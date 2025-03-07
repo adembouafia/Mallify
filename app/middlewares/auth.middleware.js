@@ -7,7 +7,7 @@ module.exports = (req , res , next) =>{
         return res.status(401).send({message : "Access denied. No token provided."});
     }
     try{
-        const verified = jwt.verify(token.replace("Bearer ", "") , process.env.SECRET_KEY);
+        const verified = jwt.verify(token.replace("Bearer ", "") , process.env.JWT_SECRET);
         req.user = verified;
         next();
     }catch(err){
