@@ -378,6 +378,24 @@
                         </div>
                     </div>
                     <!-- Login Card End -->
+                    <!-- choose an account type card start-->
+                    <div class="col-xl-6" id="chooseAccountCard">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 text-center">
+                            <h6 class="text-xl mb-32">Choose Account Type</h6>
+                            <div class="d-flex justify-content-center gap-48">
+                                <div class="text-center cursor-pointer" onclick="showVendorCard()">
+                                    <img src="/frontend/images/vendor.png" alt="Become a Vendor" class="rounded-16 shadow" width="200">
+                                    <p class="mt-2 fw-medium">Become a Vendor</p>
+                                </div>
+                                <div class="text-center cursor-pointer" onclick="showRegisterCard()">
+                                    <img src="/frontend/images/client.png" alt="Register as Client" class="rounded-16 shadow" width="200">
+                                    <p class="mt-2 fw-medium">Register as Client</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- choose an account type card end-->
     
                     <!-- Register Card Start -->
                     <div class="col-xl-6" id="registerCard" style="display: none;">
@@ -418,6 +436,56 @@
                         </div>
                     </div>
                     <!-- Register Card End -->
+                     <!-- Become a vendor Card start -->
+                     <div class="col-xl-6" id="vendorcard" style="display: none;">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
+                            <h6 class="text-xl mb-32">Become vendor</h6>
+                            <div class="mb-24">
+                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" placeholder="Write the vendor Name">
+                            </div>
+                            <div class="mb-24">
+                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" placeholder="Write a Shop name">
+                            </div>
+                            <div class="mb-24">
+                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
+                                <input type="email" class="common-input" placeholder="Enter Email Address">
+                            </div>
+                            <div class="mb-24">
+                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone </label>
+                                <input type="email" class="common-input" placeholder="Enter a phone Number">
+                            </div>
+                            <div class="mb-24">
+                                <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
+                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)">
+                                <div id="imagePreview" class="mt-4">
+                                    <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
+                                </div></p>
+                            </div>
+                            <div class="mb-24">
+                                <label for="adresse" class="text-neutral-900 text-lg mb-8 fw-medium">address</label>
+                                <input type="email" class="common-input" placeholder="Enter Shop Address">
+                            </div>
+                            <div class="mb-24">
+                                <label for="shopdescription" class="text-neutral-900 text-lg mb-8 fw-medium">Description</label>
+                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4"></textarea>
+                            </div>
+                            <div class="mb-24">
+                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password">
+                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#enter-password"></span>
+                                </div>
+                            </div>
+                            <div class="mt-48 d-flex justify-content-center gap-48">
+                                <button type="submit" class="btn btn-main py-18 px-40 ">Register</button>
+                                <button type="reset" id="cancel " class="btn btn-main py-18 px-40">Cancel</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                      <!-- Become a vendor Card end -->
     
                 </div>
             </form>
@@ -631,7 +699,7 @@
     <script src="/frontend/js/vanilla-tilt.min.js"></script>
     <script src="/frontend/js/counter.min.js"></script>
     <script src="/frontend/js/main.js"></script>
-    <script src="/frontend/js/js_functions/hide_show_cards.js"></script>"
+    <script src="/frontend/js/js_functions/login_and_register.js"></script>"
 
     </body>
 </html>
