@@ -340,7 +340,7 @@
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-            <form action="http://localhost:3000/client">
+            <form id="myForm" action="" method="GET">
                 <div class="row gy-4 d-flex justify-content-center">
     
                     <!-- Login Card Start -->
@@ -348,19 +348,21 @@
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
                             <h6 class="text-xl mb-32">Login</h6>
                             <div class="mb-24">
-                                <label for="username" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="email" placeholder="Email">
+                                <label for="username" class="text-neutral-900 text-lg mb-8 fw-medium" id="emailLabel">Email address <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="email" placeholder="Email" required >
+                                <small id="emailErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
-                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium">Password</label>
+                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="password" placeholder="Enter Password">
-                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#password"></span>
+                                    <input type="password" class="common-input" id="password" placeholder="Enter Password" required>
+                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="password"></span>
                                 </div>
+                                <small id="passwordErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24 mt-48 d-flex justify-content-center">
                                 <div class="flex-align gap-48 flex-wrap">
-                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
+                                    <button type="button" class="btn btn-main py-18 px-40" onclick="validateForm('myForm')">Log in</button>
                                     <div class="form-check common-check">
                                         <input class="form-check-input" type="checkbox" value="" id="remember">
                                         <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
@@ -372,14 +374,14 @@
                             </div>
                             <div class="mt-24 d-flex justify-content-center">
                                 <p class="text-gray-500">Don't have an account? 
-                                    <a href="#" id="showRegister" class="text-main-600 text-decoration-underline">Sign Up</a> 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
                                 </p>
                             </div>
                         </div>
                     </div>
                     <!-- Login Card End -->
                     <!-- choose an account type card start-->
-                    <div class="col-xl-6" id="chooseAccountCard">
+                    <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 text-center">
                             <h6 class="text-xl mb-32">Choose Account Type</h6>
                             <div class="d-flex justify-content-center gap-48">
@@ -403,21 +405,25 @@
                             <h6 class="text-xl mb-32">Register</h6>
                             <div class="mb-24">
                                 <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name">
+                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name" required>
+                                <small id="firstnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name">
+                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name" required>
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address">
+                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address" required>
+                                <small id="emailTwoErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password">
+                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password" required>
                                     <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#enter-password"></span>
+                                    <small id="enter-passwordErrorMessage" style="display: none;"></small>
                                 </div>
                             </div>
                             <div class="my-48">
@@ -426,11 +432,11 @@
                                 .</p>
                             </div>
                             <div class="mt-48 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
+                                <button type="submit" class="btn btn-main py-18 px-40" onclick="validateForm('myForm')">Register</button>
                             </div>
                             <div class="mt-24 d-flex justify-content-center">
                                 <p class="text-gray-500">Already have an account? 
-                                    <a href="#" id="showLogin" class="text-main-600 text-decoration-underline">Log in</a> 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
                                 </p>
                             </div>
                         </div>
@@ -441,24 +447,30 @@
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
                             <h6 class="text-xl mb-32">Become vendor</h6>
                             <div class="mb-24">
-                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" placeholder="Write the vendor Name">
+                                <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
+                                <input type="text" id="vendorname" class="common-input" placeholder="Write the vendor Name"required>
+                                <small id="vendornameErrorMessage" style="display: none;"></small>
+                                <!--!w9eft lennna -->
                             </div>
                             <div class="mb-24">
                                 <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" placeholder="Write a Shop name">
+                                <input type="text" class="common-input" placeholder="Write a Shop name"required>
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" placeholder="Enter Email Address">
+                                <input type="email" class="common-input" placeholder="Enter Email Address" required>
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
-                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone </label>
-                                <input type="email" class="common-input" placeholder="Enter a phone Number">
+                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
+                                <input type="email" class="common-input" placeholder="Enter a phone Number" required>
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
-                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)">
+                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)" required>
+                                    <small id="lastnameErrorMessage" style="display: none;"></small>
                                 <div id="imagePreview" class="mt-4">
                                     <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
                                 </div></p>
@@ -474,13 +486,14 @@
                             <div class="mb-24">
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password">
+                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password" required>
                                     <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#enter-password"></span>
+                                    <small id="lastnameErrorMessage" style="display: none;"></small>
                                 </div>
                             </div>
                             <div class="mt-48 d-flex justify-content-center gap-48">
-                                <button type="submit" class="btn btn-main py-18 px-40 ">Register</button>
-                                <button type="reset" id="cancel " class="btn btn-main py-18 px-40">Cancel</button>
+                                <button type="submit" class="btn btn-main py-18 px-40 " onclick="validateForm('myForm')" >Register</button>
+                                <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
                             </div>
                             
                         </div>
