@@ -60,3 +60,13 @@ exports.login = async (req , res) =>{
         res.status(500).send({message : err.message || "Error logging in" });
     }
 }
+
+//get all clients 
+exports.getAll = async (req , res) =>{
+    try{
+        const client = await Client.find();
+        res.send(client);
+    }catch(err){
+        res.status(500).send({message : err.message || "Error fetching clients" });
+    }
+}

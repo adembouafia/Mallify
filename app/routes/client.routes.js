@@ -4,4 +4,5 @@ module.exports = (app) =>{
 
     app.post('/client/register', client.register);
     app.post('/client/login' , client.login);
+    app.get('/client/get', auth , client.getAll);
 }

@@ -14,5 +14,7 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch((err) => console.error("Erreur de connexion :", err));
 
+  require("./app/routes/client.routes")(app);
+
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => console.log(`Serveur en cours d'exécution sur le port ${PORT}`));
