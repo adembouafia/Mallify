@@ -42,29 +42,22 @@ function previewImage(event) {
 function validateForm(formId) {
     const form = document.getElementById(formId);
     const inputs = form.querySelectorAll('input[required], select[required], textarea[required], input[type="file"][required]');
-
     function displayError(inputElement, errorMessageElement) {
         inputElement.style.border = "2px solid red";
         errorMessageElement.style.display = "block";
         errorMessageElement.innerText = "This field is required.";
         errorMessageElement.classList.add("text-danger");
-
         setTimeout(() => {
             errorMessageElement.style.display = "none";
         }, 4000);
     }
-
     function clearError(inputElement, errorMessageElement) {
         inputElement.style.border = "1px solid #ccc";
         errorMessageElement.style.display = "none";
     }
-
-    let isValid = true;
-
+    const isValid = true;
     inputs.forEach(input => {
         const errorMessageElement = document.getElementById(input.id + "ErrorMessage");
-
-        // Check if the input is a file input and if no file is selected
         if (input.type === "file" && input.files.length === 0) {
             displayError(input, errorMessageElement);
             isValid = false;
@@ -77,11 +70,30 @@ function validateForm(formId) {
             clearError(input, errorMessageElement);
         }
     });
-
     if (isValid) {
         window.location.reload();
     }
 }
+
+// //eyesplach 
+// document.addEventListener("DOMContentLoaded", function () {
+//     const passwordInput = document.getElementById("vendorpassword");
+//     const togglePassword = document.getElementById("togglePassword");
+
+//     togglePassword.addEventListener("click", function () {
+//         // Toggle password visibility
+//         if (passwordInput.type === "password") {
+//             passwordInput.type = "text";
+//             togglePassword.classList.remove("ph-eye-slash");
+//             togglePassword.classList.add("ph-eye");
+//         } else {
+//             passwordInput.type = "password";
+//             togglePassword.classList.remove("ph-eye");
+//             togglePassword.classList.add("ph-eye-slash");
+//         }
+//     });
+// });
+
 
 
 

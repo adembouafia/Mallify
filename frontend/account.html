@@ -348,17 +348,14 @@
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
                             <h6 class="text-xl mb-32">Login</h6>
                             <div class="mb-24">
-                                <label for="username" class="text-neutral-900 text-lg mb-8 fw-medium" id="emailLabel">Email address <span class="text-danger">*</span> </label>
+                                <label for="username" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
                                 <input type="text" class="common-input" id="email" placeholder="Email" required >
                                 <small id="emailErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
-                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative">
-                                    <input type="password" class="common-input" id="password" placeholder="Enter Password" required>
-                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="password"></span>
-                                </div>
-                                <small id="passwordErrorMessage" style="display: none;"></small>
+                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
+                                <input type="password" class="common-input" id="LoginPassword" placeholder="Enter your Password" required >
+                                <small id="LoginPasswordErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24 mt-48 d-flex justify-content-center">
                                 <div class="flex-align gap-48 flex-wrap">
@@ -422,7 +419,6 @@
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
                                     <input type="password" class="common-input" id="enter-password" placeholder="Enter Password" required>
-                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#enter-password"></span>
                                     <small id="enter-passwordErrorMessage" style="display: none;"></small>
                                 </div>
                             </div>
@@ -450,27 +446,26 @@
                                 <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
                                 <input type="text" id="vendorname" class="common-input" placeholder="Write the vendor Name"required>
                                 <small id="vendornameErrorMessage" style="display: none;"></small>
-                                <!--!w9eft lennna -->
                             </div>
                             <div class="mb-24">
-                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" placeholder="Write a Shop name"required>
-                                <small id="lastnameErrorMessage" style="display: none;"></small>
+                                <label for="shopname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
+                                <input type="text" id="shopname" class="common-input" placeholder="Write a Shop name"required>
+                                <small id="shopnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" placeholder="Enter Email Address" required>
-                                <small id="lastnameErrorMessage" style="display: none;"></small>
+                                <input type="email" id="mailadress"class="common-input" placeholder="Enter Email Address" required>
+                                <small id="mailadressErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
-                                <input type="email" class="common-input" placeholder="Enter a phone Number" required>
-                                <small id="lastnameErrorMessage" style="display: none;"></small>
+                                <input type="number" id="phone" class="common-input" placeholder="Enter a phone Number" required>
+                                <small id="phoneErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
                                 <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)" required>
-                                    <small id="lastnameErrorMessage" style="display: none;"></small>
+                                    <small id="shoplogoErrorMessage" style="display: none;"></small>
                                 <div id="imagePreview" class="mt-4">
                                     <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
                                 </div></p>
@@ -486,9 +481,8 @@
                             <div class="mb-24">
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password" required>
-                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash" id="#enter-password"></span>
-                                    <small id="lastnameErrorMessage" style="display: none;"></small>
+                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password" required >
+                                    <!-- <small id="vendorpasswordErrorMessage" style="display: none;"></small> -->
                                 </div>
                             </div>
                             <div class="mt-48 d-flex justify-content-center gap-48">
@@ -704,7 +698,6 @@
     <script src="/frontend/js/phosphor-icon.js"></script>
     <script src="/frontend/js/select2.min.js"></script>
     <script src="/frontend/js/slick.min.js"></script>
-    <script src="/frontend/js/count-down.js"></script>
     <script src="/frontend/js/jquery-ui.js"></script>
     <script src="/frontend/js/wow.min.js"></script>
     <script src="/frontend/js/aos.js"></script>

@@ -1,9 +1,6 @@
 (function ($) {
   "use strict";
-  
-  // ==========================================
-  //      Start Document Ready function
-  // ==========================================
+
   $(document).ready(function () {
     
   // ============== Mobile Menu Sidebar & Offcanvas Js Start ========
@@ -158,18 +155,6 @@
     $('body').removeClass('scroll-hide-sm');
   }); 
   // ========================== On Click Category menu show Js End =================================
-
-  
-  // ========================== Set Language in dropdown Js Start =================================
-  $('.selectable-text-list li').each(function () {
-    var thisItem = $(this); 
-
-    thisItem.on('click', function () {
-      const listText = thisItem.text(); 
-      var item = thisItem.parent().parent().find('.selected-text').text(listText); 
-    }); 
-  }); 
-  // ========================== Set Language in dropdown Js End =================================
 
   
   // ========================= Banner Slider Js Start ==============
@@ -1041,35 +1026,6 @@
     $(this).closest('tr').addClass('d-none')
   }); 
   // ========================== Remove Tr Js End ================================
-
-  
-  // ========================== Checkout Payment Method Js Start ================================
-  $('.payment-item .form-check-input:checked').closest('.payment-item').find('.payment-item__content').show();
-
-  $('.payment-item .form-check-input').on('change', function () {
-      $('.payment-item__content').hide();
-      $(this).closest('.payment-item').find('.payment-item__content').show();
-  });
-  // ========================== Checkout Payment Method Js End ================================
-
-  // ================== Password Show Hide Js Start ==========
-  $(".toggle-password").on('click', function() {
-    $(this).toggleClass("active");
-    var input = $($(this).attr("id"));
-    if (input.attr("type") == "password") {
-      input.attr("type", "text");
-    } else {
-      input.attr("type", "password");
-    }
-  });
-  // ========================= Password Show Hide Js End ===========================
-
-  // ========================= Background Image Js Start ===================
-    $(".bg-img").css('background-image', function () {
-      var bg = 'url(' + $(this).data("background-image") + ')';
-      return bg;
-    });
-  // ========================= Background Image Js End ===================
 
   // ========================== Text Slide Js Start =====================
     $('.text-slider').marquee({
