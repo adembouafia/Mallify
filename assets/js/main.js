@@ -1,9 +1,5 @@
 (function ($) {
-  "use strict";
-  
-  // ==========================================
-  //      Start Document Ready function
-  // ==========================================
+
   $(document).ready(function () {
     
   // ============== Mobile Menu Sidebar & Offcanvas Js Start ========
@@ -943,27 +939,6 @@
   });
   // ========================= Product Details Thumbs Slider Js End ===================
 
-  
-  // ========================= Increment & Decrement Js Start ===================
-  var minus = $('.quantity__minus');
-  var plus = $('.quantity__plus');
-
-  $(plus).on('click', function () {
-    var input = $(this).siblings('.quantity__input');
-    var value = input.val(); 
-    value++;
-    input.val(value); 
-  }); 
-
-  $(minus).on('click', function () {
-    var input = $(this).siblings('.quantity__input');
-    var value = input.val(); 
-    if(value > 1) {
-      value--;
-    }
-    input.val(value); 
-  }); 
-  // ========================= Increment & Decrement Js End ===================
 
   
   // ========================= Color List Js Start ===================
@@ -1035,34 +1010,7 @@
   }); 
   // ========================== Shop Sidebar Js End ================================
 
-  
-  // ========================== Remove Tr Js Start ================================
-  $('.remove-tr-btn').on('click', function () {
-    $(this).closest('tr').addClass('d-none')
-  }); 
-  // ========================== Remove Tr Js End ================================
 
-  
-  // ========================== Checkout Payment Method Js Start ================================
-  $('.payment-item .form-check-input:checked').closest('.payment-item').find('.payment-item__content').show();
-
-  $('.payment-item .form-check-input').on('change', function () {
-      $('.payment-item__content').hide();
-      $(this).closest('.payment-item').find('.payment-item__content').show();
-  });
-  // ========================== Checkout Payment Method Js End ================================
-
-  // ================== Password Show Hide Js Start ==========
-  $(".toggle-password").on('click', function() {
-    $(this).toggleClass("active");
-    var input = $($(this).attr("id"));
-    if (input.attr("type") == "password") {
-      input.attr("type", "text");
-    } else {
-      input.attr("type", "password");
-    }
-  });
-  // ========================= Password Show Hide Js End ===========================
 
   // ========================= Background Image Js Start ===================
     $(".bg-img").css('background-image', function () {
@@ -1223,8 +1171,6 @@
       ]
     });  
     // ========================== Testimonials Thumbs Slider Js End =====================
-    
-  // ========================= Wow Js Start ===================
   new WOW().init();
   // ========================= Wow Js End ===================
 
@@ -1266,15 +1212,13 @@
 
   
   });
-  // ==========================================
-  //      End Document Ready function
-  // ==========================================
 
-  // ========================= Preloader Js Start =====================
-    $(window).on("load", function(){
-      $('.preloader').fadeOut(); 
-    })
-    // ========================= Preloader Js End=====================
+
+  // // ========================= Preloader Js Start =====================
+  //   $(window).on("load", function(){
+  //     $('.preloader').fadeOut(); 
+  //   })
+  //   // ========================= Preloader Js End=====================
 
     // ========================= Header Sticky Js Start ==============
     $(window).on('scroll', function() {
