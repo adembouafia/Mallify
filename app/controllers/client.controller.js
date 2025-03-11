@@ -7,6 +7,7 @@ dotenv.config();
 //register 
 exports.register = async (req , res) =>{
     try{
+
         const existingClient = await Client.findOne({email:req.body.email});
         if (existingClient){
             return res.status(400).json({message:"Email already exists"});

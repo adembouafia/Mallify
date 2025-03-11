@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 mongoose
-  .connect(process.env.DB_URL) // Assure-toi que DB_URL est bien défini dans ton fichier .env
+  .connect(process.env.DB_URL) 
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch((err) => console.error("Erreur de connexion :", err));
 

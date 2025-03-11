@@ -341,7 +341,7 @@
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-            <form id="myForm" action="http://localhost:3000/client" method="POST">
+            <form id="myform" action="http://localhost:3000/client/login" method="GET">
                 <div class="row gy-4 d-flex justify-content-center">
     
                     <!-- Login Card Start -->
@@ -349,18 +349,18 @@
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
                             <h6 class="text-xl mb-32">Login</h6>
                             <div class="mb-24">
-                                <label for="username" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="email" placeholder="Email" required >
+                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="email" placeholder="Email"  name = "email">
                                 <small id="emailErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                <input type="password" class="common-input" id="LoginPassword" placeholder="Enter your Password" required >
+                                <input type="password" class="common-input" id="LoginPassword" placeholder="Enter your Password"  name = "password">
                                 <small id="LoginPasswordErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24 mt-48 d-flex justify-content-center">
                                 <div class="flex-align gap-48 flex-wrap">
-                                    <button type="button" class="btn btn-main py-18 px-40" onclick="validateForm('myForm')">Log in</button>
+                                    <button type="button" class="btn btn-main py-18 px-40">Log in</button>
                                     <div class="form-check common-check">
                                         <input class="form-check-input" type="checkbox" value="" id="remember">
                                         <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
@@ -398,28 +398,30 @@
                     <!-- choose an account type card end-->
     
                     <!-- Register Card Start -->
+                </form>
+                <form action="http://localhost:3000/client/register" method="POST">
                     <div class="col-xl-6" id="registerCard" style="display: none;">
                         <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
                             <h6 class="text-xl mb-32">Register</h6>
                             <div class="mb-24">
                                 <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name" required>
+                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
                                 <small id="firstnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name" required>
+                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
                                 <small id="lastnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address" required>
+                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email">
                                 <small id="emailTwoErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter-password" placeholder="Enter Password" required>
+                                    <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
                                     <small id="enter-passwordErrorMessage" style="display: none;"></small>
                                 </div>
                             </div>
@@ -429,7 +431,7 @@
                                 .</p>
                             </div>
                             <div class="mt-48 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-main py-18 px-40" onclick="validateForm('myForm')">Register</button>
+                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
                             </div>
                             <div class="mt-24 d-flex justify-content-center">
                                 <p class="text-gray-500">Already have an account? 
@@ -438,6 +440,7 @@
                             </div>
                         </div>
                     </div>
+                </form>
                     <!-- Register Card End -->
                      <!-- Become a vendor Card start -->
                      <div class="col-xl-6" id="vendorcard" style="display: none;">
@@ -445,49 +448,49 @@
                             <h6 class="text-xl mb-32">Become vendor</h6>
                             <div class="mb-24">
                                 <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
-                                <input type="text" id="vendorname" class="common-input" placeholder="Write the vendor Name"required>
+                                <input type="text" id="vendorname" class="common-input" placeholder="Write the vendor Name" name="vendorname">
                                 <small id="vendornameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="shopname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
-                                <input type="text" id="shopname" class="common-input" placeholder="Write a Shop name"required>
+                                <input type="text" id="shopname" class="common-input" placeholder="Write a Shop name" name="shopname">
                                 <small id="shopnameErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" id="mailadress"class="common-input" placeholder="Enter Email Address" required>
+                                <input type="email" id="mailadress"class="common-input" placeholder="Enter Email Address"  name = "email">
                                 <small id="mailadressErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
-                                <input type="number" id="phone" class="common-input" placeholder="Enter a phone Number" required>
+                                <input type="number" id="phone" class="common-input" placeholder="Enter a phone Number"  name = "phone">
                                 <small id="phoneErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24">
                                 <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
-                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)" required>
-                                    <small id="shoplogoErrorMessage" style="display: none;"></small>
+                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)"  name="shoplogo">
+                                    <small id="shoplogoErrorMessage" style="display: none;"></small></p>
                                 <div id="imagePreview" class="mt-4">
                                     <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
-                                </div></p>
+                                </div>
                             </div>
                             <div class="mb-24">
                                 <label for="adresse" class="text-neutral-900 text-lg mb-8 fw-medium">address</label>
-                                <input type="email" class="common-input" placeholder="Enter Shop Address">
+                                <input type="email" class="common-input" placeholder="Enter Shop Address" name = "adresse">
                             </div>
                             <div class="mb-24">
                                 <label for="shopdescription" class="text-neutral-900 text-lg mb-8 fw-medium">Description</label>
-                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4"></textarea>
+                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4" name = "shopdescription"></textarea>
                             </div>
                             <div class="mb-24">
                                 <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password" required >
+                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password"   name = "vendorpassword">
                                     <!-- <small id="vendorpasswordErrorMessage" style="display: none;"></small> -->
                                 </div>
                             </div>
                             <div class="mt-48 d-flex justify-content-center gap-48">
-                                <button type="submit" class="btn btn-main py-18 px-40 " onclick="validateForm('myForm')" >Register</button>
+                                <button type="submit" class="btn btn-main py-18 px-40 " >Register</button>
                                 <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
                             </div>
                             
@@ -496,7 +499,6 @@
                       <!-- Become a vendor Card end -->
     
                 </div>
-            </form>
         </div>
 </section>
 <!-- =============================== Account Section End =========================== -->

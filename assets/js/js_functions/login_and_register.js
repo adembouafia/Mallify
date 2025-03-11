@@ -39,41 +39,41 @@ function previewImage(event) {
 }
 
 //login validation 
-function validateForm(formId) {
-    const form = document.getElementById(formId);
-    const inputs = form.querySelectorAll('input[required], select[required], textarea[required], input[type="file"][required]');
-    function displayError(inputElement, errorMessageElement) {
-        inputElement.style.border = "2px solid red";
-        errorMessageElement.style.display = "block";
-        errorMessageElement.innerText = "This field is required.";
-        errorMessageElement.classList.add("text-danger");
-        setTimeout(() => {
-            errorMessageElement.style.display = "none";
-        }, 4000);
-    }
-    function clearError(inputElement, errorMessageElement) {
-        inputElement.style.border = "1px solid #ccc";
-        errorMessageElement.style.display = "none";
-    }
-    const isValid = true;
-    inputs.forEach(input => {
-        const errorMessageElement = document.getElementById(input.id + "ErrorMessage");
-        if (input.type === "file" && input.files.length === 0) {
-            displayError(input, errorMessageElement);
-            isValid = false;
-        } 
-        // Check if other inputs are empty
-        else if (input.value.trim() === "") {
-            displayError(input, errorMessageElement);
-            isValid = false;
-        } else {
-            clearError(input, errorMessageElement);
-        }
-    });
-    if (isValid) {
-        window.location.reload();
-    }
-}
+// function validateForm(formId) {
+//     const form = document.getElementById(formId);
+//     const inputs = form.querySelectorAll('input[required], select[required], textarea[required], input[type="file"][required]');
+//     function displayError(inputElement, errorMessageElement) {
+//         inputElement.style.border = "2px solid red";
+//         errorMessageElement.style.display = "block";
+//         errorMessageElement.innerText = "This field is required.";
+//         errorMessageElement.classList.add("text-danger");
+//         setTimeout(() => {
+//             errorMessageElement.style.display = "none";
+//         }, 4000);
+//     }
+//     function clearError(inputElement, errorMessageElement) {
+//         inputElement.style.border = "1px solid #ccc";
+//         errorMessageElement.style.display = "none";
+//     }
+//     const isValid = true;
+//     inputs.forEach(input => {
+//         const errorMessageElement = document.getElementById(input.id + "ErrorMessage");
+//         if (input.type === "file" && input.files.length === 0) {
+//             displayError(input, errorMessageElement);
+//             isValid = false;
+//         } 
+//         // Check if other inputs are empty
+//         else if (input.value.trim() === "") {
+//             displayError(input, errorMessageElement);
+//             isValid = false;
+//         } else {
+//             clearError(input, errorMessageElement);
+//         }
+//     });
+//     if (isValid) {
+//         window.location.reload();
+//     }
+// }
 
 // //eyesplach 
 // document.addEventListener("DOMContentLoaded", function () {
