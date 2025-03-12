@@ -339,7 +339,7 @@
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-            <form id="myform" action="http://localhost:3000/client/login" method="GET">
+            <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
                 <div class="row gy-4 d-flex justify-content-center">
     
                     <!-- Login Card Start -->
@@ -353,12 +353,12 @@
                             </div>
                             <div class="mb-24">
                                 <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                <input type="password" class="common-input" id="LoginPassword" placeholder="Enter your Password"  name = "password">
+                                <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
                                 <small id="LoginPasswordErrorMessage" style="display: none;"></small>
                             </div>
                             <div class="mb-24 mt-48 d-flex justify-content-center">
                                 <div class="flex-align gap-48 flex-wrap">
-                                    <button type="button" class="btn btn-main py-18 px-40">Log in</button>
+                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
                                     <div class="form-check common-check">
                                         <input class="form-check-input" type="checkbox" value="" id="remember">
                                         <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
@@ -375,7 +375,7 @@
                             </div>
                         </div>
                     </div>
-                </form>
+            </form>
                     <!-- Login Card End -->
                     <!-- choose an account type card start-->
                     <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
@@ -398,7 +398,7 @@
     
                     <!-- Register Card Start -->
                 
-                <form action="http://localhost:3000/client/register" method="POST">
+                <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
                     <div class="row gy-4 d-flex justify-content-center">
                         <div class="col-xl-6 " id="registerCard" style="display: none;">
                         
