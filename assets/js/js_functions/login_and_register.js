@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
             if (response.ok) {
                 alert("Connexion réussie !");
-                localStorage.setItem("token", data.token); // 🔥 Stocker le token
+                // localStorage.setItem("token", data.token); // 🔥 Stocker le token
                 window.location.href = "wishlist.html"; // Rediriger vers la page souhaitée
             } else {
                 alert(`Erreur : ${data.message}`);

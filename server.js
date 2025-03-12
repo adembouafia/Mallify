@@ -2,12 +2,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const helmet = require("helmet");
 
 dotenv.config();
 const app = express();
 
-app.use(cors());
-app.use(express.urlencoded({ extended: true })); 
+app.use(cors(
+  {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  }
+));
+
+app.use(helmet());
+
 app.use(express.json());
 
 mongoose
