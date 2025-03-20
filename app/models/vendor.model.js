@@ -45,7 +45,7 @@ const VendorSchema = new mongoose.Schema(
 );
 
 //Hashing the password before saving 
-ClientSchema.pre("save" , async function(next) {
+VendorSchema.pre("save" , async function(next) {
     try{
         if (!this.isModified("password")){
             return next();

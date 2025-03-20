@@ -32,11 +32,7 @@
     4.9. Section Heading
     4.10. Slick
     4.11. Social Icon
-*/
-/*======================== CSS Index End ======================*/
-/* Convert to Rem start */
-/* Convert to Rem End */
-/* ======================== Functions Css End ======================= */
+
 /* ======================== Functions Css End ======================= */
 /* Font Family*/
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Exo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&display=swap");
@@ -233,10 +229,6 @@
 }
 
 /* ========================= Variable Css End ======================== */
-/* ============================ Mixins Css Start ============================ */
-/* Media Breakpoint for Each Device Start */
-/* Media Breakpoint for Each Device End */
-/* ============================ Mixins Css End ============================ */
 /* =========================== Accordion Css start ============================= */
 .common-accordion .accordion-item {
     border: 1px solid var(--border-color);
@@ -7981,17 +7973,17 @@ input:focus-visible {
 
 /* ================================= preload Css Start =========================== */
 .preloader {
-    background-color: hsl(var(--white));
-    inset-block-end: 0;
-    inset-inline-start: 0;
     position: fixed;
-    inset-inline-end: 0;
-    inset-block-start: 0;
-    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff; /* Change this to match your website background */
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
 }
+
 
 /* ================================= preload Css End ===========================  */
 /* =========================== header top Css Start =============================== */
