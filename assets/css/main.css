@@ -10043,58 +10043,20 @@ input:focus-visible {
     }
 }
 /* ======================== Vendors Two Page css Start ============================= */
-.grid-cols-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 24px;
-}
-
-@media screen and (max-width: 1199px) {
-    .grid-cols-3 {
-        grid-template-columns: 1fr 1fr !important;
-    }
-}
-
-@media screen and (max-width: 575px) {
-    .grid-cols-3 {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.grid-cols-3.list-view {
-    grid-template-columns: 1fr 1fr !important;
-}
-
-@media screen and (max-width: 1399px) {
-    .grid-cols-3.list-view {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.list-view .vendors-two-item {
-    display: flex;
-}
-
-/* ======================== Vendors Two Page css End ============================= */
-/* ============================== Vendor Two Details Css Start =============================== */
 .grid-cols-4 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr !important;
-    gap: 24px;
+    gap: 20px;
 }
 
-@media screen and (max-width: 1399px) {
-    .grid-cols-4 {
-        grid-template-columns: 1fr 1fr 1fr !important;
-    }
-}
-
+/* For screens smaller than 1199px, change to 2 columns */
 @media screen and (max-width: 1199px) {
     .grid-cols-4 {
         grid-template-columns: 1fr 1fr !important;
     }
 }
 
+/* For screens smaller than 575px, change to 1 column */
 @media screen and (max-width: 575px) {
     .grid-cols-4 {
         grid-template-columns: 1fr !important;
@@ -10105,20 +10067,17 @@ input:focus-visible {
     grid-template-columns: 1fr 1fr !important;
 }
 
+/* For screens smaller than 1399px in list view, change to 1 column */
 @media screen and (max-width: 1399px) {
     .grid-cols-4.list-view {
         grid-template-columns: 1fr !important;
     }
 }
 
-.vendor-two-details .shop-sidebar {
-    width: 332px;
+.list-view .vendors-two-item {
+    display: flex;
 }
 
-.vendor-two-details__contents {
-    flex-grow: 1;
-    width: calc(100% - 356px);
-}
+/* ======================== Vendors Two Page css End ============================= */
 
-/* ============================== Vendor Two Details Css End =============================== */
 /*# sourceMappingURL=main.css.map */
