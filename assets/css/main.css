@@ -8996,6 +8996,18 @@ input:focus-visible {
 .banner {
     margin-top: 32px;
 }
+.banner-item-two__thumb {
+    bottom: 120px !important;   /* 👇 Position depuis le bas (desktop) */
+
+}
+
+@media screen and (max-width: 767px) {
+    .banner-item-two__thumb {
+        bottom: 10px !important;  /* 👇 Moins d’espace en mobile */
+
+    }
+}
+
 
 @media screen and (max-width: 767px) {
     .banner {
@@ -9017,8 +9029,6 @@ input:focus-visible {
     padding-block-end: clamp(2rem, -8.859rem + 22.623vw, 13.75rem);
     padding-inline-start: clamp(1rem, -11.87rem + 20.758vw, 8.875rem);
     padding-inline-end: clamp(1rem, -5.129rem + 9.885vw, 4.75rem);
-    -webkit-mask-image: url(../images/bg/banner-bg2.png);
-    mask-image: url(../images/bg/banner-bg2.png);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     background: #D3EBC0;

@@ -120,6 +120,40 @@ document.addEventListener("DOMContentLoaded", function () {
     
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("vendorRegisterForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);  
+
+        // Validation: Check if all fields are filled
+        if (!formData.get("vendorname") || !formData.get("shopname") || !formData.get("phone") || !formData.get("shoplogo") || !formData.get("vendorpassword")) {
+            alert("Tous les champs sont obligatoires !");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/vendor/register", {
+                method: "POST",
+                body: formData 
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Inscription du vendeur réussie !");
+                window.location.reload();
+            } else {
+                alert(`Erreur : ${data.message}`);
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'inscription du vendeur :", error);
+            alert("Une erreur s'est produite lors de l'inscription.");
+        }
+    });
+});
+
+
 
 //login validation 
 function validateForm(formId) {

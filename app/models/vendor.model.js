@@ -14,8 +14,8 @@ const VendorSchema = new mongoose.Schema(
     },
 
     email: {
-      type: String,
-      unique: [true, "The email is unique"],
+        type: String,
+        unique: [true, "The email is unique"],
     },
     phone: {
         type : Number,
