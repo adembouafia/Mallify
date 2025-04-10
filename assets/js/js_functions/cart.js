@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
             input.value = value;
         });
     });
-
     minusButtons.forEach(button => {
         button.addEventListener("click", function () {
             const input = this.closest("td").querySelector(".quantity__input");
@@ -23,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Remove item from cart
+
     document.querySelectorAll(".remove-tr-btn").forEach(button => {
         button.addEventListener("click", function () {
             this.closest("tr").classList.add("d-none");

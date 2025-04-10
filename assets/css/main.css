@@ -9280,22 +9280,18 @@ input:focus-visible {
     justify-content: space-between;
     align-items: start;
 }
-
 .product-card:hover .product-card__thumb img {
     transform: scale(0.98);
 }
-
 @media screen and (max-width: 1499px) {
     .product-card__cart {
         font-size: 12px;
         padding: 9px 12px !important;
     }
 }
-
 .product-card__badge {
     border-radius: 16px 0 16px 0;
 }
-
 .product-card__thumb {
     height: 232px;
     width: 100%;

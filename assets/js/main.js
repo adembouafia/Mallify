@@ -1032,10 +1032,7 @@
       startVisible: true
     });
     // ========================== Text Slide Js End =====================
-
-
     // ========================== Trending Products Js Strt =====================
-
     $('.wishlist-btn').on('click', function () {
       if($(this).children('i').hasClass('ph ph-heart')) {
         $(this).children('i').removeClass('ph ph-heart')

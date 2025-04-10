@@ -90,14 +90,12 @@
 
     
 }
-
 .teamDescription{
     width: 85%;
     padding: 25px;
     margin: auto;
     text-align: center;
 }
-
 .team-container{
     display: flex;
     justify-content: space-around;
