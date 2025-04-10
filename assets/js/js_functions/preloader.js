@@ -1,4 +1,5 @@
 window.addEventListener("load", function () {
+    
     var preloader = document.querySelector('.preloader');
     if (preloader) {
         preloader.style.transition = "opacity 0.4s ease";

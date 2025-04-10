@@ -42,13 +42,11 @@ function previewImage(event) {
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("registerForm").addEventListener("submit", async function (event) {
         event.preventDefault(); // Empêcher le rechargement de la page
-
         // Récupérer les valeurs du formulaire
         const firstname = document.getElementById("firstname").value.trim();
         const lastname = document.getElementById("lastname").value.trim();
         const email = document.getElementById("emailTwo").value.trim();
         const password = document.getElementById("enter_password").value.trim();
-
         // Vérifier si tous les champs sont remplis
         if (!firstname || !lastname || !email || !password) {
             alert("Tous les champs sont obligatoires !");

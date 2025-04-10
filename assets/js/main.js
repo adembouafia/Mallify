@@ -1043,7 +1043,6 @@
       }
     });
     // ========================== Trending Products Js End =====================
-
     // ========================== Instagram Slider Js Start =====================
     $('.instagram-slider').slick({
       slidesToShow: 4,
