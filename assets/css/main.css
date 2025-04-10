@@ -615,7 +615,6 @@ textarea + .input-icon {
 
 .select-has-icon select {
     background-image: none;
-    -webkit-appearance: none;
     padding: 20px 24px;
     font-size: 18px;
 }
@@ -701,16 +700,6 @@ input#your-password, input#confirm-password {
     inset-block-start: 50%;
     transform: translateY(-50%);
     color: hsl(var(--black)/0.4);
-}
-
-/* Number Arrow None */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
 }
 
 /* Custom Checkbox & Radio Css Start */
@@ -7724,7 +7713,6 @@ input:focus-visible {
 /* Overlay End */
 .text-line-1 {
     display: -webkit-box;
-    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -7732,15 +7720,12 @@ input:focus-visible {
 
 .text-line-2 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .text-line-3 {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -9297,7 +9282,7 @@ input:focus-visible {
 }
 
 .product-card:hover .product-card__thumb img {
-    transform: scale(1.2);
+    transform: scale(0.98);
 }
 
 @media screen and (max-width: 1499px) {
@@ -9806,7 +9791,6 @@ input:focus-visible {
 @media (min-width: 768px) {
     .testimonials-item__desc {
         display: -webkit-box;
-        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -9922,6 +9906,10 @@ input:focus-visible {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 24px;
 }
+.max-w-150 {
+    max-width: 150px;
+  }
+  
 
 @media (min-width: 480px) {
     .list-view {
@@ -9977,7 +9965,53 @@ input:focus-visible {
         border: 0 !important;
     }
 }
+
 /* ================================ Shop Page css End =============================== */
+/* ============================== Vendor Two Details Css Start =============================== */
+.grid-cols-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
+    gap: 24px;
+}
+
+@media (max-width: 1399.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr 1fr 1fr !important;
+    }
+}
+  
+@media (max-width: 1199.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+  
+@media (max-width: 767.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr !important;
+    }
+  }
+  
+  .grid-cols-4.list-view {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  @media (max-width: 1399.98px) {
+    .grid-cols-4.list-view {
+        grid-template-columns: 1fr !important;
+    }
+  }
+  
+  .vendor-two-details .shop-sidebar {
+    width: 332px;
+  }
+  
+  .vendor-two-details__contents {
+    flex-grow: 1;
+    width: calc(100% - 356px);
+  }
+  /* ============================== Vendor Two Details Css End =============================== */
+  
 /* ========================== Cart Page Css Start ============================ */
 .table-product__thumb {
     max-width: 150px;

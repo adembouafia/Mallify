@@ -30,16 +30,18 @@
 .faq-item__title:hover, .faq-item__title:hover .arrow{
     border-left-color: #0569ff;
 }
-.arrow{
+  
+  .arrow {
+    margin-left: 10px;
     display: inline-block;
     width: 0;
     height: 0;
-    margin: 0 0.5em;
     border-top: 6px solid transparent;
     border-left: 10px solid #555;
     border-bottom: 6px solid transparent;
     transition: 0.3s;
-}
+  }
+  
 
 .faq p{
     color: #888;
