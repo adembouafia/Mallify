@@ -9274,6 +9274,16 @@ input:focus-visible {
 
 /* ========================= flash sales End ================================ */
 /* ============================= Product Card Css Start ========================== */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 .product-card {
     display: flex;
     flex-direction: column;
@@ -9873,16 +9883,71 @@ input:focus-visible {
     }
 }
 /* ================================= Testimonials Section Css End ==================================== */
-/* ============================ Product Details Css Start ============================= */
-.product-details__thumb-slider {
-    padding: clamp(3rem, -2.173rem + 10.777vw, 7.25rem);
-}
-
-.product-details .slick-initialized.slick-slider .slick-slide > div > div {
+/* ============================ Product Details CSS Start ============================= */
+/* Step 1: Make each slide a flex container */
+.new-arrival__slider > div {
+    display: flex;
     height: 100%;
+  }
+  
+  /* Step 2: Force product-card to fill the slide */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+
+.product-details {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.product-dContent__box, .product-dContent__header {
+.product-details__thumb-slider {
+    padding: clamp(4px, 1vw, 90px);
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.product-details__thumb-slider .slick-slide {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-details__thumb-slider img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.product-details__images-slider {
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.product-details__images-slider .slick-slide {
+    padding: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.product-details__images-slider img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid transparent;
+    transition: border 0.3s ease;
+}
+
+.product-dContent__box,
+.product-dContent__header {
     padding: 16px 40px;
 }
 
@@ -9891,7 +9956,18 @@ input:focus-visible {
     padding-bottom: 48px;
 }
 
-/* ============================ Product Details Css End ============================= */
+/* Prevent slick overflow */
+.slick-slider {
+    overflow: hidden;
+}
+
+.slick-track {
+    display: flex !important;
+    align-items: center;
+}
+
+/* ============================ Product Details CSS End ============================= */
+
 /* ================================ Shop Page css Start =============================== */
 @media (max-width: 479px) {
     .list-grid-btns {
