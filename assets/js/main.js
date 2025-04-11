@@ -1032,22 +1032,7 @@
       startVisible: true
     });
     // ========================== Text Slide Js End =====================
-
-
     // ========================== Trending Products Js Strt =====================
-    $('.expand-btn').on('click', function () {
-      $(this).toggleClass('bg-main-two-600 text-white');
-      $(this).parent().find('.expand-icons').toggleClass('d-flex');
-
-      if($(this).children('i').hasClass('ph ph-plus')) {
-        $(this).children('i').removeClass('ph ph-plus')
-        $(this).children('i').addClass('ph ph-x')
-      } else {
-        $(this).children('i').removeClass('ph ph-x')
-        $(this).children('i').addClass('ph ph-plus')
-      }
-    });
-
     $('.wishlist-btn').on('click', function () {
       if($(this).children('i').hasClass('ph ph-heart')) {
         $(this).children('i').removeClass('ph ph-heart')
@@ -1058,7 +1043,6 @@
       }
     });
     // ========================== Trending Products Js End =====================
-
     // ========================== Instagram Slider Js Start =====================
     $('.instagram-slider').slick({
       slidesToShow: 4,

@@ -32,11 +32,7 @@
     4.9. Section Heading
     4.10. Slick
     4.11. Social Icon
-*/
-/*======================== CSS Index End ======================*/
-/* Convert to Rem start */
-/* Convert to Rem End */
-/* ======================== Functions Css End ======================= */
+
 /* ======================== Functions Css End ======================= */
 /* Font Family*/
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Exo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&display=swap");
@@ -233,10 +229,6 @@
 }
 
 /* ========================= Variable Css End ======================== */
-/* ============================ Mixins Css Start ============================ */
-/* Media Breakpoint for Each Device Start */
-/* Media Breakpoint for Each Device End */
-/* ============================ Mixins Css End ============================ */
 /* =========================== Accordion Css start ============================= */
 .common-accordion .accordion-item {
     border: 1px solid var(--border-color);
@@ -623,7 +615,6 @@ textarea + .input-icon {
 
 .select-has-icon select {
     background-image: none;
-    -webkit-appearance: none;
     padding: 20px 24px;
     font-size: 18px;
 }
@@ -709,16 +700,6 @@ input#your-password, input#confirm-password {
     inset-block-start: 50%;
     transform: translateY(-50%);
     color: hsl(var(--black)/0.4);
-}
-
-/* Number Arrow None */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
 }
 
 /* Custom Checkbox & Radio Css Start */
@@ -7732,7 +7713,6 @@ input:focus-visible {
 /* Overlay End */
 .text-line-1 {
     display: -webkit-box;
-    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -7740,15 +7720,12 @@ input:focus-visible {
 
 .text-line-2 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .text-line-3 {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -7981,17 +7958,17 @@ input:focus-visible {
 
 /* ================================= preload Css Start =========================== */
 .preloader {
-    background-color: hsl(var(--white));
-    inset-block-end: 0;
-    inset-inline-start: 0;
     position: fixed;
-    inset-inline-end: 0;
-    inset-block-start: 0;
-    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff; /* Change this to match your website background */
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
 }
+
 
 /* ================================= preload Css End ===========================  */
 /* =========================== header top Css Start =============================== */
@@ -9004,6 +8981,18 @@ input:focus-visible {
 .banner {
     margin-top: 32px;
 }
+.banner-item-two__thumb {
+    bottom: 120px !important;   /* 👇 Position depuis le bas (desktop) */
+
+}
+
+@media screen and (max-width: 767px) {
+    .banner-item-two__thumb {
+        bottom: 10px !important;  /* 👇 Moins d’espace en mobile */
+
+    }
+}
+
 
 @media screen and (max-width: 767px) {
     .banner {
@@ -9025,8 +9014,6 @@ input:focus-visible {
     padding-block-end: clamp(2rem, -8.859rem + 22.623vw, 13.75rem);
     padding-inline-start: clamp(1rem, -11.87rem + 20.758vw, 8.875rem);
     padding-inline-end: clamp(1rem, -5.129rem + 9.885vw, 4.75rem);
-    -webkit-mask-image: url(../images/bg/banner-bg2.png);
-    mask-image: url(../images/bg/banner-bg2.png);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     background: #D3EBC0;
@@ -9287,15 +9274,24 @@ input:focus-visible {
 
 /* ========================= flash sales End ================================ */
 /* ============================= Product Card Css Start ========================== */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 .product-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: start;
 }
-
 .product-card:hover .product-card__thumb img {
-    transform: scale(1.2);
+    transform: scale(0.98);
 }
 
 @media screen and (max-width: 1499px) {
@@ -9308,7 +9304,6 @@ input:focus-visible {
 .product-card__badge {
     border-radius: 16px 0 16px 0;
 }
-
 .product-card__thumb {
     height: 232px;
     width: 100%;
@@ -9804,7 +9799,6 @@ input:focus-visible {
 @media (min-width: 768px) {
     .testimonials-item__desc {
         display: -webkit-box;
-        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -9889,16 +9883,71 @@ input:focus-visible {
     }
 }
 /* ================================= Testimonials Section Css End ==================================== */
-/* ============================ Product Details Css Start ============================= */
-.product-details__thumb-slider {
-    padding: clamp(3rem, -2.173rem + 10.777vw, 7.25rem);
-}
-
-.product-details .slick-initialized.slick-slider .slick-slide > div > div {
+/* ============================ Product Details CSS Start ============================= */
+/* Step 1: Make each slide a flex container */
+.new-arrival__slider > div {
+    display: flex;
     height: 100%;
+  }
+  
+  /* Step 2: Force product-card to fill the slide */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+
+.product-details {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.product-dContent__box, .product-dContent__header {
+.product-details__thumb-slider {
+    padding: clamp(4px, 1vw, 90px);
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.product-details__thumb-slider .slick-slide {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-details__thumb-slider img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.product-details__images-slider {
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.product-details__images-slider .slick-slide {
+    padding: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.product-details__images-slider img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid transparent;
+    transition: border 0.3s ease;
+}
+
+.product-dContent__box,
+.product-dContent__header {
     padding: 16px 40px;
 }
 
@@ -9907,7 +9956,18 @@ input:focus-visible {
     padding-bottom: 48px;
 }
 
-/* ============================ Product Details Css End ============================= */
+/* Prevent slick overflow */
+.slick-slider {
+    overflow: hidden;
+}
+
+.slick-track {
+    display: flex !important;
+    align-items: center;
+}
+
+/* ============================ Product Details CSS End ============================= */
+
 /* ================================ Shop Page css Start =============================== */
 @media (max-width: 479px) {
     .list-grid-btns {
@@ -9920,6 +9980,10 @@ input:focus-visible {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 24px;
 }
+.max-w-150 {
+    max-width: 150px;
+  }
+  
 
 @media (min-width: 480px) {
     .list-view {
@@ -9975,7 +10039,53 @@ input:focus-visible {
         border: 0 !important;
     }
 }
+
 /* ================================ Shop Page css End =============================== */
+/* ============================== Vendor Two Details Css Start =============================== */
+.grid-cols-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
+    gap: 24px;
+}
+
+@media (max-width: 1399.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr 1fr 1fr !important;
+    }
+}
+  
+@media (max-width: 1199.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+  
+@media (max-width: 767.98px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr !important;
+    }
+  }
+  
+  .grid-cols-4.list-view {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  @media (max-width: 1399.98px) {
+    .grid-cols-4.list-view {
+        grid-template-columns: 1fr !important;
+    }
+  }
+  
+  .vendor-two-details .shop-sidebar {
+    width: 332px;
+  }
+  
+  .vendor-two-details__contents {
+    flex-grow: 1;
+    width: calc(100% - 356px);
+  }
+  /* ============================== Vendor Two Details Css End =============================== */
+  
 /* ========================== Cart Page Css Start ============================ */
 .table-product__thumb {
     max-width: 150px;
@@ -10041,58 +10151,20 @@ input:focus-visible {
     }
 }
 /* ======================== Vendors Two Page css Start ============================= */
-.grid-cols-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 24px;
-}
-
-@media screen and (max-width: 1199px) {
-    .grid-cols-3 {
-        grid-template-columns: 1fr 1fr !important;
-    }
-}
-
-@media screen and (max-width: 575px) {
-    .grid-cols-3 {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.grid-cols-3.list-view {
-    grid-template-columns: 1fr 1fr !important;
-}
-
-@media screen and (max-width: 1399px) {
-    .grid-cols-3.list-view {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.list-view .vendors-two-item {
-    display: flex;
-}
-
-/* ======================== Vendors Two Page css End ============================= */
-/* ============================== Vendor Two Details Css Start =============================== */
 .grid-cols-4 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr !important;
-    gap: 24px;
+    gap: 20px;
 }
 
-@media screen and (max-width: 1399px) {
-    .grid-cols-4 {
-        grid-template-columns: 1fr 1fr 1fr !important;
-    }
-}
-
+/* For screens smaller than 1199px, change to 2 columns */
 @media screen and (max-width: 1199px) {
     .grid-cols-4 {
         grid-template-columns: 1fr 1fr !important;
     }
 }
 
+/* For screens smaller than 575px, change to 1 column */
 @media screen and (max-width: 575px) {
     .grid-cols-4 {
         grid-template-columns: 1fr !important;
@@ -10103,20 +10175,17 @@ input:focus-visible {
     grid-template-columns: 1fr 1fr !important;
 }
 
+/* For screens smaller than 1399px in list view, change to 1 column */
 @media screen and (max-width: 1399px) {
     .grid-cols-4.list-view {
         grid-template-columns: 1fr !important;
     }
 }
 
-.vendor-two-details .shop-sidebar {
-    width: 332px;
+.list-view .vendors-two-item {
+    display: flex;
 }
 
-.vendor-two-details__contents {
-    flex-grow: 1;
-    width: calc(100% - 356px);
-}
+/* ======================== Vendors Two Page css End ============================= */
 
-/* ============================== Vendor Two Details Css End =============================== */
 /*# sourceMappingURL=main.css.map */
