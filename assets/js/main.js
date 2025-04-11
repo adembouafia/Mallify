@@ -955,21 +955,6 @@
   }); 
   // ========================= Color List Js End ===================
 
-  // ========================== Range Slider Js Start =====================
-  $(function() {
-    $( "#slider-range" ).slider({
-        range: true,
-        min: 0,
-        max: 25,
-        values: [ 0, 25 ],
-        slide: function( event, ui ) {
-            $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-        }
-    });
-    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-    " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-  });
-  // ========================== Range Slider Js End =====================
 
   
   // ========================== List Grid Js Start ================================
@@ -1196,14 +1181,6 @@
 
   
   });
-
-
-  // // ========================= Preloader Js Start =====================
-  //   $(window).on("load", function(){
-  //     $('.preloader').fadeOut(); 
-  //   })
-  //   // ========================= Preloader Js End=====================
-
     // ========================= Header Sticky Js Start ==============
     $(window).on('scroll', function() {
       if ($(window).scrollTop() >= 260) {
@@ -1214,5 +1191,17 @@
       }
     }); 
     // ========================= Header Sticky Js End===================
-
+    $(document).ready(function() {
+      // Use the ID selector for all elements with id="searchIcon" (not recommended for multiple elements)
+      $('[id="searchIcon"]').on('click', function(event) {
+        event.preventDefault(); // Prevent default action for the icon click
+        
+        // Redirect to shop.html
+        window.location.href = 'shop.html';
+      });
+    });
+    
+    
+    
 })(jQuery);
+
