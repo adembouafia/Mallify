@@ -45,3 +45,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+
+//report cards toggle
+document.addEventListener('DOMContentLoaded', () => {
+    const SELECTOR_COLLAPSE = '[data-lte-toggle="card-collapse"]';
+    const SELECTOR_REMOVE = '[data-lte-toggle="card-remove"]';
+    const SELECTOR_MAXIMIZE = '[data-lte-toggle="card-maximize"]';
+    document.querySelectorAll(SELECTOR_COLLAPSE).forEach(button => {
+        button.addEventListener('click', () => {
+            const card = button.closest('.card');
+            card.classList.toggle('collapsed-card');
+        });
+    });
+
+    document.querySelectorAll(SELECTOR_REMOVE).forEach(button => {
+        button.addEventListener('click', () => {
+            const card = button.closest('.card');
+            card.remove();
+        });
+    });
+
+    document.querySelectorAll(SELECTOR_MAXIMIZE).forEach(button => {
+        button.addEventListener('click', () => {
+            const card = button.closest('.card');
+            card.classList.toggle('maximized-card');
+    
+            const html = document.documentElement;
+            html.classList.toggle('maximized-card');
+        });
+    });
+});
