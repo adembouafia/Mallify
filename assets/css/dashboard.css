@@ -4400,8 +4400,8 @@ textarea.form-control-lg {
 }
 
 .card {
-  --bs-card-spacer-y: 1rem;
-  --bs-card-spacer-x: 1rem;
+  --bs-card-spacer-y: 0.5rem;
+  --bs-card-spacer-x: 0.5rem;
   --bs-card-title-spacer-y: 0.5rem;
   --bs-card-title-color: ;
   --bs-card-subtitle-color: ;
@@ -4423,7 +4423,7 @@ textarea.form-control-lg {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  height: var(--bs-card-height);
+  height: 110px;
   color: var(--bs-body-color);
   word-wrap: break-word;
   background-color: var(--bs-card-bg);
@@ -4459,6 +4459,10 @@ textarea.form-control-lg {
   flex: 1 1 auto;
   padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
   color: var(--bs-card-color);
+  overflow-y: hidden;
+  overflow-x: hidden;
+  white-space: nowrap; /* Ne permet pas le retour à la ligne */
+  text-overflow: ellipsis; /* Affiche des points de suspension quand le texte est trop long */
 }
 
 .card-title {
@@ -15373,4 +15377,3 @@ html.maximized-card {
   width: 32px;
 }
 
-/*# sourceMappingURL=adminlte.css.map */
