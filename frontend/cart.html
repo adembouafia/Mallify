@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/animate.css" />
     <link rel="stylesheet" href="../assets/css/aos.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="../assets/css/cart.css">
   </head>
   <body>
     <!-- ==================== scroll up  ==================== -->
@@ -658,378 +659,105 @@
     </div>
     <!-- ========================= Breadcrumb End =============================== -->
     <!-- ================================ Cart Section Start ================================ -->
-    <section class="cart py-80">
-      <div class="container container-lg">
-        <div class="row gy-4">
-          <div class="col-xl-9 col-lg-8">
-            <div
-              class="cart-table border border-gray-100 rounded-8 px-40 py-48"
-            >
-              <div class="overflow-x-auto scroll-sm scroll-sm-horizontal">
-                <table class="table style-three">
-                  <thead>
-                    <tr>
-                      <th class="h6 mb-0 text-lg fw-bold">Delete</th>
-                      <th class="h6 mb-0 text-lg fw-bold">Product Name</th>
-                      <th class="h6 mb-0 text-lg fw-bold">Price</th>
-                      <th class="h6 mb-0 text-lg fw-bold">Quantity</th>
-                      <th class="h6 mb-0 text-lg fw-bold">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <button
-                          type="button"
-                          class="remove-tr-btn flex-align gap-12 hover-text-danger-600"
-                        >
-                          <i class="ph ph-x-circle text-2xl d-flex"></i>
-                          Remove
-                        </button>
-                      </td>
-                      <td>
-                        <div
-                          class="table-product d-flex align-items-center gap-24"
-                        >
-                          <a
-                            href="product-details.html"
-                            class="table-product__thumb border border-gray-100 rounded-8 flex-center"
-                          >
-                            <img
-                              src="../assets/images/products/disque-dur-interne-msi.jpg"
-                              alt="product"
-                            />
-                          </a>
-                          <div class="table-product__content text-start">
-                            <h6 class="title text-lg fw-semibold mb-8">
-                              <a
-                                href="product-details.html"
-                                class="link text-line-2 d-flex flex-wrap max-w-275"
-                                tabindex="0"
-                                >Disque Dur Interne MSI Spatium 960Go SSD SATA
-                                2.5’’</a
-                              >
-                            </h6>
-
-                            <div class="flex-align gap-16 mb-16">
-                              <div class="flex-align gap-6">
-                                <span
-                                  class="text-md fw-medium text-warning-600 d-flex"
-                                  ><i class="ph-fill ph-star"></i
-                                ></span>
-                                <span class="text-md fw-semibold text-gray-900"
-                                  >4.8</span
-                                >
-                              </div>
-                            </div>
-                          </div>
+    <section class="cart-section py-20">
+      <div class="container-cart">
+        <div class="cart-layout">
+          <!-- Cart Content -->
+          <div class="cart-main">
+            <!-- Table View -->
+            <div class="cart-table-container">
+              <table class="cart-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="table-product">
+                        <div class="product-thumb">
+                          <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product" />
                         </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold">179 DT</span>
-                      </td>
-                      <td>
-                        <div class="d-flex rounded-4 overflow-hidden">
-                          <button
-                            type="button"
-                            class="quantity__minus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-minus"></i>
-                          </button>
-                          <input
-                            type="number"
-                            class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-4"
-                            value="1"
-                            min="1"
-                          />
-                          <button
-                            type="button"
-                            class="quantity__plus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-plus"></i>
-                          </button>
+                        <div class="product-content">
+                          <h6><a href="#">Disque Dur MSI 960Go</a></h6>
                         </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold" id="total1"
-                          >179 DT</span
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button
-                          type="button"
-                          class="remove-tr-btn flex-align gap-12 hover-text-danger-600"
-                        >
-                          <i class="ph ph-x-circle text-2xl d-flex"></i>
-                          Remove
-                        </button>
-                      </td>
-                      <td>
-                        <div
-                          class="table-product d-flex align-items-center gap-24"
-                        >
-                          <a
-                            href="product-details.html"
-                            class="table-product__thumb border border-gray-100 rounded-8 flex-center"
-                          >
-                            <img
-                              src="../assets/images/products/bureau.jpg"
-                              alt="product"
-                            />
-                          </a>
-                          <div class="table-product__content text-start">
-                            <h6 class="title text-lg fw-semibold mb-8">
-                              <a
-                                href="product-details.html"
-                                class="link text-line-2 d-flex flex-wrap max-w-275"
-                                tabindex="0"
-                                >Bureau motorisé gaming Ksix avec hauteur
-                                réglable - Blanc</a
-                              >
-                            </h6>
-
-                            <div class="flex-align gap-16 mb-16">
-                              <div class="flex-align gap-6">
-                                <span
-                                  class="text-md fw-medium text-warning-600 d-flex"
-                                  ><i class="ph-fill ph-star"></i
-                                ></span>
-                                <span class="text-md fw-semibold text-gray-900"
-                                  >4.8</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold"
-                          >2 399 DT</span
-                        >
-                      </td>
-                      <td>
-                        <div class="d-flex rounded-4 overflow-hidden">
-                          <button
-                            type="button"
-                            class="quantity__minus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-minus"></i>
-                          </button>
-                          <input
-                            type="number"
-                            class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-4"
-                            value="1"
-                            min="1"
-                          />
-                          <button
-                            type="button"
-                            class="quantity__plus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold" id="total2"
-                          >2 399 DT</span
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button
-                          type="button"
-                          class="remove-tr-btn flex-align gap-12 hover-text-danger-600"
-                        >
-                          <i class="ph ph-x-circle text-2xl d-flex"></i>
-                          Remove
-                        </button>
-                      </td>
-                      <td>
-                        <div
-                          class="table-product d-flex align-items-center gap-24"
-                        >
-                          <a
-                            href="product-details.html"
-                            class="table-product__thumb border border-gray-100 rounded-8 flex-center"
-                          >
-                            <img
-                              src="../assets/images/products/oversize.png"
-                              alt="product"
-                            />
-                          </a>
-                          <div class="table-product__content text-start">
-                            <h6 class="title text-lg fw-semibold mb-8">
-                              <a
-                                href="product-details.html"
-                                class="link text-line-2 d-flex flex-wrap max-w-275"
-                                tabindex="0"
-                                >"Old Money" Oversized Sweat-shirt - Beige</a
-                              >
-                            </h6>
-                            <div class="flex-align gap-16 mb-16">
-                              <div class="flex-align gap-6">
-                                <span
-                                  class="text-md fw-medium text-warning-600 d-flex"
-                                  ><i class="ph-fill ph-star"></i
-                                ></span>
-                                <span class="text-md fw-semibold text-gray-900"
-                                  >4.8</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold">78 DT</span>
-                      </td>
-                      <td>
-                        <div class="d-flex rounded-4 overflow-hidden">
-                          <button
-                            type="button"
-                            class="quantity__minus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-minus"></i>
-                          </button>
-                          <input
-                            type="number"
-                            class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-4"
-                            value="1"
-                            min="1"
-                          />
-                          <button
-                            type="button"
-                            class="quantity__plus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold" id="total3"
-                          >78 DT</span
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button
-                          type="button"
-                          class="remove-tr-btn flex-align gap-12 hover-text-danger-600"
-                        >
-                          <i class="ph ph-x-circle text-2xl d-flex"></i>
-                          Remove
-                        </button>
-                      </td>
-                      <td>
-                        <div
-                          class="table-product d-flex align-items-center gap-24"
-                        >
-                          <a
-                            href="product-details.html"
-                            class="table-product__thumb border border-gray-100 rounded-8 flex-center"
-                          >
-                            <img
-                              src="../assets/images/products/baby-walker.webp"
-                              alt="product"
-                            />
-                          </a>
-                          <div class="table-product__content text-start">
-                            <h6 class="title text-lg fw-semibold mb-8">
-                              <a
-                                href="product-details.html"
-                                class="link text-line-2 d-flex flex-wrap max-w-275"
-                                tabindex="0"
-                                >Wooden Baby Walker</a
-                              >
-                            </h6>
-                            <div class="flex-align gap-16 mb-16">
-                              <div class="flex-align gap-6">
-                                <span
-                                  class="text-md fw-medium text-warning-600 d-flex"
-                                  ><i class="ph-fill ph-star"></i
-                                ></span>
-                                <span class="text-md fw-semibold text-gray-900"
-                                  >4.8</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold">125 DT</span>
-                      </td>
-                      <td>
-                        <div class="d-flex rounded-4 overflow-hidden">
-                          <button
-                            type="button"
-                            class="quantity__minus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-minus"></i>
-                          </button>
-                          <input
-                            type="number"
-                            class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-4"
-                            value="1"
-                            min="1"
-                          />
-                          <button
-                            type="button"
-                            class="quantity__plus border border-end border-gray-100 flex-shrink-0 h-48 w-48 text-neutral-600 flex-center hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph ph-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-lg h6 mb-0 fw-semibold" id="total4"
-                          >125 DT</span
-                        >
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </div>
+                    </td>
+                    <td><span class="price">179 DT</span></td>
+                    <td>
+                      <div class="quantity-control">
+                        <button class="btn-qty">-</button>
+                        <input type="text" value="1" />
+                        <button class="btn-qty">+</button>
+                      </div>
+                    </td>
+                    <td><span class="price">179 DT</span></td>
+                    <td class="action-buttons">
+                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
+                    </td>
+                  </tr>
+                  
+                  <!-- Add more rows as needed -->
+                </tbody>
+              </table>
+            </div>
+    
+            <!-- Card View -->
+            <div class="cart-cards">
+              <div class="cart-card">
+                <div class="card-product">
+                  <div class="product-thumb">
+                    <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product" />
+                  </div>
+                  <div class="product-details">
+                    <h6>Disque Dur MSI 960Go</h6>
+                    <span class="price">179 DT</span>
+                    <div class="quantity-control mt-8">
+                      <button class="btn-qty">-</button>
+                      <input type="text" value="1" />
+                      <button class="btn-qty">+</button>
+                    </div>
+                    <div class="card-actions mt-8">
+                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                </div>
               </div>
+              <!-- Add more cards as needed -->
             </div>
           </div>
-
-          <div class="col-xl-3 col-lg-4">
-            <div
-              class="cart-sidebar border border-gray-100 rounded-8 px-24 py-40"
-            >
-              <h6 class="text-xl mb-32">Cart Totals</h6>
-              <div class="bg-color-three rounded-8 p-24">
-                <div class="mb-32 flex-between gap-8">
-                  <span class="text-gray-900 font-heading-two">Total</span>
-                  <span class="text-gray-900 fw-semibold">3500 DT</span>
-                </div>
-                <div class="mb-32 flex-between gap-8">
-                  <span class="text-gray-900 font-heading-two"
-                    >Extimated Delivery</span
-                  >
-                  <span class="text-gray-900 fw-semibold">Free</span>
-                </div>
+    
+          <!-- Sidebar -->
+          <div class="cart-sidebar">
+            <h6 class="text-xl mb-32">Cart Totals</h6>
+            <div class="cart-summary-box">
+              <div class="flex-between">
+                <span>Total</span>
+                <span>3500 DT</span>
               </div>
-              <div class="bg-color-three rounded-8 p-24 mt-24">
-                <div class="flex-between gap-8">
-                  <span class="text-gray-900 text-xl fw-semibold">Total</span>
-                  <span class="text-gray-900 text-xl fw-semibold">3500 DT</span>
-                </div>
+              <div class="flex-between">
+                <span>Estimated Delivery</span>
+                <span>Free</span>
               </div>
-              <a
-                href="checkout.html"
-                class="btn btn-main mt-40 py-18 w-100 rounded-8"
-                >Proceed to checkout</a
-              >
             </div>
+            <div class="cart-summary-box mt-24">
+              <div class="flex-between bold">
+                <span>Total</span>
+                <span>3500 DT</span>
+              </div>
+            </div>
+            <a href="checkout.html" class="btn btn-main mt-40">Proceed to checkout</a>
           </div>
         </div>
       </div>
     </section>
+    
+    
     <!-- ================================ Cart Section End ================================ -->
 
     <!-- ========================== Shipping Section Start ============================ -->
@@ -1112,6 +840,7 @@
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </section>

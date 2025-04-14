@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="../assets/css/animate.css">
         <link rel="stylesheet" href="../assets/css/aos.css">
         <link rel="stylesheet" href="../assets/css/main.css">
+        <link rel="stylesheet" href="../assets/css/whishlist.css">
     </head> 
 <body>
 <!-- ==================== scroll up  ==================== -->
@@ -34,31 +35,7 @@
       </div>
     </div>
    </form>
-    <!-- ==================== Search Box Start Here ==================== -->
-    <form action="#" class="search-box">
-        <button
-          type="button"
-          class="search-box__close position-absolute inset-block-start-0 inset-inline-end-0 m-16 w-48 h-48 border border-gray-100 rounded-circle flex-center text-white hover-text-gray-800 hover-bg-white text-2xl transition-1"
-        >
-          <i class="ph ph-x"></i>
-        </button>
-        <div class="container">
-          <div class="position-relative">
-            <input
-              type="text"
-              class="form-control py-16 px-24 text-xl rounded-pill pe-64"
-              placeholder="Search for a product or brand"
-            />
-            <button
-              type="submit"
-              class="w-48 h-48 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8"
-            >
-              <i class="ph ph-magnifying-glass" id="searchIcon"></i>
-            </button>
-          </div>
-        </div>
-      </form>
-      <!-- ==================== Search Box End Here ==================== -->
+<!-- ==================== Search Box End Here ==================== -->
   
       <!-- ==================== Mobile Menu Start Here ==================== -->
       <div class="mobile-menu scroll-sm d-lg-none d-block">
@@ -666,190 +643,254 @@
 </div>
 <!-- ========================= Breadcrumb End =============================== -->
 
-    <!-- ================================ Cart Section Start ================================ -->
-<section class="cart py-80">
-    <div class="container container-lg">
-        <div class="row gy-4">
-            <div class="col-lg-11">
-                <div class="cart-table border border-gray-100 rounded-8">
-                    <div class="overflow-x-auto scroll-sm scroll-sm-horizontal">
-                        <table class="table rounded-8 overflow-hidden">
-                            <thead>
-                                <tr class="border-bottom border-neutral-100">
-                                    <th class="h6 mb-0 text-lg fw-bold px-40 py-32 border-end border-neutral-100">Delete</th>
-                                    <th class="h6 mb-0 text-lg fw-bold px-40 py-32 border-end border-neutral-100">Product Name</th>
-                                    <th class="h6 mb-0 text-lg fw-bold px-40 py-32 border-end border-neutral-100">Unit Price</th>
-                                    <th class="h6 mb-0 text-lg fw-bold px-40 py-32 border-end border-neutral-100">Stock Status</th>
-                                    <th class="h6 mb-0 text-lg fw-bold px-40 py-32"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="">
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <button type="button" class="remove-tr-btn flex-align gap-12 hover-text-danger-600">
-                                            <i class="ph ph-x-circle text-2xl d-flex"></i>
-                                            Remove
-                                        </button>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <div class="table-product d-flex align-items-center gap-24">
-                                            <a href="product-details.html" class="table-product__thumb border border-gray-100 rounded-8 flex-center ">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </a>
-                                            <div class="table-product__content text-start">
-    
-                                                <h6 class="title text-lg fw-semibold mb-8">
-                                                    <a href="product-details.html" class="link text-line-2 d-flex flex-wrap max-w-275" tabindex="0">Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5’’</a>
-                                                </h6>
-    
-                                                <div class="flex-align gap-16 mb-16">
-                                                    <div class="flex-align gap-6">
-                                                        <span class="text-md fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-md fw-semibold text-gray-900">4.8</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">179 DT</span>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">In Stock</span>
-                                    </td>
-                                    <td class="px-40 py-32">
-                                        <a href="cart.html" class="btn btn-main-two rounded-8 px-64">
-                                            Add To Cart <i class="ph ph-shopping-cart"></i> 
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <button type="button" class="remove-tr-btn flex-align gap-12 hover-text-danger-600">
-                                            <i class="ph ph-x-circle text-2xl d-flex"></i>
-                                            Remove
-                                        </button>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <div class="table-product d-flex align-items-center gap-24">
-                                            <a href="product-details.html" class="table-product__thumb border border-gray-100 rounded-8 flex-center ">
-                                                <img src="../assets/images//products/bureau.jpg" alt="product">
-                                            </a>
-                                            <div class="table-product__content text-start">
-    
-                                                <h6 class="title text-lg fw-semibold mb-8">
-                                                    <a href="product-details.html" class="link text-line-2 d-flex flex-wrap max-w-275" tabindex="0">Bureau motorisé gaming Ksix avec hauteur réglable - Blanc</a>
-                                                </h6>
-    
-                                                <div class="flex-align gap-16 mb-16">
-                                                    <div class="flex-align gap-6">
-                                                        <span class="text-md fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-md fw-semibold text-gray-900">4.8</span>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">2 399 DT</span>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">In Stock</span>
-                                    </td>
-                                    <td class="px-40 py-32">
-                                        <a href="cart.html" class="btn btn-main-two rounded-8 px-64">
-                                            Add To Cart <i class="ph ph-shopping-cart"></i> 
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <button type="button" class="remove-tr-btn flex-align gap-12 hover-text-danger-600">
-                                            <i class="ph ph-x-circle text-2xl d-flex"></i>
-                                            Remove
-                                        </button>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <div class="table-product d-flex align-items-center gap-24">
-                                            <a href="product-details.html" class="table-product__thumb border border-gray-100 rounded-8 flex-center ">
-                                                <img src="../assets/images//products/oversize.png" alt="product">
-                                            </a>
-                                            <div class="table-product__content text-start">
-    
-                                                <h6 class="title text-lg fw-semibold mb-8">
-                                                    <a href="product-details.html" class="link text-line-2 d-flex flex-wrap max-w-275" tabindex="0">" Old Money " Oversized Sweat-shirt - Beige</a>
-                                                </h6>
-    
-                                                <div class="flex-align gap-16 mb-16">
-                                                    <div class="flex-align gap-6">
-                                                        <span class="text-md fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-md fw-semibold text-gray-900">4.8</span>
-                                                    </div>
-                                                </div>
-    
-                                               
-                                        </div>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">78 DT</span>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">In Stock</span>
-                                    </td>
-                                    <td class="px-40 py-32">
-                                        <a href="cart.html" class="btn btn-main-two rounded-8 px-64">
-                                            Add To Cart <i class="ph ph-shopping-cart"></i> 
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <button type="button" class="remove-tr-btn flex-align gap-12 hover-text-danger-600">
-                                            <i class="ph ph-x-circle text-2xl d-flex"></i>
-                                            Remove
-                                        </button>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <div class="table-product d-flex align-items-center gap-24">
-                                            <a href="product-details.html" class="table-product__thumb border border-gray-100 rounded-8 flex-center ">
-                                                <img src="../assets/images/products/baby-walker.webp" alt="product">
-                                            </a>
-                                            <div class="table-product__content text-start">
-    
-                                                <h6 class="title text-lg fw-semibold mb-8">
-                                                    <a href="product-details.html" class="link text-line-2 d-flex flex-wrap max-w-275" tabindex="0">Wooden Baby Walker</a>
-                                                </h6>
-    
-                                                <div class="flex-align gap-16 mb-16">
-                                                    <div class="flex-align gap-6">
-                                                        <span class="text-md fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-md fw-semibold text-gray-900">4.8</span>
-                                                    </div>
-                                                </div>
-    
-                                               
-                                        </div>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">125</span>
-                                    </td>
-                                    <td class="px-40 py-32 border-end border-neutral-100">
-                                        <span class="text-lg h6 mb-0 fw-semibold">In Stock</span>
-                                    </td>
-                                    <td class="px-40 py-32">
-                                        <a href="cart.html" class="btn btn-main-two rounded-8 px-64">
-                                            Add To Cart <i class="ph ph-shopping-cart"></i> 
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+    <!-- ================================ whishlist Section Start ================================ -->
+    <section class="wishlist-section py-20">
+      <div class="container-whishlist">
+        <div class="wishlist-table-container">
+          <table class="wishlist-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="table-product">
+                    <div class="product-thumb">
+                      <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product 1">
                     </div>
+                    <div class="product-content">
+                      <h6><a href="#">Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5''</a></h6>
+                      <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating">4.8</span>
+                      </div>  
+                    </div>
+                  </div>
+                </td>
+                <td><span class="price">179 DT</span></td>
+                <td><span class="stock-status">In Stock</span></td>
+                <td class="action-buttons">
+                  <button class="btn-add-to-cart">
+                    <span>Add To Cart</span>
+                    <i class="ph ph-shopping-cart"></i>
+                  </button>
+                  <button class="btn-remove">
+                    <i class="ph ph-trash"></i>
+                    <span>Remove</span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="table-product">
+                    <div class="product-thumb">
+                      <img src="../assets/images/products/bureau.png" alt="Product 1">
+                    </div>
+                    <div class="product-content">
+                      <h6><a href="#">Bureau motorisé gaming Ksix avec hauteur réglable - Blanc</a></h6>
+                      <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating">4.8</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="price">2 399 DT</span></td>
+                <td><span class="stock-status">In Stock</span></td>
+                <td class="action-buttons">
+                  <button class="btn-add-to-cart">
+                    <span>Add To Cart</span>
+                    <i class="ph ph-shopping-cart"></i>
+                  </button>
+                  <button class="btn-remove">
+                    <i class="ph ph-trash"></i>
+                    <span>Remove</span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="table-product">
+                    <div class="product-thumb">
+                      <img src="../assets/images/products/oversize.png" alt="Product 1">
+                    </div>
+                    <div class="product-content">
+                      <h6><a href="#">"Old Money " Oversized Sweat-shirt - Beige</a></h6>
+                      <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating">4.8</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="price">79 DT</span></td>
+                <td><span class="stock-status">In Stock</span></td>
+                <td class="action-buttons">
+                  <button class="btn-add-to-cart">
+                    <span>Add To Cart</span>
+                    <i class="ph ph-shopping-cart"></i>
+                  </button>
+                  <button class="btn-remove">
+                    <i class="ph ph-trash"></i>
+                    <span>Remove</span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="table-product">
+                    <div class="product-thumb">
+                      <img src="../assets/images/products/baby-walker.webp" alt="Product 1">
+                    </div>
+                    <div class="product-content">
+                      <h6><a href="#">Wooden Baby Walker</a></h6>
+                      <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating">4.8</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="price">125 DT</span></td>
+                <td><span class="stock-status">In Stock</span></td>
+                <td class="action-buttons">
+                  <button class="btn-add-to-cart">
+                    <span>Add To Cart</span>
+                    <i class="ph ph-shopping-cart"></i>
+                  </button>
+                  <button class="btn-remove">
+                    <i class="ph ph-trash"></i>
+                    <span>Remove</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+    
+          <!-- Responsive Cards View -->
+          <div class="wishlist-cards">
+            <div class="wishlist-card">
+              <div class="card-product">
+                <div class="product-thumb">
+                  <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product 1">
                 </div>
+                <div class="product-details">
+                  <h6><a href="#">Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5''</a></h6>
+                  <div class="product-rating">
+                    <span class="stars">★★★★</span>
+                    <span class="rating">4.8</span>
+                  </div>
+                  <div class="meta col-xl-6">
+                    <span class="price">179 DT</span>
+                    <span class="stock-status">In Stock</span>
+                  </div>
+                  <div class="card-actions">
+                    <button class="btn-add-to-cart">
+                      <span>Add To Cart</span>
+                      <i class="ph ph-shopping-cart"></i>
+                    </button>
+                    <button class="btn-remove">
+                      <i class="ph ph-trash"></i>
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div class="wishlist-card">
+              <div class="card-product">
+                <div class="product-thumb">
+                  <img src="../assets/images/products/bureau.png" alt="Product 1">
+                </div>
+                <div class="product-details">
+                  <h6><a href="#">Bureau motorisé gaming Ksix avec hauteur réglable - Blanc</a></h6>
+                  <div class="product-rating">
+                    <span class="stars">★★★★</span>
+                    <span class="rating">4.8</span>
+                  </div>
+                  <div class="meta col-xl-6">
+                    <span class="price">2 399 DT</span>
+                    <span class="stock-status">In Stock</span>
+                  </div>
+                  <div class="card-actions">
+                    <button class="btn-add-to-cart">
+                      <span>Add To Cart</span>
+                      <i class="ph ph-shopping-cart"></i>
+                    </button>
+                    <button class="btn-remove">
+                      <i class="ph ph-trash"></i>
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="wishlist-card">
+              <div class="card-product">
+                <div class="product-thumb">
+                  <img src="../assets/images/products/oversize.png" alt="Product 1">
+                </div>
+                <div class="product-details">
+                  <h6><a href="#">"Old Money " Oversized Sweat-shirt - Beige</a></h6>
+                  <div class="product-rating">
+                    <span class="stars">★★★★</span>
+                    <span class="rating">4.8</span>
+                  </div>
+                  <div class="meta col-xl-6">
+                    <span class="price">79 DT</span>
+                    <span class="stock-status">In Stock</span>
+                  </div>
+                  <div class="card-actions">
+                    <button class="btn-add-to-cart">
+                      <span>Add To Cart</span>
+                      <i class="ph ph-shopping-cart"></i>
+                    </button>
+                    <button class="btn-remove">
+                      <i class="ph ph-trash"></i>
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="wishlist-card">
+              <div class="card-product">
+                <div class="product-thumb">
+                  <img src="../assets/images/products/baby-walker.webp" alt="Product 1">
+                </div>
+                <div class="product-details">
+                  <h6><a href="#">Wooden Baby Walker</a></h6>
+                  <div class="product-rating">
+                    <span class="stars">★★★★</span>
+                    <span class="rating">4.8</span>
+                  </div>
+                  <div class="meta col-xl-6">
+                    <span class="price">125 DT</span>
+                    <span class="stock-status">In Stock</span>
+                  </div>
+                  <div class="card-actions">
+                    <button class="btn-add-to-cart">
+                      <span>Add To Cart</span>
+                      <i class="ph ph-shopping-cart"></i>
+                    </button>
+                    <button class="btn-remove">
+                      <i class="ph ph-trash"></i>
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
- </section>
-<!-- ================================ Cart Section End ================================ -->
+      </div>
+    </section>
+<!-- ================================ whishlist Section End ================================ -->
 
     <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
