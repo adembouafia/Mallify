@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="../assets/css/animate.css">
         <link rel="stylesheet" href="../assets/css/aos.css">
         <link rel="stylesheet" href="../assets/css/main.css">
-        <link rel="stylesheet" href="../assets/css/style1.css">
+        <link rel="stylesheet" href="../assets/css/mainProfil.css">
     </head> 
 <body>
 <!-- <div class="preloader">
@@ -634,197 +634,138 @@
       </header>
       <!-- ==================== Header End Here ==================== -->
     <!-- ========================= Breadcrumb Start =============================== -->
-<div class="breadcrumb mb-0 py-26 bg-main-two-50">
-    <div class="container container-lg">
-        <div class="breadcrumb-wrapper flex-between flex-wrap gap-16">
-            <h6 class="mb-0">My Account</h6>
-            <ul class="flex-align gap-8 flex-wrap">
-                <li class="text-sm">
-                    <a href="index.html" class="text-gray-900 flex-align gap-8 hover-text-main-600">
-                        <i class="ph ph-house"></i>
-                        Home
-                    </a>
-                </li>
-                <li class="flex-align">
-                    <i class="ph ph-caret-right"></i>
-                </li>
-                <li class="text-sm text-main-600"> Account </li>
-            </ul>
+        <div class="breadcrumb mb-0 py-26 bg-main-two-50">
+            <div class="container container-lg">
+                <div class="breadcrumb-wrapper flex-between flex-wrap gap-16">
+                    <h6 class="mb-0">My Profil</h6>
+                    <ul class="flex-align gap-8 flex-wrap">
+                        <li class="text-sm">
+                            <a href="index.html" class="text-gray-900 flex-align gap-8 hover-text-main-600">
+                                <i class="ph ph-house"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li class="flex-align">
+                            <i class="ph ph-caret-right"></i>
+                        </li>
+                        <li class="text-sm text-main-600"> Profil </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 <!-- ========================= Breadcrumb End =============================== -->
 
-<!-- =============================== Account Section Start =========================== -->
+<!-- =============================== Manage Profile Section Start =========================== -->
 <section class="account py-80">
-        <div class="container container-lg">
-            <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
-                <div class="row gy-4 d-flex justify-content-center">
-    
-                    <!-- Login Card Start -->
-                    <div class="col-xl-6 pe-xl-5 " id="loginCard">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
-                            <h6 class="text-xl mb-32">Login</h6>
-                            <div class="input-wrapper">
-                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
-                                <span class="icon"></span>
+    <div class="container container-size">
+        <div class="row gy-4 justify-content-center">
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="profile-nav card border border-gray-100 rounded-16 p-24 h-100">
+                    <div class="profile-user text-center mb-32">
+                        <div class="profile-user__thumb position-relative mx-auto mb-16">
+                            <img src="../assets/images/team_members/devoloper1.jpg" alt="User" class="rounded-circle" width="100" height="100">
+                            <button class="profile-user__edit btn btn-sm btn-main rounded-circle position-absolute bottom-0 end-0 w-32 h-32 flex-center">
+                                <i class="ph ph-pencil-simple"></i>
+                            </button>
+                        </div>
+                        <h6 class="profile-user__name mb-4">Abroud Koussay</h6>
+                        <span class="text-sm text-gray-500">abkoussay@gmail.com</span>
+                    </div>
+                    <ul class="profile-nav__menu">
+                        <li class="active" id="profile-info">
+                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('profile-info')">
+                                <i class="ph ph-user text-xl"></i>
+                                <span>Profile Information</span>
+                            </a>
+                        </li>
+                        <li id="my-orders">
+                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-orders')">
+                                <i class="ph ph-shopping-cart text-xl"></i>
+                                <span>My Orders</span>
+                            </a>
+                        </li>
+                        <li id="my-wishlist">
+                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-wishlist')">
+                                <i class="ph ph-heart text-xl"></i>
+                                <span>My Wishlist</span>
+                            </a>
+                        </li>
+                        <li id="change-password">
+                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('change-password')">
+                                <i class="ph ph-lock text-xl"></i>
+                                <span>Change Password</span>
+                            </a>
+                        </li>
+                        <li id="logout">
+                            <a href="#" class="flex-align gap-8 p-12 rounded-8 text-danger" onclick="showContent('logout')">
+                                <i class="ph ph-sign-out text-xl"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-12">
+                <div class="profile-content card border border-gray-100 rounded-16 p-24 h-100">
+                    <div id="content-container">
+                        <div id="profile-info-content">
+                            <div class="d-flex justify-content-between align-items-center mb-32">
+                                <h5 class="mb-0">Profile Information</h5>
+                                <button class="btn btn-outline-main">Edit Profile</button>
                             </div>
-                            <div class="mb-24">
-                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
-                                <small id="LoginPasswordErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="mb-24 mt-48 d-flex justify-content-center">
-                                <div class="flex-align gap-48 flex-wrap">
-                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
-                                    <div class="form-check common-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="remember">
-                                        <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
+                            <form>
+                                <div class="row gx-1 gy-4">
+                                    <div class="col-md-6">
+                                        <div class="input-wrapper">
+                                            <label for="firstName" class="text-neutral-900 text-lg mb-8 fw-medium">First Name</label>
+                                            <input type="text" class="common-input" id="firstName" value="Koussay" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-wrapper">
+                                            <label for="lastName" class="text-neutral-900 text-lg mb-8 fw-medium">Last Name</label>
+                                            <input type="text" class="common-input" id="lastName" value="Abroud" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-wrapper">
+                                            <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email Address</label>
+                                            <input type="email" class="common-input" id="email" value="abkoussay40@gmail.com" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-wrapper">
+                                            <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone Number</label>
+                                            <input type="tel" class="common-input" id="phone" value="+216 26 788 694" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-wrapper">
+                                            <label for="birthday" class="text-neutral-900 text-lg mb-8 fw-medium">Date of Birth</label>
+                                            <input type="date" class="common-input" id="birthday" value="2003-08-08" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-wrapper">
+                                            <label for="gender" class="text-neutral-900 text-lg mb-8 fw-medium">Gender</label>
+                                            <input type="text" class="common-input" id="gender" value="Male" readonly>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mt-48 d-flex justify-content-center">
-                                <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
-                            </div>
-                            <div class="mt-24 d-flex justify-content-center">
-                                <p class="text-gray-500">Don't have an account? 
-                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
-                                </p>
-                            </div>
+                            </form>
                         </div>
-                    </div>
-            </form>
-                    <!-- Login Card End -->
-                    <!-- choose an account type card start-->
-                    <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 text-center">
-                            <h6 class="text-xl mb-32">Choose Account Type</h6>
-                            <div class="d-flex justify-content-center gap-48">
-                                <div class="text-center cursor-pointer" onclick="showVendorCard()">
-                                    <img src="../assets/images/vendor.png" alt="Become a Vendor" class="rounded-16 shadow" width="200">
-                                    <p class="mt-2 fw-medium">Become a Vendor</p>
-                                </div>
-                                <div class="text-center cursor-pointer" onclick="showRegisterCard()">
-                                    <img src="../assets/images/client.png" alt="Register as Client" class="rounded-16 shadow" width="200">
-                                    <p class="mt-2 fw-medium">Register as Client</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- choose an account type card end-->
-    
-                    <!-- Register Card Start -->
-                
-                <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
-                    <div class="row gy-4 d-flex justify-content-center">
-                        <div class="col-xl-6 " id="registerCard" style="display: none;">
-                        
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
-                            <h6 class="text-xl mb-32">Register</h6>
-                            <div class="mb-24">
-                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
-                                <small id="firstnameErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="mb-24">
-                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
-                                <small id="lastnameErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
-                                <span class="icon"></span>
-                            </div>
-                            <div class="mb-24">
-                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
-                                    <small id="enter-passwordErrorMessage" style="display: none;"></small>
-                                </div>
-                            </div>
-                            <div class="my-48">
-                                <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
-                                    <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
-                                .</p>
-                            </div>
-                            <div class="mt-48 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                            </div>
-                            <div class="mt-24 d-flex justify-content-center">
-                                <p class="text-gray-500">Already have an account? 
-                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </form>
-                    <!-- Register Card End -->
-                     <!-- Become a vendor Card start -->
-                <form action="http://localhost:3000/vendor/register" id="vendorForm" method="POST">
-                    <div class="row gy-4 d-flex justify-content-center">
-                     <div class="col-xl-6" id="vendorcard" style="display: none;">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
-                            <h6 class="text-xl mb-32">Become vendor</h6>
-                            <div class="mb-24">
-                                <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
-                                <input type="text" id="vendorname" name="vendorname" class="common-input" placeholder="Write the vendor Name" >
-                            </div>
-                            <div class="mb-24">
-                                <label for="shopname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
-                                <input type="text" id="shopname" name="shopname" class="common-input" placeholder="Write a Shop name" >
-                                <small id="shopnameErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" id="mailadress" class="common-input" name ="email" placeholder="Enter Email Address"   required>
-                                <span class="icon"></span>
-                            </div>
-                            <div class="mb-24">
-                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
-                                <input type="number" id="phone" name ="phone" class="common-input" placeholder="Enter a phone Number"  >
-                                <small id="phoneErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="mb-24">
-                                <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
-                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)"  name="shoplogo">
-                                    <small id="shoplogoErrorMessage" style="display: none;"></small></p>
-                                <div id="imagePreview" class="mt-4">
-                                    <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
-                                </div>
-                            </div>
-                            <div class="mb-24">
-                                <label for="adresse" class="text-neutral-900 text-lg mb-8 fw-medium">address</label>
-                                <input type="text" class="common-input" placeholder="Enter Shop Address" name ="adresse">
-                            </div>
-                            <div class="mb-24">
-                                <label for="shopdescription" class="text-neutral-900 text-lg mb-8 fw-medium">Description</label>
-                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4" name = "shopdescription"></textarea>
-                            </div>
-                            <div class="mb-24">
-                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative">
-                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password"   name = "vendorpassword">
-                                    <!-- <small id="vendorpasswordErrorMessage" style="display: none;"></small> -->
-                                </div>
-                            </div>
-                            <div class="mt-48 d-flex justify-content-center gap-48">
-                                <button type="submit" class="btn btn-main py-18 px-40 " >Register</button>
-                                <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
-                            </div>
+                        <div id="my-orders-content">
                             
                         </div>
-                    </div></div>
-                </form>
-                      <!-- Become a vendor Card end -->
-    
+                    </div>
                 </div>
+            </div>
         </div>
+    </div>
 </section>
-<!-- =============================== Account Section End =========================== -->
+
+
+<!-- =============================== Manage Profile Section End =========================== -->
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
@@ -1027,7 +968,7 @@
   <script src="../assets/js/aos.js"></script>
   <script src="../assets/js/marque.min.js"></script>
   <script src="../assets/js/main.js"></script>
-  <script src="../assets/js/js_functions/login_and_register.js"></script>
+  <script src="../assets/js/js_functions/mainProfil.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script src="../assets/js/js_functions/preloader.js"></script>
     </body>

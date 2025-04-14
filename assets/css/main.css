@@ -1205,7 +1205,7 @@ input[type=number] {
     content: "\e136";
     font-family: "Phosphor";
     font-weight: 900;
-    color: hsl(var(--heading-color)/0.4);
+    color: hsl(var(--white)) !important;
     transition: 0.2s linear;
 }
 
@@ -1264,12 +1264,33 @@ input[type=number] {
 .select2-container .select2-selection--single .select2-selection__rendered {
     padding-inline-start: 24px !important;
     padding-inline-end: 40px !important;
+    color: hsl(var(--white)) !important;
 }
 
 @media screen and (max-width: 1199px) {
     .select2-container .select2-selection--single .select2-selection__rendered {
         padding-inline-start: 10px !important;
         padding-inline-end: 24px !important;
+        color: hsl(var(--white)) !important;
+    }
+}
+@media screen and (max-width: 990px) {
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-inline-start: 10px !important;
+        padding-inline-end: 24px !important;
+        color: hsl(var(--black)) !important;
+    }
+}
+
+@media screen and (max-width: 990px) {
+    .select2-container .selection{
+        background-color: hsl(var(--white)) !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b::before {
+        color: hsl(var(--black)) !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: hsl(var(--black)) !important;
     }
 }
 
@@ -1369,11 +1390,10 @@ input[type=number] {
 }
 
 .select2-container--open.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--main-600) !important;
-}
+    color: hsl(var(--white));}
 
 .select2-container--open.select2-container--default .select2-selection--single .select2-selection__arrow b::before {
-    color: var(--main-600) !important;
+    color: hsl(var(--white));
 }
 
 /* Location Box Css  */
@@ -1385,6 +1405,7 @@ input[type=number] {
 .location-box .select2-selection__arrow {
     right: 0px !important;
     inset-block-start: 10% !important;
+    color: hsl(var(--white)) !important;
 }
 
 .location-box .select2-selection.select2-selection--single {
@@ -1417,6 +1438,7 @@ input[type=number] {
 
     .location-box .select2-selection__rendered, .search-category.h-48 .select2-selection__rendered {
         font-size: 12px;
+        background-color: white;
     }
 }
 
@@ -5419,7 +5441,7 @@ input:focus-visible {
 }
 
 .text-heading-two, .select-style-one .select2-container--default .select2-selection--single .select2-selection__arrow b::before {
-    color: #2D2727 !important;
+    color: #ffffff !important;
 }
 
 .text-heading-three {
@@ -8340,6 +8362,7 @@ input:focus-visible {
 .header-top__right.style-two > li {
     padding-inline-end: 16px !important;
     margin-inline-end: 0 !important;
+    background-color: hsl(var(--white));
 }
 
 .header-top__right.style-two > li:last-child {
@@ -8352,11 +8375,12 @@ input:focus-visible {
 
 .header-top__right.style-two > li a {
     padding-inline-end: 20px;
+    background-color: hsl(var(--white))
 }
 
 @media screen and (max-width: 991px) {
     .header-top__right.style-two > li a {
-        color: #fff !important;
+        color: #020202 !important;
     }
 }
 
@@ -8886,6 +8910,7 @@ input:focus-visible {
     .search-form .select2-selection.select2-selection--single {
         border-radius: 50px !important;
         border-radius: 50px !important;
+        border-color: white !important;
         background-color: hsl(var(--white)) !important;
         border: 1px solid var(--gray-100) !important;
     }
@@ -8954,6 +8979,7 @@ input:focus-visible {
 
 .search-category.style-two .select2-container--default .select2-selection--single {
     border-radius: 0;
+    border-color: white !important;
     border-left: 0 !important;
     border-top: 0 !important;
     border-bottom: 0 !important;
@@ -10617,9 +10643,12 @@ input[type=number] {
 }
 
 /* ============================== Vendor Two Details Css End =============================== */
-/* ============================== progresse bar Css Start =============================== */
+
 .w-220 {
     width: 220px;
   }
-/* ============================== progresse bar Css Start =============================== */
+.w-300 {
+    width: 300px;
+  }
+
 
