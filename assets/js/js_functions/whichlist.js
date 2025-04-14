@@ -1,7 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
-document.querySelectorAll(".remove-tr-btn").forEach(button => {
-    button.addEventListener("click", function () {
-        this.closest("tr").classList.add("d-none");
+    document.querySelectorAll(".btn-remove").forEach(button => {
+      button.addEventListener("click", function () {
+        const row = this.closest("tr");
+        if (row) {
+          row.remove();
+        }
+  
+        const card = this.closest(".wishlist-card");
+        if (card) {
+          card.remove();
+        }
+      });
     });
-});
-});
+  });
+  
