@@ -4461,8 +4461,8 @@ textarea.form-control-lg {
   color: var(--bs-card-color);
   overflow-y: hidden;
   overflow-x: hidden;
-  white-space: nowrap; /* Ne permet pas le retour à la ligne */
-  text-overflow: ellipsis; /* Affiche des points de suspension quand le texte est trop long */
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
 }
 
 .card-title {
@@ -13894,6 +13894,7 @@ body:not(.app-loaded) .app-footer {
   }
 }
 
+
 .fs-7 .dropdown-menu {
   font-size: 0.875rem !important;
 }
@@ -14431,7 +14432,7 @@ html.maximized-card {
   float: left;
   margin: 0;
   font-size: 1.1rem;
-  font-weight: 400;
+  font-weight: bold;
 }
 
 .btn-tool {

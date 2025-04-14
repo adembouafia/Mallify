@@ -22,7 +22,12 @@
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
     />
-
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -40,6 +45,9 @@
                 <i class="bi bi-list"></i>
               </a>
             </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="index.html" class="nav-link">Go shopping</a>
+            </li>
           </ul>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
@@ -52,7 +60,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../assets/images/dashboard/devoloper1.jpg"
+                        src="../../assets/images/dashboard/devoloper1.jpg"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -72,12 +80,11 @@
                   </div>
                 </a>
                 <div class="dropdown-divider"></div>
-                <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item">
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../assets/images/dashboard/devoloper2.jpg"
+                        src="../../assets/images/dashboard/devoloper2.jpg"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -143,17 +150,17 @@
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
-                <span class="d-none d-md-inline">Mallify </span>
+                <span class="d-none d-md-inline">Shop Name</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header bg-bs-info">
                   <img
-                    src="../assets/images/logo.png"
+                    src="../../assets/images/logo.png"
                     class="rounded-circle shadow"
                     alt="Admin image"
                   />
                   <p>
-                    Mallify - Admin
+                    Shop Name - Admin
                     <small>Founded In 2025</small>
                   </p>
                 </li>
@@ -177,7 +184,7 @@
               alt="Admin Logo"
               class="brand-image opacity-75 shadow"
             />
-            <span class="brand-text fw-light">Admin Mallify</span>
+            <span class="brand-text fw-light">Dashboard Shop</span>
           </a>
         </div>
         <div class="sidebar-wrapper">
@@ -189,7 +196,7 @@
               data-accordion="false"
             >
               <li class="nav-item">
-                <a href="../dashboardA.html" class="nav-link">
+                <a href="../dashbordBoutique.html" class="nav-link">
                   <i class="nav-icon bi bi-house"></i>
                   <p>
                     Home
@@ -198,19 +205,25 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="admins.html" class="nav-link">
+                <a
+                  href="moderators.html"
+                  class="nav-link"
+                >
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
-                    Admins
+                    Moderators
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="shops.html" class="nav-link">
+                <a
+                  href="orders.html"
+                  class="nav-link"
+                >
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
-                    Shops
+                    Orders
                     <span class="nav-badge badge text-bg-secondary me-3"
                       >6</span
                     >
@@ -219,7 +232,55 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="reports.html" class="nav-link active">
+                <a
+                  href="delivery.html"
+                  class="nav-link"
+                >
+                  <i class="nav-icon bi bi-clipboard-fill"></i>
+                  <p>
+                    Delivery
+                    <span class="nav-badge badge text-bg-secondary me-3"
+                      >6</span
+                    >
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="orderHistoris.html"
+                  class="nav-link"
+                >
+                  <i class="nav-icon bi bi-clipboard-fill"></i>
+                  <p>
+                    Order Histories
+                    <span class="nav-badge badge text-bg-secondary me-3"
+                      >6</span
+                    >
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="invoice.html"
+                  class="nav-link"
+                >
+                  <i class="nav-icon bi bi-clipboard-fill"></i>
+                  <p>
+                    Invoice
+                    <span class="nav-badge badge text-bg-secondary me-3"
+                      >6</span
+                    >
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  href="reports.html"
+                  class="nav-link active"
+                >
                   <i class="nav-icon bi bi-tree-fill"></i>
                   <p>
                     Reports
@@ -374,8 +435,6 @@
         </div>
         <!--end::App Content-->
     </main>
-    
-
       <!--end::App Main-->
       <!--begin::Footer-->
       <footer class="app-footer">
@@ -385,7 +444,7 @@
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2025
-          <a href="https://Mallify.com" class="text-decoration-none">Maillify</a
+          <a href="https://adminlte.io" class="text-decoration-none">Maillify</a
           >.
         </strong>
         All rights reserved.
@@ -395,6 +454,7 @@
     </div>
     <!--end::App Wrapper-->
     <!--begin::Script-->
+    <!--begin::Required Plugin(AdminLTE)-->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -407,7 +467,13 @@
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="../assets/js/js_functions/superAdmin.js"></script>
+    <script src="../../assets/js/js_functions/shopAdmin.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
+      integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
+      crossorigin="anonymous"
+    ></script>
 
     <!--end::Script-->
   </body>
