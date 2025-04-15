@@ -23,616 +23,615 @@
       <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
     </svg>
 </div>
+<!-- ==================== Search Box Start Here ==================== -->
+<form action="#" class="search-box">
+  <button
+    type="button"
+    class="search-box__close position-absolute inset-block-start-0 inset-inline-end-0 m-16 w-48 h-48 border border-gray-100 rounded-circle flex-center text-white hover-text-gray-800 hover-bg-white text-2xl transition-1"
+  >
+    <i class="ph ph-x"></i>
+  </button>
+  <div class="container">
+    <div class="position-relative">
+      <input
+        type="text"
+        class="form-control py-16 px-24 text-xl rounded-pill pe-64"
+        placeholder="Search for a product or brand"
+      />
+      <button
+        type="submit"
+        class="w-48 h-48 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8"
+      >
+        <i class="ph ph-magnifying-glass" id="searchIcon"></i>
+      </button>
+    </div>
+  </div>
+</form>
+<!-- ==================== Search Box End Here ==================== -->
 
-    <!-- ==================== Search Box Start Here ==================== -->
-    <form action="#" class="search-box">
-        <button
-          type="button"
-          class="search-box__close position-absolute inset-block-start-0 inset-inline-end-0 m-16 w-48 h-48 border border-gray-100 rounded-circle flex-center text-white hover-text-gray-800 hover-bg-white text-2xl transition-1"
-        >
-          <i class="ph ph-x"></i>
-        </button>
-        <div class="container">
-          <div class="position-relative">
-            <input
-              type="text"
-              class="form-control py-16 px-24 text-xl rounded-pill pe-64"
-              placeholder="Search for a product or brand"
-            />
+<!-- ==================== Mobile Menu Start Here ==================== -->
+<div class="mobile-menu scroll-sm d-lg-none d-block">
+  <button type="button" class="close-button">
+    <i class="ph ph-x"></i>
+  </button>
+  <div class="mobile-menu__inner">
+    <a href="index.html" class="mobile-menu__logo">
+      <img src="../assets/images/logo-horizontal.png" alt="Logo" />
+    </a>
+    <div class="mobile-menu__menu">
+      <ul class="nav-menu flex-align nav-menu--mobile">
+        <li class="on-hover-item nav-menu__item activePage">
+          <a href="index.html" class="nav-menu__link">Home</a>
+        </li>
+        <li class="on-hover-item nav-menu__item">
+          <a href="aboutUs.html" class="nav-menu__link">About Us</a>
+        </li>
+        <li class="on-hover-item nav-menu__item">
+          <a href="Sellers.html" class="nav-menu__link">Sellers</a>
+        </li>
+        <li class="on-hover-item nav-menu__item">
+          <a href="faq.html" class="nav-menu__link">FAQ</a>
+        </li>
+        <li class="on-hover-item nav-menu__item">
+          <a href="blog.html" class="nav-menu__link">Blog</a>
+        </li>
+        <li class="nav-menu__item">
+          <a href="contact.html" class="nav-menu__link">Contact Us</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- ==================== Mobile Menu End Here ==================== -->
+<!-- ======================= Middle Header Two Start ========================= -->
+<header class="header-middle ">
+  <div class="container container-lg">
+    <nav class="header-inner flex-between">
+      <!-- Logo Start -->
+      <div class="logo">
+        <a href="index.html" class="link">
+          <img src="../assets/images/logo-horizontal.png" alt="Logo" />
+        </a>
+      </div>
+      <!-- Logo End  -->
+
+      <!-- form Category Start -->
+      <div class="flex-align gap-16">
+        <div class="select-dropdown-for-home-two d-lg-none d-block bg-main-two-50">
+          <ul class="header-top__right style-two flex-align flex-wrap">
+            <li
+              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
+            >
+              <a href="#" class="selected-text text-heading text-sm py-8"
+                >Eng</a
+              >
+              <ul
+                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
+              >
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    English
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Japan
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    French
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Germany
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li
+              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
+            >
+              <a href="#" class="selected-text text-heading text-sm py-8"
+                >USD</a
+              >
+              <ul
+                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
+              >
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    USD
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Yen
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Franc
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    EURO
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <form action="#" class="flex-align flex-wrap form-location-wrapper">
+          <div
+            class="search-category style-two d-flex h-48 search-form d-sm-flex d-none bg-main-600"
+          >
+            <select
+              class="js-example-basic-single border border-gray-200 border-end-0 rounded-0 border-0"
+              name="state"
+            >
+              <option value="1" selected disabled>All Categories</option>
+              <option value="1">test1</option>
+              <option value="1">test2</option>
+              <option value="1">test3</option>
+              <option value="1">test4</option>
+              <option value="1">test5</option>
+              <option value="1">test6</option>
+              <option value="1">test7</option>
+              <option value="1">test8</option>
+              <option value="1">test9</option>
+              <option value="1">test10</option>
+            </select>
+            <div class="search-form__wrapper position-relative bg-main-two-50">
+              <input
+                type="text"
+                class="search-form__input common-input py-13 ps-16 pe-18 rounded-0 border-0"
+                placeholder="Search for a product or brand"
+              />
+            </div>
             <button
               type="submit"
-              class="w-48 h-48 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8"
+              class="bg-main-two-600 flex-center text-xl text-white flex-shrink-0 w-48 hover-bg-main-two-700 d-lg-flex d-none"
             >
               <i class="ph ph-magnifying-glass" id="searchIcon"></i>
             </button>
           </div>
-        </div>
-      </form>
-      <!-- ==================== Search Box End Here ==================== -->
-  
-      <!-- ==================== Mobile Menu Start Here ==================== -->
-      <div class="mobile-menu scroll-sm d-lg-none d-block">
-        <button type="button" class="close-button">
-          <i class="ph ph-x"></i>
-        </button>
-        <div class="mobile-menu__inner">
-          <a href="index.html" class="mobile-menu__logo">
-            <img src="../assets/images/logo-horizontal.png" alt="Logo" />
+        </form>
+      </div>
+      <!-- form Category start -->
+
+      <!-- Header Middle Right start -->
+      <div class="header-right flex-align d-lg-block d-none">
+        <div class="header-two-activities flex-align flex-wrap gap-32">
+          <button
+            type="button"
+            class="flex-align search-icon d-lg-none d-flex gap-4 item-hover-two"
+          >
+            <span
+              class="text-2xl text-white d-flex position-relative item-hover__text"
+            >
+              <i class="ph ph-magnifying-glass" id="searchIcon"></i>
+            </span>
+          </button>
+          <a href="account.html" class="d-flex align-content-around gap-10 fw-medium text-main-600 py-14 px-24 bg-main-50 rounded-pill line-height-1 hover-bg-main-600 hover-text-white">
+            <span class="d-sm-flex d-none line-height-1"><i class="ph-bold ph-user"></i></span>
+            Account
+        </a>
+          <a
+            href="wishlist.html"
+            class="flex-align flex-column gap-8 item-hover-two"
+          >
+            <span
+              class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
+            >
+              <i class="ph ph-heart text-black"></i>
+              <span
+                class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
+                >2</span
+              >
+            </span>
+            <span
+              class="text-md text-black item-hover__text d-none d-lg-flex"
+              >Wishlist</span
+            >
           </a>
-          <div class="mobile-menu__menu">
-            <ul class="nav-menu flex-align nav-menu--mobile">
-              <li class="on-hover-item nav-menu__item activePage">
-                <a href="index.html" class="nav-menu__link">Home</a>
-              </li>
-              <li class="on-hover-item nav-menu__item">
-                <a href="aboutUs.html" class="nav-menu__link">About Us</a>
-              </li>
-              <li class="on-hover-item nav-menu__item">
-                <a href="Sellers.html" class="nav-menu__link">Sellers</a>
-              </li>
-              <li class="on-hover-item nav-menu__item">
-                <a href="faq.html" class="nav-menu__link">FAQ</a>
-              </li>
-              <li class="on-hover-item nav-menu__item">
-                <a href="blog.html" class="nav-menu__link">Blog</a>
-              </li>
-              <li class="nav-menu__item">
-                <a href="contact.html" class="nav-menu__link">Contact Us</a>
-              </li>
-            </ul>
-          </div>
+
+          <a
+            href="cart.html"
+            class="flex-align flex-column gap-8 item-hover-two"
+          >
+            <span
+              class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
+            >
+              <i class="ph ph-shopping-cart-simple text-black"></i>
+              <span
+                class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
+                >2</span
+              >
+            </span>
+            <span
+              class="text-md text-black item-hover__text d-none d-lg-flex"
+              >Cart</span
+            >
+          </a>
         </div>
       </div>
-      <!-- ==================== Mobile Menu End Here ==================== -->
-      <!-- ======================= Middle Header Two Start ========================= -->
-      <header class="header-middle ">
-        <div class="container container-lg">
-          <nav class="header-inner flex-between">
-            <!-- Logo Start -->
-            <div class="logo">
+    </nav>
+  </div>
+</header>
+<!-- ======================= Middle Header Two End ========================= -->
+
+<!-- ==================== Header Two Start Here ==================== -->
+<header class="header bg-white border-top border-gray-100 shadow-sm">
+  <div class="container container-lg">
+    <nav class="header-inner d-flex justify-content-between gap-8">
+      <div class="flex-align menu-category-wrapper">
+        <!-- Category Dropdown Start -->
+        <div class="category-two d-none">
+          <button
+            type="button"
+            class="category__button flex-align gap-8 fw-medium bg-main-two-600 p-16 text-white"
+          >
+            <span class="icon text-2xl d-xs-flex d-none text-white"
+              ><i class="ph ph-dots-nine"></i
+            ></span>
+            <span class="d-sm-flex d-none">All</span> Categories
+            <span class="arrow-icon text-xl d-flex"><i class="ph ph-caret-down"></i></span>
+          </button>
+
+          <div
+            class="responsive-dropdown common-dropdown d-lg-none d-block nav-submenu p-0 submenus-submenu-wrapper shadow-none border border-gray-100"
+          >
+            <button
+              type="button"
+              class="close-responsive-dropdown rounded-circle text-xl position-absolute inset-inline-end-0 inset-block-start-0 mt-4 me-8 d-lg-none d-flex"
+            >
+              <i class="ph ph-x"></i>
+            </button>
+          </div>
+        </div>
+        <div class="category d-block on-hover-item bg-main-600 text-white">
+          <button
+            type="button"
+            class="category__button flex-align gap-8 fw-medium p-16 border-end border-start border-gray-100 text-white"
+          >
+            <span class="icon text-2xl d-xs-flex d-none"
+              ><i class="ph ph-dots-nine"></i
+            ></span>
+            <span class="d-sm-flex d-none">All</span> Categories
+            <span class="arrow-icon text-xl d-flex"
+              ><i class="ph ph-caret-down"></i
+            ></span>
+          </button>
+
+          <div
+            class="responsive-dropdown on-hover-dropdown common-dropdown nav-submenu p-0 submenus-submenu-wrapper"
+          >
+            <button
+              type="button"
+              class="close-responsive-dropdown rounded-circle text-xl position-absolute inset-inline-end-0 inset-block-start-0 mt-4 me-8 d-lg-none d-flex"
+            >
+              <i class="ph ph-x"></i>
+            </button>
+            <div class="logo px-16 d-lg-none d-block">
               <a href="index.html" class="link">
                 <img src="../assets/images/logo-horizontal.png" alt="Logo" />
               </a>
             </div>
-            <!-- Logo End  -->
-  
-            <!-- form Category Start -->
-            <div class="flex-align gap-16">
-              <div class="select-dropdown-for-home-two d-lg-none d-block bg-main-two-50">
-                <ul class="header-top__right style-two flex-align flex-wrap">
-                  <li
-                    class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
-                  >
-                    <a href="#" class="selected-text text-heading text-sm py-8"
-                      >Eng</a
-                    >
-                    <ul
-                      class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          English
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Japan
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          French
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Germany
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li
-                    class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
-                  >
-                    <a href="#" class="selected-text text-heading text-sm py-8"
-                      >USD</a
-                    >
-                    <ul
-                      class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          USD
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Yen
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Franc
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          EURO
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-  
-              <form action="#" class="flex-align flex-wrap form-location-wrapper">
-                <div
-                  class="search-category style-two d-flex h-48 search-form d-sm-flex d-none bg-main-600"
-                >
-                  <select
-                    class="js-example-basic-single border border-gray-200 border-end-0 rounded-0 border-0"
-                    name="state"
-                  >
-                    <option value="1" selected disabled>All Categories</option>
-                    <option value="1">test1</option>
-                    <option value="1">test2</option>
-                    <option value="1">test3</option>
-                    <option value="1">test4</option>
-                    <option value="1">test5</option>
-                    <option value="1">test6</option>
-                    <option value="1">test7</option>
-                    <option value="1">test8</option>
-                    <option value="1">test9</option>
-                    <option value="1">test10</option>
-                  </select>
-                  <div class="search-form__wrapper position-relative bg-main-two-50">
-                    <input
-                      type="text"
-                      class="search-form__input common-input py-13 ps-16 pe-18 rounded-0 border-0"
-                      placeholder="Search for a product or brand"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    class="bg-main-two-600 flex-center text-xl text-white flex-shrink-0 w-48 hover-bg-main-two-700 d-lg-flex d-none"
-                  >
-                    <i class="ph ph-magnifying-glass" id="searchIcon"></i>
-                  </button>
-                </div>
-              </form>
-            </div>
-            <!-- form Category start -->
-  
-            <!-- Header Middle Right start -->
-            <div class="header-right flex-align d-lg-block d-none">
-              <div class="header-two-activities flex-align flex-wrap gap-32">
-                <button
-                  type="button"
-                  class="flex-align search-icon d-lg-none d-flex gap-4 item-hover-two"
-                >
-                  <span
-                    class="text-2xl text-white d-flex position-relative item-hover__text"
-                  >
-                    <i class="ph ph-magnifying-glass" id="searchIcon"></i>
-                  </span>
-                </button>
-                <a href="account.html" class="d-flex align-content-around gap-10 fw-medium text-main-600 py-14 px-24 bg-main-50 rounded-pill line-height-1 hover-bg-main-600 hover-text-white">
-                  <span class="d-sm-flex d-none line-height-1"><i class="ph-bold ph-user"></i></span>
-                  Account
-              </a>
+            <ul class="scroll-sm p-0 py-8 w-300 max-h-400 overflow-y-auto">
+              <li class="has-submenus-submenu">
                 <a
-                  href="wishlist.html"
-                  class="flex-align flex-column gap-8 item-hover-two"
+                  href="index.html"
+                  class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0"
                 >
-                  <span
-                    class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
-                  >
-                    <i class="ph ph-heart text-black"></i>
-                    <span
-                      class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
-                      >2</span
-                    >
-                  </span>
-                  <span
-                    class="text-md text-black item-hover__text d-none d-lg-flex"
-                    >Wishlist</span
-                  >
+                  <span class="text-xl d-flex"
+                    ><i class="ph ph-carrot"></i
+                  ></span>
+                  <span>test1 &amp;</span>
+                  <span class="icon text-md d-flex ms-auto"
+                    ><i class="ph ph-caret-right"></i
+                  ></span>
                 </a>
-  
-                <a
-                  href="cart.html"
-                  class="flex-align flex-column gap-8 item-hover-two"
-                >
-                  <span
-                    class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
+
+                <div class="submenus-submenu py-16">
+                  <h6 class="text-lg px-16 submenus-submenu__title">
+                    test1
+                  </h6>
+                  <ul
+                    class="submenus-submenu__list max-h-300 overflow-y-auto scroll-sm"
                   >
-                    <i class="ph ph-shopping-cart-simple text-black"></i>
-                    <span
-                      class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
-                      >2</span
-                    >
-                  </span>
-                  <span
-                    class="text-md text-black item-hover__text d-none d-lg-flex"
-                    >Cart</span
-                  >
-                </a>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </header>
-      <!-- ======================= Middle Header Two End ========================= -->
-  
-      <!-- ==================== Header Two Start Here ==================== -->
-      <header class="header bg-white border-top border-gray-100 shadow-sm">
-        <div class="container container-lg">
-          <nav class="header-inner d-flex justify-content-between gap-8">
-            <div class="flex-align menu-category-wrapper">
-              <!-- Category Dropdown Start -->
-              <div class="category-two d-none">
-                <button
-                  type="button"
-                  class="category__button flex-align gap-8 fw-medium bg-main-two-600 p-16 text-white"
-                >
-                  <span class="icon text-2xl d-xs-flex d-none text-white"
-                    ><i class="ph ph-dots-nine"></i
-                  ></span>
-                  <span class="d-sm-flex d-none">All</span> Categories
-                  <span class="arrow-icon text-xl d-flex"><i class="ph ph-caret-down"></i></span>
-                </button>
-  
-                <div
-                  class="responsive-dropdown common-dropdown d-lg-none d-block nav-submenu p-0 submenus-submenu-wrapper shadow-none border border-gray-100"
-                >
-                  <button
-                    type="button"
-                    class="close-responsive-dropdown rounded-circle text-xl position-absolute inset-inline-end-0 inset-block-start-0 mt-4 me-8 d-lg-none d-flex"
-                  >
-                    <i class="ph ph-x"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="category d-block on-hover-item bg-main-600 text-white">
-                <button
-                  type="button"
-                  class="category__button flex-align gap-8 fw-medium p-16 border-end border-start border-gray-100 text-white"
-                >
-                  <span class="icon text-2xl d-xs-flex d-none"
-                    ><i class="ph ph-dots-nine"></i
-                  ></span>
-                  <span class="d-sm-flex d-none">All</span> Categories
-                  <span class="arrow-icon text-xl d-flex"
-                    ><i class="ph ph-caret-down"></i
-                  ></span>
-                </button>
-  
-                <div
-                  class="responsive-dropdown on-hover-dropdown common-dropdown nav-submenu p-0 submenus-submenu-wrapper"
-                >
-                  <button
-                    type="button"
-                    class="close-responsive-dropdown rounded-circle text-xl position-absolute inset-inline-end-0 inset-block-start-0 mt-4 me-8 d-lg-none d-flex"
-                  >
-                    <i class="ph ph-x"></i>
-                  </button>
-                  <div class="logo px-16 d-lg-none d-block">
-                    <a href="index.html" class="link">
-                      <img src="../assets/images/logo-horizontal.png" alt="Logo" />
-                    </a>
-                  </div>
-                  <ul class="scroll-sm p-0 py-8 w-300 max-h-400 overflow-y-auto">
-                    <li class="has-submenus-submenu">
-                      <a
-                        href="index.html"
-                        class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0"
-                      >
-                        <span class="text-xl d-flex"
-                          ><i class="ph ph-carrot"></i
-                        ></span>
-                        <span>test1 &amp;</span>
-                        <span class="icon text-md d-flex ms-auto"
-                          ><i class="ph ph-caret-right"></i
-                        ></span>
-                      </a>
-  
-                      <div class="submenus-submenu py-16">
-                        <h6 class="text-lg px-16 submenus-submenu__title">
-                          test1
-                        </h6>
-                        <ul
-                          class="submenus-submenu__list max-h-300 overflow-y-auto scroll-sm"
-                        >
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test1.1</a>
-                          </li>
-                        </ul>
-                      </div>
+                    <li>
+                      <a href="#">test1.1</a>
                     </li>
-                    <li class="has-submenus-submenu">
-                      <a
-                        href="index.html"
-                        class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0"
-                      >
-                        <span class="text-xl d-flex"
-                          ><i class="ph ph-brandy"></i
-                        ></span>
-                        <span>test2</span>
-                        <span class="icon text-md d-flex ms-auto"
-                          ><i class="ph ph-caret-right"></i
-                        ></span>
-                      </a>
-                      <div class="submenus-submenu py-16">
-                        <h6 class="text-lg px-16 submenus-submenu__title">
-                          test2
-                        </h6>
-                        <ul
-                          class="submenus-submenu__list max-h-300 overflow-y-auto scroll-sm"
-                        >
-                          <li>
-                            <a href="#">test2.1</a>
-                          </li>
-                          <li>
-                            <a href="#"> test2.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test2.1</a>
-                          </li>
-                          <li>
-                            <a href="#"> test2.1</a>
-                          </li>
-                          <li>
-                            <a href="#"> test2.1</a>
-                          </li>
-                          <li>
-                            <a href="#">test2.1</a>
-                          </li>
-                        </ul>
-                      </div>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test1.1</a>
                     </li>
                   </ul>
                 </div>
-              </div>
-              <!-- Category Dropdown End  -->
-  
-              <!-- Menu Start  -->
-              <div class="header-menu d-lg-block d-none">
-                <!-- Nav Menu Start -->
-                <ul class="nav-menu flex-align">
-                  <li class="on-hover-item nav-menu__item activePage">
-                    <a href="index.html" class="nav-menu__link">Home</a>
-                  </li>
-                  <li class="on-hover-item nav-menu__item">
-                    <a href="aboutUs.html" class="nav-menu__link">About Us</a>
-                  </li>
-                  <li class="on-hover-item nav-menu__item">
-                    <a href="Sellers.html" class="nav-menu__link">Sellers</a>
-                  </li>
-                  <li class="on-hover-item nav-menu__item">
-                    <a href="faq.html" class="nav-menu__link">FAQ</a>
-                  </li>
-                  <li class="on-hover-item nav-menu__item">
-                    <a href="blog.html" class="nav-menu__link">Blog</a>
-                  </li>
-                  <li class="nav-menu__item">
-                    <a href="contact.html" class="nav-menu__link">Contact Us</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="header-right flex-align">
-              <div class="select-dropdown-for-home-two d-lg-block d-none">
-                <!-- Dropdown Select Start -->
-                <ul class="header-top__right style-two flex-align flex-wrap">
-                  <li
-                    class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
+              </li>
+              <li class="has-submenus-submenu">
+                <a
+                  href="index.html"
+                  class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0"
+                >
+                  <span class="text-xl d-flex"
+                    ><i class="ph ph-brandy"></i
+                  ></span>
+                  <span>test2</span>
+                  <span class="icon text-md d-flex ms-auto"
+                    ><i class="ph ph-caret-right"></i
+                  ></span>
+                </a>
+                <div class="submenus-submenu py-16">
+                  <h6 class="text-lg px-16 submenus-submenu__title">
+                    test2
+                  </h6>
+                  <ul
+                    class="submenus-submenu__list max-h-300 overflow-y-auto scroll-sm"
                   >
-                    <a href="#" class="selected-text text-heading text-sm py-8"
-                      >Eng</a
-                    >
-                    <ul
-                      class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          English
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Japan
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          French
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Germany
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li
-                    class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
-                  >
-                    <a href="#" class="selected-text text-heading text-sm py-8"
-                      >USD</a
-                    >
-                    <ul
-                      class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          USD
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Yen
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          Franc
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                        >
-                          EURO
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-                <!-- Dropdown Select End -->
-              </div>
-              <div class="me-8 d-lg-none d-block">
-                <div class="header-two-activities flex-align flex-wrap gap-32">
-                  <button
-                    type="button"
-                    class="flex-align search-icon d-lg-none d-flex gap-4 item-hover-two"
-                  >
-                    <span
-                      class="text-2xl text-white d-flex position-relative item-hover__text"
-                    >
-                      <i class="ph ph-magnifying-glass"></i>
-                    </span>
-                  </button>
-                  <a
-                    href="account.html"
-                    class="flex-align flex-column gap-8 item-hover-two"
-                  >
-                    <span
-                      class="text-2xl text-white d-flex position-relative item-hover__text"
-                    >
-                      <i class="ph ph-user"></i>
-                    </span>
-                    <span
-                      class="text-md text-white item-hover__text d-none d-lg-flex"
-                      >Profile</span
-                    >
-                  </a>
-                  <a
-                    href="wishlist.html"
-                    class="flex-align flex-column gap-8 item-hover-two"
-                  >
-                    <span
-                      class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
-                    >
-                      <i class="ph ph-heart text-black"></i>
-                      <span
-                        class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
-                        >2</span
-                      >
-                    </span>
-                    <span
-                      class="text-md text-black item-hover__text d-none d-lg-flex"
-                      >Wishlist</span
-                    >
-                  </a>
-                  <a
-                    href="cart.html"
-                    class="flex-align flex-column gap-8 item-hover-two"
-                  >
-                    <span
-                      class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
-                    >
-                      <i class="ph ph-shopping-cart-simple"></i>
-                      <span
-                        class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
-                        >2</span
-                      >
-                    </span>
-                    <span
-                      class="text-md text-white item-hover__text d-none d-lg-flex"
-                      >Cart</span
-                    >
-                  </a>
+                    <li>
+                      <a href="#">test2.1</a>
+                    </li>
+                    <li>
+                      <a href="#"> test2.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test2.1</a>
+                    </li>
+                    <li>
+                      <a href="#"> test2.1</a>
+                    </li>
+                    <li>
+                      <a href="#"> test2.1</a>
+                    </li>
+                    <li>
+                      <a href="#">test2.1</a>
+                    </li>
+                  </ul>
                 </div>
-              </div>
-              <button
-                type="button"
-                class="toggle-mobileMenu d-lg-none ms-3n text-gray-800 text-4xl d-flex"
-              >
-                <i class="ph ph-list"></i>
-              </button>
-            </div>
-          </nav>
+              </li>
+            </ul>
+          </div>
         </div>
-      </header>
-      <!-- ==================== Header End Here ==================== -->
+        <!-- Category Dropdown End  -->
+
+        <!-- Menu Start  -->
+        <div class="header-menu d-lg-block d-none">
+          <!-- Nav Menu Start -->
+          <ul class="nav-menu flex-align">
+            <li class="on-hover-item nav-menu__item activePage">
+              <a href="index.html" class="nav-menu__link">Home</a>
+            </li>
+            <li class="on-hover-item nav-menu__item">
+              <a href="aboutUs.html" class="nav-menu__link">About Us</a>
+            </li>
+            <li class="on-hover-item nav-menu__item">
+              <a href="Sellers.html" class="nav-menu__link">Sellers</a>
+            </li>
+            <li class="on-hover-item nav-menu__item">
+              <a href="faq.html" class="nav-menu__link">FAQ</a>
+            </li>
+            <li class="on-hover-item nav-menu__item">
+              <a href="blog.html" class="nav-menu__link">Blog</a>
+            </li>
+            <li class="nav-menu__item">
+              <a href="contact.html" class="nav-menu__link">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="header-right flex-align">
+        <div class="select-dropdown-for-home-two d-lg-block d-none">
+          <!-- Dropdown Select Start -->
+          <ul class="header-top__right style-two flex-align flex-wrap">
+            <li
+              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
+            >
+              <a href="#" class="selected-text text-heading text-sm py-8"
+                >Eng</a
+              >
+              <ul
+                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
+              >
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    English
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Japan
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    French
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Germany
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li
+              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
+            >
+              <a href="#" class="selected-text text-heading text-sm py-8"
+                >USD</a
+              >
+              <ul
+                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
+              >
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    USD
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Yen
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    Franc
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
+                  >
+                    EURO
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <!-- Dropdown Select End -->
+        </div>
+        <div class="me-8 d-lg-none d-block">
+          <div class="header-two-activities flex-align flex-wrap gap-32">
+            <button
+              type="button"
+              class="flex-align search-icon d-lg-none d-flex gap-4 item-hover-two"
+            >
+              <span
+                class="text-2xl text-white d-flex position-relative item-hover__text"
+              >
+                <i class="ph ph-magnifying-glass"></i>
+              </span>
+            </button>
+            <a
+              href="account.html"
+              class="flex-align flex-column gap-8 item-hover-two"
+            >
+              <span
+                class="text-2xl text-white d-flex position-relative item-hover__text"
+              >
+                <i class="ph ph-user"></i>
+              </span>
+              <span
+                class="text-md text-white item-hover__text d-none d-lg-flex"
+                >Profile</span
+              >
+            </a>
+            <a
+              href="wishlist.html"
+              class="flex-align flex-column gap-8 item-hover-two"
+            >
+              <span
+                class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
+              >
+                <i class="ph ph-heart text-black"></i>
+                <span
+                  class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
+                  >2</span
+                >
+              </span>
+              <span
+                class="text-md text-black item-hover__text d-none d-lg-flex"
+                >Wishlist</span
+              >
+            </a>
+            <a
+              href="cart.html"
+              class="flex-align flex-column gap-8 item-hover-two"
+            >
+              <span
+                class="text-2xl text-white d-flex position-relative me-6 mt-6 item-hover__text"
+              >
+                <i class="ph ph-shopping-cart-simple"></i>
+                <span
+                  class="w-16 h-16 flex-center rounded-circle bg-main-two-600 text-white text-xs position-absolute top-n6 end-n4"
+                  >2</span
+                >
+              </span>
+              <span
+                class="text-md text-white item-hover__text d-none d-lg-flex"
+                >Cart</span
+              >
+            </a>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="toggle-mobileMenu d-lg-none ms-3n text-gray-800 text-4xl d-flex"
+        >
+          <i class="ph ph-list"></i>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- ==================== Header End Here ==================== -->
     <!-- ========================= Breadcrumb Start =============================== -->
 <div class="breadcrumb mb-0 py-26 bg-main-two-50">
     <div class="container container-lg">
