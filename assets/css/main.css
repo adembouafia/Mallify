@@ -10339,88 +10339,84 @@ input[type=number] {
 }
 /* ================================= Testimonials Section Css End ==================================== */
 /*============================ Product Details CSS Start ============================= */
-/* Step 1: Make each slide a flex container */
 .new-arrival__slider > div {
     display: flex;
     height: 100%;
   }
   
-  /* Step 2: Force product-card to fill the slide */
   .product-card {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
   
-
-.product-details {
+  .product-details {
     display: flex;
     flex-wrap: wrap;
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
-}
-
-.product-details__thumb-slider {
+  }
+  
+  .product-details__thumb-slider {
     padding: clamp(4px, 1vw, 90px);
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-}
-
-.product-details__thumb-slider .slick-slide {
+    position: relative;
+    z-index: 1; 
+  }
+  
+  .product-details__thumb-slider .slick-slide {
     display: flex !important;
     justify-content: center;
     align-items: center;
-}
-
-.product-details__thumb-slider img {
+  }
+  
+  .product-details__thumb-slider img {
     max-width: 100%;
     height: auto;
     display: block;
     margin: 0 auto;
-}
-
-.product-details__images-slider {
+  }
+  
+  .product-details__images-slider {
     margin-top: 20px;
     box-sizing: border-box;
-}
-
-.product-details__images-slider .slick-slide {
+  }
+  
+  .product-details__images-slider .slick-slide {
     padding: 5px;
     cursor: pointer;
     box-sizing: border-box;
-}
-
-.product-details__images-slider img {
+  }
+  
+  .product-details__images-slider img {
     max-width: 100%;
     height: auto;
     display: block;
     border: 2px solid transparent;
     transition: border 0.3s ease;
-}
-
-.product-dContent__box,
-.product-dContent__header {
+  }
+  
+  .product-dContent__box,
+  .product-dContent__header {
     padding: 16px 40px;
-}
-
-.product-dContent__box {
+  }
+  
+  .product-dContent__box {
     padding-top: 48px;
     padding-bottom: 48px;
-}
-
-/* Prevent slick overflow */
-.slick-slider {
+  }
+  .slick-slider {
     overflow: hidden;
-}
-
-.slick-track {
+  }
+  
+  .slick-track {
     display: flex !important;
     align-items: center;
-}
-
+  }
 /* ============================ Product Details CSS End ============================= */
 /* ================================ Shop Page css Start =============================== */
 @media (max-width: 479px) {
