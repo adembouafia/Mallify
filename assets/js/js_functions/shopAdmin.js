@@ -46,6 +46,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+//nav-treeview
+document.addEventListener('DOMContentLoaded', () => {
+    const treeviewToggles = document.querySelectorAll('.nav-item > .nav-link');
+    treeviewToggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            const parentItem = toggle.closest('.nav-item');
+            const submenu = parentItem.querySelector('.nav-treeview');
+            if (submenu) {
+                e.preventDefault(); 
+                submenu.classList.toggle('show');
+                parentItem.classList.toggle('menu-open');
+                const arrow = toggle.querySelector('.nav-arrow');
+                if (arrow) {
+                    arrow.classList.toggle('bi-chevron-down');
+                }
+            }
+        });
+    });
+
+    const activeSubItems = document.querySelectorAll('.nav-treeview .nav-link.active');
+    activeSubItems.forEach(item => {
+        const treeview = item.closest('.nav-treeview');
+        if (treeview) {
+            treeview.classList.add('show');
+            const parentItem = treeview.closest('.nav-item');
+            if (parentItem) {
+                parentItem.classList.add('menu-open');
+                const arrow = parentItem.querySelector('.nav-arrow');
+                if (arrow) {
+                    arrow.classList.add('bi-chevron-down');
+                }
+            }
+        }
+    });
+});
 
 
 //report cards toggle

@@ -15378,3 +15378,28 @@ html.maximized-card {
   width: 32px;
 }
 
+
+@media (max-width: 909px) {
+  .btn-responsive span {
+    display: none;
+  }
+  
+  .btn{
+    background-color: white;
+  }
+  .bi{
+    color: #000;
+  }
+  .btn-responsive {
+    min-width: 40px;
+    justify-content: center;
+  }
+
+  .btn-responsive i {
+    font-size: 1.3rem;
+  }
+}
+
+
+
+
