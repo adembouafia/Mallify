@@ -657,296 +657,298 @@
 
 <!-- =============================== Manage Profile Section Start =========================== -->
 <section class="account py-80">
-    <div class="container container-size">
-        <div class="row gy-4 justify-content-center">
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="profile-nav card border border-gray-100 rounded-16 p-24 ">
-                    <div class="profile-user text-center mb-32">
-                        <div class="profile-user__thumb position-relative mx-auto mb-16">
-                            <img src="../assets/images/team_members/devoloper1.jpg" alt="User" class="rounded-circle" width="100" height="100">
-                            <button class="profile-user__edit btn btn-sm btn-main rounded-circle position-absolute bottom-0 end-0 w-32 h-32 flex-center">
-                                <i class="ph ph-pencil-simple"></i>
-                            </button>
-                        </div>
-                        <h6 class="profile-user__name mb-4">Abroud Koussay</h6>
-                        <span class="text-sm text-gray-500">abkoussay@gmail.com</span>
-                    </div>
-                    <ul class="profile-nav__menu">
-                        <li class="active" id="profile-info">
-                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('profile-info')">
-                                <i class="ph ph-user text-xl"></i>
-                                <span>Profile Information</span>
-                            </a>
-                        </li>
-                        <li id="my-orders">
-                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-orders')">
-                                <i class="ph ph-shopping-cart text-xl"></i>
-                                <span>My Orders</span>
-                            </a>
-                        </li>
-                        <li id="my-wishlist">
-                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-wishlist')">
-                                <i class="ph ph-heart text-xl"></i>
-                                <span>My Wishlist</span>
-                            </a>
-                        </li>
-                        <li id="change-password">
-                            <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('change-password')">
-                                <i class="ph ph-lock text-xl"></i>
-                                <span>Change Password</span>
-                            </a>
-                        </li>
-                        <li id="logout">
-                            <a href="account.html" class="flex-align gap-8 p-12 rounded-8 text-danger">
-                                <i class="ph ph-sign-out text-xl"></i>
-                                <span>Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+  <div class="container container-size">
+    <div class="account-wrapper d-flex flex-column flex-lg-row gap-4">
+      <div class="profile-sidebar-custom" id="customProfileSidebar">
+        <div class="profile-nav card border border-gray-100 rounded-16 p-24">
+          <div class="profile-user text-center mb-32">
+            <div class="profile-user__thumb position-relative mx-auto mb-16">
+              <img src="../assets/images/team_members/devoloper1.jpg" alt="User" class="rounded-circle" width="100" height="100">
+              <button class="profile-user__edit btn btn-sm btn-main rounded-circle position-absolute bottom-0 end-0 w-32 h-32 flex-center">
+                <i class="ph ph-pencil-simple"></i>
+              </button>
             </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-                <div class="profile-content card border border-gray-100 rounded-16 p-24 h-100">
-                    <div id="content-container">
-                        <div id="profile-info-content">
-                            <div class="d-flex justify-content-between align-items-center mb-32">
-                                <h5 class="mb-0">Profile Information</h5>
-                                <button class="btn btn-outline-main">Edit Profile</button>
-                            </div>
-                            <form>
-                                <div class="row gx-1 gy-4">
-                                    <div class="col-md-6">
-                                        <div class="input-wrapper">
-                                            <label for="firstName" class="text-neutral-900 text-lg mb-8 fw-medium">First Name</label>
-                                            <input type="text" class="common-input" id="firstName" value="Koussay" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-wrapper">
-                                            <label for="lastName" class="text-neutral-900 text-lg mb-8 fw-medium">Last Name</label>
-                                            <input type="text" class="common-input" id="lastName" value="Abroud" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-wrapper">
-                                            <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email Address</label>
-                                            <input type="email" class="common-input" id="email" value="abkoussay40@gmail.com" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-wrapper">
-                                            <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone Number</label>
-                                            <input type="tel" class="common-input" id="phone" value="+216 26 788 694" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="input-wrapper">
-                                            <label for="birthday" class="text-neutral-900 text-lg mb-8 fw-medium">Date of Birth</label>
-                                            <input type="date" class="common-input" id="birthday" value="2003-08-08" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="input-wrapper">
-                                            <label for="gender" class="text-neutral-900 text-lg mb-8 fw-medium">Gender</label>
-                                            <input type="text" class="common-input" id="gender" value="Male" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="my-orders-content">
-                          <div class="orders-dashboard">
-                            <div class="orders-header">
-                              <div class="header-left">
-                                <i class="ph ph-package"></i>
-                                <h1>My Orders</h1>
-                              </div>
-                              <div class="header-right">
-                                <div class="search-box">
-                                  <i class="ph ph-magnifying-glass"></i>
-                                  <input type="text" id="my-orders-search" placeholder="Search orders...">
-                                </div>
-                                <div class="filter-dropdown">
-                                  <select id="my-orders-filter">
-                                    <option value="all">All Orders</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="shipped">Shipped</option>
-                                    <option value="delivered">Delivered</option>
-                                    <option value="cancelled">Cancelled</option>
-                                  </select>
-                                  <i class="ph ph-caret-down"></i>
-                                </div>
-                              </div>
-                            </div>
-                        
-                            <div class="orders-list">
-                              <!-- Order 1 -->
-                              <div class="order-card" id="my-order-87654">
-                                <div class="order-header">
-                                  <span class="order-id">#ORD-87654</span>
-                                  <span class="order-date">Oct 12, 2023</span>
-                                  <span class="order-status shipped">Shipped</span>
-                                </div>
-                                
-                                <div class="order-products-list">
-                                  <div class="order-product-item" id="my-order-item-1">
-                                    <div class="product-image">
-                                      <img src="https://via.placeholder.com/80x80/e2e8f0/64748b?text=Headphones" alt="Wireless Headphones">
-                                    </div>
-                                    <div class="product-info">
-                                      <h3>Wireless Headphones Pro</h3>
-                                      <p class="product-sku">SKU: HP-2023-BLK</p>
-                                      <div class="product-meta">
-                                        <span class="product-price">$199.99</span>
-                                        <span class="product-qty">Qty: 1</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  <div class="order-product-item" id="my-order-item-2">
-                                    <div class="product-image">
-                                      <img src="https://via.placeholder.com/80x80/e2e8f0/64748b?text=Case" alt="Leather Case">
-                                    </div>
-                                    <div class="product-info">
-                                      <h3>Premium Leather Case</h3>
-                                      <p class="product-sku">SKU: CASE-LEA-BRN</p>
-                                      <div class="product-meta">
-                                        <span class="product-price">$49.99</span>
-                                        <span class="product-qty">Qty: 2</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div class="order-summary">
-                                  <div class="summary-row">
-                                    <span>Subtotal</span>
-                                    <span>$299.97</span>
-                                  </div>
-                                  <div class="summary-row total">
-                                    <span>Total</span>
-                                    <span>$299.97</span>
-                                  </div>
-                                </div>
-                                
-                                <div class="order-footer">
-                                  <button class="order-action track" id="track-order-87654">
-                                    <i class="ph ph-map-pin"></i> Track Order
-                                  </button>
-                                  <button class="order-action details" id="details-order-87654">
-                                    <i class="ph ph-file-text"></i> View Details
-                                  </button>
-                                </div>
-                              </div>
-                        
-                              <!-- Order 2 -->
-                              <div class="order-card" id="my-order-76543">
-                                <div class="order-header">
-                                  <span class="order-id">#ORD-76543</span>
-                                  <span class="order-date">Oct 5, 2023</span>
-                                  <span class="order-status delivered">Delivered</span>
-                                </div>
-                                
-                                <div class="order-products-list">
-                                  <div class="order-product-item" id="my-order-item-3">
-                                    <div class="product-image">
-                                      <img src="https://via.placeholder.com/80x80/e2e8f0/64748b?text=Smartwatch" alt="Smart Watch">
-                                    </div>
-                                    <div class="product-info">
-                                      <h3>Smart Watch Series 5</h3>
-                                      <p class="product-sku">SKU: SW-2023-SLV</p>
-                                      <div class="product-meta">
-                                        <span class="product-price">$299.99</span>
-                                        <span class="product-qty">Qty: 1</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div class="order-summary">
-                                  <div class="summary-row">
-                                    <span>Subtotal</span>
-                                    <span>$299.99</span>
-                                  </div>
-                                  <div class="summary-row total">
-                                    <span>Total</span>
-                                    <span>$299.99</span>
-                                  </div>
-                                </div>
-                                
-                                <div class="order-footer">
-                                  <button class="order-action review" id="review-order-76543">
-                                    <i class="ph ph-star"></i> Leave Review
-                                  </button>
-                                  <button class="order-action details" id="details-order-76543">
-                                    <i class="ph ph-file-text"></i> View Details
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div class="orders-pagination">
-                              <button class="pagination-btn disabled" id="my-orders-prev">
-                                <i class="ph ph-caret-left"></i> <span>Previous</span>
-                              </button>
-                              <div class="page-numbers">
-                                <span class="page-number active" id="my-orders-page-1">1</span>
-                                <span class="page-number" id="my-orders-page-2">2</span>
-                                <span class="page-number" id="my-orders-page-3">3</span>
-                              </div>
-                              <button class="pagination-btn" id="my-orders-next">
-                                <span>Next</span> <i class="ph ph-caret-right"></i>
-                              </button>
-                            </div>
-                            
-                            
-                          </div>
-                        </div>
-                        <div id="my-wishlist-content">
-                            
-                        </div>
-                        <div id="change-password-content">
-                          <div class="password-container">
-                            <div class="password-card">
-                              <div class="password-header">
-                                <i class="ph ph-lock"></i>
-                                <h2>Change Your Password</h2>
-                                <p class="password-subtitle">Secure your account with a new password</p>
-                              </div>
-                              
-                              <form class="password-form">
-                                <div class="input-field">
-                                  <i class="ph ph-lock-key"></i>
-                                  <input type="password" id="current-password" placeholder="Current Password" required>
-                                  <i class="ph ph-eye-slash toggle-password" data-target="current-password"></i>
-                                </div>
-                                
-                                <div class="input-field">
-                                  <i class="ph ph-key"></i>
-                                  <input type="password" id="new-password" placeholder="New Password" required>
-                                  <i class="ph ph-eye-slash toggle-password" data-target="new-password"></i>
-                                </div>
-                                
-                                <div class="input-field">
-                                  <i class="ph ph-keyhole"></i>
-                                  <input type="password" id="confirm-password" placeholder="Confirm New Password" required>
-                                  <i class="ph ph-eye-slash toggle-password" data-target="confirm-password"></i>
-                                </div>
-                                
-                                <button type="submit" class="submit-btn">
-                                  <i class="ph ph-arrow-clockwise"></i> Update Password
-                                </button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <h6 class="profile-user__name mb-4">Abroud Koussay</h6>
+            <span class="text-sm text-gray-500">abkoussay@gmail.com</span>
+          </div>
+          <ul class="profile-nav__menu">
+            <li class="active" id="profile-info">
+              <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('profile-info')">
+                <i class="ph ph-user text-xl"></i>
+                <span>Profile Information</span>
+              </a>
+            </li>
+            <li id="my-orders">
+              <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-orders')">
+                <i class="ph ph-shopping-cart text-xl"></i>
+                <span>My Orders</span>
+              </a>
+            </li>
+            <li id="my-wishlist">
+              <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('my-wishlist')">
+                <i class="ph ph-heart text-xl"></i>
+                <span>My Wishlist</span>
+              </a>
+            </li>
+            <li id="change-password">
+              <a href="#" class="flex-align gap-8 p-12 rounded-8" onclick="showContent('change-password')">
+                <i class="ph ph-lock text-xl"></i>
+                <span>Change Password</span>
+              </a>
+            </li>
+            <li id="logout">
+              <a href="account.html" class="flex-align gap-8 p-12 rounded-8 text-danger">
+                <i class="ph ph-sign-out text-xl"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+          </ul>
         </div>
-    </div>
-</section>
+      </div>
+      <div class="flex-grow-1">
+        <div class="profile-content card border border-gray-100 rounded-16 p-24 h-100">
+          <div id="content-container">
+            <button class="sidebar-toggle-custom d-lg-none" id="toggleCustomSidebar">
+              <i class="ph ph-list"></i>
+            </button>
+            <div id="profile-info-content">
+              <div class="d-flex justify-content-between align-items-center mb-32">
+                  <h5 class="mb-0">Profile Information</h5>
+                  
+              </div>
+              <form>
+                  <div class="row gx-1 gy-4">
+                      <div class="col-md-6">
+                          <div class="input-wrapper">
+                              <label for="firstName" class="text-neutral-900 text-lg mb-8 fw-medium">First Name</label>
+                              <input type="text" class="common-input" id="firstName" value="Koussay" readonly>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="input-wrapper">
+                              <label for="lastName" class="text-neutral-900 text-lg mb-8 fw-medium">Last Name</label>
+                              <input type="text" class="common-input" id="lastName" value="Abroud" readonly>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="input-wrapper">
+                              <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email Address</label>
+                              <input type="email" class="common-input" id="email" value="abkoussay40@gmail.com" readonly>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="input-wrapper">
+                              <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone Number</label>
+                              <input type="tel" class="common-input" id="phone" value="+216 26 788 694" readonly>
+                          </div>
+                      </div>
+                      <div class="col-12">
+                          <div class="input-wrapper">
+                              <label for="birthday" class="text-neutral-900 text-lg mb-8 fw-medium">Date of Birth</label>
+                              <input type="date" class="common-input" id="birthday" value="2003-08-08" readonly>
+                          </div>
+                      </div>
+                      <div class="col-12">
+                          <div class="input-wrapper">
+                              <label for="gender" class="text-neutral-900 text-lg mb-8 fw-medium">Gender</label>
+                              <input type="text" class="common-input" id="gender" value="Male" readonly>
+                          </div>
+                      </div>
+                  </div>
+                  <button class="btn btn-outline-main feature">Edit Profile</button>
+              </form>
+          </div>
+          <div id="my-orders-content">
+            <div class="orders-dashboard">
+              <div class="orders-header">
+                <div class="header-left">
+                  <i class="ph ph-package"></i>
+                  <h1>My Orders</h1>
+                </div>
+                <div class="header-right">
+                  <div class="search-box">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" id="my-orders-search" placeholder="Search orders...">
+                  </div>
+                  <div class="filter-dropdown">
+                    <select id="my-orders-filter">
+                      <option value="all">All Orders</option>
+                      <option value="pending">Pending</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                    <i class="ph ph-caret-down"></i>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="orders-list">
+                <div class="order-card" id="my-order-87654">
+                  <div class="order-header">
+                    <span class="order-id">#ORD-87654</span>
+                    <span class="order-date">April 12, 2025</span>
+                    <span class="order-status shipped">Shipped</span>
+                  </div>
+                  
+                  <div class="order-products-list">
+                    <div class="order-product-item" id="my-order-item-1">
+                      <div class="product-image">
+                        <img src="../assets/images/products/frier.png" alt="Fryer">
+                      </div>
+                      <div class="product-info">
+                        <h3>Fryer -Bandlt</h3>
+                        <p class="product-sku">SKU: HP-2025-BLF</p>
+                        <div class="product-meta">
+                          <span class="product-price">125 DT</span>
+                          <span class="product-qty">Qty: 1</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="order-product-item" id="my-order-item-2">
+                      <div class="product-image">
+                        <img src="../assets/images/products/bracelet.png" alt="bracelet">
+                      </div>
+                      <div class="product-info">
+                        <h3>Silver bracelet</h3>
+                        <p class="product-sku">SKU: CASE-267-SBR</p>
+                        <div class="product-meta">
+                          <span class="product-price">50 DT</span>
+                          <span class="product-qty">Qty: 2</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="order-summary">
+                    <div class="summary-row">
+                      <span>Subtotal</span>
+                      <span>175 DT</span>
+                    </div>
+                    <div class="summary-row total">
+                      <span>Total</span>
+                      <span>175  DT</span>
+                    </div>
+                  </div>
+                  
+                  <div class="order-footer">
+                    <button class="order-action track" id="track-order-87654">
+                      <i class="ph ph-map-pin"></i> Track Order
+                    </button>
+                    <button class="order-action receipt" id="Receipt">
+                      <i class="ph ph-file-text"></i> Receipt
+                    </button>
+                  </div>
+                </div>
+                <div class="order-card" id="my-order-76543">
+                  <div class="order-header">
+                    <span class="order-id">#ORD-76543</span>
+                    <span class="order-date">April 1, 2023</span>
+                    <span class="order-status delivered">Delivered</span>
+                  </div>
+                  
+                  <div class="order-products-list">
+                    <div class="order-product-item" id="my-order-item-3">
+                      <div class="product-image">
+                        <img src="../assets/images/products/oversize.png" alt="Hoddie">
+                      </div>
+                      <div class="product-info">
+                        <h3>Smart Watch Series 5</h3>
+                        <p class="product-sku">SKU: HO-2025-OPH</p>
+                        <div class="product-meta">
+                          <span class="product-price">79 DT</span>
+                          <span class="product-qty">Qty: 1</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="order-summary">
+                    <div class="summary-row">
+                      <span>Subtotal</span>
+                      <span>79 DT</span>
+                    </div>
+                    <div class="summary-row total">
+                      <span>Total</span>
+                      <span>79 DT</span>
+                    </div>
+                  </div>
+                  
+                  <div class="order-footer">
+                    <button class="order-action review" id="review-order-76543">
+                      <i class="ph ph-star"></i> Leave Review
+                    </button>
+                    <button class="order-action receipt" id="receipt-order-76543">
+                      <i class="ph ph-file-text"></i> View Receipt
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="orders-pagination">
+                <button class="pagination-btn disabled" id="my-orders-prev">
+                  <i class="ph ph-caret-left"></i> <span>Previous</span>
+                </button>
+                <div class="page-numbers">
+                  <span class="page-number active" id="my-orders-page-1">1</span>
+                  <span class="page-number" id="my-orders-page-2">2</span>
+                  <span class="page-number" id="my-orders-page-3">3</span>
+                </div>
+                <button class="pagination-btn" id="my-orders-next">
+                  <span>Next</span> <i class="ph ph-caret-right"></i>
+                </button>
+              </div>
+              
+              
+            </div>
+          </div>
+          <div id="my-wishlist-content">
+            <div id="wishlist-container">
+            </div>
+          </div>
+          <div id="change-password-content">
+            <div class="password-container">
+              <div class="password-card">
+                <div class="password-header">
+                  <i class="ph ph-lock"></i>
+                  <h2>Change Your Password</h2>
+                  <p class="password-subtitle">Secure your account with a new password</p>
+                </div>
+                
+                <form class="password-form">
+                  <div class="input-field">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" id="current-password" placeholder="Current Password" required>
+                    <i class="ph ph-eye-slash toggle-password" data-target="current-password"></i>
+                  </div>
+                  
+                  <div class="input-field">
+                    <i class="ph ph-key"></i>
+                    <input type="password" id="new-password" placeholder="New Password" required>
+                    <i class="ph ph-eye-slash toggle-password" data-target="new-password"></i>
+                  </div>
+                  
+                  <div class="input-field">
+                    <i class="ph ph-keyhole"></i>
+                    <input type="password" id="confirm-password" placeholder="Confirm New Password" required>
+                    <i class="ph ph-eye-slash toggle-password" data-target="confirm-password"></i>
+                  </div>
+                  
+                  <button type="submit" class="submit-btn">
+                    <i class="ph ph-arrow-clockwise"></i> Update Password
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
 
+    </div>
+  </div>
+</section>
 
 <!-- =============================== Manage Profile Section End =========================== -->
 
