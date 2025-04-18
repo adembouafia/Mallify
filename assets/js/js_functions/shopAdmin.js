@@ -135,52 +135,68 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 //Popup edit product
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".editProductBtn").forEach(button => {
-    button.addEventListener("click", function () {
-        let name = "", id = "", price = "", stock = "", category = "", description = "", availability = "";
+document.querySelectorAll('.editProductBtn').forEach(button => {
+    button.addEventListener('click', function () {
+    Swal.fire({
+        title: 'Edit Product',
+        width: '70em',
+        html: `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            <div>
+            <label>Product Name</label>
+            <input type="text" id="productName" class="swal2-input" value="Modern Office Desk">
+            </div>
+            <div>
+            <label>Product ID</label>
+            <input type="text" id="productID" class="swal2-input" value="#123456">
+            </div>
+            <div>
+            <label>Price ($)</label>
+            <input type="number" id="productPrice" class="swal2-input" value="80.00">
+            </div>
+            <div>
+            <label>Category</label>
+            <input type="text" id="productCategory" class="swal2-input" value="Office Furniture">
+            </div>
+            <div>
+            <label>Availability</label>
+            <input type="text" id="productAvailability" class="swal2-input" value="In Stock">
+            </div>
+            <div>
+            <label>Stock</label>
+            <input type="number" id="productStock" class="swal2-input" value="12">
+            </div>
+        </div>
+        <div style="margin-top: 1rem;">
+            <label>Description</label>
+            <textarea id="productDescription" class="swal2-textarea" style="width: 80%; min-height: 120px;">
+            High quality wooden office desk with metal legs, perfect for home or workplace setups.
+            </textarea>
+        </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Save Changes',
+        customClass: {
+        popup: 'swal2-edit-product'
+        },
+        preConfirm: () => {
+        const name = document.getElementById('productName').value;
+        const id = document.getElementById('productID').value;
+        const price = document.getElementById('productPrice').value;
+        const category = document.getElementById('productCategory').value;
+        const availability = document.getElementById('productAvailability').value;
+        const stock = document.getElementById('productStock').value;
+        const description = document.getElementById('productDescription').value;
 
-        const row = this.closest("tr");
-        const card = this.closest(".card");
-
-        if (row) {
-        // Extract from row in Page 1
-        id = row.querySelector("td:nth-child(1)")?.innerText.trim() || "";
-        name = row.querySelector("td:nth-child(2) a")?.innerText.trim() || "";
-        description = row.querySelector("td:nth-child(2) p")?.innerText.replace("Size: ", "").trim() || "No description";
-        price = row.querySelector("td:nth-child(3)")?.innerText.replace("$", "").trim() || "";
-        stock = row.querySelector("td:nth-child(4) .fw-semibold")?.innerText.trim() || "";
-        category = row.querySelector("td:nth-child(5) span")?.innerText.trim() || "";
-        availability = "In Stock"; // Default if not present
-        } 
-        else if (card) {
-        // Extract from product card in Page 2
-        name = card.querySelector("h2.fw-bold")?.innerText.trim() || "";
-        id = card.querySelector(".text-muted")?.innerText.replace("Product ID: ", "").trim() || "";
-        price = card.querySelector("h4.text-danger")?.innerText.replace("$", "").trim() || "";
-        category = card.querySelector("p.mb-2:nth-of-type(1)")?.innerText.replace("Category:", "").trim() || "";
-        availability = card.querySelector("p.mb-2:nth-of-type(2)")?.innerText.replace("Availability:", "").trim() || "";
-        stock = card.querySelector("p.mb-2:nth-of-type(3) .badge")?.innerText.replace(" units", "").trim() || "";
-        description = card.querySelector("p:last-of-type")?.innerText.trim() || "";
+        document.querySelector('h2.fw-bold').innerText = name;
+        document.querySelector('.text-muted').innerText = `Product ID: ${id}`;
+        document.querySelector('h4.text-danger').innerText = `$${price}`;
+        document.querySelectorAll('p.mb-2')[0].innerHTML = `<strong>Category:</strong> ${category}`;
+        document.querySelectorAll('p.mb-2')[1].innerHTML = `<strong>Availability:</strong> ${availability}`;
+        document.querySelectorAll('p.mb-2')[2].innerHTML = `<strong>Stock:</strong> <span class="badge bg-success">${stock} units</span>`;
+        document.querySelector('p:last-of-type').innerText = description;
         }
-
-        // Prefill modal
-        document.getElementById("editProductName").value = name;
-        document.getElementById("editProductID").value = id;
-        document.getElementById("editPrice").value = price;
-        document.getElementById("editStock").value = stock;
-        document.getElementById("editCategory").value = category;
-        document.getElementById("editAvailability").value = availability;
-        document.getElementById("editDescription").value = description;
-
-        // Show modal
-        const modal = new bootstrap.Modal(document.querySelector(".editProductModal"));
-        modal.show();
     });
-    });
-
-    document.getElementById("saveProductChanges").addEventListener("click", function () {
-    const modal = bootstrap.Modal.getInstance(document.querySelector(".editProductModal"));
-    modal.hide();
     });
 });
+
