@@ -90,3 +90,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const fields = ["firstName", "lastName", "email", "phone", "birthday", "gender"];
+
+    // When modal opens, prefill inputs
+    document.getElementById("editProfileModal").addEventListener("show.bs.modal", function () {
+        fields.forEach(field => {
+            document.getElementById("edit" + capitalize(field)).value = document.getElementById(field).value;
+        });
+    });
+
+    // Save changes and update the readonly fields
+    document.getElementById("saveChanges").addEventListener("click", function () {
+        fields.forEach(field => {
+            document.getElementById(field).value = document.getElementById("edit" + capitalize(field)).value;
+        });
+        const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
+        modal.hide();
+    });
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+});
+

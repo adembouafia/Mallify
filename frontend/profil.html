@@ -755,7 +755,10 @@
                           </div>
                       </div>
                   </div>
-                  <button class="btn btn-outline-main feature">Edit Profile</button>
+                  <button type="button" class="btn btn-outline-main feature" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    Edit Profile
+                </button>
+                
               </form>
           </div>
           <div id="my-orders-content">
@@ -951,6 +954,52 @@
 </section>
 
 <!-- =============================== Manage Profile Section End =========================== -->
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="editFirstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="editFirstName">
+            </div>
+            <div class="col-md-6">
+              <label for="editLastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="editLastName">
+            </div>
+            <div class="col-md-6">
+              <label for="editEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="editEmail">
+            </div>
+            <div class="col-md-6">
+              <label for="editPhone" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="editPhone">
+            </div>
+            <div class="col-md-6">
+              <label for="editBirthday" class="form-label">Date of Birth</label>
+              <input type="date" class="form-control" id="editBirthday">
+            </div>
+            <div class="col-md-6">
+              <label for="editGender" class="form-label">Gender</label>
+              <input type="text" class="form-control" id="editGender">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-main" id="saveChanges">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
