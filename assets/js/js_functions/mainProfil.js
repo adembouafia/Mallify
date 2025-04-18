@@ -90,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     });
 });
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const fields = ["firstName", "lastName", "email", "phone", "birthday", "gender"];
 

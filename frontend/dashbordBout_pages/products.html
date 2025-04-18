@@ -739,6 +739,56 @@
         </div>
       </main>
       <!--end::App Main-->
+      <!-- Product Edit Modal -->
+      <div class="modal fade editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editProductForm">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="editProductName" class="form-label">Product Name</label>
+                    <input type="text" class="form-control" id="editProductName">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editProductID" class="form-label">Product ID</label>
+                    <input type="text" class="form-control" id="editProductID">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editPrice" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="editPrice">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editCategory" class="form-label">Category</label>
+                    <input type="text" class="form-control" id="editCategory">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editAvailability" class="form-label">Availability</label>
+                    <input type="text" class="form-control" id="editAvailability">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editStock" class="form-label">Stock</label>
+                    <input type="number" class="form-control" id="editStock">
+                  </div>
+                  <div class="col-md-12">
+                    <label for="editDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="editDescription" rows="3"></textarea>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-main" id="saveProductChanges">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!--end::Edit product modal-->  
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
