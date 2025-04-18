@@ -90,27 +90,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     });
 });
+// Edit Profile Info Modal  
 document.addEventListener("DOMContentLoaded", function () {
-    const fields = ["firstName", "lastName", "email", "phone", "birthday", "gender"];
-
-    // When modal opens, prefill inputs
-    document.getElementById("editProfileModal").addEventListener("show.bs.modal", function () {
+    const fields = [
+        { id: "firstName", modalId: "editFirstName" },
+        { id: "lastName", modalId: "editLastName" },
+        { id: "email", modalId: "editEmail" },
+        { id: "phone", modalId: "editPhone" },
+        { id: "birthday", modalId: "editBirthday" },
+        { id: "gender", modalId: "editGender" },
+    ];
+    const modalEl = document.getElementById("editProfileModal");
+    modalEl.addEventListener("show.bs.modal", function () {
         fields.forEach(field => {
-            document.getElementById("edit" + capitalize(field)).value = document.getElementById(field).value;
+            const input = document.getElementById(field.id);
+            const modalInput = document.getElementById(field.modalId);
+            if (input && modalInput) {
+                modalInput.value = input.value;
+            }
         });
     });
-
-    // Save changes and update the readonly fields
     document.getElementById("saveChanges").addEventListener("click", function () {
+        let firstName = "";
+        let lastName = "";
+        let email = "";
         fields.forEach(field => {
-            document.getElementById(field).value = document.getElementById("edit" + capitalize(field)).value;
+            const modalInput = document.getElementById(field.modalId);
+            const input = document.getElementById(field.id);
+            if (input && modalInput) {
+                input.value = modalInput.value;
+                if (field.id === "lastName") lastName = modalInput.value;
+                if (field.id === "firstName") firstName = modalInput.value;
+                if (field.id === "email") email = modalInput.value;
+            }
         });
-        const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
+        const displayName = document.getElementById("profileName");
+        const displayEmail = document.getElementById("profileEmail");
+        if (displayName) displayName.textContent = `${lastName} ${firstName} `;
+        if (displayEmail) displayEmail.textContent = email;
+        const modal = bootstrap.Modal.getInstance(modalEl);
         modal.hide();
     });
+}); 
+//changer l'image de profile
 
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-});
+  document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("profileImageInput");
+    const profileImage = document.getElementById("profileImage");
+    const editBtn = document.getElementById("editImageBtn");
+
+    // Quand on clique sur le bouton crayon, on déclenche le file input
+    editBtn.addEventListener("click", function () {
+      imageInput.click();
+    });
+
+    // Quand une image est choisie, on la met à jour dans la balise <img>
+    imageInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          profileImage.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      }
+    });
+  });
 
