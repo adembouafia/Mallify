@@ -14033,6 +14033,7 @@ body:not(.app-loaded) .app-footer {
   border: 3px solid;
   border-color: transparent;
   border-color: var(--bs-border-color-translucent);
+
 }
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
   z-index: 5;
@@ -14044,6 +14045,7 @@ body:not(.app-loaded) .app-footer {
   display: block;
   font-size: 12px;
 }
+
 .navbar-nav > .user-menu > .dropdown-menu > .user-body {
   padding: 15px;
   border-top: 1px solid var(--bs-border-color);

@@ -77,3 +77,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// add admin form
+
+const avatarInput = document.getElementById("adminAvatar");
+const avatarPreview = document.getElementById("avatarPreview");
+
+avatarInput.addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      avatarPreview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+document.getElementById("adminForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const name = document.getElementById("adminName").value;
+  const email = document.getElementById("adminEmail").value;
+  const date = document.getElementById("adminDate").value;
+  const avatarSrc = avatarPreview.src;
+
+  const tbody = document.querySelector("table tbody");
+
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <td><img src="${avatarSrc}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+    <td>${name}</td>
+    <td>${email}</td>
+    <td>${date}</td>
+    <td>
+      <button class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></button>
+      <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+    </td>
+  `;
+  tbody.appendChild(newRow);
+
+  // Ferme le modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
+  modal.hide();
+
+  // Reset le form
+  this.reset();
+  avatarPreview.src = "../../assets/images/dashboard/devoloper1.jpg";
+});
