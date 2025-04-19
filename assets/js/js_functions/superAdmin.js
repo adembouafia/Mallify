@@ -113,11 +113,11 @@ const adminForm = document.getElementById("adminForm");
       <td>${email}</td>
       <td>${new Date().toLocaleString()}</td>
       <td>
-        <button class="btn btn-sm btn-outline-primary me-1">
-          <i class="bi bi-pencil"></i>
+        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+            <i class="bi bi-pencil"></i>
         </button>
-        <button class="btn btn-sm btn-outline-danger">
-          <i class="bi bi-trash"></i>
+        <button class="btn btn-sm btn-outline-danger btn-delete">
+            <i class="bi bi-trash"></i>
         </button>
       </td>`;
     adminTableBody.insertBefore(newRow, adminTableBody.firstChild);
@@ -140,7 +140,7 @@ const adminForm = document.getElementById("adminForm");
   });
 
 // edit admin
-  let editingRow = null;
+let editingRow = null;
 let newEditAvatarDataURL = null;
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
@@ -206,6 +206,76 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// filtrer les admins 
+function sortTable(type, direction) {
+    const table = document.getElementById('adminTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+  
+    let colIndex;
+    if (type === 'name') colIndex = 1;
+    else if (type === 'email') colIndex = 2;
+    else if (type === 'date') colIndex = 3;
+  
+    rows.sort((a, b) => {
+      const textA = a.cells[colIndex].textContent.trim();
+      const textB = b.cells[colIndex].textContent.trim();
+  
+      if (type === 'date') {
+        const dateA = parseDate(textA);
+        const dateB = parseDate(textB);
+        return direction === 'asc' ? dateA - dateB : dateB - dateA;
+      } else {
+        const valA = textA.toLowerCase();
+        const valB = textB.toLowerCase();
+        if (valA < valB) return direction === 'asc' ? -1 : 1;
+        if (valA > valB) return direction === 'asc' ? 1 : -1;
+        return 0;
+      }
+    });
+  
+    rows.forEach(row => tbody.appendChild(row));
+  }
+  function parseDate(dateStr) {
+    const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
+    if (parts[0].length === 4) {
+      // format: YYYY-MM-DD
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    } else {
+      // format: DD/MM/YYYY
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+  }
+
+// filtrer par number of row "pagination "
+const entriesSelect = document.getElementById('entriesSelect');
+const table = document.getElementById('adminTable');
+const tbody = table.querySelector('tbody');
+const paginationInfo = document.getElementById('paginationInfo');
+
+function updatePagination() {
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const selectedCount = parseInt(entriesSelect.value);
+  const totalRows = rows.length;
+
+  // Hide/show rows
+  rows.forEach((row, index) => {
+    row.style.display = index < selectedCount ? '' : 'none';
+  });
+
+  // Update info text
+  const visibleEnd = Math.min(selectedCount, totalRows);
+  paginationInfo.textContent = `Showing 1 to ${visibleEnd} of ${totalRows} entries`;
+}
+
+// Event when select changes
+entriesSelect.addEventListener('change', updatePagination);
+
+// Call on page load
+window.addEventListener('load', updatePagination);
+
+
 
 
 
