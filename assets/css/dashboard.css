@@ -15464,3 +15464,8 @@ html.maximized-card {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+  .highlight {
+    background-color:#0b5ed7;
+    color :white;
+}
+
