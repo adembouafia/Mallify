@@ -335,7 +335,7 @@
                             <button class="btn btn-sm btn-outline-secondary me-2">
                                 <i class="bi bi-filter"></i> Filter
                             </button>
-                            <button class="btn btn-sm btn-success" id="exportCsv">
+                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addModeratorModal">
                                 <i class="bi bi-plus-circle"></i> Add Moderator
                             </button>
                         </div>
@@ -376,7 +376,7 @@
                                     <td>admin@gmail.com</td>
                                     <td>2016-05-19 06:14</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -390,7 +390,7 @@
                                     <td>autore@gmail.com</td>
                                     <td>2016-05-27 08:01</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -404,7 +404,7 @@
                                     <td>barben@gmail.com</td>
                                     <td>2016-11-25 12:43</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -418,7 +418,7 @@
                                     <td>bien@gmail.com</td>
                                     <td>2016-05-07 17:03</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -432,7 +432,7 @@
                                     <td>efsb@mail.com</td>
                                     <td>2016-05-07 10:13</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -446,7 +446,7 @@
                                     <td>ebabden@gmail.com</td>
                                     <td>2016-05-07 13:20</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -460,7 +460,7 @@
                                     <td>ema@mail.com</td>
                                     <td>2016-05-07 12:39</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -474,7 +474,7 @@
                                     <td>james@mail.com</td>
                                     <td>2016-05-07 09:45</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -488,7 +488,7 @@
                                     <td>jane@mail.com</td>
                                     <td>2016-05-07 03:03</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -522,6 +522,72 @@
         </div>
       </main>
       <!--end::App Main-->
+      <!--add moderator-->
+      <div class="modal fade" id="addModeratorModal" tabindex="-1" aria-labelledby="addModeratorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="moderatorForm">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModeratorModalLabel">Add Moderator</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3 text-center">
+                  <label for="moderatorAvatar" class="form-label">Choose Avatar</label>
+                  <input type="file" class="form-control" id="moderatorAvatar" accept="image/*">
+                  <div class="mt-3">
+                    <img id="avatarPreview" src="../../assets/images/dashboard/superadmin.jpg" alt="Preview" class="rounded-circle object-fit-cover" width="64" height="64">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="moderatorName" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="moderatorName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="moderatorEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="moderatorEmail" required>
+                </div>
+                <div class="mb-3">
+                  <label for="moderatorPassword" class="form-label">Mot de passe</label>
+                  <input type="password" class="form-control" id="moderatorPassword" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Add moderator</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!--end add moderator-->
+      <!--begin::edit moderator-->
+      <div class="modal fade" id="editModeratorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editModeratorForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Moderator</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editRowIndex">
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      <!--end::edit moderator-->
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
