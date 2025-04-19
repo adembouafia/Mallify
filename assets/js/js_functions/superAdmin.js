@@ -183,47 +183,30 @@ document.getElementById("editAdminForm").addEventListener("submit", function (e)
 });
 
 //search admin 
-document.getElementById('searchBtn').addEventListener('click', function() {
-    const searchText = document.getElementById('searchAdminBar').value.toLowerCase();
-    const table = document.getElementById('adminTable');
-    const rows = table.getElementsByTagName('tr');
-    
-    Array.from(rows).forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        
-        if (cells.length) { // Skip the header row
-            let matchFound = false;
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchAdminInput");
+    const searchButton = document.getElementById("searchAdminBtn");
+    const adminTableRows = document.querySelectorAll("#adminTable tbody tr");
 
-            // Loop through each cell (skip the Avatar and Action buttons)
-            for (let i = 1; i < cells.length - 1; i++) {
-                const cell = cells[i];
+    searchButton.addEventListener("click", () => {
+        const searchText = searchInput.value.toLowerCase().trim();
 
-                // Clear previous highlights
-                removeHighlights(cell);
+        adminTableRows.forEach((row) => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchText) ? "" : "none";
+        });
+    });
 
-                if (searchText && cell.textContent.toLowerCase().includes(searchText)) {
-                    matchFound = true;
-                    cell.innerHTML = highlightMatches(cell.textContent, searchText);
-                }
-            }
+    searchInput.addEventListener("input", () => {
+        const searchText = searchInput.value.toLowerCase().trim();
 
-            // If a match is found, display the row, else hide it
-            row.style.display = matchFound ? '' : 'none';
-        }
+        adminTableRows.forEach((row) => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchText) ? "" : "none";
+        });
     });
 });
 
-// Function to highlight matching text
-function highlightMatches(text, searchText) {
-    const regex = new RegExp(`(${searchText})`, 'gi');
-    return text.replace(regex, '<span class="highlight">$1</span>');
-}
 
-// Function to remove any previous highlights
-function removeHighlights(cell) {
-    const highlightedText = cell.querySelectorAll('.highlight');
-    highlightedText.forEach(highlight => {
-        const newNode = document.createTextNode(highlight.textContent);
-        highlight.replaceWith(newNode);
-    });
-}
+
+  
