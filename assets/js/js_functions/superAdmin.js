@@ -142,6 +142,7 @@ const adminForm = document.getElementById("adminForm");
 // edit admin
 let editingRow = null;
 let newEditAvatarDataURL = null;
+
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
     editingRow = e.target.closest("tr");
@@ -153,10 +154,14 @@ document.addEventListener("click", function (e) {
     document.getElementById("editName").value = fullName;
     document.getElementById("editEmail").value = email;
     document.getElementById("editAvatarPreview").src = avatarImg;
+
+    // Reset file input and data URL
     document.getElementById("editAvatar").value = "";
     newEditAvatarDataURL = null;
   }
 });
+
+// Preview new uploaded avatar
 document.getElementById("editAvatar").addEventListener("change", function () {
   const file = this.files[0];
   if (file) {
@@ -168,11 +173,14 @@ document.getElementById("editAvatar").addEventListener("change", function () {
     reader.readAsDataURL(file);
   }
 });
+
 document.getElementById("editAdminForm").addEventListener("submit", function (e) {
   e.preventDefault();
   if (editingRow) {
     editingRow.cells[1].textContent = document.getElementById("editName").value;
     editingRow.cells[2].textContent = document.getElementById("editEmail").value;
+
+    // Update avatar if a new one is chosen
     if (newEditAvatarDataURL) {
       editingRow.querySelector("img").src = newEditAvatarDataURL;
     }
@@ -181,6 +189,7 @@ document.getElementById("editAdminForm").addEventListener("submit", function (e)
     editModal.hide();
   }
 });
+
 
 //search admin 
 document.addEventListener("DOMContentLoaded", () => {
@@ -206,48 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
-// filtrer les admins 
-function sortTable(type, direction) {
-    const table = document.getElementById('adminTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-  
-    let colIndex;
-    if (type === 'name') colIndex = 1;
-    else if (type === 'email') colIndex = 2;
-    else if (type === 'date') colIndex = 3;
-  
-    rows.sort((a, b) => {
-      const textA = a.cells[colIndex].textContent.trim();
-      const textB = b.cells[colIndex].textContent.trim();
-  
-      if (type === 'date') {
-        const dateA = parseDate(textA);
-        const dateB = parseDate(textB);
-        return direction === 'asc' ? dateA - dateB : dateB - dateA;
-      } else {
-        const valA = textA.toLowerCase();
-        const valB = textB.toLowerCase();
-        if (valA < valB) return direction === 'asc' ? -1 : 1;
-        if (valA > valB) return direction === 'asc' ? 1 : -1;
-        return 0;
-      }
-    });
-  
-    rows.forEach(row => tbody.appendChild(row));
-  }
-  function parseDate(dateStr) {
-    const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
-    if (parts[0].length === 4) {
-      // format: YYYY-MM-DD
-      return new Date(parts[0], parts[1] - 1, parts[2]);
-    } else {
-      // format: DD/MM/YYYY
-      return new Date(parts[2], parts[1] - 1, parts[0]);
-    }
-  }
-
 // filtrer par number of row "pagination "
 const entriesSelect = document.getElementById('entriesSelect');
 const table = document.getElementById('adminTable');
@@ -258,25 +225,59 @@ function updatePagination() {
   const rows = Array.from(tbody.querySelectorAll('tr'));
   const selectedCount = parseInt(entriesSelect.value);
   const totalRows = rows.length;
-
-  // Hide/show rows
   rows.forEach((row, index) => {
     row.style.display = index < selectedCount ? '' : 'none';
   });
-
-  // Update info text
   const visibleEnd = Math.min(selectedCount, totalRows);
   paginationInfo.textContent = `Showing 1 to ${visibleEnd} of ${totalRows} entries`;
 }
-
-// Event when select changes
 entriesSelect.addEventListener('change', updatePagination);
-
-// Call on page load
 window.addEventListener('load', updatePagination);
 
 
+// filtrer les admins 
+function sortAdminTable(type, direction) {
+  const table = document.getElementById('adminTable');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
 
+  let colIndex;
+  if (type === 'name') colIndex = 1;
+  else if (type === 'email') colIndex = 2;
+  else if (type === 'date') colIndex = 3;
+
+  rows.sort((a, b) => {
+    const textA = a.cells[colIndex].textContent.trim().toLowerCase();
+    const textB = b.cells[colIndex].textContent.trim().toLowerCase();
+
+    if (type === 'date') {
+      const dateA = new Date(textA);
+      const dateB = new Date(textB);
+      return direction === 'asc' ? dateA - dateB : dateB - dateA;
+    }
+
+    if (textA < textB) return direction === 'asc' ? -1 : 1;
+    if (textA > textB) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  rows.forEach(row => tbody.appendChild(row));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const filterSelect = document.getElementById('filterSelect');
+
+  filterSelect.addEventListener('change', () => {
+    const selected = filterSelect.value;
+
+    if (selected === 'name-asc') sortAdminTable('name', 'asc');
+    else if (selected === 'name-desc') sortAdminTable('name', 'desc');
+    else if (selected === 'email-asc') sortAdminTable('email', 'asc');
+    else if (selected === 'email-desc') sortAdminTable('email', 'desc');
+    else if (selected === 'date-asc') sortAdminTable('date', 'asc');
+    else if (selected === 'date-desc') sortAdminTable('date', 'desc');
+  });
+});
 
 
   

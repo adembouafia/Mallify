@@ -297,9 +297,6 @@ modal.hide();
 
 console.log("Liste des mots de passe :", passwordList);
 });
-
-
-//edit moderator
 let editingRow = null;
 let newEditAvatarDataURL = null;
 document.addEventListener("click", function (e) {
@@ -308,7 +305,7 @@ document.addEventListener("click", function (e) {
 
     const fullName = editingRow.cells[1].textContent.trim();
     const email = editingRow.cells[2].textContent.trim();
-    const avatarImg = editingRow.querySelector("img").src;
+    const avatarImg = editingRow.querySelector("img")?.src || "";
 
     document.getElementById("editName").value = fullName;
     document.getElementById("editEmail").value = email;
@@ -330,14 +327,136 @@ document.getElementById("editAvatar").addEventListener("change", function () {
 });
 document.getElementById("editModeratorForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  if (editingRow) {
-    editingRow.cells[1].textContent = document.getElementById("editName").value;
-    editingRow.cells[2].textContent = document.getElementById("editEmail").value;
-    if (newEditAvatarDataURL) {
-      editingRow.querySelector("img").src = newEditAvatarDataURL;
-    }
 
+  if (editingRow) {
+    const newName = document.getElementById("editName").value;
+    const newEmail = document.getElementById("editEmail").value;
+
+    editingRow.cells[1].textContent = newName;
+    editingRow.cells[2].textContent = newEmail;
+
+    if (newEditAvatarDataURL) {
+      const avatarImg = editingRow.querySelector("img");
+      if (avatarImg) {
+        avatarImg.src = newEditAvatarDataURL;
+      }
+    }
     const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
     editModal.hide();
+  }
+});
+  // delete admin
+  document.addEventListener("click", function (e) {
+    if (e.target.closest(".btn-delete")) {
+      const row = e.target.closest("tr");
+      if (confirm("Are you sure you want to delete this Moderator ?")) {
+        row.remove();
+      }
+    }
+  });
+// Search moderators
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchModeratorInput");
+  const searchButton = document.getElementById("searchModeratorBtn");
+  const moderatorTableRows = document.querySelectorAll("#moderatorTable tbody tr");
+
+  function filterRows() {
+      const searchText = searchInput.value.toLowerCase().trim();
+
+      moderatorTableRows.forEach((row) => {
+          const rowText = row.textContent.toLowerCase();
+          row.style.display = rowText.includes(searchText) ? "" : "none";
+      });
+  }
+
+  searchButton.addEventListener("click", filterRows);
+  searchInput.addEventListener("input", filterRows);
+});
+// filtrer par number of row "pagination "
+const entriesSelect = document.getElementById('entriesSelect');
+const table = document.getElementById('moderatorTable');
+const tbody = table.querySelector('tbody');
+const paginationInfo = document.getElementById('paginationInfo');
+
+function updatePagination() {
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const selectedCount = parseInt(entriesSelect.value);
+  const totalRows = rows.length;
+
+  // Hide/show rows
+  rows.forEach((row, index) => {
+    row.style.display = index < selectedCount ? '' : 'none';
+  });
+
+  // Update info text
+  const visibleEnd = Math.min(selectedCount, totalRows);
+  paginationInfo.textContent = `Showing 1 to ${visibleEnd} of ${totalRows} entries`;
+}
+
+// Event when select changes
+entriesSelect.addEventListener('change', updatePagination);
+
+// Call on page load
+window.addEventListener('load', updatePagination);
+
+// filtrer les Moderators
+function sortTable(type, direction) {
+  const table = document.getElementById('moderatorTable');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  let colIndex;
+  if (type === 'name') colIndex = 1;
+  else if (type === 'email') colIndex = 2;
+  else if (type === 'date') colIndex = 3;
+
+  rows.sort((a, b) => {
+    const textA = a.cells[colIndex].textContent.trim();
+    const textB = b.cells[colIndex].textContent.trim();
+
+    if (type === 'date') {
+      const dateA = parseDate(textA);
+      const dateB = parseDate(textB);
+      return direction === 'asc' ? dateA - dateB : dateB - dateA;
+    } else {
+      const valA = textA.toLowerCase();
+      const valB = textB.toLowerCase();
+      if (valA < valB) return direction === 'asc' ? -1 : 1;
+      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    }
+  });
+
+  rows.forEach(row => tbody.appendChild(row));
+}
+
+// Date parser that works with "YYYY-MM-DD HH:mm" or "DD/MM/YYYY HH:mm"
+function parseDate(dateStr) {
+  const [datePart] = dateStr.trim().split(" ");
+  const parts = datePart.includes('/') ? datePart.split('/') : datePart.split('-');
+
+  if (parts[0].length === 4) {
+    // format: YYYY-MM-DD
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  } else {
+    // format: DD/MM/YYYY
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+  }
+}
+
+// Handle filter dropdown
+document.addEventListener('DOMContentLoaded', () => {
+  const filterSelect = document.getElementById('filterSelect');
+
+  if (filterSelect) {
+    filterSelect.addEventListener('change', () => {
+      const selected = filterSelect.value;
+      if (selected === 'name-asc') sortTable('name', 'asc');
+      else if (selected === 'name-desc') sortTable('name', 'desc');
+      else if (selected === 'email-asc') sortTable('email', 'asc');
+      else if (selected === 'email-desc') sortTable('email', 'desc');
+      else if (selected === 'date-asc') sortTable('date', 'asc');
+      else if (selected === 'date-desc') sortTable('date', 'desc');
+    });
   }
 });
