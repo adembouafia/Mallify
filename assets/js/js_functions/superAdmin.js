@@ -102,7 +102,7 @@ const adminForm = document.getElementById("adminForm");
     const email = document.getElementById("adminEmail").value;
     const password = document.getElementById("adminPassword").value;
     const avatarFile = avatarInput.files[0];
-    let avatarUrl = "../../assets/images/dashboard/devoloper1.jpg";
+    let avatarUrl = "../../assets/images/dashboard/superadmin.jpg";
     if (avatarFile) {
       avatarUrl = URL.createObjectURL(avatarFile);
     }
@@ -139,30 +139,74 @@ const adminForm = document.getElementById("adminForm");
     }
   });
 
-  // edit admin
+// edit admin
   let editingRow = null;
-
+let newEditAvatarDataURL = null;
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
     editingRow = e.target.closest("tr");
+
     const fullName = editingRow.cells[1].textContent.trim();
     const email = editingRow.cells[2].textContent.trim();
+    const avatarImg = editingRow.querySelector("img").src;
 
     document.getElementById("editName").value = fullName;
     document.getElementById("editEmail").value = email;
+    document.getElementById("editAvatarPreview").src = avatarImg;
+    document.getElementById("editAvatar").value = "";
+    newEditAvatarDataURL = null;
   }
 });
-
+document.getElementById("editAvatar").addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("editAvatarPreview").src = e.target.result;
+      newEditAvatarDataURL = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
 document.getElementById("editAdminForm").addEventListener("submit", function (e) {
   e.preventDefault();
   if (editingRow) {
     editingRow.cells[1].textContent = document.getElementById("editName").value;
     editingRow.cells[2].textContent = document.getElementById("editEmail").value;
+    if (newEditAvatarDataURL) {
+      editingRow.querySelector("img").src = newEditAvatarDataURL;
+    }
 
     const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
     editModal.hide();
   }
 });
+
+//search admin 
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchAdminInput");
+    const searchButton = document.getElementById("searchAdminBtn");
+    const adminTableRows = document.querySelectorAll("#adminTable tbody tr");
+
+    searchButton.addEventListener("click", () => {
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        adminTableRows.forEach((row) => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchText) ? "" : "none";
+        });
+    });
+
+    searchInput.addEventListener("input", () => {
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        adminTableRows.forEach((row) => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchText) ? "" : "none";
+        });
+    });
+});
+
 
 
   
