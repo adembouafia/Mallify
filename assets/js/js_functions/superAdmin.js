@@ -102,7 +102,7 @@ const adminForm = document.getElementById("adminForm");
     const email = document.getElementById("adminEmail").value;
     const password = document.getElementById("adminPassword").value;
     const avatarFile = avatarInput.files[0];
-    let avatarUrl = "../../assets/images/dashboard/devoloper1.jpg";
+    let avatarUrl = "../../assets/images/dashboard/superadmin.jpg";
     if (avatarFile) {
       avatarUrl = URL.createObjectURL(avatarFile);
     }
