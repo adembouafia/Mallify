@@ -10,6 +10,8 @@
       integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
@@ -326,6 +328,152 @@
       <!--end::Sidebar-->
       <!--begin::App Main-->
       <main class="app-main">
+        <div class="invoice-container" id="invoiceContainer">
+          <!-- Controls -->
+          <div class="invoice-controls" id="invoiceControls">
+            <div class="time-selector" id="timeSelectorContainer">
+              <button id="invoiceTimeBtn" class="time-btn">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="timeBtnText">Last Month</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div id="invoiceTimeOptions" class="time-dropdown">
+                <div data-period="day" id="timeOptionDay">Today</div>
+                <div data-period="week" id="timeOptionWeek">This Week</div>
+                <div data-period="month" id="timeOptionMonth" class="active">Last Month</div>
+                <div data-period="year" id="timeOptionYear">Last Year</div>
+                <div data-period="custom" id="timeOptionCustom">Custom Range</div>
+              </div>
+            </div>
+            <button id="invoiceDownloadBtn" class="download-btn">
+              <i class="fas fa-file-pdf"></i>
+              <span id="downloadBtnText">Download PDF</span>
+            </button>
+          </div>
+      
+          <!-- Invoice Display -->
+          <div class="invoice-display" id="invoiceToPrint">
+            <div class="invoice-header" id="invoiceHeader">
+              <div class="invoice-brand" id="invoiceBrand">
+                <h2 id="companyName">Your Shop Name</h2>
+                <p id="invoiceType">Sales Invoice</p>
+              </div>
+              <div class="invoice-meta" id="invoiceMeta">
+                <div class="invoice-period" id="invoicePeriodLabel">June 2023</div>
+                <div class="invoice-total" id="invoiceTotalAmount">$4,250.00</div>
+              </div>
+            </div>
+      
+            <div class="invoice-details" id="invoiceDetails">
+              <table id="invoiceTable">
+                <thead id="invoiceTableHead">
+                  <tr id="invoiceTableHeaderRow">
+                    <th id="colDate">Date</th>
+                    <th id="colOrderId">Order ID</th>
+                    <th id="colCustomer">Customer</th>
+                    <th id="colAmount">Amount</th>
+                    <th id="colStatus">Status</th>
+                    <th id="colDetails">Details</th>
+                  </tr>
+                </thead>
+                <tbody id="invoiceTableBody">
+                  <tr id="invoiceRow1" class="invoice-row">
+                    <td id="row1Date">Jun 15, 2023</td>
+                    <td id="row1OrderId">#ORD-1001</td>
+                    <td id="row1Customer">John Smith</td>
+                    <td id="row1Amount">$120.00</td>
+                    <td id="row1Status"><span class="badge-invoice paid">Paid</span></td>
+                    <td id="row1Details"><button class="detail-btn" id="detailBtn1" data-order="1001"><i class="bi bi-eye"></i></button></td>
+                  </tr>
+                  <tr id="invoiceRow2" class="invoice-row">
+                    <td id="row2Date">Jun 18, 2023</td>
+                    <td id="row2OrderId">#ORD-1002</td>
+                    <td id="row2Customer">Sarah Johnson</td>
+                    <td id="row2Amount">$85.50</td>
+                    <td id="row2Status"><span class="badge-invoice paid">Paid</span></td>
+                    <td id="row2Details"><button class="detail-btn" id="detailBtn2" data-order="1002"><i class="bi bi-eye"></i></button></td>
+                  </tr>
+                  <tr id="invoiceRow3" class="invoice-row">
+                    <td id="row3Date">Jun 22, 2023</td>
+                    <td id="row3OrderId">#ORD-1003</td>
+                    <td id="row3Customer">Mike Brown</td>
+                    <td id="row3Amount">$210.00</td>
+                    <td id="row3Status"><span class="badge-invoice pending">Pending</span></td>
+                    <td id="row3Details"><button class="detail-btn" id="detailBtn3" data-order="1003"><i class="bi bi-eye"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+      
+            <div class="invoice-summary" id="invoiceSummary">
+              <div class="summary-row" id="summaryRow1">
+                <span id="summaryLabel1">Total Sales:</span>
+                <span id="summaryValue1">$4,250.00</span>
+              </div>
+              <div class="summary-row" id="summaryRow2">
+                <span id="summaryLabel2">Total Orders:</span>
+                <span id="summaryValue2">24</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Order Details Modal -->
+        <div id="orderModal" class="modal">
+          <div class="modal-content" id="modalContent">
+            <span class="close" id="modalClose">&times;</span>
+            <h3 id="modalOrderTitle">Order #1001 Details</h3>
+            
+            <div class="modal-section" id="modalCustomerSection">
+              <h4 id="modalCustomerHeader">Customer Information</h4>
+              <div id="modalCustomerInfo">
+                <p id="customerNameP"><strong>Name:</strong> <span id="customerName">John Smith</span></p>
+                <p id="customerEmailP"><strong>Email:</strong> <span id="customerEmail">john@example.com</span></p>
+                <p id="customerPhoneP"><strong>Phone:</strong> <span id="customerPhone">(555) 123-4567</span></p>
+                <p id="customerAddressP"><strong>Address:</strong> <span id="customerAddress">123 Main St, Cityville, ST 12345</span></p>
+              </div>
+            </div>
+            
+            <div class="modal-section" id="modalItemsSection">
+              <h4 id="modalItemsHeader">Order Items</h4>
+              <table class="modal-items" id="modalItemsTable">
+                <thead id="modalItemsHead">
+                  <tr id="modalItemsHeaderRow">
+                    <th id="modalColProduct">Product</th>
+                    <th id="modalColPrice">Price</th>
+                    <th id="modalColQty">Qty</th>
+                    <th id="modalColTotal">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="modalItemsBody">
+                  <!-- Items will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="modal-section" id="modalSummarySection">
+              <h4 id="modalSummaryHeader">Order Summary</h4>
+              <div class="modal-summary" id="modalOrderSummary">
+                <div class="summary-row" id="modalSubtotalRow">
+                  <span id="modalSubtotalLabel">Subtotal:</span>
+                  <span id="modalSubtotal">$120.00</span>
+                </div>
+                <div class="summary-row" id="modalShippingRow">
+                  <span id="modalShippingLabel">Shipping:</span>
+                  <span id="modalShipping">$5.00</span>
+                </div>
+                <div class="summary-row" id="modalTaxRow">
+                  <span id="modalTaxLabel">Tax:</span>
+                  <span id="modalTax">$10.00</span>
+                </div>
+                <div class="summary-row total" id="modalTotalRow">
+                  <span id="modalTotalLabel">Total:</span>
+                  <span id="modalTotal">$135.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->

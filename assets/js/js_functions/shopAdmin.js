@@ -460,3 +460,148 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+// invoice JS
+document.addEventListener('DOMContentLoaded', function () {
+  const invoiceTimeBtn = document.getElementById('invoiceTimeBtn');
+  const invoiceTimeOptions = document.getElementById('invoiceTimeOptions');
+  const timeBtnText = document.getElementById('timeBtnText');
+
+  invoiceTimeBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    invoiceTimeOptions.classList.toggle('show');
+  });
+
+  document.addEventListener('click', function () {
+    invoiceTimeOptions.classList.remove('show');
+  });
+
+  invoiceTimeOptions.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (e.target.dataset.period) {
+      const period = e.target.dataset.period;
+      document.querySelectorAll('#invoiceTimeOptions div').forEach(option => option.classList.remove('active'));
+      e.target.classList.add('active');
+      timeBtnText.textContent = e.target.textContent;
+      updateInvoiceData(period);
+      invoiceTimeOptions.classList.remove('show');
+    }
+  });
+
+  document.getElementById('invoiceDownloadBtn').addEventListener('click', function () {
+    window.print();
+  });
+
+  const ordersData = {
+    '1001': {
+      customer: {
+        name: 'John Smith',
+        email: 'john@example.com',
+        phone: '(555) 123-4567',
+        address: '123 Main St, Cityville, ST 12345'
+      },
+      items: [
+        { name: 'T-Shirt', price: 25.00, quantity: 2 },
+        { name: 'Coffee Mug', price: 12.50, quantity: 1 },
+        { name: 'Sticker Pack', price: 5.00, quantity: 3 }
+      ],
+      shipping: 5.00,
+      tax: 10.00
+    },
+    '1002': {
+      customer: {
+        name: 'Sarah Johnson',
+        email: 'sarah@example.com',
+        phone: '(555) 987-6543',
+        address: '456 Oak Ave, Townsville, ST 54321'
+      },
+      items: [
+        { name: 'Hoodie', price: 45.00, quantity: 1 },
+        { name: 'Keychain', price: 3.50, quantity: 2 }
+      ],
+      shipping: 5.00,
+      tax: 4.60
+    },
+    '1003': {
+      customer: {
+        name: 'Mike Brown',
+        email: 'mike@example.com',
+        phone: '(555) 555-5555',
+        address: '789 Pine Rd, Villagetown, ST 67890'
+      },
+      items: [
+        { name: 'Notebook', price: 15.00, quantity: 1 },
+        { name: 'Pen Set', price: 8.00, quantity: 2 },
+        { name: 'Desk Organizer', price: 32.00, quantity: 1 }
+      ],
+      shipping: 8.00,
+      tax: 12.75
+    }
+  };
+
+  const orderModal = document.getElementById('orderModal');
+  const modalClose = document.getElementById('modalClose');
+  const detailBtns = document.querySelectorAll('.detail-btn');
+
+  detailBtns.forEach(btn => {
+    btn.addEventListener('click', function () {
+      const orderId = this.getAttribute('data-order');
+      const order = ordersData[orderId];
+      if (!order) return;
+
+      document.getElementById('modalOrderTitle').textContent = `Order #${orderId} Details`;
+      document.getElementById('customerName').textContent = order.customer.name;
+      document.getElementById('customerEmail').textContent = order.customer.email;
+      document.getElementById('customerPhone').textContent = order.customer.phone;
+      document.getElementById('customerAddress').textContent = order.customer.address;
+
+      const itemsBody = document.getElementById('modalItemsBody');
+      itemsBody.innerHTML = '';
+      let subtotal = 0;
+      order.items.forEach(item => {
+        const row = document.createElement('tr');
+        const total = item.price * item.quantity;
+        subtotal += total;
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>$${item.price.toFixed(2)}</td>
+          <td>${item.quantity}</td>
+          <td>$${total.toFixed(2)}</td>
+        `;
+        itemsBody.appendChild(row);
+      });
+
+      document.getElementById('modalSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('modalShipping').textContent = `$${order.shipping.toFixed(2)}`;
+      document.getElementById('modalTax').textContent = `$${order.tax.toFixed(2)}`;
+      document.getElementById('modalTotal').textContent = `$${(subtotal + order.shipping + order.tax).toFixed(2)}`;
+
+      orderModal.style.display = 'block';
+    });
+  });
+
+  modalClose.addEventListener('click', () => orderModal.style.display = 'none');
+  window.addEventListener('click', e => { if (e.target === orderModal) orderModal.style.display = 'none'; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') orderModal.style.display = 'none'; });
+
+  function updateInvoiceData(period) {
+    const periodLabels = {
+      day: new Date().toLocaleDateString(),
+      week: 'Week ' + getWeekNumber(new Date()),
+      month: new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }),
+      year: new Date().getFullYear(),
+      custom: 'Custom Range'
+    };
+    document.getElementById('invoicePeriodLabel').textContent = periodLabels[period] || period;
+  }
+
+  function getWeekNumber(date) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  }
+
+  // Initialize
+  updateInvoiceData('month');
+});
