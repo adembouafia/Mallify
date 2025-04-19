@@ -139,30 +139,49 @@ const adminForm = document.getElementById("adminForm");
     }
   });
 
-  // edit admin
+// edit admin
   let editingRow = null;
-
+let newEditAvatarDataURL = null;
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
     editingRow = e.target.closest("tr");
+
     const fullName = editingRow.cells[1].textContent.trim();
     const email = editingRow.cells[2].textContent.trim();
+    const avatarImg = editingRow.querySelector("img").src;
 
     document.getElementById("editName").value = fullName;
     document.getElementById("editEmail").value = email;
+    document.getElementById("editAvatarPreview").src = avatarImg;
+    document.getElementById("editAvatar").value = "";
+    newEditAvatarDataURL = null;
   }
 });
-
+document.getElementById("editAvatar").addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("editAvatarPreview").src = e.target.result;
+      newEditAvatarDataURL = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
 document.getElementById("editAdminForm").addEventListener("submit", function (e) {
   e.preventDefault();
   if (editingRow) {
     editingRow.cells[1].textContent = document.getElementById("editName").value;
     editingRow.cells[2].textContent = document.getElementById("editEmail").value;
+    if (newEditAvatarDataURL) {
+      editingRow.querySelector("img").src = newEditAvatarDataURL;
+    }
 
     const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
     editModal.hide();
   }
 });
+
 
 
   
