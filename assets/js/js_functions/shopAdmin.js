@@ -279,7 +279,7 @@ newRow.innerHTML = `
     <td>${email}</td>
     <td>${new Date().toLocaleString()}</td>
     <td>
-    <button class="btn btn-sm btn-outline-primary me-1">
+    <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
         <i class="bi bi-pencil"></i>
     </button>
     <button class="btn btn-sm btn-outline-danger">
@@ -301,66 +301,43 @@ console.log("Liste des mots de passe :", passwordList);
 
 //edit moderator
 let editingRow = null;
-
+let newEditAvatarDataURL = null;
 document.addEventListener("click", function (e) {
-    if (e.target.closest(".btn-edit")) {
-        editingRow = e.target.closest("tr");
+  if (e.target.closest(".btn-edit")) {
+    editingRow = e.target.closest("tr");
 
-        const fullName = editingRow.cells[1].textContent.trim();
-        const email = editingRow.cells[2].textContent.trim();
-        const avatarImg = editingRow.querySelector("img");  // Assuming the avatar is an <img> element
+    const fullName = editingRow.cells[1].textContent.trim();
+    const email = editingRow.cells[2].textContent.trim();
+    const avatarImg = editingRow.querySelector("img").src;
 
-        document.getElementById("editName").value = fullName;
-        document.getElementById("editEmail").value = email;
-
-        // If there's an avatar image in the row, show it in the modal
-        if (avatarImg) {
-            document.getElementById("avatarPreview").src = avatarImg.src;
-        } else {
-            document.getElementById("avatarPreview").src = "";  // Clear avatar preview if no avatar exists
-        }
-
-        const editModal = new bootstrap.Modal(document.getElementById("editModeratorModal"));
-        editModal.show();
-    }
+    document.getElementById("editName").value = fullName;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editAvatarPreview").src = avatarImg;
+    document.getElementById("editAvatar").value = "";
+    newEditAvatarDataURL = null;
+  }
 });
-
-// Preview the avatar image when a new one is selected
 document.getElementById("editAvatar").addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            document.getElementById("avatarPreview").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("editAvatarPreview").src = e.target.result;
+      newEditAvatarDataURL = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 });
-
-// Submit the form and update the row with new details and avatar
 document.getElementById("editModeratorForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (editingRow) {
-        // Update name and email
-        editingRow.cells[1].textContent = document.getElementById("editName").value;
-        editingRow.cells[2].textContent = document.getElementById("editEmail").value;
-
-        // If a new avatar has been selected, update it
-        const newAvatarSrc = document.getElementById("avatarPreview").src;
-        const avatarImgInRow = editingRow.querySelector("img");
-
-        if (avatarImgInRow) {
-            avatarImgInRow.src = newAvatarSrc;  // Update existing avatar image
-        } else {
-            // If there's no avatar, create a new img tag in the row
-            const newAvatarImg = document.createElement("img");
-            newAvatarImg.src = newAvatarSrc;
-            newAvatarImg.classList.add("rounded-circle");  // Add any classes you need
-            editingRow.cells[0].appendChild(newAvatarImg);  // Assuming the avatar is in the first cell
-        }
-
-        // Hide the modal after submission
-        const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
-        editModal.hide();
+  e.preventDefault();
+  if (editingRow) {
+    editingRow.cells[1].textContent = document.getElementById("editName").value;
+    editingRow.cells[2].textContent = document.getElementById("editEmail").value;
+    if (newEditAvatarDataURL) {
+      editingRow.querySelector("img").src = newEditAvatarDataURL;
     }
+
+    const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
+    editModal.hide();
+  }
 });
