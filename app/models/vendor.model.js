@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const VendorSchema = new mongoose.Schema(
-  {
+    {
     vendorname: {
         type : String,
         required : true
@@ -37,11 +37,17 @@ const VendorSchema = new mongoose.Schema(
     vendorpassword: {
         type : String ,
         required : true
+    },
+
+    role: {
+        type: String,
+        default: "vendor"
     }
-  },
-  {
-    timestamps: true,
-  }
+    },
+
+    {
+        timestamps: true,
+    }
 );
 
 //Hashing the password before saving 

@@ -1,39 +1,41 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const ClientSchema = new mongoose.Schema(
-  {
-    firstname: {
+const moderatorSchema = new mongoose.Schema(
+    {
+    moderatorName: {
         type : String,
         required : true
     },
     
-    lastname: {
-        type : String,
-        required : true
-    },
-
     email: {
-      type: String,
-      unique: [true, "The email is unique"],
+        type: String,
+        unique: [true, "The email is unique"],
     },
 
-    password: {
+    moderatorPassword: {
         type : String ,
         required : true
     },
+
     role: {
         type: String,
-        default: "client"
+        default: "moderator"
+    },
+    moderatorImage: {
+        type: String,
+        required: true
+    },
+    
+    },
+
+    {
+        timestamps: true,
     }
-  },
-  {
-    timestamps: true,
-  }
 );
 
 //Hashing the password before saving 
-ClientSchema.pre("save" , async function(next) {
+moderatorSchema.pre("save" , async function(next) {
     try{
         if (!this.isModified("password")){
             return next();
@@ -46,4 +48,4 @@ ClientSchema.pre("save" , async function(next) {
     }
 })
 
-module.exports = mongoose.model("Client", ClientSchema);
+module.exports = mongoose.model("moderator", moderatorSchema);
