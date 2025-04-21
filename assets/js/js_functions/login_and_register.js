@@ -22,8 +22,6 @@ function backtologin(){
 
 }  
 
-
-
 //Preview the logo 
 function previewImage(event) {
     const input = event.target;
@@ -80,9 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
-        
+    
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
     
@@ -91,65 +89,59 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        try {
-            const response = await fetch("http://localhost:3000/client/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            });
+        const loginData = {
+            email: email,
+            vendorPassword: password
+        };
     
-            const data = await response.json();
-            console.log("Réponse du serveur :", data); // Vérification en console
+        const xhrClient = new XMLHttpRequest();
+        xhrClient.open("POST", "http://localhost:3000/client/login", true);
+        xhrClient.setRequestHeader("Content-Type", "application/json");
     
-            if (response.ok) {
-                alert("Connexion réussie !");
-                // localStorage.setItem("token", data.token); // Stocker le token
-                window.location.href = "wishlist.html"; // Rediriger vers la page souhaitée
+        xhrClient.onload = function () {
+            if (xhrClient.status === 200) {
+                const clientResponse = JSON.parse(xhrClient.responseText);
+                alert("Connexion réussie (client) !");
+                console.log("Client :", clientResponse);
+                // localStorage.setItem("token", clientResponse.token);
+                window.location.href = "wishlist.html";
             } else {
-                alert(`Erreur : ${data.message}`);
+                // Si ce n'est pas un client, on essaye comme vendor
+                const xhrVendor = new XMLHttpRequest();
+                xhrVendor.open("POST", "http://localhost:3000/vendor/login", true);
+                xhrVendor.setRequestHeader("Content-Type", "application/json");
+    
+                xhrVendor.onload = function () {
+                    if (xhrVendor.status === 200) {
+                        const vendorResponse = JSON.parse(xhrVendor.responseText);
+                        alert("Connexion réussie (vendeur) !");
+                        console.log("Vendor :", vendorResponse);
+                        // localStorage.setItem("token", vendorResponse.token);
+                        window.location.href = "../../frontend/dashbordBout_pages/index.html";
+                    } else {
+                        const error = JSON.parse(xhrVendor.responseText);
+                        alert("Erreur : " + (error.message || "Email ou mot de passe invalide"));
+                    }
+                };
+    
+                xhrVendor.onerror = function () {
+                    alert("Erreur de connexion avec le serveur (vendor).");
+                };
+    
+                xhrVendor.send(JSON.stringify(loginData));
             }
-        } catch (error) {
-            console.error("Erreur lors de la connexion :", error);
-            alert("Une erreur s'est produite lors de la connexion.");
-        }
+        };
+    
+        xhrClient.onerror = function () {
+            alert("Erreur de connexion avec le serveur (client).");
+        };
+    
+        xhrClient.send(JSON.stringify(loginData));
     });
+    
     
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("vendorRegisterForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);  
-
-        // Validation: Check if all fields are filled
-        if (!formData.get("vendorname") || !formData.get("shopname") || !formData.get("phone") || !formData.get("shoplogo") || !formData.get("vendorpassword")) {
-            alert("Tous les champs sont obligatoires !");
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:3000/vendor/register", {
-                method: "POST",
-                body: formData 
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Inscription du vendeur réussie !");
-                window.location.reload();
-            } else {
-                alert(`Erreur : ${data.message}`);
-            }
-        } catch (error) {
-            console.error("Erreur lors de l'inscription du vendeur :", error);
-            alert("Une erreur s'est produite lors de l'inscription.");
-        }
-    });
-});
 
 
 
@@ -190,28 +182,39 @@ function validateForm(formId) {
     }
 }
 
-// //eyesplach 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const passwordInput = document.getElementById("vendorpassword");
-//     const togglePassword = document.getElementById("togglePassword");
-
-//     togglePassword.addEventListener("click", function () {
-//         // Toggle password visibility
-//         if (passwordInput.type === "password") {
-//             passwordInput.type = "text";
-//             togglePassword.classList.remove("ph-eye-slash");
-//             togglePassword.classList.add("ph-eye");
-//         } else {
-//             passwordInput.type = "password";
-//             togglePassword.classList.remove("ph-eye");
-//             togglePassword.classList.add("ph-eye-slash");
-//         }
-//     });
-// });
 
 
 
 
+// Envoi du formulaire d'inscription du vendeur
+document.getElementById("vendorForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Empêche le rechargement de la page
 
+    const form = document.getElementById("vendorForm");
+    const formData = new FormData(form); // Crée FormData automatiquement avec tous les champs du formulaire
 
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/vendor/register", true); // Change le port si nécessaire
+
+    xhr.onload = function () {
+    if (xhr.status === 201) {
+        const response = JSON.parse(xhr.responseText);
+        alert("Vendor enregistré avec succès !");
+        console.log(response);
+        // reset form ou redirection si tu veux
+        window.location.reload();
+        showLogin(); 
+    } else {
+        const error = JSON.parse(xhr.responseText);
+        alert("Erreur : " + (error.message || "Échec de l'inscription"));
+        console.error(error);
+    }
+    };
+
+    xhr.onerror = function () {
+    alert("Erreur de connexion avec le serveur.");
+    };
+
+    xhr.send(formData); // Envoie les données, y compris l'image
+});
 

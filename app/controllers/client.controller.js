@@ -2,6 +2,7 @@ const Client = require("../models/client.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const Vendor = require("../models/vendor.model");
 dotenv.config();
 
 //register 
@@ -9,7 +10,8 @@ exports.register = async (req , res) =>{
     try{
 
         const existingClient = await Client.findOne({email:req.body.email});
-        if (existingClient){
+        const existingVendor = await Vendor.findOne({email:req.body.email});
+        if (existingClient || existingVendor){
             return res.status(400).json({message:"Email already exists"});
         }
 

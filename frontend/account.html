@@ -762,62 +762,64 @@
                 </div>
                 </form>
                     <!-- Register Card End -->
-                     <!-- Become a vendor Card start -->
-                <form action="http://localhost:3000/vendor/register" id="vendorForm" method="POST">
-                    <div class="row gy-4 d-flex justify-content-center">
-                     <div class="col-xl-6" id="vendorcard" style="display: none;">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
-                            <h6 class="text-xl mb-32">Become vendor</h6>
+                    <!-- Become a vendor Card start -->
+                    <form id="vendorForm" enctype="multipart/form-data">
+                      <div class="row gy-4 d-flex justify-content-center">
+                        <div class="col-xl-6" id="vendorcard" style="display: none;">
+                          <div class="border rounded-16 px-24 py-40">
+                            <h6 class="text-xl mb-32">Vendor Informations</h6>
+                    
                             <div class="mb-24">
-                                <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
-                                <input type="text" id="vendorname" name="vendorname" class="common-input" placeholder="Write the vendor Name" >
+                              <label for="vendorname">Vendor Name <span class="text-danger">*</span></label>
+                              <input type="text" id="vendorname" name="vendorName" class="common-input" placeholder="Write the vendor Name">
                             </div>
-                            <div class="mb-24">
-                                <label for="shopname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
-                                <input type="text" id="shopname" name="shopname" class="common-input" placeholder="Write a Shop name" >
-                                <small id="shopnameErrorMessage" style="display: none;"></small>
-                            </div>
+                    
                             <div class="input-wrapper">
-                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" id="mailadress" class="common-input" name ="email" placeholder="Enter Email Address"   required>
-                                <span class="icon"></span>
+                              <label for="mailadress">Email address <span class="text-danger">*</span></label>
+                              <input type="email" id="mailadress" name="email" class="common-input" placeholder="Enter Email Address" >
                             </div>
+                    
                             <div class="mb-24">
-                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
-                                <input type="number" id="phone" name ="phone" class="common-input" placeholder="Enter a phone Number"  >
-                                <small id="phoneErrorMessage" style="display: none;"></small>
+                              <label for="phone">Phone <span class="text-danger">*</span></label>
+                              <input type="number" id="phone" name="phone" class="common-input" placeholder="Enter a phone Number">
                             </div>
+                    
                             <div class="mb-24">
-                                <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
-                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)"  name="shoplogo">
-                                    <small id="shoplogoErrorMessage" style="display: none;"></small></p>
-                                <div id="imagePreview" class="mt-4">
-                                    <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
-                                </div>
+                              <label for="vendorpassword">Password <span class="text-danger">*</span></label>
+                              <input type="password" id="vendorpassword" name="vendorPassword" class="common-input" placeholder="Enter Password">
                             </div>
+                    
+                            <h6 class="text-xl mb-32">Shop Informations</h6>
+                    
                             <div class="mb-24">
-                                <label for="adresse" class="text-neutral-900 text-lg mb-8 fw-medium">address</label>
-                                <input type="text" class="common-input" placeholder="Enter Shop Address" name ="adresse">
+                              <label for="shopName">Shop Name <span class="text-danger">*</span></label>
+                              <input type="text" id="shopName" name="shopName" class="common-input" placeholder="Write a Shop name">
                             </div>
+                    
                             <div class="mb-24">
-                                <label for="shopdescription" class="text-neutral-900 text-lg mb-8 fw-medium">Description</label>
-                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4" name = "shopdescription"></textarea>
+                              <label for="shoplogo">Logo <span class="text-danger">*</span></label>
+                              <input type="file" id="shopLogo" name="shopLogo" accept="image/*" onchange="previewImage(event)">
                             </div>
+                    
                             <div class="mb-24">
-                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative">
-                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password"   name = "vendorpassword">
-                                    <!-- <small id="vendorpasswordErrorMessage" style="display: none;"></small> -->
-                                </div>
+                              <label for="adresse">Address</label>
+                              <input type="text" id="adresse" name="adresse" class="common-input" placeholder="Enter Shop Address">
                             </div>
+                    
+                            <div class="mb-24">
+                              <label for="shopdescription">Description</label>
+                              <textarea id="shopdescription" name="shopdescription" class="common-input" rows="4" placeholder="Enter Your Description"></textarea>
+                            </div>
+                    
                             <div class="mt-48 d-flex justify-content-center gap-48">
-                                <button type="submit" class="btn btn-main py-18 px-40 " >Register</button>
-                                <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
+                              <button type="submit" class="btn btn-main py-18 px-40">Register</button>
+                              <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
                             </div>
-                            
+                          </div>
                         </div>
-                    </div></div>
-                </form>
+                      </div>
+                    </form>
+                    
                       <!-- Become a vendor Card end -->
     
                 </div>
