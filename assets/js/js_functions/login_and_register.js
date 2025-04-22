@@ -147,6 +147,54 @@ function validateForm(formId) {
 }
 
 
+document.getElementById("registerForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Empêche le rechargement de la page
+
+    const email = document.getElementById("emailTwo").value.trim();
+    const firstname = document.getElementById("firstname").value.trim();
+    const lastname = document.getElementById("lastname").value.trim();
+    const password = document.getElementById("enter_password").value.trim();
+
+    // Validation basique (tu peux améliorer les validations ici)
+    if (!firstname || !lastname || !email || !password) {
+        alert("Tous les champs sont obligatoires !");
+        return;
+    }
+
+    // Création de l'objet avec les données du formulaire
+    const formData = {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password
+    };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/client/register", true); // Change l'URL pour l'inscription du client
+    xhr.setRequestHeader("Content-Type", "application/json"); // Définir le type de contenu en JSON
+
+    xhr.onload = function () {
+        if (xhr.status === 201) {
+            const response = JSON.parse(xhr.responseText);
+            alert("Client enregistré avec succès !");
+            console.log(response);
+            // Redirige ou réinitialise le formulaire après inscription
+            window.location.reload(); // Recharge la page pour réinitialiser l'état du formulaire
+            showLogin(); // Affiche le formulaire de connexion après l'inscription
+        } else {
+            const error = JSON.parse(xhr.responseText);
+            alert("Erreur : " + (error.message || "Échec de l'inscription"));
+            console.error(error);
+        }
+    };
+
+    xhr.onerror = function () {
+        alert("Erreur de connexion avec le serveur.");
+    };
+
+    xhr.send(JSON.stringify(formData)); // Envoie les données sous forme de JSON
+});
+
 
 
 
@@ -181,16 +229,6 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 
     xhr.send(formData); // Envoie les données, y compris l'image
 });
-
-
-
-
-
-
-
-
-
-
 
 
 
