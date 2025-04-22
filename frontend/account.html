@@ -657,43 +657,45 @@
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-                    <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
-                        <div class="row gy-4 d-flex justify-content-center">
-            
-                            <!-- Login Card Start -->
-                            <div class="col-xl-6 pe-xl-5 " id="loginCard">
-                                <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
-                                    <h6 class="text-xl mb-32">Login</h6>
-                                    <div class="input-wrapper">
-                                        <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
-                                        <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
-                                        <span class="icon"></span>
-                                    </div>
-                                    <div class="mb-24">
-                                        <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                        <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
-                                        <small id="LoginPasswordErrorMessage" style="display: none;"></small>
-                                    </div>
-                                    <div class="mb-24 mt-48 d-flex justify-content-center">
-                                        <div class="flex-align gap-48 flex-wrap">
-                                            <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
-                                            <div class="form-check common-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="remember">
-                                                <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-48 d-flex justify-content-center">
-                                        <a href="javascript:void(0)" onclick="toggleForgotPassword()" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
-                                    </div>
-                                    <div class="mt-24 d-flex justify-content-center">
-                                        <p class="text-gray-500">Don't have an account? 
-                                            <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
-                                        </p>
+            <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
+                <div class="row gy-4 d-flex justify-content-center">
+    
+                    <!-- Login Card Start -->
+                    <div class="col-xl-6 pe-xl-5 " id="loginCard">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
+                            <h6 class="text-xl mb-32">Login</h6>
+                            <div class="input-wrapper">
+                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
+                                <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
+                                <span class="icon"></span>
+                            </div>
+                            <div class="mb-24">
+                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
+                                <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
+                                <small id="LoginPasswordErrorMessage" style="display: none;"></small>
+                            </div>
+                            <div class="mb-24 mt-48 d-flex justify-content-center">
+                                <div class="flex-align gap-48 flex-wrap">
+                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
+                                    <div class="form-check common-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="remember">
+                                        <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
                                     </div>
                                 </div>
                             </div>
-                    </form>
+                            <div class="mt-48 d-flex justify-content-center">
+                              <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline" data-bs-toggle="modal" data-bs-target="#emailModal">
+                                Forgot your password?
+                              </a>
+                                                          </div>
+                            <div class="mt-24 d-flex justify-content-center">
+                                <p class="text-gray-500">Don't have an account? 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+            </form>
                     <!-- Login Card End -->
                     <!-- choose an account type card start-->
                     <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
@@ -716,116 +718,198 @@
     
                     <!-- Register Card Start -->
                 
-                    <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
-                        <div class="row gy-4 d-flex justify-content-center">
-                            <div class="col-xl-6 " id="registerCard" style="display: none;">
-                            
-                            <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
-                                <h6 class="text-xl mb-32">Register</h6>
-                                <div class="mb-24">
-                                    <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                    <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
-                                    <small id="firstnameErrorMessage" style="display: none;"></small>
+                <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
+                    <div class="row gy-4 d-flex justify-content-center">
+                        <div class="col-xl-6 " id="registerCard" style="display: none;">
+                        
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
+                            <h6 class="text-xl mb-32">Register</h6>
+                            <div class="mb-24">
+                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
+                                <small id="firstnameErrorMessage" style="display: none;"></small>
+                            </div>
+                            <div class="mb-24">
+                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
+                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
+                                <span class="icon"></span>
+                            </div>
+                            <div class="mb-24">
+                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
+                                    <small id="enter-passwordErrorMessage" style="display: none;"></small>
                                 </div>
-                                <div class="mb-24">
-                                    <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                    <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
-                                    <small id="lastnameErrorMessage" style="display: none;"></small>
-                                </div>
-                                <div class="input-wrapper">
-                                    <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                    <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
-                                    <span class="icon"></span>
-                                </div>
-                                <div class="mb-24">
-                                    <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                    <div class="position-relative">
-                                        <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
-                                        <small id="enter-passwordErrorMessage" style="display: none;"></small>
-                                    </div>
-                                </div>
-                                <div class="my-48">
-                                    <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
-                                        <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
-                                    .</p>
-                                </div>
-                                <div class="mt-48 d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                                </div>
-                                <div class="mt-24 d-flex justify-content-center">
-                                    <p class="text-gray-500">Already have an account? 
-                                        <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
-                                    </p>
-                                </div>
+                            </div>
+                            <div class="my-48">
+                                <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
+                                    <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
+                                .</p>
+                            </div>
+                            <div class="mt-48 d-flex justify-content-center">
+                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
+                            </div>
+                            <div class="mt-24 d-flex justify-content-center">
+                                <p class="text-gray-500">Already have an account? 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
+                                </p>
                             </div>
                         </div>
                     </div>
-                    </form>
+                </div>
+                </form>
                     <!-- Register Card End -->
-                    <!-- Become a vendor Card start -->
-                    <form id="vendorForm" enctype="multipart/form-data">
-                      <div class="row gy-4 d-flex justify-content-center">
-                        <div class="col-xl-6" id="vendorcard" style="display: none;">
-                          <div class="border rounded-16 px-24 py-40">
-                            <h6 class="text-xl mb-32">Vendor Informations</h6>
-                    
+                     <!-- Become a vendor Card start -->
+                <form action="http://localhost:3000/vendor/register" id="vendorForm" method="POST">
+                    <div class="row gy-4 d-flex justify-content-center">
+                     <div class="col-xl-6" id="vendorcard" style="display: none;">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40">
+                            <h6 class="text-xl mb-32">Become vendor</h6>
                             <div class="mb-24">
-                              <label for="vendorname">Vendor Name <span class="text-danger">*</span></label>
-                              <input type="text" id="vendorname" name="vendorName" class="common-input" placeholder="Write the vendor Name">
+                                <label for="vendorname" class="text-neutral-900 text-lg mb-8 fw-medium">Vendor Name <span class="text-danger">*</span> </label>
+                                <input type="text" id="vendorname" name="vendorname" class="common-input" placeholder="Write the vendor Name" >
                             </div>
-                    
+                            <div class="mb-24">
+                                <label for="shopname" class="text-neutral-900 text-lg mb-8 fw-medium">Shop Name<span class="text-danger">*</span> </label>
+                                <input type="text" id="shopname" name="shopname" class="common-input" placeholder="Write a Shop name" >
+                                <small id="shopnameErrorMessage" style="display: none;"></small>
+                            </div>
                             <div class="input-wrapper">
-                              <label for="mailadress">Email address <span class="text-danger">*</span></label>
-                              <input type="email" id="mailadress" name="email" class="common-input" placeholder="Enter Email Address" >
+                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
+                                <input type="email" id="mailadress" class="common-input" name ="email" placeholder="Enter Email Address"   required>
+                                <span class="icon"></span>
                             </div>
-                    
                             <div class="mb-24">
-                              <label for="phone">Phone <span class="text-danger">*</span></label>
-                              <input type="number" id="phone" name="phone" class="common-input" placeholder="Enter a phone Number">
+                                <label for="phone" class="text-neutral-900 text-lg mb-8 fw-medium">Phone <span class="text-danger">*</span></label>
+                                <input type="number" id="phone" name ="phone" class="common-input" placeholder="Enter a phone Number"  >
+                                <small id="phoneErrorMessage" style="display: none;"></small>
                             </div>
-                    
                             <div class="mb-24">
-                              <label for="vendorpassword">Password <span class="text-danger">*</span></label>
-                              <input type="password" id="vendorpassword" name="vendorPassword" class="common-input" placeholder="Enter Password">
+                                <label for="shoplogo" class="text-neutral-900 text-lg mb-8 fw-medium">Logo <span class="text-danger">*</span> </label>
+                                <p><input type="file" id="shoplogo" accept="image/*" onchange="previewImage(event)"  name="shoplogo">
+                                    <small id="shoplogoErrorMessage" style="display: none;"></small></p>
+                                <div id="imagePreview" class="mt-4">
+                                    <img id="preview" src="" alt="Logo Preview" style="max-width: 150px; display: none;"/>
+                                </div>
                             </div>
-                    
-                            <h6 class="text-xl mb-32">Shop Informations</h6>
-                    
                             <div class="mb-24">
-                              <label for="shopName">Shop Name <span class="text-danger">*</span></label>
-                              <input type="text" id="shopName" name="shopName" class="common-input" placeholder="Write a Shop name">
+                                <label for="adresse" class="text-neutral-900 text-lg mb-8 fw-medium">address</label>
+                                <input type="text" class="common-input" placeholder="Enter Shop Address" name ="adresse">
                             </div>
-                    
                             <div class="mb-24">
-                              <label for="shoplogo">Logo <span class="text-danger">*</span></label>
-                              <input type="file" id="shopLogo" name="shopLogo" accept="image/*" onchange="previewImage(event)">
+                                <label for="shopdescription" class="text-neutral-900 text-lg mb-8 fw-medium">Description</label>
+                                <textarea id="shopdescription" class="common-input" placeholder="Enter Your Description" rows="4" name = "shopdescription"></textarea>
                             </div>
-                    
                             <div class="mb-24">
-                              <label for="adresse">Address</label>
-                              <input type="text" id="adresse" name="adresse" class="common-input" placeholder="Enter Shop Address">
+                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="password" class="common-input" id="vendorpassword" placeholder="Enter Password"   name = "vendorpassword">
+                                    <!-- <small id="vendorpasswordErrorMessage" style="display: none;"></small> -->
+                                </div>
                             </div>
-                    
-                            <div class="mb-24">
-                              <label for="shopdescription">Description</label>
-                              <textarea id="shopdescription" name="shopdescription" class="common-input" rows="4" placeholder="Enter Your Description"></textarea>
-                            </div>
-                    
                             <div class="mt-48 d-flex justify-content-center gap-48">
-                              <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                              <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
+                                <button type="submit" class="btn btn-main py-18 px-40 " >Register</button>
+                                <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
                             </div>
-                          </div>
+                            
                         </div>
-                      </div>
-                    </form>
-                    
+                    </div></div>
+                </form>
                       <!-- Become a vendor Card end -->
     
                 </div>
         </div>
 </section>
 <!-- =============================== Account Section End =========================== -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-key"></i>
+                  Password Reset
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email">
+              <div class="invalid-feedback">
+                  <i class="ph ph-warning"></i>
+                  Please enter a valid email
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validateEmail()">
+                  Continue
+                  <i class="ph ph-caret-right"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal 2 - Code Verification -->
+<div class="modal fade" id="codeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-shield-check"></i>
+                  Verify Code
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <p id="emailMessage" class="text-sm text-slate-500 mb-3"></p>
+              <input type="text" id="verificationCode" class="form-control" placeholder="Enter 6-digit code">
+              <div class="invalid-feedback">
+                  <i class="ph ph-warning"></i>
+                  Please enter a valid code
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validateCode()">
+                  Verify Code
+                  <i class="ph ph-check-circle"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal 3 - Password Reset -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-lock"></i>
+                  New Password
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <input type="password" id="newPassword" class="form-control mb-3" placeholder="New password">
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password">
+              
+              <div class="password-strength mt-2">
+                  <div class="password-strength-bar"></div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validatePassword()">
+                  Reset Password
+                  <i class="ph ph-arrow-clockwise"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
