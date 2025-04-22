@@ -51,6 +51,8 @@ mongoose
   require("./app/routes/vendor.routes")(app);
   require("./app/routes/product.routes")(app);
   require("./app/routes/shop.routes")(app);
+  require("./app/routes/category.routes")(app);
+  require("./app/routes/subCategory.routes")(app);
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => console.log(`Serveur en cours d'exécution sur le port ${PORT}`));
