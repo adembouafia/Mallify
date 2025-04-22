@@ -657,43 +657,43 @@
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-            <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
-                <div class="row gy-4 d-flex justify-content-center">
-    
-                    <!-- Login Card Start -->
-                    <div class="col-xl-6 pe-xl-5 " id="loginCard">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
-                            <h6 class="text-xl mb-32">Login</h6>
-                            <div class="input-wrapper">
-                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
-                                <span class="icon"></span>
-                            </div>
-                            <div class="mb-24">
-                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
-                                <small id="LoginPasswordErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="mb-24 mt-48 d-flex justify-content-center">
-                                <div class="flex-align gap-48 flex-wrap">
-                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
-                                    <div class="form-check common-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="remember">
-                                        <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
+                    <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
+                        <div class="row gy-4 d-flex justify-content-center">
+            
+                            <!-- Login Card Start -->
+                            <div class="col-xl-6 pe-xl-5 " id="loginCard">
+                                <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
+                                    <h6 class="text-xl mb-32">Login</h6>
+                                    <div class="input-wrapper">
+                                        <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
+                                        <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
+                                        <span class="icon"></span>
+                                    </div>
+                                    <div class="mb-24">
+                                        <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
+                                        <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
+                                        <small id="LoginPasswordErrorMessage" style="display: none;"></small>
+                                    </div>
+                                    <div class="mb-24 mt-48 d-flex justify-content-center">
+                                        <div class="flex-align gap-48 flex-wrap">
+                                            <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
+                                            <div class="form-check common-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="remember">
+                                                <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-48 d-flex justify-content-center">
+                                        <a href="javascript:void(0)" onclick="toggleForgotPassword()" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
+                                    </div>
+                                    <div class="mt-24 d-flex justify-content-center">
+                                        <p class="text-gray-500">Don't have an account? 
+                                            <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-48 d-flex justify-content-center">
-                                <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
-                            </div>
-                            <div class="mt-24 d-flex justify-content-center">
-                                <p class="text-gray-500">Don't have an account? 
-                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-            </form>
+                    </form>
                     <!-- Login Card End -->
                     <!-- choose an account type card start-->
                     <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
@@ -716,51 +716,51 @@
     
                     <!-- Register Card Start -->
                 
-                <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
-                    <div class="row gy-4 d-flex justify-content-center">
-                        <div class="col-xl-6 " id="registerCard" style="display: none;">
-                        
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
-                            <h6 class="text-xl mb-32">Register</h6>
-                            <div class="mb-24">
-                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
-                                <small id="firstnameErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="mb-24">
-                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
-                                <small id="lastnameErrorMessage" style="display: none;"></small>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
-                                <span class="icon"></span>
-                            </div>
-                            <div class="mb-24">
-                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative">
-                                    <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
-                                    <small id="enter-passwordErrorMessage" style="display: none;"></small>
+                    <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
+                        <div class="row gy-4 d-flex justify-content-center">
+                            <div class="col-xl-6 " id="registerCard" style="display: none;">
+                            
+                            <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
+                                <h6 class="text-xl mb-32">Register</h6>
+                                <div class="mb-24">
+                                    <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
+                                    <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
+                                    <small id="firstnameErrorMessage" style="display: none;"></small>
                                 </div>
-                            </div>
-                            <div class="my-48">
-                                <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
-                                    <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
-                                .</p>
-                            </div>
-                            <div class="mt-48 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                            </div>
-                            <div class="mt-24 d-flex justify-content-center">
-                                <p class="text-gray-500">Already have an account? 
-                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
-                                </p>
+                                <div class="mb-24">
+                                    <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
+                                    <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
+                                    <small id="lastnameErrorMessage" style="display: none;"></small>
+                                </div>
+                                <div class="input-wrapper">
+                                    <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
+                                    <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
+                                    <span class="icon"></span>
+                                </div>
+                                <div class="mb-24">
+                                    <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
+                                    <div class="position-relative">
+                                        <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
+                                        <small id="enter-passwordErrorMessage" style="display: none;"></small>
+                                    </div>
+                                </div>
+                                <div class="my-48">
+                                    <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
+                                        <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
+                                    .</p>
+                                </div>
+                                <div class="mt-48 d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-main py-18 px-40">Register</button>
+                                </div>
+                                <div class="mt-24 d-flex justify-content-center">
+                                    <p class="text-gray-500">Already have an account? 
+                                        <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                </form>
+                    </form>
                     <!-- Register Card End -->
                     <!-- Become a vendor Card start -->
                     <form id="vendorForm" enctype="multipart/form-data">

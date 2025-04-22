@@ -25,6 +25,15 @@ const ClientSchema = new mongoose.Schema(
     role: {
         type: String,
         default: "client"
+    },
+    resetPasswordToken: {
+      type: String
+    },
+    resetPasswordExpires: {
+      type: Date
+    },
+    resetPasswordCode: {
+      type: String
     }
   },
   {
