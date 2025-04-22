@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         alert("Connexion réussie (vendeur) !");
                         console.log("Vendor :", vendorResponse);
                         // localStorage.setItem("token", vendorResponse.token);
-                        window.location.href = "../../frontend/dashbordBout_pages/index.html";
+                        window.location.href = "../frontend/dashbordBout_pages/index.html";
                     } else {
                         try {
                             const error = JSON.parse(xhrVendor.responseText);
@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         xhrClient.send(JSON.stringify(loginData));
     });
 });
+
 
 
 
@@ -180,6 +181,20 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 
     xhr.send(formData); // Envoie les données, y compris l'image
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // forget password modal 
 function validateEmail() {

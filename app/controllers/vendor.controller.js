@@ -66,7 +66,7 @@ exports.register = (req, res) => {
 
 // Vendor login
 exports.login = async (req, res) => {
-    const { email, vendorPassword } = req.body;
+    const { email, password } = req.body;
 
     try {
         const vendor = await Vendor.findOne({ email });
@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Email not found" });
         }
 
-        const isMatch = await bcrypt.compare(vendorPassword, vendor.vendorPassword);
+        const isMatch = await bcrypt.compare(password, vendor.vendorPassword);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid password" });
         }
