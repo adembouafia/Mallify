@@ -146,7 +146,7 @@ function validateForm(formId) {
     }
 }
 
-
+// Envoi du formulaire d'inscription du client
 document.getElementById("registerForm").addEventListener("submit", function (e) {
     e.preventDefault(); // Empêche le rechargement de la page
 
@@ -238,46 +238,46 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 function validateEmail() {
     const email = document.getElementById('resetEmail').value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
     if(emailRegex.test(email)) {
-      document.getElementById('emailMessage').textContent = `A verification code has been sent to ${email}`;
-      bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
-      bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
+    document.getElementById('emailMessage').textContent = `A verification code has been sent to ${email}`;
+    bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
     } else {
-      document.getElementById('resetEmail').classList.add('is-invalid');
+    document.getElementById('resetEmail').classList.add('is-invalid');
     }
-  }
-  
-  function validateCode() {
+}
+
+function validateCode() {
     const code = document.getElementById('verificationCode').value;
     
     if(code.length === 6 && /^\d+$/.test(code)) {
-      bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
-      bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
+    bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
     } else {
-      document.getElementById('verificationCode').classList.add('is-invalid');
+    document.getElementById('verificationCode').classList.add('is-invalid');
     }
-  }
-  
-  function validatePassword() {
+}
+
+function validatePassword() {
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-  
+
     if(newPassword && newPassword === confirmPassword) {
-      // Ici vous pouvez ajouter la logique de réinitialisation réelle
-      alert('Password reset successfully!');
-      window.location.href = '/login'; // Redirection après succès
+    // Ici vous pouvez ajouter la logique de réinitialisation réelle
+    alert('Password reset successfully!');
+    window.location.href = '/login'; // Redirection après succès
     } else {
-      document.getElementById('confirmPassword').classList.add('is-invalid');
+    document.getElementById('confirmPassword').classList.add('is-invalid');
     }
-  }
-  
-  // Réinitialiser les erreurs quand on modifie les champs
-  document.querySelectorAll('.form-control').forEach(input => {
+}
+
+// Réinitialiser les erreurs quand on modifie les champs
+document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', () => {
-      input.classList.remove('is-invalid');
+    input.classList.remove('is-invalid');
     });
-  });
+});
 
 // Password strength indicator
 document.getElementById('newPassword').addEventListener('input', function(e) {
