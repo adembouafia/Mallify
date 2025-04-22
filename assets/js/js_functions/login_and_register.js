@@ -181,4 +181,64 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
     xhr.send(formData); // Envoie les données, y compris l'image
 });
 
+// forget password modal 
+function validateEmail() {
+    const email = document.getElementById('resetEmail').value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    if(emailRegex.test(email)) {
+      document.getElementById('emailMessage').textContent = `A verification code has been sent to ${email}`;
+      bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
+    } else {
+      document.getElementById('resetEmail').classList.add('is-invalid');
+    }
+  }
+  
+  function validateCode() {
+    const code = document.getElementById('verificationCode').value;
+    
+    if(code.length === 6 && /^\d+$/.test(code)) {
+      bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
+    } else {
+      document.getElementById('verificationCode').classList.add('is-invalid');
+    }
+  }
+  
+  function validatePassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+  
+    if(newPassword && newPassword === confirmPassword) {
+      // Ici vous pouvez ajouter la logique de réinitialisation réelle
+      alert('Password reset successfully!');
+      window.location.href = '/login'; // Redirection après succès
+    } else {
+      document.getElementById('confirmPassword').classList.add('is-invalid');
+    }
+  }
+  
+  // Réinitialiser les erreurs quand on modifie les champs
+  document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('is-invalid');
+    });
+  });
 
+// Password strength indicator
+document.getElementById('newPassword').addEventListener('input', function(e) {
+    const strengthBar = document.querySelector('.password-strength-bar');
+    const password = e.target.value;
+    
+    let strength = 0;
+    if (password.match(/[a-z]+/)) strength++;
+    if (password.match(/[A-Z]+/)) strength++;
+    if (password.match(/[0-9]+/)) strength++;
+    if (password.match(/[$@#&!]+/)) strength++;
+    
+    strengthBar.style.width = (strength * 25) + '%';
+    strengthBar.style.backgroundColor = 
+        strength < 2 ? '#e53e3e' : 
+        strength < 4 ? '#d69e2e' : '#48bb78';
+});

@@ -684,8 +684,10 @@
                                 </div>
                             </div>
                             <div class="mt-48 d-flex justify-content-center">
-                                <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
-                            </div>
+                              <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline" data-bs-toggle="modal" data-bs-target="#emailModal">
+                                Forgot your password?
+                              </a>
+                                                          </div>
                             <div class="mt-24 d-flex justify-content-center">
                                 <p class="text-gray-500">Don't have an account? 
                                     <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
@@ -824,6 +826,90 @@
         </div>
 </section>
 <!-- =============================== Account Section End =========================== -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-key"></i>
+                  Password Reset
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email">
+              <div class="invalid-feedback">
+                  <i class="ph ph-warning"></i>
+                  Please enter a valid email
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validateEmail()">
+                  Continue
+                  <i class="ph ph-caret-right"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal 2 - Code Verification -->
+<div class="modal fade" id="codeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-shield-check"></i>
+                  Verify Code
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <p id="emailMessage" class="text-sm text-slate-500 mb-3"></p>
+              <input type="text" id="verificationCode" class="form-control" placeholder="Enter 6-digit code">
+              <div class="invalid-feedback">
+                  <i class="ph ph-warning"></i>
+                  Please enter a valid code
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validateCode()">
+                  Verify Code
+                  <i class="ph ph-check-circle"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal 3 - Password Reset -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="ph ph-lock"></i>
+                  New Password
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <input type="password" id="newPassword" class="form-control mb-3" placeholder="New password">
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password">
+              
+              <div class="password-strength mt-2">
+                  <div class="password-strength-bar"></div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validatePassword()">
+                  Reset Password
+                  <i class="ph ph-arrow-clockwise"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
