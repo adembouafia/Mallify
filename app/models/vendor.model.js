@@ -2,15 +2,10 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const VendorSchema = new mongoose.Schema(
-  {
-    vendorname: {
+    {
+    vendorName: {
         type : String,
-        required : true
-    },
-    
-    shopname: {
-        type : String,
-        required : true
+        required : true,
     },
 
     email: {
@@ -19,39 +14,36 @@ const VendorSchema = new mongoose.Schema(
     },
     phone: {
         type : Number,
-        required : true
-    },
-    shoplogo : {
-        type : String,
-        required : true
-    },
-    adresse: {
-        type : String,
-        required :false
-    },
-    shopdescription: {
-        type : String,
-        required : false
     },
 
-    vendorpassword: {
+    vendorPassword: {
         type : String ,
-        required : true
+    },
+
+    role: {
+        type: String,
+        enum: ["vendor", "moderator"],
+        default: "vendor"
+    },
+    shop: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "shop"
+    },
+    },
+
+    {
+        timestamps: true,
     }
-  },
-  {
-    timestamps: true,
-  }
 );
 
 //Hashing the password before saving 
 VendorSchema.pre("save" , async function(next) {
     try{
-        if (!this.isModified("password")){
+        if (!this.isModified("vendorPassword")) {
             return next();
         }
-        const hashedPassword = await bcrypt.hash(this.password , 10);
-        this.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(this.vendorPassword , 10);
+        this.vendorPassword = hashedPassword;
         next()
     }catch(err){
         next(err)

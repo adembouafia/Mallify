@@ -4,5 +4,7 @@ module.exports = (app) =>{
 
     app.post('/client/register', client.register);
     app.post('/client/login' , client.login);
+    app.post('/client/forgotPassword' , client.forgotPassword);
+    app.post('/client/reset-password' , client.resetPassword);
     app.get('/client/get', auth , client.getAll);
 }

@@ -2,7 +2,6 @@ document.getElementById("addProductForm").addEventListener("submit", function(e)
     e.preventDefault();
     const form = e.target;
   
-    // Build product object
     const product = {
       productId: form.productId.value,
       productName: form.productName.value,
@@ -15,13 +14,10 @@ document.getElementById("addProductForm").addEventListener("submit", function(e)
       otherImageFiles: Array.from(form.otherImages.files)
     };
   
-    // Create a URL for the main image
     const mainImageURL = URL.createObjectURL(product.mainImageFile);
   
-    // (Optional) Store or upload otherImageFiles as needed
     console.log("Other images:", product.otherImageFiles);
   
-    // Create new table row
     const tbody = document.getElementById("productTableBody");
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -68,14 +64,10 @@ document.getElementById("addProductForm").addEventListener("submit", function(e)
       </td>
     `;
   
-    // 🚀 Ici, on insère toujours en haut de la liste
     tbody.insertBefore(tr, tbody.firstElementChild);
   
-    // Reset form & close modal
     form.reset();
     bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-  
-    // Optionally revoke the image URL later
-    // URL.revokeObjectURL(mainImageURL);
+
   });
   

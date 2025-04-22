@@ -684,9 +684,7 @@
                                 </div>
                             </div>
                             <div class="mt-48 d-flex justify-content-center">
-                              <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline" data-bs-toggle="modal" data-bs-target="#emailModal">
-                                Forgot your password?
-                              </a>
+                                <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline ">Forgot your password?</a>
                             </div>
                             <div class="mt-24 d-flex justify-content-center">
                                 <p class="text-gray-500">Don't have an account? 
@@ -826,64 +824,6 @@
         </div>
 </section>
 <!-- =============================== Account Section End =========================== -->
- <!-- Modal 1 - Email Input -->
-<div class="modal fade" id="emailModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Reset Password</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email">
-        <div class="invalid-feedback">Please enter a valid email</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="validateEmail()">Send Code</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal 2 - Code Verification -->
-<div class="modal fade" id="codeModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Verify Code</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p id="emailMessage"></p>
-        <input type="text" id="verificationCode" class="form-control" placeholder="Enter verification code">
-        <div class="invalid-feedback">Please enter a 6-digit code</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="validateCode()">Verify Code</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal 3 - Password Reset -->
-<div class="modal fade" id="passwordModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">New Password</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="password" id="newPassword" class="form-control mb-2" placeholder="New password">
-        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password">
-        <div class="invalid-feedback">Passwords do not match</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="validatePassword()">Reset Password</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">

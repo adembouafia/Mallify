@@ -6,6 +6,6 @@ window.addEventListener("load", function () {
         preloader.style.opacity = "0";
         setTimeout(function () {
             preloader.style.display = "none";
-        }, 600); // Assurez-vous que la durée correspond à l'animation CSS
+        }, 600); 
     }
 });

@@ -22,8 +22,6 @@ function backtologin(){
 
 }  
 
-
-
 //Preview the logo 
 function previewImage(event) {
     const input = event.target;
@@ -40,116 +38,73 @@ function previewImage(event) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("registerForm").addEventListener("submit", async function (event) {
-        event.preventDefault(); // Empêcher le rechargement de la page
-        // Récupérer les valeurs du formulaire
-        const firstname = document.getElementById("firstname").value.trim();
-        const lastname = document.getElementById("lastname").value.trim();
-        const email = document.getElementById("emailTwo").value.trim();
-        const password = document.getElementById("enter_password").value.trim();
-        // Vérifier si tous les champs sont remplis
-        if (!firstname || !lastname || !email || !password) {
-            alert("Tous les champs sont obligatoires !");
-            return;
-        }
-
-        const userData = { firstname, lastname, email, password };
-
-        try {
-            const response = await fetch("http://localhost:3000/client/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(userData)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Inscription réussie !");
-                window.location.reload()
-                showLogin(); // Rediriger vers la page de connexion
-            } else {
-                alert(`Erreur : ${data.message}`);
-            }
-        } catch (error) {
-            console.error("Erreur lors de l'inscription :", error);
-            alert("Une erreur s'est produite lors de l'inscription.");
-        }
-    });
-
-
-    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
-        
+
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
-    
+
         if (!email || !password) {
             alert("Tous les champs sont obligatoires !");
             return;
         }
-    
-        try {
-            const response = await fetch("http://localhost:3000/client/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            });
-    
-            const data = await response.json();
-            console.log("Réponse du serveur :", data); // Vérification en console
-    
-            if (response.ok) {
-                alert("Connexion réussie !");
-                // localStorage.setItem("token", data.token); // Stocker le token
-                window.location.href = "wishlist.html"; // Rediriger vers la page souhaitée
+
+        const loginData = {
+            email: email,
+            password: password // Utiliser "password" pour les deux requêtes
+        };
+
+        // === Tentative de connexion client ===
+        const xhrClient = new XMLHttpRequest();
+        xhrClient.open("POST", "http://localhost:3000/client/login", true);
+        xhrClient.setRequestHeader("Content-Type", "application/json");
+
+        xhrClient.onload = function () {
+            if (xhrClient.status === 200) {
+                const clientResponse = JSON.parse(xhrClient.responseText);
+                alert("Connexion réussie (client) !");
+                console.log("Client :", clientResponse);
+                // localStorage.setItem("token", clientResponse.token);
+                window.location.href = "wishlist.html";
             } else {
-                alert(`Erreur : ${data.message}`);
+                // === Sinon, tentative de connexion vendor ===
+                const xhrVendor = new XMLHttpRequest();
+                xhrVendor.open("POST", "http://localhost:3000/vendor/login", true);
+                xhrVendor.setRequestHeader("Content-Type", "application/json");
+
+                xhrVendor.onload = function () {
+                    if (xhrVendor.status === 200) {
+                        const vendorResponse = JSON.parse(xhrVendor.responseText);
+                        alert("Connexion réussie (vendeur) !");
+                        console.log("Vendor :", vendorResponse);
+                        // localStorage.setItem("token", vendorResponse.token);
+                        window.location.href = "../../frontend/dashbordBout_pages/index.html";
+                    } else {
+                        try {
+                            const error = JSON.parse(xhrVendor.responseText);
+                            alert("Erreur : " + (error.message || "Email ou mot de passe invalide"));
+                        } catch (e) {
+                            alert("Erreur inconnue lors de la connexion vendeur.");
+                        }
+                    }
+                };
+
+                xhrVendor.onerror = function () {
+                    alert("Erreur de connexion avec le serveur (vendeur).");
+                };
+
+                xhrVendor.send(JSON.stringify(loginData));
             }
-        } catch (error) {
-            console.error("Erreur lors de la connexion :", error);
-            alert("Une erreur s'est produite lors de la connexion.");
-        }
-    });
-    
-});
+        };
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("vendorRegisterForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);  
+        xhrClient.onerror = function () {
+            alert("Erreur de connexion avec le serveur (client).");
+        };
 
-        // Validation: Check if all fields are filled
-        if (!formData.get("vendorname") || !formData.get("shopname") || !formData.get("phone") || !formData.get("shoplogo") || !formData.get("vendorpassword")) {
-            alert("Tous les champs sont obligatoires !");
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:3000/vendor/register", {
-                method: "POST",
-                body: formData 
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Inscription du vendeur réussie !");
-                window.location.reload();
-            } else {
-                alert(`Erreur : ${data.message}`);
-            }
-        } catch (error) {
-            console.error("Erreur lors de l'inscription du vendeur :", error);
-            alert("Une erreur s'est produite lors de l'inscription.");
-        }
+        xhrClient.send(JSON.stringify(loginData));
     });
 });
+
 
 
 
@@ -190,54 +145,40 @@ function validateForm(formId) {
     }
 }
 
-//reset password 
-function validateEmail() {
-    const email = document.getElementById('resetEmail').value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
-    if(emailRegex.test(email)) {
-      document.getElementById('emailMessage').textContent = `A verification code has been sent to ${email}`;
-      bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
-      bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
+
+
+
+
+// Envoi du formulaire d'inscription du vendeur
+document.getElementById("vendorForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Empêche le rechargement de la page
+
+    const form = document.getElementById("vendorForm");
+    const formData = new FormData(form); // Crée FormData automatiquement avec tous les champs du formulaire
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/vendor/register", true); // Change le port si nécessaire
+
+    xhr.onload = function () {
+    if (xhr.status === 201) {
+        const response = JSON.parse(xhr.responseText);
+        alert("Vendor enregistré avec succès !");
+        console.log(response);
+        // reset form ou redirection si tu veux
+        window.location.reload();
+        showLogin(); 
     } else {
-      document.getElementById('resetEmail').classList.add('is-invalid');
+        const error = JSON.parse(xhr.responseText);
+        alert("Erreur : " + (error.message || "Échec de l'inscription"));
+        console.error(error);
     }
-  }
-  
-  function validateCode() {
-    const code = document.getElementById('verificationCode').value;
-    
-    if(code.length === 6 && /^\d+$/.test(code)) {
-      bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
-      bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
-    } else {
-      document.getElementById('verificationCode').classList.add('is-invalid');
-    }
-  }
-  
-  function validatePassword() {
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-  
-    if(newPassword && newPassword === confirmPassword) {
-      // Ici vous pouvez ajouter la logique de réinitialisation réelle
-      alert('Password reset successfully!');
-      window.location.href = '/login'; // Redirection après succès
-    } else {
-      document.getElementById('confirmPassword').classList.add('is-invalid');
-    }
-  }
-  
-  // Réinitialiser les erreurs quand on modifie les champs
-  document.querySelectorAll('.form-control').forEach(input => {
-    input.addEventListener('input', () => {
-      input.classList.remove('is-invalid');
-    });
-  });
+    };
 
+    xhr.onerror = function () {
+    alert("Erreur de connexion avec le serveur.");
+    };
 
-
-
-
+    xhr.send(formData); // Envoie les données, y compris l'image
+});
 
 

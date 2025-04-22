@@ -1,7 +1,9 @@
 const Vendor = require("../models/vendor.model");
+const Shop = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const Client = require("../models/client.model");
 const multer = require("multer");
 
 dotenv.config();
@@ -9,88 +11,88 @@ dotenv.config();
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");  // Specify upload directory
+        cb(null, "uploads/");
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);  // Set unique filename
+        cb(null, Date.now() + "-" + file.originalname);
     }
 });
 
-const upload = multer({ storage: storage }).single("shoplogo");  // Handle single file upload for 'shoplogo'
+const upload = multer({ storage: storage }).single("shopLogo"); // 👈 important ici
 
 // Register a new vendor
 exports.register = (req, res) => {
     upload(req, res, async (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error uploading file" });
-        }
+        if (err) return res.status(500).json({ message: "Error uploading file" });
 
         try {
-            // Check if the email already exists in the database
             const existingVendor = await Vendor.findOne({ email: req.body.email });
-            if (existingVendor) {
-                return res.status(400).json({ message: "Email already exists" });
-            }
+            const existingClient = await Client.findOne({ email: req.body.email });
+            if (existingVendor || existingClient) return res.status(400).json({ message: "Email already exists" });
 
-            // Create a new vendor
-            const vendor = new Vendor({
-                vendorname: req.body.vendorname,
-                shopname: req.body.shopname,
-                email: req.body.email,
-                phone: req.body.phone,
-                shoplogo: req.file.path,  // Save the file path in the database
+
+            // Créer le Shop d'abord
+            const newShop = new Shop({
+                shopName: req.body.shopName,
                 adresse: req.body.adresse,
                 shopdescription: req.body.shopdescription,
-                vendorpassword: req.body.vendorpassword
+                shopLogo: req.file ? req.file.filename : null
             });
 
-            // Save the vendor to the database
+            const savedShop = await newShop.save();
+
+            const vendor = new Vendor({
+                vendorName: req.body.vendorName,
+                email: req.body.email,
+                phone: req.body.phone,
+                vendorPassword: req.body.vendorPassword,
+                shop: savedShop._id
+            });
+
             const savedVendor = await vendor.save();
 
-            // Send response
-            res.status(201).send({ message: "Vendor registered successfully", vendor: savedVendor });
+            res.status(201).send({
+                message: "Vendor & Shop registered successfully",
+                vendor: savedVendor,
+                shop: savedShop
+            });
+
         } catch (err) {
-            res.status(500).send({ message: err.message || "Error registering Vendor" });
+            console.error(err);
+            res.status(500).send({ message: err.message || "Server error" });
         }
     });
 };
 
 // Vendor login
 exports.login = async (req, res) => {
-    const { email, vendorpassword } = req.body;
+    const { email, vendorPassword } = req.body;
 
     try {
-        // Find the vendor by email
         const vendor = await Vendor.findOne({ email });
         if (!vendor) {
             return res.status(400).json({ message: "Email not found" });
         }
 
-        // Compare password with hashed password
-        const isMatch = await bcrypt.compare(vendorpassword, vendor.vendorpassword);
+        const isMatch = await bcrypt.compare(vendorPassword, vendor.vendorPassword);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid password" });
         }
 
-        // Generate a JWT token for the vendor
         const token = jwt.sign({
             id: vendor._id,
             email: vendor.email
         }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // Send response with token and vendor data
         res.send({
             message: "Login successful",
             token,
             vendor: {
                 id: vendor._id,
-                vendorname: vendor.vendorname,
-                shopname: vendor.shopname,
+                vendorname: vendor.vendorName,
                 email: vendor.email,
                 phone: vendor.phone,
-                shoplogo: vendor.shoplogo,
-                adresse: vendor.adresse,
-                shopdescription: vendor.shopdescription
+                shop: vendor.shop
             }
         });
     } catch (err) {
@@ -101,8 +103,8 @@ exports.login = async (req, res) => {
 // Get all vendors
 exports.getAll = async (req, res) => {
     try {
-        const vendors = await Vendor.find();  // Fetch all vendors from the database
-        res.send(vendors);  // Send the vendors list in the response
+        const vendors = await Vendor.find();
+        res.send(vendors);
     } catch (err) {
         res.status(500).send({ message: err.message || "Error fetching vendors" });
     }
