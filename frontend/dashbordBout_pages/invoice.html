@@ -31,6 +31,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <link rel="stylesheet" href="../../assets/css/invoice.css">
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -418,63 +419,71 @@
   
       <!-- Order Details Modal -->
       <div class="order-modal" id="orderModal">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h3 id="modalOrderTitle">Order Details</h3>
-                  <span class="modal-close" id="modalClose">&times;</span>
-              </div>
-              
-              <div class="modal-section">
-                  <h4 class="section-title">👤 Customer Information</h4>
-                  <div class="customer-info" id="modalCustomerInfo">
-                      <p><strong>Name:</strong> <span id="modalCustomerName">-</span></p>
-                      <p><strong>Email:</strong> <span id="modalCustomerEmail">-</span></p>
-                      <p><strong>Phone:</strong> <span id="modalCustomerPhone">-</span></p>
-                      <p><strong>Address:</strong> <span id="modalCustomerAddress">-</span></p>
-                  </div>
-              </div>
-              
-              <div class="modal-section">
-                  <h4 class="section-title">🛒 Order Items</h4>
-                  <table class="modal-items-table">
-                      <thead>
-                          <tr>
-                              <th>Product</th>
-                              <th>Price</th>
-                              <th>Qty</th>
-                              <th>Total</th>
-                          </tr>
-                      </thead>
-                      <tbody id="modalItemsBody">
-                          <!-- Items will be added by JavaScript -->
-                      </tbody>
-                  </table>
-              </div>
-              
-              <div class="modal-section">
-                  <h4 class="section-title">💰 Order Summary</h4>
-                  <div class="summary-card">
-                      <div class="summary-row">
-                          <span>Subtotal:</span>
-                          <span id="modalSubtotal">$0.00</span>
-                      </div>
-                      <div class="summary-row">
-                          <span>Shipping:</span>
-                          <span id="modalShipping">$0.00</span>
-                      </div>
-                      <div class="summary-row">
-                          <span>Tax:</span>
-                          <span id="modalTax">$0.00</span>
-                      </div>
-                      <div class="summary-row total">
-                          <span>Total:</span>
-                          <span id="modalTotal">$0.00</span>
-                      </div>
-                  </div>
-              </div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="modalOrderTitle">Order Details</h3>
+            <span class="modal-close" id="modalClose">&times;</span>
           </div>
+      
+          <div class="modal-section">
+            <h4 class="section-title">👤 Customer Information</h4>
+            <div class="customer-info" id="modalCustomerInfo">
+              <p><strong>Name:</strong> <span id="modalCustomerName">-</span></p>
+              <p><strong>Email:</strong> <span id="modalCustomerEmail">-</span></p>
+              <p><strong>Phone:</strong> <span id="modalCustomerPhone">-</span></p>
+              <p><strong>Address:</strong> <span id="modalCustomerAddress">-</span></p>
+            </div>
+          </div>
+      
+          <div class="modal-section">
+            <h4 class="section-title">🛒 Order Items</h4>
+            <table class="modal-items-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="modalItemsBody">
+                <!-- Items will be added by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+      
+          <div class="modal-section-orderSUM">
+            <div class="summary-card">
+              <h4 class="section-title d-flex justify-content-center">💰 Order Summary</h4>
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="modalSubtotal">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping:</span>
+                <span id="modalShipping">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Tax:</span>
+                <span id="modalTax">$0.00</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total:</span>
+                <span id="modalTotal">$0.00</span>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Static Print Button -->
+          <div class="modal-footer" style="text-align: center; margin-top: 20px;">
+            <button id="printSingleOrderBtn" class="print-order-btn">
+              🖨️ Print Invoice
+            </button>
+          </div>
+        </div>
       </div>
-      </main>
+      
+    </main>
       <!--end::App Main-->
       <!--begin::Footer-->
       <footer class="app-footer">
