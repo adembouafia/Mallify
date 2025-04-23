@@ -6,38 +6,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const SELECTOR_APP_SIDEBAR = '.app-sidebar';
 
   class PushMenu {
-      constructor(element) {
-          this._element = element;
-          this._sidebar = document.querySelector(SELECTOR_APP_SIDEBAR);
-      }
+    constructor(element) {
+      this._element = element;
+      this._sidebar = document.querySelector(SELECTOR_APP_SIDEBAR);
+    }
 
-      toggle() {
-          if (document.body.classList.contains(CLASS_NAME_SIDEBAR_COLLAPSE)) {
-              this.expand();
-          } else {
-              this.collapse();
-          }
+    toggle() {
+      if (document.body.classList.contains(CLASS_NAME_SIDEBAR_COLLAPSE)) {
+        this.expand();
+      } else {
+        this.collapse();
       }
+    }
 
-      expand() {
-          document.body.classList.remove(CLASS_NAME_SIDEBAR_COLLAPSE);
-          document.body.classList.add(CLASS_NAME_SIDEBAR_OPEN);
-      }
+    expand() {
+      document.body.classList.remove(CLASS_NAME_SIDEBAR_COLLAPSE);
+      document.body.classList.add(CLASS_NAME_SIDEBAR_OPEN);
+    }
 
-      collapse() {
-          document.body.classList.remove(CLASS_NAME_SIDEBAR_OPEN);
-          document.body.classList.add(CLASS_NAME_SIDEBAR_COLLAPSE);
-      }
+    collapse() {
+      document.body.classList.remove(CLASS_NAME_SIDEBAR_OPEN);
+      document.body.classList.add(CLASS_NAME_SIDEBAR_COLLAPSE);
+    }
   }
 
+  const pushMenuInstances = [];
+
   document.querySelectorAll(SELECTOR_SIDEBAR_TOGGLE).forEach(btn => {
-      const pushMenu = new PushMenu(btn);
-      btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          pushMenu.toggle();
-      });
+    const pushMenu = new PushMenu(btn);
+    pushMenuInstances.push(pushMenu);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      pushMenu.toggle();
+    });
+  });
+
+  // Close sidebar when clicking outside
+  document.addEventListener('click', (e) => {
+    const sidebar = document.querySelector(SELECTOR_APP_SIDEBAR);
+    const toggleBtn = document.querySelector(SELECTOR_SIDEBAR_TOGGLE);
+
+    const isClickInsideSidebar = sidebar.contains(e.target);
+    const isClickOnToggle = toggleBtn.contains(e.target);
+
+    if (
+      !isClickInsideSidebar &&
+      !isClickOnToggle &&
+      document.body.classList.contains(CLASS_NAME_SIDEBAR_OPEN)
+    ) {
+      document.body.classList.remove(CLASS_NAME_SIDEBAR_OPEN);
+      document.body.classList.add(CLASS_NAME_SIDEBAR_COLLAPSE);
+    }
   });
 });
+
 
 // nav-treeview
 document.addEventListener('DOMContentLoaded', () => {

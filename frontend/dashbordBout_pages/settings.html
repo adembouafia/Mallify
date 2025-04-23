@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pro Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --background: #f8f9fa;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      padding: 25px;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+      position: fixed;
+      height: 100%;
+      left: 0;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.hidden {
+      left: -100%;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    #shop-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 15px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .shop-info {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .shop-name {
+      color: #2b2d42;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .shop-description {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 15px 0;
+    }
+
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      margin: 8px 0;
+      color: #495057;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-menu li a:hover,
+    .sidebar-menu li a.active {
+      background: var(--primary-color);
+      color: white;
+      transform: translateX(10px);
+    }
+
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 30px;
+      background: var(--background);
+      transition: margin-left 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -100%;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      
+    }
+    @media (min-width: 768px)  {
+        .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    .mobile-menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      z-index: 1001;
+    }
+
+    .mobile-menu-btn i {
+      font-size: 24px;
+      color: var(--primary-color);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      display: none;
+      z-index: 999;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .settings-section {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .settings-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 25px;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+    }
+
+    button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <button class="mobile-menu-btn" id="menu-btn" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-container">
+        <img id="shop-logo" src="../../assets/images/dashboard/shop-logo.jpg" alt="Shop Logo">
+        <div class="shop-info">
+          <h2 class="shop-name" id="sidebar-shop-name">Pro Shop</h2>
+          <p class="shop-description" id="sidebar-shop-description">Premium products store</p>
+        </div>
+        <div class="sidebar-footer" style="margin-top: 30px;">
+        <p id="sidebar-stock-limit">📦 Stock Limit: 5</p>
+        <p id="sidebar-address">📍 Sousse , Tunisie</p>
+        <p id="sidebar-phone">📞 +216 26 788 694</p>
+      </div>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="index.html" >🏠 Dashboard</a></li>
+        <li><a href="#" onclick="showSection(event, 'stock-limiter')">📊 Stock Limiter</a></li>
+        <li><a href="#" class="active" onclick="showSection(event, 'shop-info')">🏪 Shop Info</a></li>
+      </ul>
+      
+    </aside>
+
+    <main class="main-content">
+      <section id="shop-info" class="settings-section">
+        <h2>Shop Information</h2>
+        <div class="form-group"><input type="text" id="shop-name" placeholder="Shop Name"></div>
+        <div class="form-group"><textarea id="shop-description" placeholder="Shop Description"></textarea></div>
+        <div class="form-group"><input type="text" id="shop-address" placeholder="Address"></div>
+        <div class="form-group"><input type="text" id="shop-phone" placeholder="Phone Number"></div>
+        <div class="form-group">
+          <label>Update Logo:</label>
+          <input type="file" id="logo-upload" accept="image/*">
+        </div>
+        <button onclick="saveShopInfo()">Save Changes</button>
+      </section>
+
+
+      <section id="stock-limiter" class="settings-section hidden">
+        <h2>Stock Limiter Settings</h2>
+        <div class="form-group"><input type="number" id="stock-limit" placeholder="Set stock limit"></div>
+        <button onclick="setStockLimit()">Save Limit</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('show');
+    }
+
+    document.getElementById('logo-upload').addEventListener('change', function(e) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById('shop-logo').src = reader.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function updateSidebarInfo() {
+      document.getElementById('sidebar-shop-name').textContent = document.getElementById('shop-name').value;
+      document.getElementById('sidebar-shop-description').textContent = document.getElementById('shop-description').value;
+      document.getElementById('sidebar-address').textContent = "📍 " + document.getElementById('shop-address').value;
+      document.getElementById('sidebar-phone').textContent = "📞 " + document.getElementById('shop-phone').value;
+    }
+
+    function saveShopInfo() {
+      updateSidebarInfo();
+      alert('Settings saved!');
+    }
+
+    function setStockLimit() {
+      const limit = document.getElementById('stock-limit').value;
+      document.getElementById('sidebar-stock-limit').textContent = `📦 Stock Limit: ${limit}`;
+      alert(`Stock limit set to ${limit}`);
+    }
+
+    function showSection(event, sectionId) {
+      event.preventDefault();
+      document.querySelectorAll('.settings-section').forEach(section => section.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+
+      document.querySelectorAll('.sidebar-menu a').forEach(link => link.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (window.innerWidth <= 768) {
+        toggleSidebar();
+      }
+    }
+  </script>
+</body>
+</html>
