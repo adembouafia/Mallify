@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Connexion réussie (client) !");
                 console.log("Client :", clientResponse);
                 // localStorage.setItem("token", clientResponse.token);
-                window.location.href = "wishlist.html";
+                window.location.href = "profil.html";
             } else {
                 // === Sinon, tentative de connexion vendor ===
                 const xhrVendor = new XMLHttpRequest();
