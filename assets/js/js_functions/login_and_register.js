@@ -237,40 +237,85 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 // forget password modal 
 function validateEmail() {
     const email = document.getElementById('resetEmail').value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailInput = document.getElementById('resetEmail');
 
-    if(emailRegex.test(email)) {
-    document.getElementById('emailMessage').textContent = `A verification code has been sent to ${email}`;
-    bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
-    bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
-    } else {
-    document.getElementById('resetEmail').classList.add('is-invalid');
+    // Validation simple
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailInput.classList.add('is-invalid');
+        return;
     }
+
+    emailInput.classList.remove('is-invalid');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:3000/client/forgotPassword', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            const res = JSON.parse(xhr.responseText);
+            if (xhr.status === 200) {
+                document.getElementById('emailMessage').innerText = `A code has been sent to: ${email}`;
+                bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('codeModal')).show();
+            } else {
+                alert(res.message || "Error sending reset code.");
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify({ email }));
 }
+
+
+let verifiedCode = ''; // Variable pour stocker le code vérifié
 
 function validateCode() {
-    const code = document.getElementById('verificationCode').value;
-    
-    if(code.length === 6 && /^\d+$/.test(code)) {
-    bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
-    bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
+    const codeInput = document.getElementById('verificationCode');
+    const code = codeInput.value;
+
+    if (code.length === 6 && /^[a-zA-Z0-9]+$/.test(code)) {
+        verifiedCode = code;
+        bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
     } else {
-    document.getElementById('verificationCode').classList.add('is-invalid');
+        codeInput.classList.add('is-invalid');
     }
 }
+
 
 function validatePassword() {
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
-    if(newPassword && newPassword === confirmPassword) {
-    // Ici vous pouvez ajouter la logique de réinitialisation réelle
-    alert('Password reset successfully!');
-    window.location.href = '/login'; // Redirection après succès
-    } else {
-    document.getElementById('confirmPassword').classList.add('is-invalid');
+    if (newPassword !== confirmPassword || newPassword.length < 6) {
+        alert("Passwords must match and be at least 6 characters.");
+        return;
     }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:3000/client/reset-password', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            const res = JSON.parse(xhr.responseText);
+            if (xhr.status === 200) {
+                alert("Password successfully reset!");
+                bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
+            } else {
+                alert(res.message || "Invalid or expired code.");
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify({
+        code: verifiedCode,
+        newPassword: newPassword
+    }));
 }
+
+
+
+
 
 // Réinitialiser les erreurs quand on modifie les champs
 document.querySelectorAll('.form-control').forEach(input => {

@@ -109,34 +109,34 @@ exports.forgotPassword = async (req, res) => {
       console.error("Error sending email:", err);
       res.status(500).send({ message: "Error sending reset code" });
     }
-  };
+};
   
-  // Reset password function
-  exports.resetPassword = async (req, res) => {
-    const { code, newPassword } = req.body;
-  
-    try {
-      const client = await Client.findOne({
-        resetPasswordCode: code,
-        resetPasswordExpires: { $gt: Date.now() }, // Vérifie que le code n'a pas expiré
-      });
-  
-      if (!client) {
-        return res.status(400).send({ message: "Invalid or expired reset code." });
-      }
-  
-      // Mettre à jour le mot de passe
-      client.password = newPassword;
-      client.resetPasswordCode = undefined;
-      client.resetPasswordExpires = undefined;
-  
-      await client.save();
-  
-      res.send({ message: "Password has been reset." });
-    } catch (err) {
-      res.status(500).send({ message: "Error resetting password" });
-    }
-  };
+// Reset password function
+exports.resetPassword = async (req, res) => {
+  const { code, newPassword } = req.body;
+
+  try {
+    const client = await Client.findOne({
+      resetPasswordCode: code,
+      resetPasswordExpires: { $gt: Date.now() }, // Vérifie que le code n'a pas expiré
+    });
+
+    if (!client) {
+      return res.status(400).send({ message: "Invalid or expired reset code." });
+    }
+
+    // Mettre à jour le mot de passe
+    client.password = newPassword;
+    client.resetPasswordCode = undefined;
+    client.resetPasswordExpires = undefined;
+
+    await client.save();
+
+    res.send({ message: "Password has been reset." });
+  } catch (err) {
+    res.status(500).send({ message: "Error resetting password" });
+  }
+};
 
 
 //get all clients 
