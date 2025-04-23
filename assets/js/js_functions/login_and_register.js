@@ -275,7 +275,7 @@ function validatePassword() {
 // Réinitialiser les erreurs quand on modifie les champs
 document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', () => {
-    input.classList.remove('is-invalid');
+        input.classList.remove('is-invalid');
     });
 });
 
