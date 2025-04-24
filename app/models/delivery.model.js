@@ -23,6 +23,16 @@ const deliverySchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Delivered', 'Cancelled' , 'Postponed'],
     default: 'Pending'
+  },
+  clientInfo: {
+    nom: {
+      type: String,
+      required: true
+    },
+    prenom: {
+      type: String,
+      required: true
+    }
   }
 }, {
   timestamps: true
@@ -44,4 +54,4 @@ deliverySchema.methods.trackDelivery = function() {
   };
 };
 
-module.exports = mongoose.model('Livraison', deliverySchema);
+module.exports = mongoose.model('Delivery', deliverySchema);

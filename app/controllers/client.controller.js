@@ -32,6 +32,7 @@ exports.register = async (req , res) =>{
     }
 };
 
+
 //login
 exports.login = async (req , res) =>{
     const {email , password} = req.body ; 
@@ -66,51 +67,53 @@ exports.login = async (req , res) =>{
     }
 }
 
+
 //reset password
 exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
-  
+
     try {
-      const client = await Client.findOne({ email });
-      if (!client) {
-        return res.status(404).send({ message: "User not found" });
-      }
-  
+        const client = await Client.findOne({ email });
+        if (!client) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
       // Générer un code aléatoire
-      const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Exemple : "A1B2C3"
-      client.resetPasswordCode = resetCode;
-      client.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-  
-      await client.save();
-  
+        const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Exemple : "A1B2C3"
+        client.resetPasswordCode = resetCode;
+        client.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+
+        await client.save();
+
       // Envoyer l'email avec le code
-      // transporter nodemailer (CORRIGÉ)
+      // transporter nodemailer
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
             },
         });
-  
-  
-      const mailOptions = {
-        to: client.email,
-        from: process.env.EMAIL_USER,
-        subject: "Password Reset Code",
-        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-          Your reset code is: ${resetCode}\n\n
-          If you did not request this, please ignore this email and your password will remain unchanged.\n`,
-      };
-  
-      await transporter.sendMail(mailOptions);
-      res.send({ message: "Reset code sent to your email." });
+
+
+        const mailOptions = {
+            to: client.email,
+            from: process.env.EMAIL_USER,
+            subject: "Password Reset Code",
+            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+            Your reset code is: ${resetCode}\n\n
+            If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+        };
+    
+        await transporter.sendMail(mailOptions);
+        res.send({ message: "Reset code sent to your email." });
     } catch (err) {
-      console.error("Error sending email:", err);
-      res.status(500).send({ message: "Error sending reset code" });
+        console.error("Error sending email:", err);
+        res.status(500).send({ message: "Error sending reset code" });
     }
 };
-  
+
+
 // Reset password function
 exports.resetPassword = async (req, res) => {
   const { code, newPassword } = req.body;

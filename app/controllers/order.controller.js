@@ -1,7 +1,6 @@
 const Order = require('../models/order.model');
 const Cart = require('../models/cart.model');
 const Invoice = require('../models/invoice.model');
-const Moderator = require('../models/moderator.model');
 
 
 //creation de commende

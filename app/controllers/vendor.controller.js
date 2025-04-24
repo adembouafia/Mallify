@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage }).single("shopLogo"); // 👈 important ici
+const upload = multer({ storage: storage }).single("shopLogo"); 
 
 // Register a new vendor
 exports.register = (req, res) => {

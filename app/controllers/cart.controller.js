@@ -46,7 +46,6 @@ exports.addToCart = async (req, res) => {
 };
 
 
-
 // Supprimer un produit du panier
 exports.removeFromCart = async (req, res) => {
     const { clientId, productId } = req.body;
