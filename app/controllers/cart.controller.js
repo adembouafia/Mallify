@@ -34,7 +34,6 @@ exports.addToCart = async (req, res) => {
 
         await cart.save();
 
-        // repopulate product info for the response
         cart = await Cart.findById(cart._id).populate('items.productId');
 
         res.status(200).json({

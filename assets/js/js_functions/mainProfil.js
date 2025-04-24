@@ -13,6 +13,8 @@ function showContent(sectionId) {
     }
 }
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
     showContent('profile-info');
     const sidebar = document.getElementById("customProfileSidebar");
@@ -90,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     });
 });
+
+
+
 // Edit Profile Info Modal  
 document.addEventListener("DOMContentLoaded", function () {
     const fields = [
@@ -132,30 +137,30 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.hide();
     });
 }); 
-//changer l'image de profile
 
-  document.addEventListener("DOMContentLoaded", function () {
+
+//changer l'image de profile
+document.addEventListener("DOMContentLoaded", function () {
     const imageInput = document.getElementById("profileImageInput");
     const profileImage = document.getElementById("profileImage");
     const editBtn = document.getElementById("editImageBtn");
 
     // Quand on clique sur le bouton crayon, on déclenche le file input
     editBtn.addEventListener("click", function () {
-      imageInput.click();
+    imageInput.click();
     });
 
     // Quand une image est choisie, on la met à jour dans la balise <img>
     imageInput.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
+    const file = this.files[0];
+    if (file) {
         const reader = new FileReader();
 
         reader.onload = function (e) {
-          profileImage.src = e.target.result;
+        profileImage.src = e.target.result;
         };
 
         reader.readAsDataURL(file);
-      }
+    }
     });
-  });
-
+});
