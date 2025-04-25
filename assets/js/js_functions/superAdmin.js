@@ -78,66 +78,152 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+
+
 // add admin form
-const adminForm = document.getElementById("adminForm");
+document.getElementById("adminAvatar").addEventListener("change", function() {
+  const avatarPreview = document.getElementById("avatarPreview");
+  const file = this.files[0];
+  
+  if (file) {
+    // Create a URL for the selected image and update the preview
+    const imageUrl = URL.createObjectURL(file);
+    avatarPreview.src = imageUrl;
+  } else {
+    // If no file is selected, show the default image
+    avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
+  }
+});
+
+adminForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const adminForm = document.getElementById("adminForm");
   const adminTableBody = document.querySelector(".table tbody");
   const avatarPreview = document.getElementById("avatarPreview");
   const avatarInput = document.getElementById("adminAvatar");
-  const passwordList = [];
-   avatarInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        avatarPreview.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
+  const name = document.getElementById("adminName").value;
+  const email = document.getElementById("adminEmail").value;
+  const password = document.getElementById("adminPassword").value;
+  const avatarFile = avatarInput.files[0];
 
-  adminForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+  const formData = new FormData();
+  formData.append("firstname", name); // 🟡 adapte si nécessaire
+  formData.append("lastname", name); // 🟡 adapte si nécessaire
+  formData.append("email", email);
+  formData.append("password", password);
+  if (avatarFile) formData.append("adminImage", avatarFile); // le nom doit correspondre à .single("adminImage")
 
-    const name = document.getElementById("adminName").value;
-    const email = document.getElementById("adminEmail").value;
-    const password = document.getElementById("adminPassword").value;
-    const avatarFile = avatarInput.files[0];
-    let avatarUrl = "../../assets/images/dashboard/superadmin.jpg";
-    if (avatarFile) {
-      avatarUrl = URL.createObjectURL(avatarFile);
-    }
-    passwordList.unshift(password);
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `<td><img src="${avatarUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-      <td>${name}</td>
-      <td>${email}</td>
-      <td>${new Date().toLocaleString()}</td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
-            <i class="bi bi-pencil"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-danger btn-delete">
-            <i class="bi bi-trash"></i>
-        </button>
-      </td>`;
-    adminTableBody.insertBefore(newRow, adminTableBody.firstChild);
-    this.reset();
-    avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:3000/admin/add", true);
 
-    const modal = bootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
-    modal.hide();
-    console.log("Liste des mots de passe :", passwordList);
-  });
+  const token = localStorage.getItem("token");
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
-  // delete admin
-  document.addEventListener("click", function (e) {
-    if (e.target.closest(".btn-delete")) {
-      const row = e.target.closest("tr");
-      if (confirm("Are you sure you want to delete this admin?")) {
-        row.remove();
+  xhr.onload = function () {
+    if (xhr.status === 201 || xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      const savedAdmin = response.admin;
+      
+      // Create a temporary image to check if the URL is valid
+      let imageUrl;
+      
+      if (avatarFile) {
+        // If we uploaded a file, use a local object URL temporarily
+        // This ensures we see the image immediately without waiting for server processing
+        imageUrl = URL.createObjectURL(avatarFile);
+      } else if (savedAdmin.adminImage) {
+        // If the response has an image URL, use it
+        // Check if it's a relative or absolute URL
+        if (savedAdmin.adminImage.startsWith('http')) {
+          imageUrl = savedAdmin.adminImage;
+        } else {
+          // If it's a relative path, prepend the base URL
+          imageUrl = `http://localhost:3000${savedAdmin.adminImage}`;
+        }
+      } else {
+        // Fallback to default image
+        imageUrl = "../../assets/images/dashboard/superadmin.jpg";
       }
+
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `<td><img src="${imageUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+        <td>${savedAdmin.firstname}</td>
+        <td>${savedAdmin.email}</td>
+        <td>${new Date().toLocaleString()}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+              <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger btn-delete">
+              <i class="bi bi-trash"></i>
+          </button>
+        </td>`;
+      adminTableBody.insertBefore(newRow, adminTableBody.firstChild);
+
+      adminForm.reset();
+      avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
+      modal.hide();
+
+      console.log("Admin ajouté avec succès");
+    } else {
+      alert("Erreur lors de l'ajout de l'admin.");
+      console.log(xhr.responseText);
     }
-  });
+  };
+
+  xhr.onerror = function () {
+    alert("Erreur réseau lors de la requête.");
+  };
+
+  xhr.send(formData);
+});
+
+
+
+
+// Delete admin 
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".btn-delete")) {
+    const row = e.target.closest("tr");
+    const adminId = row.dataset.adminId;
+    
+    if (!adminId) {
+      console.error("Admin ID not found");
+      return;
+    }
+    
+    if (confirm("Are you sure you want to delete this admin?")) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("DELETE", `http://localhost:3000/admin/delete/${adminId}`, true);
+      
+      const token = localStorage.getItem("token");
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          row.remove();
+          console.log("Admin supprimé avec succès");
+        } else {
+          alert("Erreur lors de la suppression de l'admin.");
+          console.log(xhr.responseText);
+        }
+      };
+      
+      xhr.onerror = function () {
+        alert("Erreur réseau lors de la requête.");
+      };
+      
+      xhr.send();
+    }
+  }
+});
+
+
+
 
 // edit admin
 let editingRow = null;
@@ -158,10 +244,13 @@ document.addEventListener("click", function (e) {
     // Reset file input and data URL
     document.getElementById("editAvatar").value = "";
     newEditAvatarDataURL = null;
+    
+    // Log the admin ID for debugging
+    console.log("Editing admin with ID:", editingRow.dataset.adminId);
   }
 });
 
-// Preview new uploaded avatar
+// Preview avatar
 document.getElementById("editAvatar").addEventListener("change", function () {
   const file = this.files[0];
   if (file) {
@@ -177,18 +266,122 @@ document.getElementById("editAvatar").addEventListener("change", function () {
 document.getElementById("editAdminForm").addEventListener("submit", function (e) {
   e.preventDefault();
   if (editingRow) {
-    editingRow.cells[1].textContent = document.getElementById("editName").value;
-    editingRow.cells[2].textContent = document.getElementById("editEmail").value;
-
-    // Update avatar if a new one is chosen
-    if (newEditAvatarDataURL) {
-      editingRow.querySelector("img").src = newEditAvatarDataURL;
+    const adminId = editingRow.dataset.adminId;
+    
+    if (!adminId) {
+      console.error("Admin ID is missing or null");
+      alert("Error: Admin ID is missing. Cannot update.");
+      return;
     }
-
-    const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
-    editModal.hide();
+    
+    const updatedName = document.getElementById("editName").value;
+    const updatedEmail = document.getElementById("editEmail").value;
+    
+    if (newEditAvatarDataURL && newEditAvatarDataURL.startsWith('data:image')) {
+      const formData = new FormData();
+      formData.append("firstname", updatedName);
+      formData.append("lastname", updatedName);
+      
+      // Convert data URL to File object
+      if (document.getElementById("editAvatar").files.length > 0) {
+        formData.append("adminImage", document.getElementById("editAvatar").files[0]);
+      }
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `http://localhost:3000/admin/update/${adminId}`, true);
+      
+      const token = localStorage.getItem("token");
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      }
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            
+            // Update the row in the table
+            editingRow.cells[1].textContent = updatedName;
+            editingRow.cells[2].textContent = updatedEmail;
+            
+            // Update the avatar if we have a new one
+            if (newEditAvatarDataURL) {
+              editingRow.querySelector("img").src = newEditAvatarDataURL;
+            }
+            
+            // Close the modal
+            const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
+            editModal.hide();
+            
+            console.log("Admin updated successfully:", response);
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            alert("Error updating admin: " + error.message);
+          }
+        } else {
+          console.error("Error updating admin:", xhr.status, xhr.responseText);
+          alert("Error updating admin. Status: " + xhr.status);
+        }
+      };
+      
+      xhr.onerror = function () {
+        console.error("Network error during update");
+        alert("Network error during update!");
+      };
+      
+      xhr.send(formData);
+    } else {
+      // No new image, can use JSON
+      const updateData = JSON.stringify({
+        firstname: updatedName,
+        lastname: updatedName,
+        email: updatedEmail,
+      });
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `http://localhost:3000/admin/update/${adminId}`, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      
+      const token = localStorage.getItem("token");
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      }
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            
+            // Update the row in the table
+            editingRow.cells[1].textContent = updatedName;
+            editingRow.cells[2].textContent = updatedEmail;
+            
+            // Close the modal
+            const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
+            editModal.hide();
+            
+            console.log("Admin updated successfully:", response);
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            alert("Error updating admin: " + error.message);
+          }
+        } else {
+          console.error("Error updating admin:", xhr.status, xhr.responseText);
+          alert("Error updating admin. Status: " + xhr.status);
+        }
+      };
+      
+      xhr.onerror = function () {
+        console.error("Network error during update");
+        alert("Network error during update!");
+      };
+      
+      xhr.send(updateData);
+    }
   }
 });
+
+
 
 
 //search admin 
@@ -280,4 +473,96 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-  
+//get admins
+function getAdmins() {
+  const adminTableBody = document.querySelector(".table tbody");
+  adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Authentication token not found. Please log in again.</td></tr>';
+    return;
+  }
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/admin/getAll", true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      const admins = response.admins || response;
+
+      adminTableBody.innerHTML = '';
+
+      if (Array.isArray(admins) && admins.length > 0) {
+        admins.forEach(admin => {
+          const row = document.createElement("tr");
+          const adminId = admin._id;
+          const imgId = `admin-img-${adminId}`;
+          const imagePath = admin.adminImage ? (admin.adminImage.startsWith('/') ? admin.adminImage : `/${admin.adminImage}`) : null;
+          const createdAt = new Date(admin.createdAt || Date.now()).toLocaleString();
+
+          row.dataset.adminId = adminId;
+          row.innerHTML = `
+            <td><img id="${imgId}" src="../../assets/images/dashboard/superadmin.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+            <td>${admin.firstname || 'Unknown'}</td>
+            <td>${admin.email || 'No email'}</td>
+            <td>${createdAt}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger btn-delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          `;
+          adminTableBody.appendChild(row);
+
+          // Load admin image if exists
+          if (imagePath) {
+            const imgXhr = new XMLHttpRequest();
+            imgXhr.open("GET", `http://localhost:3000${imagePath}`, true);
+            imgXhr.responseType = "blob";
+            imgXhr.setRequestHeader("Authorization", `Bearer ${token}`);
+            imgXhr.onload = function () {
+              if (imgXhr.status === 200) {
+                const blob = imgXhr.response;
+                const imgElement = document.getElementById(imgId);
+                if (imgElement) {
+                  const reader = new FileReader();
+                  reader.onloadend = function () {
+                    imgElement.src = reader.result;
+                  };
+                  reader.readAsDataURL(blob);
+                }
+              } else {
+                console.error(`Failed to load image for admin ${adminId}`);
+              }
+            };
+            imgXhr.onerror = () => {
+              console.error(`Error loading image for admin ${adminId}`);
+            };
+            imgXhr.send();
+          }
+        });
+      } else {
+        adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No admins found</td></tr>';
+      }
+    } else {
+      console.error("Error fetching admins:", xhr.responseText);
+      adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error loading admins</td></tr>';
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error while fetching admins");
+    adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error</td></tr>';
+  };
+
+  xhr.send();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  getAdmins();
+});

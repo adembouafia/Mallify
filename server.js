@@ -8,11 +8,18 @@ const path = require("path");
 dotenv.config();
 const app = express();
 
+
+
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+
+
+
 app.use(
   cors({
     origin: "*",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
 
@@ -33,7 +40,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "frontend")));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-app.use("/uploads", express.static("uploads"));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 app.use((req, res, next) => {
   console.log(`request made to ${req.url}`);

@@ -174,3 +174,54 @@ exports.getAllAdmins = async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
+
+
+//delete admin
+exports.deleteAdmin = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedAdmin = await Admin.findByIdAndDelete(id);
+        if (!deletedAdmin) {
+            return res.status(404).send({ message: "Admin not found" });
+        }
+        res.status(200).send({ message: "Admin deleted successfully", admin: deletedAdmin });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+
+//update admin
+exports.updateAdmin = async (req, res) => {
+    const { id } = req.params;
+    const { firstname, lastname, email, password, role } = req.body;
+
+    try {
+        const updateData = {
+            firstname,
+            lastname,
+            email,
+            password,
+            role,
+        };
+
+        if (req.file) {
+            updateData.adminImage = `uploads/${req.file.filename}`;
+        }
+
+        const updatedAdmin = await Admin.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedAdmin) {
+            return res.status(404).send({ message: "Admin not found" });
+        }
+
+        res.status(200).send({ message: "Admin updated successfully", admin: updatedAdmin });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
