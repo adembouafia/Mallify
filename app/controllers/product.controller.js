@@ -18,12 +18,15 @@ exports.createProduct = async (req, res) => {
         }
 
         // Créer un nouveau produit
-        const product = await Product.create(req.body);
+        const product = await Product.create({
+            ...req.body,
+            shop: req.shop._id, 
+        });
 
         res.status(201).json({
             status: "success",
             data: {
-                product,
+                product
             }
         });
     } catch (err) {
@@ -33,6 +36,8 @@ exports.createProduct = async (req, res) => {
         });
     }
 }
+
+
 
 // Get all products with populated subCategory
 exports.getAllProducts = async (req, res) => {
@@ -53,6 +58,8 @@ exports.getAllProducts = async (req, res) => {
         });
     }
 }
+
+
 
 // Get product by ID with populated subCategory
 exports.getProduct = async (req, res) => {
@@ -80,6 +87,29 @@ exports.getProduct = async (req, res) => {
     }
 }
 
+
+
+exports.getMyProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ shop: req.shop._id }).populate('subCategory', 'name');
+
+        res.status(200).json({
+            status: "success",
+            results: products.length,
+            data: {
+                products
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: "fail",
+            message: err.message
+        });
+    }
+};
+
+
+
 // Update product by ID
 exports.updateProduct = async (req, res) => {
     try {
@@ -105,6 +135,8 @@ exports.updateProduct = async (req, res) => {
         });
     }
 }
+
+
 
 // Delete product by ID
 exports.deleteProduct = async (req, res) => {
