@@ -78,3 +78,13 @@ exports.login = async (req, res) => {
         res.status(500).send({ message: err.message || "Error logging in" });
     }
 };
+
+//get all moderators
+exports.getAllM = async (req, res) => {
+    try {
+        const moderators = await Moderator.find();
+        res.status(200).send({ moderators });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error fetching moderators" });
+    }
+};

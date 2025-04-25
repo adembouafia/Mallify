@@ -1,6 +1,9 @@
+const auth = require("../middlewares/auth.middleware");
+const authorize = require("../middlewares/authorize.middleware");
+
 module.exports = (app) => {
     const category = require("../controllers/category.controller");
-
-    app.post('/category/create', category.createCategory);
-    app.delete('/category/delete/:id', category.deleteCategory);
-}
+    app.post('/category/create',auth,authorize('admin', 'superAdmin'),category.createCategory);
+    app.delete('/category/delete/:id',auth,authorize('superAdmin'),category.deleteCategory);
+    app.get('/category',auth,authorize('client', 'vendor', 'moderator', 'admin', 'superAdmin'),category.getAllCategories);
+};

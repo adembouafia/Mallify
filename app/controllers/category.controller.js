@@ -45,3 +45,16 @@ exports.deleteCategory = async(req , res)=>{
         });
     }
 };
+
+
+
+//get all categories
+exports.getAllCategories = async (req, res) => {
+    try {
+        const categories = await Category.find();
+        res.status(200).json({ categories });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur serveur lors de la récupération des catégories' });
+    }
+};

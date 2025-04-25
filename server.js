@@ -47,16 +47,25 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch((err) => console.error("Erreur de connexion :", err));
 
-  require("./app/routes/client.routes")(app);
-  require("./app/routes/vendor.routes")(app);
-  require("./app/routes/product.routes")(app);
-  require("./app/routes/shop.routes")(app);
-  require("./app/routes/category.routes")(app);
-  require("./app/routes/subCategory.routes")(app);
+
+
+  require("./app/routes/admin.routes")(app);
   require("./app/routes/cart.routes")(app);
-  require("./app/routes/order.routes")(app);
+  require("./app/routes/client.routes")(app);
+  require("./app/routes/category.routes")(app);
   require("./app/routes/delivery.routes")(app);
   require("./app/routes/favoris.routes")(app);
+  require("./app/routes/invoice.routes")(app);
+  require("./app/routes/moderator.routes")(app);
+  require("./app/routes/order.routes")(app);
+  require("./app/routes/product.routes")(app);
+  require("./app/routes/report.routes")(app);
+  require("./app/routes/shop.routes")(app);
+  require("./app/routes/subCategory.routes")(app);
+  require("./app/routes/vendor.routes")(app);
+  
+  
+
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => console.log(`Serveur en cours d'exécution sur le port ${PORT}`));
