@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const multer = require("multer");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 dotenv.config();
 
 // Multer storage configuration

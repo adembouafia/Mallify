@@ -22,13 +22,19 @@ const VendorSchema = new mongoose.Schema(
 
     role: {
         type: String,
-        enum: ["vendor", "moderator"],
         default: "vendor"
     },
     shop: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "shop"
     },
+    resetPasswordCode: {
+        type: String,
+    },
+
+    resetPasswordExpires: {
+        type: Date,
+    }
     },
 
     {

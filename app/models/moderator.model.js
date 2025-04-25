@@ -26,6 +26,13 @@ const moderatorSchema = new mongoose.Schema(
         type: String,
         required: true
     },
+    resetPasswordCode: {
+        type: String,
+    },
+
+    resetPasswordExpires: {
+        type: Date,
+    }
     
     },
 

@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const Client = require("../models/client.model");
 const multer = require("multer");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 
@@ -64,6 +66,8 @@ exports.register = (req, res) => {
     });
 };
 
+
+
 // Vendor login
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -100,6 +104,8 @@ exports.login = async (req, res) => {
     }
 };
 
+
+
 // Get all vendors
 exports.getAll = async (req, res) => {
     try {
@@ -107,5 +113,75 @@ exports.getAll = async (req, res) => {
         res.send(vendors);
     } catch (err) {
         res.status(500).send({ message: err.message || "Error fetching vendors" });
+    }
+};
+
+
+
+//forgot password
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const vendor = await Vendor.findOne({ email });
+        if (!vendor) {
+            return res.status(404).send({ message: "Vendor not found" });
+        }
+
+        const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Ex: "A1B2C3"
+        vendor.resetPasswordCode = resetCode;
+        vendor.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+
+        await vendor.save();
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        const mailOptions = {
+            to: vendor.email,
+            from: process.env.EMAIL_USER,
+            subject: "Vendor Password Reset Code",
+            text: `You have requested a password reset.\n\nYour reset code is: ${resetCode}\n\nIf you did not request this, please ignore this email.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.send({ message: "Reset code sent to your email." });
+    } catch (err) {
+        console.error("Error sending reset code:", err);
+        res.status(500).send({ message: "Error sending reset code" });
+    }
+};
+
+
+
+// Reset Password 
+exports.resetPassword = async (req, res) => {
+    const { code, newPassword } = req.body;
+
+    try {
+        const vendor = await Vendor.findOne({
+            resetPasswordCode: code,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!vendor) {
+            return res.status(400).send({ message: "Invalid or expired reset code." });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        vendor.vendorPassword = hashedPassword;
+        vendor.resetPasswordCode = undefined;
+        vendor.resetPasswordExpires = undefined;
+
+        await vendor.save();
+        res.send({ message: "Password has been reset successfully." });
+    } catch (err) {
+        res.status(500).send({ message: "Error resetting password" });
     }
 };
