@@ -37,7 +37,7 @@ exports.addAdmin = (req, res) => {
             firstname,
             lastname,
             email,
-            password, // will be hashed automatically by the pre-save hook
+            password, 
             role: role || "admin",
             adminImage: req.file.path,
         });

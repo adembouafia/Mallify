@@ -37,74 +37,65 @@ function previewImage(event) {
     }
 }
 
+
+
+//login form 
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
 
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
-
         if (!email || !password) {
-            alert("Tous les champs sont obligatoires !");
-            return;
+        alert("Tous les champs sont obligatoires !");
+        return;
         }
 
-        const loginData = {
-            email: email,
-            password: password // Utiliser "password" pour les deux requêtes
-        };
+        const loginData = JSON.stringify({ email, password });
 
-        // === Tentative de connexion client ===
-        const xhrClient = new XMLHttpRequest();
-        xhrClient.open("POST", "http://localhost:3000/client/login", true);
-        xhrClient.setRequestHeader("Content-Type", "application/json");
-
-        xhrClient.onload = function () {
-            if (xhrClient.status === 200) {
-                const clientResponse = JSON.parse(xhrClient.responseText);
-                alert("Connexion réussie (client) !");
-                console.log("Client :", clientResponse);
-                // localStorage.setItem("token", clientResponse.token);
-                window.location.href = "profil.html";
+        const xhrAdmin = new XMLHttpRequest();
+        xhrAdmin.open("POST", "http://localhost:3000/admin/login", true);
+        xhrAdmin.setRequestHeader("Content-Type", "application/json");
+        xhrAdmin.onload = function () {
+        if (xhrAdmin.status === 200) {
+            const res = JSON.parse(xhrAdmin.responseText);
+            const role = res.admin.role;
+            window.location.href = "../frontend/dashbordA_pages/index.html";
+        } else {
+            const xhrVendor = new XMLHttpRequest();
+            xhrVendor.open("POST", "http://localhost:3000/vendor/login", true);
+            xhrVendor.setRequestHeader("Content-Type", "application/json");
+            xhrVendor.onload = function () {
+            if (xhrVendor.status === 200) {
+                window.location.href = "../frontend/dashbordBout_pages/index.html";
             } else {
-                // === Sinon, tentative de connexion vendor ===
-                const xhrVendor = new XMLHttpRequest();
-                xhrVendor.open("POST", "http://localhost:3000/vendor/login", true);
-                xhrVendor.setRequestHeader("Content-Type", "application/json");
-
-                xhrVendor.onload = function () {
-                    if (xhrVendor.status === 200) {
-                        const vendorResponse = JSON.parse(xhrVendor.responseText);
-                        alert("Connexion réussie (vendeur) !");
-                        console.log("Vendor :", vendorResponse);
-                        // localStorage.setItem("token", vendorResponse.token);
-                        window.location.href = "../frontend/dashbordBout_pages/index.html";
-                    } else {
-                        try {
-                            const error = JSON.parse(xhrVendor.responseText);
-                            alert("Erreur : " + (error.message || "Email ou mot de passe invalide"));
-                        } catch (e) {
-                            alert("Erreur inconnue lors de la connexion vendeur.");
-                        }
+                const xhrClient = new XMLHttpRequest();
+                xhrClient.open("POST", "http://localhost:3000/client/login", true);
+                xhrClient.setRequestHeader("Content-Type", "application/json");
+                xhrClient.onload = function () {
+                if (xhrClient.status === 200) {
+                    window.location.href = "../frontend/index.html";
+                } else {
+                    try {
+                    const err = JSON.parse(xhrClient.responseText);
+                    alert("Erreur : " + (err.message || "Identifiants invalides"));
+                    } catch {
+                    alert("Erreur inconnue lors de la connexion.");
                     }
+                }
                 };
-
-                xhrVendor.onerror = function () {
-                    alert("Erreur de connexion avec le serveur (vendeur).");
-                };
-
-                xhrVendor.send(JSON.stringify(loginData));
+                xhrClient.onerror = () => alert("Erreur réseau lors de la connexion client.");
+                xhrClient.send(loginData);
             }
+            };
+            xhrVendor.onerror = () => alert("Erreur réseau lors de la connexion vendeur.");
+            xhrVendor.send(loginData);
+        }
         };
-
-        xhrClient.onerror = function () {
-            alert("Erreur de connexion avec le serveur (client).");
-        };
-
-        xhrClient.send(JSON.stringify(loginData));
+        xhrAdmin.onerror = () => alert("Erreur réseau lors de la connexion admin.");
+        xhrAdmin.send(loginData);
     });
 });
-
 
 
 
@@ -197,7 +188,6 @@ document.getElementById("registerForm").addEventListener("submit", function (e) 
 
 
 
-
 // Envoi du formulaire d'inscription du vendeur
 document.getElementById("vendorForm").addEventListener("submit", function (e) {
     e.preventDefault(); // Empêche le rechargement de la page
@@ -229,7 +219,6 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 
     xhr.send(formData); // Envoie les données, y compris l'image
 });
-
 
 
 
@@ -283,6 +272,7 @@ function validateCode() {
 }
 
 
+
 function validatePassword() {
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
@@ -313,10 +303,6 @@ function validatePassword() {
     }));
 }
 
-
-
-
-
 // Réinitialiser les erreurs quand on modifie les champs
 document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', () => {
@@ -340,3 +326,5 @@ document.getElementById('newPassword').addEventListener('input', function(e) {
         strength < 2 ? '#e53e3e' : 
         strength < 4 ? '#d69e2e' : '#48bb78';
 });
+
+//end forget password modal
