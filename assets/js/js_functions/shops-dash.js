@@ -1,177 +1,231 @@
-// Shop data structure
 let shops = {
-  pending: [
-    {
-      id: 'p1',
-      name: 'TechHub Store',
-      image: '../../assets/images/products/iphone.png',
-      location: 'New York, USA',
-      date: 'Apr 20, 2025',
-      owner: {
-        name: 'Alex Johnson',
-        avatar: '../../assets/images/dashboard/devoloper1.jpg'
-      }
-    },
-    {
-      id: 'p2',
-      name: 'Café Parisien',
-      image: '../../assets/images/products/bureau.png',
-      location: 'Paris, France',
-      date: 'Apr 18, 2025',
-      owner: {
-        name: 'Marie Dubois',
-        avatar: '../../assets/images/dashboard/devoloper2.jpg'
-      }
-    },
-    {
-      id: 'p3',
-      name: 'Fashion Boutique',
-      image: '../../assets/images/products/bureau.png',
-      location: 'Milan, Italy',
-      date: 'Apr 15, 2025',
-      owner: {
-        name: 'Sophia Romano',
-        avatar: '../../assets/images/dashboard/superadmin.jpg'
-      }
-    },
-    {
-      id: 'p4',
-      name: 'Organic Market',
-      image: '../../assets/images/products/bureau.png',
-      location: 'Berlin, Germany',
-      date: 'Apr 12, 2025',
-      owner: {
-        name: 'Hans Mueller',
-        avatar: '../../assets/images/dashboard/admin.jpg'
-      }
-    }
-  ],
-  approved: [
-    {
-      id: 'a1',
-      name: 'Digital World',
-      image: '../../assets/images/products/iphone.png',
-      location: 'San Francisco, USA',
-      date: 'Apr 5, 2025',
-      status: 'Active',
-      owner: {
-        name: 'John Smith',
-        avatar: '../../assets/images/dashboard/devoloper1.jpg'
-      },
-      shopId: '#SH001'
-    },
-    {
-      id: 'a2',
-      name: 'Fashion Hub',
-      image: '../../assets/images/products/bureau.png',
-      location: 'London, UK',
-      date: 'Apr 3, 2025',
-      status: 'Active',
-      owner: {
-        name: 'Emma Wilson',
-        avatar: '../../assets/images/dashboard/devoloper2.jpg'
-      },
-      shopId: '#SH002'
-    }
-  ],
-  rejected: [
-    {
-      id: 'r1',
-      name: 'Budget Electronics',
-      image: '../../assets/images/products/bureau.png',
-      location: 'Shanghai, China',
-      date: 'Apr 2, 2025',
-      reason: 'Insufficient product quality documentation',
-      owner: {
-        name: 'Robert Chen',
-        avatar: '../../assets/images/dashboard/admin.jpg'
-      },
-      shopId: '#SH007'
-    },
-    {
-      id: 'r2',
-      name: 'Discount Clothing',
-      image: '../../assets/images/products/bureau.png',
-      location: 'Toronto, Canada',
-      date: 'Mar 28, 2025',
-      reason: 'Failed compliance verification',
-      owner: {
-        name: 'Lisa Johnson',
-        avatar: '../../assets/images/dashboard/superadmin.jpg'
-      },
-      shopId: '#SH008'
-    }
-  ]
-};
+  pending: [],
+  approved: [],
+  rejected: [],
+}
 
-// Initialize the dashboard
-document.addEventListener('DOMContentLoaded', function() {
-  // Update statistics
-  updateStats();
-  
-  // Render all shops
-  renderPendingShops();
-  renderApprovedShops();
-  renderRejectedShops();
-  
-  // Initialize event listeners
-  initEventListeners();
-  
-  // Initialize tooltips
-  initTooltips();
-});
+// Fetch all shops
+function fetchShops() {
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", "http://localhost:3000/shop/get", true)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      const allShops = JSON.parse(xhr.responseText)
+
+      // Reset shops
+      shops.pending = []
+      shops.approved = []
+      shops.rejected = []
+
+      // Process each shop and categorize by status
+      allShops.forEach((shop) => {
+        // Map backend fields to frontend fields
+        const shopItem = {
+          id: shop._id,
+          name: shop.shopName,
+          image:
+            shop.shopLogo && shop.shopLogo.trim() !== ""
+              ? `/uploads/${shop.shopLogo}`
+              : "/assets/images/products/aboutUs.jpg",
+          location: shop.adresse || "No address provided",
+          description: shop.shopdescription || "No description provided",
+          date: new Date(shop.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+          owner: {
+            name: shop.vendor ? shop.vendor.vendorName || "Unknown" : "Unknown",
+            email: shop.vendor ? shop.vendor.email || "No email" : "No email",
+            phone: shop.vendor ? shop.vendor.phone || "No phone" : "No phone",
+            avatar: shop.vendor && shop.vendor.profilePicture
+              ? `/uploads/${shop.vendor.profilePicture}`
+              : '/uploads/admin.jpg'
+          },          
+          shopId: `#SH${shop._id.slice(-4).toUpperCase()}`,
+          status: shop.status,
+          reason: shop.rejectionReason || "",
+        }
+
+        console.log("Shop ID:", shop._id)
+  console.log("Shop Name:", shop.shopName)
+  console.log("Vendor data:", shop.vendor)
+  if (shop.vendor) {
+    console.log("Vendor type:", typeof shop.vendor)
+    if (typeof shop.vendor === "object") {
+      console.log("Vendor keys:", Object.keys(shop.vendor))
+      console.log("Vendor name property:", shop.vendor.vendorName)
+      console.log("Vendor name property:", shop.vendor.name)
+    }
+  }
+
+        // Categorize by status
+        if (shop.status === "Pending") shops.pending.push(shopItem)
+        else if (shop.status === "Approved") shops.approved.push(shopItem)
+        else if (shop.status === "Rejected") shops.rejected.push(shopItem)
+      })
+
+      // Update the dashboard UI
+      updateDashboard()
+      updateStatistics()
+    } else {
+      showToast("Error fetching shops data", "danger")
+    }
+  }
+
+  xhr.onerror = () => {
+    showToast("Network error occurred", "danger")
+  }
+
+  xhr.send()
+}
 
 // Update dashboard statistics
-function updateStats() {
-  const totalShops = shops.pending.length + shops.approved.length + shops.rejected.length;
-  const pendingCount = shops.pending.length;
-  const approvedCount = shops.approved.length;
-  const rejectedCount = shops.rejected.length;
-  
-  // Update stat cards
-  document.querySelector('.stat-card.primary .stat-card-number').textContent = totalShops;
-  document.querySelector('.stat-card.success .stat-card-number').textContent = approvedCount;
-  document.querySelector('.stat-card.warning .stat-card-number').textContent = pendingCount;
-  document.querySelector('.stat-card.danger .stat-card-number').textContent = rejectedCount;
-  
-  // Update progress bars
-  const approvedPercentage = Math.round((approvedCount / totalShops) * 100) || 0;
-  const pendingPercentage = Math.round((pendingCount / totalShops) * 100) || 0;
-  const rejectedPercentage = Math.round((rejectedCount / totalShops) * 100) || 0;
-  
-  document.querySelector('.stat-card.success .progress-bar').style.width = `${approvedPercentage}%`;
-  document.querySelector('.stat-card.success .progress-bar').setAttribute('aria-valuenow', approvedPercentage);
-  document.querySelector('.stat-card.success .stat-card-progress').textContent = `${approvedPercentage}% of total shops`;
-  
-  document.querySelector('.stat-card.warning .progress-bar').style.width = `${pendingPercentage}%`;
-  document.querySelector('.stat-card.warning .progress-bar').setAttribute('aria-valuenow', pendingPercentage);
-  document.querySelector('.stat-card.warning .stat-card-progress').textContent = `${pendingPercentage}% of total shops`;
-  
-  document.querySelector('.stat-card.danger .progress-bar').style.width = `${rejectedPercentage}%`;
-  document.querySelector('.stat-card.danger .progress-bar').setAttribute('aria-valuenow', rejectedPercentage);
-  document.querySelector('.stat-card.danger .stat-card-progress').textContent = `${rejectedPercentage}% of total shops`;
-  
+function updateStatistics() {
+  // Update count displays
+  document.querySelector(".stat-card.primary .stat-card-number").textContent =
+    shops.pending.length + shops.approved.length + shops.rejected.length
+
+  document.querySelector(".stat-card.success .stat-card-number").textContent = shops.approved.length
+
+  document.querySelector(".stat-card.warning .stat-card-number").textContent = shops.pending.length
+
+  document.querySelector(".stat-card.danger .stat-card-number").textContent = shops.rejected.length
+
   // Update tab badges
-  document.querySelector('#pending-tab .badge').textContent = pendingCount;
-  document.querySelector('#approved-tab .badge').textContent = approvedCount;
-  document.querySelector('#rejected-tab .badge').textContent = rejectedCount;
+  document.querySelector("#pending-tab .badge").textContent = shops.pending.length
+  document.querySelector("#approved-tab .badge").textContent = shops.approved.length
+  document.querySelector("#rejected-tab .badge").textContent = shops.rejected.length
+}
+
+// Fetch single shop by ID
+function getShopDetails(shopId) {
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/shop/get/${shopId}`, true)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      const shop = JSON.parse(xhr.responseText)
+      displayShopDetails(shop)
+    } else {
+      showToast("Error fetching shop details", "danger")
+    }
+  }
+
+  xhr.onerror = () => {
+    showToast("Network error occurred", "danger")
+  }
+
+  xhr.send()
+}
+
+// Display shop details in modal
+function displayShopDetails(shop) {
+  const modalContent = document.getElementById("shopDetailsContent")
+  if (!modalContent) return
+
+  const shopImage = shop.shopLogo ? `/uploads/${shop.shopLogo}` : "/assets/images/products/aboutUs.jpg"
+
+  modalContent.innerHTML = `
+    <div class="shop-details">
+      <div class="shop-details-header">
+        <div class="shop-details-image">
+          <img src="${shopImage}" alt="${shop.shopName}" onerror="this.src='/assets/images/products/aboutUs.jpg'">
+        </div>
+        <div class="shop-details-info">
+          <h4>${shop.shopName}</h4>
+          <p><i class="bi bi-geo-alt"></i> ${shop.adresse || "No address provided"}</p>
+          <p><i class="bi bi-calendar3"></i> Created: ${new Date(shop.createdAt).toLocaleDateString()}</p>
+          <p><span class="badge bg-${shop.status === "Approved" ? "success" : shop.status === "Pending" ? "warning" : "danger"}">${shop.status}</span></p>
+        </div>
+      </div>
+      <div class="shop-details-body">
+        <h5>Description</h5>
+        <p>${shop.shopdescription || "No description provided"}</p>
+
+        <h5>Owner Information</h5>
+        <div class="shop-owner-info">
+          <img src="/assets/images/dashboard/admin.jpg" alt="Owner" class="shop-owner-avatar">
+          <div>
+            <p><strong>Name:</strong> ${shop.vendor?.vendorName || "Unknown"}</p>
+            <p><strong>Email:</strong> ${shop.vendor?.email || "No email provided"}</p>
+            <p><strong>Phone:</strong> ${shop.vendor?.phone || "No phone provided"}</p>
+          </div>
+        </div>
+
+        ${
+          shop.status === "Rejected"
+            ? `
+          <h5>Rejection Reason</h5>
+          <p>${shop.rejectionReason || "No reason provided"}</p>
+        `
+            : ""
+        }
+      </div>
+    </div>
+  `
+
+  const actionButton = document.getElementById("shopActionButton")
+  if (actionButton) {
+    if (shop.status === "Pending") {
+      actionButton.textContent = "Approve Shop"
+      actionButton.className = "btn btn-success"
+      actionButton.onclick = () => {
+        const modal = document.getElementById("shopDetailsModal")
+        const bsModal = bootstrap.Modal.getInstance(modal)
+        bsModal.hide()
+        approveShop(shop._id)
+      }
+    } else if (shop.status === "Approved") {
+      actionButton.textContent = "Reject Shop"
+      actionButton.className = "btn btn-warning"
+      actionButton.onclick = () => {
+        const reason = prompt("Provide a reason for rejection:")
+        if (reason) {
+          const modal = document.getElementById("shopDetailsModal")
+          const bsModal = bootstrap.Modal.getInstance(modal)
+          bsModal.hide()
+          rejectShop(shop._id, reason)
+        }
+      }
+    } else {
+      actionButton.textContent = "Approve Shop"
+      actionButton.className = "btn btn-success"
+      actionButton.onclick = () => {
+        const modal = document.getElementById("shopDetailsModal")
+        const bsModal = bootstrap.Modal.getInstance(modal)
+        bsModal.hide()
+        approveShop(shop._id)
+      }
+    }
+  }
+
+  // Show the modal
+  const shopModal = document.getElementById("shopDetailsModal")
+  if (shopModal) {
+    const myModal = new bootstrap.Modal(shopModal)
+    myModal.show()
+  } else {
+    console.error("Shop details modal not found")
+  }
 }
 
 // Render pending shops
 function renderPendingShops() {
-  const container = document.querySelector('#pending .shop-grid .row');
-  container.innerHTML = '';
-  
-  if (shops.pending.length === 0) {
-    container.innerHTML = '<div class="col-12"><div class="alert alert-info">No pending shops found.</div></div>';
-    return;
-  }
-  
-  shops.pending.forEach(shop => {
-    const shopCard = document.createElement('div');
-    shopCard.className = 'col-xl-3 col-lg-4 col-md-6';
-    shopCard.dataset.shopId = shop.id;
-    
+  const container = document.querySelector("#pending .shop-grid .row")
+  if (!container) return
+
+  container.innerHTML = shops.pending.length
+    ? ""
+    : '<div class="col-12"><div class="alert alert-info">No pending shops found.</div></div>'
+
+  shops.pending.forEach((shop) => {
+    const shopCard = document.createElement("div")
+    shopCard.className = "col-xl-3 col-lg-4 col-md-6"
+    shopCard.dataset.shopId = shop.id
     shopCard.innerHTML = `
       <div class="shop-card">
         <div class="shop-card-header">
@@ -190,7 +244,7 @@ function renderPendingShops() {
           </div>
         </div>
         <div class="shop-card-image">
-          <img src="${shop.image}" alt="${shop.name}">
+          <img src="${shop.image}" alt="${shop.name}" onerror="this.src='/assets/images/products/aboutUs.jpg'">
         </div>
         <div class="shop-card-body">
           <h5 class="shop-card-title">${shop.name}</h5>
@@ -203,7 +257,7 @@ function renderPendingShops() {
             </div>
           </div>
           <div class="shop-card-owner">
-            <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-card-owner-avatar">
+            <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-card-owner-avatar" onerror="this.src='/assets/images/dashboard/admin.jpg'">
             <span class="shop-card-owner-name">${shop.owner.name}</span>
           </div>
         </div>
@@ -213,28 +267,26 @@ function renderPendingShops() {
           <button class="btn btn-outline-primary btn-sm ms-auto view-shop" data-shop-id="${shop.id}"><i class="bi bi-eye me-1"></i>Details</button>
         </div>
       </div>
-    `;
-    
-    container.appendChild(shopCard);
-  });
+    `
+    container.appendChild(shopCard)
+  })
+
+  // Add event listeners to the newly created buttons
+  addShopCardEventListeners()
 }
 
 // Render approved shops
 function renderApprovedShops() {
-  const container = document.querySelector('#approved .table tbody');
-  container.innerHTML = '';
-  
-  if (shops.approved.length === 0) {
-    const emptyRow = document.createElement('tr');
-    emptyRow.innerHTML = '<td colspan="7" class="text-center">No approved shops found.</td>';
-    container.appendChild(emptyRow);
-    return;
-  }
-  
-  shops.approved.forEach(shop => {
-    const row = document.createElement('tr');
-    row.dataset.shopId = shop.id;
-    
+  const container = document.querySelector("#approved tbody")
+  if (!container) return
+
+  container.innerHTML = shops.approved.length
+    ? ""
+    : '<tr><td colspan="7" class="text-center">No approved shops found.</td></tr>'
+
+  shops.approved.forEach((shop) => {
+    const row = document.createElement("tr")
+    row.dataset.shopId = shop.id
     row.innerHTML = `
       <td>
         <div class="form-check">
@@ -245,7 +297,7 @@ function renderApprovedShops() {
       <td>
         <div class="d-flex align-items-center">
           <div class="shop-table-image me-3">
-            <img src="${shop.image}" alt="${shop.name}">
+            <img src="${shop.image}" alt="${shop.name}" onerror="this.src='/assets/images/products/aboutUs.jpg'">
           </div>
           <div>
             <h6 class="mb-0">${shop.name}</h6>
@@ -255,12 +307,12 @@ function renderApprovedShops() {
       </td>
       <td>
         <div class="d-flex align-items-center">
-          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2">
+          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2" onerror="this.src='/assets/images/dashboard/admin.jpg'">
           <span>${shop.owner.name}</span>
         </div>
       </td>
       <td>${shop.location}</td>
-      <td><span class="badge bg-success">${shop.status}</span></td>
+      <td><span class="badge bg-success">Active</span></td>
       <td>${shop.date}</td>
       <td>
         <div class="d-flex justify-content-end">
@@ -275,33 +327,35 @@ function renderApprovedShops() {
           </button>
         </div>
       </td>
-    `;
-    
-    container.appendChild(row);
-  });
+    `
+    container.appendChild(row)
+  })
+
+  // Initialize tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  tooltipTriggerList.map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl))
+
+  // Add event listeners
+  addShopTableEventListeners()
 }
 
 // Render rejected shops
 function renderRejectedShops() {
-  const container = document.querySelector('#rejected .table tbody');
-  container.innerHTML = '';
-  
-  if (shops.rejected.length === 0) {
-    const emptyRow = document.createElement('tr');
-    emptyRow.innerHTML = '<td colspan="4" class="text-center">No rejected shops found.</td>';
-    container.appendChild(emptyRow);
-    return;
-  }
-  
-  shops.rejected.forEach(shop => {
-    const row = document.createElement('tr');
-    row.dataset.shopId = shop.id;
-    
+  const container = document.querySelector("#rejected tbody")
+  if (!container) return
+
+  container.innerHTML = shops.rejected.length
+    ? ""
+    : '<tr><td colspan="4" class="text-center">No rejected shops found.</td></tr>'
+
+  shops.rejected.forEach((shop) => {
+    const row = document.createElement("tr")
+    row.dataset.shopId = shop.id
     row.innerHTML = `
       <td>
         <div class="d-flex align-items-center">
           <div class="shop-table-image me-3">
-            <img src="${shop.image}" alt="${shop.name}">
+            <img src="${shop.image}" alt="${shop.name}" onerror="this.src='/assets/images/products/aboutUs.jpg'">
           </div>
           <div>
             <h6 class="mb-0">${shop.name}</h6>
@@ -311,380 +365,185 @@ function renderRejectedShops() {
       </td>
       <td>
         <div class="d-flex align-items-center">
-          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2">
+          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2" onerror="this.src='/assets/images/dashboard/admin.jpg'">
           <span>${shop.owner.name}</span>
         </div>
       </td>
-      <td>${shop.reason}</td>
+      <td>${shop.reason || "No reason provided"}</td>
       <td>${shop.date}</td>
-    `;
-    
-    container.appendChild(row);
-  });
+    `
+    container.appendChild(row)
+  })
 }
 
-// Initialize event listeners
-function initEventListeners() {
-  // Approve shop
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('approve-shop') || e.target.closest('.approve-shop')) {
-      e.preventDefault();
-      const element = e.target.classList.contains('approve-shop') ? e.target : e.target.closest('.approve-shop');
-      const shopId = element.dataset.shopId;
-      approveShop(shopId);
-    }
-  });
-  
-  // Reject shop
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('reject-shop') || e.target.closest('.reject-shop')) {
-      e.preventDefault();
-      const element = e.target.classList.contains('reject-shop') ? e.target : e.target.closest('.reject-shop');
-      const shopId = element.dataset.shopId;
-      rejectShop(shopId);
-    }
-  });
-  
-  // Delete shop
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('delete-shop') || e.target.closest('.delete-shop')) {
-      e.preventDefault();
-      const element = e.target.classList.contains('delete-shop') ? e.target : e.target.closest('.delete-shop');
-      const shopId = element.dataset.shopId;
-      deleteShop(shopId);
-    }
-  });
-  
-  // View shop details
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('view-shop') || e.target.closest('.view-shop')) {
-      e.preventDefault();
-      const element = e.target.classList.contains('view-shop') ? e.target : e.target.closest('.view-shop');
-      const shopId = element.dataset.shopId;
-      viewShopDetails(shopId);
-    }
-  });
-  
-  // Edit shop
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('edit-shop') || e.target.closest('.edit-shop')) {
-      e.preventDefault();
-      const element = e.target.classList.contains('edit-shop') ? e.target : e.target.closest('.edit-shop');
-      const shopId = element.dataset.shopId;
-      editShop(shopId);
-    }
-  });
-  
-  // Select all approved shops
-  document.querySelector('#selectAllApproved').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('#approved .table tbody input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-      checkbox.checked = this.checked;
-    });
-  });
-  
-  // Search functionality
-  document.querySelector('.dashboard-search input').addEventListener('keyup', function(e) {
-    if (e.key === 'Enter') {
-      searchShops(this.value);
-    }
-  });
-  
-  document.querySelector('.dashboard-search button').addEventListener('click', function() {
-    const searchTerm = document.querySelector('.dashboard-search input').value;
-    searchShops(searchTerm);
-  });
-  
-  // Sort functionality
-  document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.preventDefault();
-      const sortOption = this.textContent.trim();
-      sortShops(sortOption);
-    });
-  });
-}
-
-// Initialize Bootstrap tooltips
-function initTooltips() {
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-}
-
-// Approve a shop
+// Update shop status (approve)
 function approveShop(shopId) {
-  // Find the shop in pending list
-  const shopIndex = shops.pending.findIndex(shop => shop.id === shopId);
-  if (shopIndex === -1) return;
-  
-  const shop = shops.pending[shopIndex];
-  
-  // Create a new approved shop object
-  const approvedShop = {
-    id: shop.id,
-    name: shop.name,
-    image: shop.image,
-    location: shop.location,
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    status: 'Active',
-    owner: shop.owner,
-    shopId: `#SH${Math.floor(1000 + Math.random() * 9000)}`
-  };
-  
-  // Remove from pending and add to approved
-  shops.pending.splice(shopIndex, 1);
-  shops.approved.push(approvedShop);
-  
-  // Show success message
-  showToast(`${shop.name} has been approved successfully!`, 'success');
-  
-  // Update UI
-  updateStats();
-  renderPendingShops();
-  renderApprovedShops();
-}
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
-// Reject a shop
-function rejectShop(shopId) {
-  // Find the shop in pending list
-  const shopIndex = shops.pending.findIndex(shop => shop.id === shopId);
-  if (shopIndex === -1) return;
-  
-  const shop = shops.pending[shopIndex];
-  
-  // Prompt for rejection reason
-  const reason = prompt('Please provide a reason for rejection:', 'Failed to meet quality standards');
-  if (reason === null) return; // User cancelled
-  
-  // Create a new rejected shop object
-  const rejectedShop = {
-    id: shop.id,
-    name: shop.name,
-    image: shop.image,
-    location: shop.location,
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    reason: reason,
-    owner: shop.owner,
-    shopId: `#SH${Math.floor(1000 + Math.random() * 9000)}`
-  };
-  
-  // Remove from pending and add to rejected
-  shops.pending.splice(shopIndex, 1);
-  shops.rejected.push(rejectedShop);
-  
-  // Show success message
-  showToast(`${shop.name} has been rejected.`, 'warning');
-  
-  // Update UI
-  updateStats();
-  renderPendingShops();
-  renderRejectedShops();
-}
-
-// Delete a shop
-function deleteShop(shopId) {
-  // Check which list the shop is in
-  let shopList = null;
-  let shopIndex = -1;
-  
-  // Check pending list
-  shopIndex = shops.pending.findIndex(shop => shop.id === shopId);
-  if (shopIndex !== -1) {
-    shopList = 'pending';
-  } else {
-    // Check approved list
-    shopIndex = shops.approved.findIndex(shop => shop.id === shopId);
-    if (shopIndex !== -1) {
-      shopList = 'approved';
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      showToast("Shop approved successfully", "success")
+      fetchShops() // Refresh data
     } else {
-      // Check rejected list
-      shopIndex = shops.rejected.findIndex(shop => shop.id === shopId);
-      if (shopIndex !== -1) {
-        shopList = 'rejected';
-      }
+      showToast("Error approving shop", "danger")
     }
   }
-  
-  if (!shopList || shopIndex === -1) return;
-  
-  // Confirm deletion
-  if (!confirm(`Are you sure you want to delete this shop?`)) return;
-  
-  // Get shop name before deletion
-  const shopName = shops[shopList][shopIndex].name;
-  
-  // Remove the shop
-  shops[shopList].splice(shopIndex, 1);
-  
-  // Show success message
-  showToast(`${shopName} has been deleted.`, 'danger');
-  
-  // Update UI
-  updateStats();
-  renderPendingShops();
-  renderApprovedShops();
-  renderRejectedShops();
+
+  xhr.onerror = () => {
+    showToast("Network error occurred", "danger")
+  }
+
+  xhr.send(JSON.stringify({ status: "Approved" }))
 }
 
-// View shop details
-function viewShopDetails(shopId) {
-  // Find the shop in any list
-  let shop = shops.pending.find(s => s.id === shopId) || 
-             shops.approved.find(s => s.id === shopId) || 
-             shops.rejected.find(s => s.id === shopId);
-  
-  if (!shop) return;
-  
-  // In a real application, you would show a modal with shop details
-  alert(`Shop Details:\nName: ${shop.name}\nLocation: ${shop.location}\nOwner: ${shop.owner.name}`);
-  
-  // For a complete implementation, you would create a modal with all shop details
+// Update shop status (reject)
+function rejectShop(shopId, reason) {
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      showToast("Shop rejected successfully", "success")
+      fetchShops() // Refresh data
+    } else {
+      showToast("Error rejecting shop", "danger")
+    }
+  }
+
+  xhr.onerror = () => {
+    showToast("Network error occurred", "danger")
+  }
+
+  xhr.send(
+    JSON.stringify({
+      status: "Rejected",
+      rejectionReason: reason,
+    }),
+  )
 }
 
-// Edit shop
-function editShop(shopId) {
-  // Find the shop in any list
-  let shopList = null;
-  let shop = null;
-  
-  if (shops.pending.some(s => s.id === shopId)) {
-    shopList = 'pending';
-    shop = shops.pending.find(s => s.id === shopId);
-  } else if (shops.approved.some(s => s.id === shopId)) {
-    shopList = 'approved';
-    shop = shops.approved.find(s => s.id === shopId);
-  } else if (shops.rejected.some(s => s.id === shopId)) {
-    shopList = 'rejected';
-    shop = shops.rejected.find(s => s.id === shopId);
+// Delete shop
+function deleteShop(shopId) {
+  if (!confirm("Are you sure you want to delete this shop?")) return
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("DELETE", `http://localhost:3000/shop/delete/${shopId}`, true)
+
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      showToast("Shop deleted successfully", "success")
+      fetchShops() // Refresh data
+    } else {
+      showToast("Error deleting shop", "danger")
+    }
   }
-  
-  if (!shop) return;
-  
-  // In a real application, you would show a modal with form to edit shop details
-  const newName = prompt('Edit shop name:', shop.name);
-  if (newName === null) return; // User cancelled
-  
-  // Update shop name
-  shop.name = newName;
-  
-  // Show success message
-  showToast(`Shop details updated successfully!`, 'success');
-  
-  // Update UI based on which list the shop is in
-  if (shopList === 'pending') {
-    renderPendingShops();
-  } else if (shopList === 'approved') {
-    renderApprovedShops();
-  } else if (shopList === 'rejected') {
-    renderRejectedShops();
+
+  xhr.onerror = () => {
+    showToast("Network error occurred", "danger")
   }
+
+  xhr.send()
 }
 
-// Search shops
-function searchShops(term) {
-  if (!term) {
-    // Reset to show all shops
-    renderPendingShops();
-    renderApprovedShops();
-    renderRejectedShops();
-    return;
-  }
-  
-  term = term.toLowerCase();
-  
-  // Filter pending shops
-  const filteredPending = shops.pending.filter(shop => 
-    shop.name.toLowerCase().includes(term) || 
-    shop.location.toLowerCase().includes(term) ||
-    shop.owner.name.toLowerCase().includes(term)
-  );
-  
-  // Filter approved shops
-  const filteredApproved = shops.approved.filter(shop => 
-    shop.name.toLowerCase().includes(term) || 
-    shop.location.toLowerCase().includes(term) ||
-    shop.owner.name.toLowerCase().includes(term)
-  );
-  
-  // Filter rejected shops
-  const filteredRejected = shops.rejected.filter(shop => 
-    shop.name.toLowerCase().includes(term) || 
-    shop.location.toLowerCase().includes(term) ||
-    shop.owner.name.toLowerCase().includes(term)
-  );
-  
-  // Temporarily replace shops data with filtered data
-  const originalShops = { ...shops };
-  shops.pending = filteredPending;
-  shops.approved = filteredApproved;
-  shops.rejected = filteredRejected;
-  
-  // Render filtered shops
-  renderPendingShops();
-  renderApprovedShops();
-  renderRejectedShops();
-  
-  // Restore original data
-  shops = originalShops;
-  
-  // Show search results message
-  const totalResults = filteredPending.length + filteredApproved.length + filteredRejected.length;
-  showToast(`Found ${totalResults} shops matching "${term}"`, 'info');
+// Add event listeners to shop cards
+function addShopCardEventListeners() {
+  // Approve buttons
+  document.querySelectorAll(".approve-shop").forEach((button) => {
+    button.addEventListener("click", function (e) {
+      e.preventDefault()
+      const shopId = this.dataset.shopId
+      approveShop(shopId)
+    })
+  })
+
+  // Reject buttons
+  document.querySelectorAll(".reject-shop").forEach((button) => {
+    button.addEventListener("click", function (e) {
+      e.preventDefault()
+      const shopId = this.dataset.shopId
+      const reason = prompt("Provide a reason for rejection:")
+      if (reason) {
+        rejectShop(shopId, reason)
+      }
+    })
+  })
+
+  // View buttons
+  document.querySelectorAll(".view-shop").forEach((button) => {
+    button.addEventListener("click", function (e) {
+      e.preventDefault()
+      const shopId = this.dataset.shopId
+      getShopDetails(shopId)
+    })
+  })
+
+  // Delete buttons
+  document.querySelectorAll(".delete-shop").forEach((button) => {
+    button.addEventListener("click", function (e) {
+      e.preventDefault()
+      const shopId = this.dataset.shopId
+      deleteShop(shopId)
+    })
+  })
 }
 
-// Sort shops
-function sortShops(option) {
-  let sortFunction;
-  
-  switch(option) {
-    case 'Newest First':
-      sortFunction = (a, b) => new Date(b.date) - new Date(a.date);
-      break;
-    case 'Oldest First':
-      sortFunction = (a, b) => new Date(a.date) - new Date(b.date);
-      break;
-    case 'Alphabetical (A-Z)':
-      sortFunction = (a, b) => a.name.localeCompare(b.name);
-      break;
-    default:
-      return;
-  }
-  
-  // Sort all shop lists
-  shops.pending.sort(sortFunction);
-  shops.approved.sort(sortFunction);
-  shops.rejected.sort(sortFunction);
-  
-  // Update UI
-  renderPendingShops();
-  renderApprovedShops();
-  renderRejectedShops();
-  
-  // Show sort message
-  showToast(`Shops sorted by ${option}`, 'info');
+// Add event listeners to shop table rows
+function addShopTableEventListeners() {
+  // View buttons
+  document.querySelectorAll("#approved .view-shop").forEach((button) => {
+    button.addEventListener("click", function () {
+      const shopId = this.dataset.shopId
+      getShopDetails(shopId)
+    })
+  })
+
+  // Edit buttons
+  document.querySelectorAll("#approved .edit-shop").forEach((button) => {
+    button.addEventListener("click", function () {
+      const shopId = this.dataset.shopId
+      // Implement edit functionality if needed
+      console.log("Edit shop:", shopId)
+    })
+  })
+
+  // Delete buttons
+  document.querySelectorAll("#approved .delete-shop").forEach((button) => {
+    button.addEventListener("click", function () {
+      const shopId = this.dataset.shopId
+      deleteShop(shopId)
+    })
+  })
+}
+
+// Update dashboard with fetched data
+function updateDashboard() {
+  renderPendingShops()
+  renderApprovedShops()
+  renderRejectedShops()
 }
 
 // Show toast notification
-function showToast(message, type = 'info') {
+function showToast(message, type = "info") {
   // Check if toast container exists, if not create it
-  let toastContainer = document.querySelector('.toast-container');
+  let toastContainer = document.querySelector(".toast-container")
   if (!toastContainer) {
-    toastContainer = document.createElement('div');
-    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    document.body.appendChild(toastContainer);
+    toastContainer = document.createElement("div")
+    toastContainer.className = "toast-container position-fixed bottom-0 end-0 p-3"
+    document.body.appendChild(toastContainer)
   }
-  
+
   // Create toast element
-  const toastId = `toast-${Date.now()}`;
-  const toast = document.createElement('div');
-  toast.className = `toast align-items-center text-white bg-${type} border-0`;
-  toast.id = toastId;
-  toast.setAttribute('role', 'alert');
-  toast.setAttribute('aria-live', 'assertive');
-  toast.setAttribute('aria-atomic', 'true');
-  
+  const toastId = "toast-" + Date.now()
+  const toast = document.createElement("div")
+  toast.className = `toast align-items-center text-white bg-${type} border-0`
+  toast.id = toastId
+  toast.setAttribute("role", "alert")
+  toast.setAttribute("aria-live", "assertive")
+  toast.setAttribute("aria-atomic", "true")
+
   toast.innerHTML = `
     <div class="d-flex">
       <div class="toast-body">
@@ -692,52 +551,95 @@ function showToast(message, type = 'info') {
       </div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
-  `;
-  
-  toastContainer.appendChild(toast);
-  
-  // Initialize and show the toast
-  const bsToast = new bootstrap.Toast(toast);
-  bsToast.show();
-  
+  `
+
+  toastContainer.appendChild(toast)
+
+  // Initialize and show toast
+  const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 })
+  bsToast.show()
+
   // Remove toast after it's hidden
-  toast.addEventListener('hidden.bs.toast', function() {
-    toast.remove();
-  });
+  toast.addEventListener("hidden.bs.toast", () => {
+    toast.remove()
+  })
 }
 
-// Add shop modal
-function createShopModal() {
-  // Create modal element if it doesn't exist
-  if (!document.getElementById('shopDetailsModal')) {
-    const modal = document.createElement('div');
-    modal.className = 'modal fade';
-    modal.id = 'shopDetailsModal';
-    modal.tabIndex = '-1';
-    modal.setAttribute('aria-labelledby', 'shopDetailsModalLabel');
-    modal.setAttribute('aria-hidden', 'true');
-    
-    modal.innerHTML = `
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="shopDetailsModalLabel">Shop Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div id="shopDetailsContent"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="shopActionButton">Action</button>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
+// Initialize the dashboard
+document.addEventListener("DOMContentLoaded", () => {
+  // Fetch shops data when page loads
+  fetchShops()
+
+  // Add event listener for tab changes to refresh data
+  const shopTabs = document.querySelectorAll('button[data-bs-toggle="tab"]')
+  shopTabs.forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", () => {
+      // You could refresh data for the specific tab if needed
+    })
+  })
+
+  // Add event listener for search
+  const searchInput = document.querySelector(".dashboard-search input")
+  if (searchInput) {
+    searchInput.addEventListener("keyup", function (e) {
+      if (e.key === "Enter") {
+        const searchTerm = this.value.toLowerCase().trim()
+        if (searchTerm) {
+          filterShops(searchTerm)
+        } else {
+          updateDashboard() // Reset to show all shops
+        }
+      }
+    })
+
+    const searchButton = document.querySelector(".dashboard-search button")
+    if (searchButton) {
+      searchButton.addEventListener("click", () => {
+        const searchTerm = searchInput.value.toLowerCase().trim()
+        if (searchTerm) {
+          filterShops(searchTerm)
+        } else {
+          updateDashboard() // Reset to show all shops
+        }
+      })
+    }
   }
-}
+})
 
-// Call this function to create the modal when the page loads
-document.addEventListener('DOMContentLoaded', createShopModal);
+// Filter shops by search term
+function filterShops(searchTerm) {
+  const filteredPending = shops.pending.filter(
+    (shop) =>
+      shop.name.toLowerCase().includes(searchTerm) ||
+      shop.owner.name.toLowerCase().includes(searchTerm) ||
+      shop.location.toLowerCase().includes(searchTerm),
+  )
+
+  const filteredApproved = shops.approved.filter(
+    (shop) =>
+      shop.name.toLowerCase().includes(searchTerm) ||
+      shop.owner.name.toLowerCase().includes(searchTerm) ||
+      shop.location.toLowerCase().includes(searchTerm),
+  )
+
+  const filteredRejected = shops.rejected.filter(
+    (shop) =>
+      shop.name.toLowerCase().includes(searchTerm) ||
+      shop.owner.name.toLowerCase().includes(searchTerm) ||
+      shop.location.toLowerCase().includes(searchTerm),
+  )
+
+  // Store original shops
+  const originalShops = { ...shops }
+
+  // Replace with filtered shops
+  shops.pending = filteredPending
+  shops.approved = filteredApproved
+  shops.rejected = filteredRejected
+
+  // Update UI
+  updateDashboard()
+
+  // Restore original shops
+  shops = originalShops
+}

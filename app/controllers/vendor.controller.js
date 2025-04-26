@@ -23,6 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single("shopLogo"); 
 
 // Register a new vendor
+// Register a new vendor
 exports.register = (req, res) => {
     upload(req, res, async (err) => {
         if (err) return res.status(500).json({ message: "Error uploading file" });
@@ -31,7 +32,6 @@ exports.register = (req, res) => {
             const existingVendor = await Vendor.findOne({ email: req.body.email });
             const existingClient = await Client.findOne({ email: req.body.email });
             if (existingVendor || existingClient) return res.status(400).json({ message: "Email already exists" });
-
 
             // Créer le Shop d'abord
             const newShop = new Shop({
@@ -43,6 +43,7 @@ exports.register = (req, res) => {
 
             const savedShop = await newShop.save();
 
+            // Créer le Vendor en liant au Shop
             const vendor = new Vendor({
                 vendorName: req.body.vendorName,
                 email: req.body.email,
@@ -52,6 +53,10 @@ exports.register = (req, res) => {
             });
 
             const savedVendor = await vendor.save();
+
+            // 🔥 Maintenant on met à jour le Shop pour lui lier le Vendor
+            savedShop.vendor = savedVendor._id;
+            await savedShop.save();
 
             res.status(201).send({
                 message: "Vendor & Shop registered successfully",
@@ -65,6 +70,7 @@ exports.register = (req, res) => {
         }
     });
 };
+
 
 
 

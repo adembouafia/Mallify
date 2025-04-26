@@ -11,7 +11,7 @@ const shopSchema = new mongoose.Schema({
     },
     adresse: {
         type : String,
-        required :false
+        required : false
     },
     shopdescription: {
         type : String,
@@ -22,15 +22,17 @@ const shopSchema = new mongoose.Schema({
         enum : ["Pending" , "Approved" , "Rejected"],
         default : "Pending"
     },
+    rejectionReason: {
+        type: String,
+        required: false
+    },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "vendor",
     }
-
-    },
-    {
-        timestamps: true
-    });
-
+},
+{
+    timestamps: true
+});
 
 module.exports = mongoose.model("shop" , shopSchema)
