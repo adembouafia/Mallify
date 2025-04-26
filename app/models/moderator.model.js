@@ -44,11 +44,11 @@ const moderatorSchema = new mongoose.Schema(
 //Hashing the password before saving 
 moderatorSchema.pre("save" , async function(next) {
     try{
-        if (!this.isModified("password")){
+        if (!this.isModified("moderatorPassword")){
             return next();
         }
-        const hashedPassword = await bcrypt.hash(this.password , 10);
-        this.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(this.moderatorPassword , 10);
+        this.moderatorPassword = hashedPassword;
         next()
     }catch(err){
         next(err)

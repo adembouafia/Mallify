@@ -158,3 +158,53 @@ exports.resetPassword = async (req, res) => {
         res.status(500).send({ message: "Error resetting password" });
     }
 };
+
+
+//update moderator
+exports.updateModerator = async (req, res) => {
+    const { id } = req.params;
+    const { moderatorName, email, password, role } = req.body;
+
+    try {
+        const updateData = {
+            moderatorName,
+            email,
+            password,
+            role
+        };
+
+        if (req.file) {
+            updateData.moderatorImage = `uploads/${req.file.filename}`;
+        }
+
+        const updatedModerator = await Moderator.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedModerator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+
+        res.status(200).send({ message: "Moderator updated successfully", moderator: updatedModerator });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+
+//delete moderator
+exports.deleteModerator = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedModerator = await Moderator.findByIdAndDelete(id);
+        if (!deletedModerator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+        res.status(200).send({ message: "Moderator deleted successfully", moderator: deletedModerator });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
