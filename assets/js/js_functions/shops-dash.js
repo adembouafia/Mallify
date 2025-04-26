@@ -643,3 +643,80 @@ function filterShops(searchTerm) {
   // Restore original shops
   shops = originalShops
 }
+
+
+
+//progress bar
+
+function showProgressBar() {
+  // Check if progress bar container exists, if not create it
+  let progressContainer = document.querySelector(".progress-container")
+  if (!progressContainer) {
+    progressContainer = document.createElement("div")
+    progressContainer.className = "progress-container position-fixed top-0 start-0 end-0"
+    progressContainer.style.zIndex = "1050"
+    
+    const progressBar = document.createElement("div")
+    progressBar.className = "progress"
+    progressBar.style.height = "4px"
+    progressBar.style.borderRadius = "0"
+    
+    const progressIndicator = document.createElement("div")
+    progressIndicator.className = "progress-bar bg-primary"
+    progressIndicator.id = "main-progress-bar"
+    progressIndicator.setAttribute("role", "progressbar")
+    progressIndicator.setAttribute("aria-valuenow", "0")
+    progressIndicator.setAttribute("aria-valuemin", "0")
+    progressIndicator.setAttribute("aria-valuemax", "100")
+    
+    progressBar.appendChild(progressIndicator)
+    progressContainer.appendChild(progressBar)
+    document.body.appendChild(progressContainer)
+  }
+  
+  // Reset progress bar
+  const progressBar = document.getElementById("main-progress-bar")
+  if (progressBar) {
+    progressBar.style.width = "0%"
+    progressBar.style.transition = "width 0.2s ease"
+    
+    // Start progress animation
+    setTimeout(() => {
+      progressBar.style.width = "30%"
+    }, 100)
+    
+    setTimeout(() => {
+      progressBar.style.width = "70%"
+    }, 300)
+  }
+}
+
+function hideProgressBar(success = true) {
+  const progressBar = document.getElementById("main-progress-bar")
+  if (progressBar) {
+    // Complete the progress bar
+    progressBar.style.width = "100%"
+    
+    // Change color based on success/failure
+    if (success) {
+      progressBar.className = "progress-bar bg-success"
+    } else {
+      progressBar.className = "progress-bar bg-danger"
+    }
+    
+    // Hide after completion
+    setTimeout(() => {
+      const container = document.querySelector(".progress-container")
+      if (container) {
+        container.style.opacity = "0"
+        container.style.transition = "opacity 0.3s ease"
+        
+        setTimeout(() => {
+          if (container.parentNode) {
+            container.parentNode.removeChild(container)
+          }
+        }, 300)
+      }
+    }, 500)
+  }
+}

@@ -15677,6 +15677,8 @@ html.maximized-card {
   gap: 0.75rem;
 }
 
+
+
 /* Shop Cards */
 .shop-grid {
   margin-bottom: 1.5rem;
@@ -15730,26 +15732,38 @@ html.maximized-card {
   border-radius: 50%;
 }
 
+
 .shop-card-image {
-  height: 160px;
+  height: 250px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: #f8f9fa;
   overflow: hidden;
 }
 
 .shop-card-image img {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
   transition: transform 0.5s ease;
 }
 
 .shop-card:hover .shop-card-image img {
   transform: scale(1.05);
 }
+
+.shop-card-owner-avatar {
+  width: 48px;     
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+
 
 .shop-card-body {
   padding: 1.25rem;
@@ -15802,13 +15816,7 @@ html.maximized-card {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.shop-card-owner-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 0.75rem;
-}
+
 
 .shop-card-owner-name {
   font-size: 0.875rem;
@@ -15875,7 +15883,6 @@ html.maximized-card {
   margin-left: 0.25rem;
 }
 
-/* Pagination */
 .pagination-wrapper {
   margin-top: 1.5rem;
   display: flex;
@@ -15893,7 +15900,6 @@ html.maximized-card {
   border-color: #0d6efd;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 992px) {
   .dashboard-actions {
     margin-top: 1rem;
@@ -15951,17 +15957,17 @@ html.maximized-card {
 
 
 
-
+/*shop details*/
 .shop-details {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .shop-details-header {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .shop-details-image {
@@ -15969,23 +15975,34 @@ html.maximized-card {
   background-color: #f8f9fa;
   border-radius: 8px;
   overflow: hidden;
-  max-height: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .shop-details-image img {
-  max-height: 250px;
-  object-fit: contain;
+  height: 100%;
   width: 100%;
+  object-fit: cover; 
+  transition: transform 0.4s ease; 
+}
+
+.shop-details-image:hover img {
+  transform: scale(1.05); 
 }
 
 .shop-details-info {
   padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .shop-details-body {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .shop-owner-info {
@@ -15997,24 +16014,26 @@ html.maximized-card {
   border-radius: 8px;
 }
 
-
 .shop-owner-avatar {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 50%;
+  border: 2px solid #e0e0e0; 
 }
 
 @media (min-width: 768px) {
   .shop-details-header {
     flex-direction: row;
+    align-items: center;
   }
   
   .shop-details-image {
-    flex: 0 0 50%;
+    flex: 0 0 45%;
   }
   
   .shop-details-info {
     flex: 1;
   }
 }
+
