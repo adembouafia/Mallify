@@ -301,33 +301,30 @@ tabs.forEach(tab => {
   
   // ─── TOAST UTILITIES ───────────────────────────────────────────────────────────
   function showToast(title, message, type) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    let icon = 'bi-info-circle-fill';
-    if (type === 'success') icon = 'bi-check-circle-fill';
-    if (type === 'warning') icon = 'bi-exclamation-triangle-fill';
-    if (type === 'danger')  icon = 'bi-x-circle-fill';
-  
-    toast.innerHTML = `
-      <div class="toast-icon ${type}"><i class="bi ${icon}"></i></div>
-      <div class="toast-content">
-        <div class="toast-title">${title}</div>
-        <div class="toast-message">${message}</div>
-      </div>
-      <button class="toast-close"><i class="bi bi-x"></i></button>
-    `;
-    const container = document.getElementById('toastContainer');
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    const autoDismiss = setTimeout(() => dismissToast(toast), 5000);
-    toast.querySelector('.toast-close').addEventListener('click', () => {
-      clearTimeout(autoDismiss);
-      dismissToast(toast);
+    Swal.fire({
+      title: `<span style="font-weight:bold;">${title}</span>`,
+      html: `<p style="margin:0;">${message}</p>`,
+      icon: type, // 'success', 'error', 'warning', 'info', or 'question'
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      background: '#1e1e2f',
+      color: '#fff',
+      iconColor: type === 'success' ? '#00e676' :
+                 type === 'warning' ? '#ff9100' :
+                 type === 'error'   ? '#ff1744' :
+                 '#40c4ff',
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      },
+      customClass: {
+        popup: 'cool-toast-popup',
+        timerProgressBar: 'cool-toast-timer'
+      }
     });
-  }
-  function dismissToast(toast) {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
   }
   
   // ─── DEBOUNCE HELP ─────────────────────────────────────────────────────────────
