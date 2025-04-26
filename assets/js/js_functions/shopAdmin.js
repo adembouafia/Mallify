@@ -145,105 +145,105 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// Popup edit product
-document.querySelectorAll('.editProductBtn').forEach(button => {
-  button.addEventListener('click', function () {
-      const row = button.closest('tr');
-      const productName = row?.querySelector('a.text-dark')?.innerText || document.querySelector('h2.fw-bold')?.innerText || '';
-      const productID = row?.querySelector('td.fw-semibold')?.innerText || document.querySelector('p.text-muted')?.innerText?.split(': ')[1] || '';
-      const price = row?.querySelector('td:nth-child(3)')?.innerText?.replace('$', '') || document.querySelector('h4.text-danger')?.innerText?.replace('$', '') || '';
-      const category = row?.querySelector('td:nth-child(5) .badge')?.innerText || document.querySelectorAll('p.mb-2')[0]?.innerText?.split(': ')[1] || '';
-      const availability = row ? 'In Stock' : document.querySelectorAll('p.mb-2')[1]?.innerText?.split(': ')[1] || '';
-      const stock = row?.querySelector('td:nth-child(4) .text-dark')?.innerText || document.querySelectorAll('p.mb-2')[2]?.innerText?.match(/\d+/)?.[0] || '';
-      const description = document.querySelector('p:last-of-type')?.innerText || '';
+// // Popup edit product
+// document.querySelectorAll('.editProductBtn').forEach(button => {
+//   button.addEventListener('click', function () {
+//       const row = button.closest('tr');
+//       const productName = row?.querySelector('a.text-dark')?.innerText || document.querySelector('h2.fw-bold')?.innerText || '';
+//       const productID = row?.querySelector('td.fw-semibold')?.innerText || document.querySelector('p.text-muted')?.innerText?.split(': ')[1] || '';
+//       const price = row?.querySelector('td:nth-child(3)')?.innerText?.replace('$', '') || document.querySelector('h4.text-danger')?.innerText?.replace('$', '') || '';
+//       const category = row?.querySelector('td:nth-child(5) .badge')?.innerText || document.querySelectorAll('p.mb-2')[0]?.innerText?.split(': ')[1] || '';
+//       const availability = row ? 'In Stock' : document.querySelectorAll('p.mb-2')[1]?.innerText?.split(': ')[1] || '';
+//       const stock = row?.querySelector('td:nth-child(4) .text-dark')?.innerText || document.querySelectorAll('p.mb-2')[2]?.innerText?.match(/\d+/)?.[0] || '';
+//       const description = document.querySelector('p:last-of-type')?.innerText || '';
 
-      Swal.fire({
-          title: 'Edit Product',
-          width: '70em',
-          html: `
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                  <div>
-                      <label>Product Name</label>
-                      <input type="text" id="productName" class="swal2-input" value="${productName}">
-                  </div>
-                  <div>
-                      <label>Product ID</label>
-                      <input type="text" id="productID" class="swal2-input" value="${productID}">
-                  </div>
-                  <div>
-                      <label>Price ($)</label>
-                      <input type="number" id="productPrice" class="swal2-input" value="${price}">
-                  </div>
-                  <div>
-                      <label>Category</label>
-                      <input type="text" id="productCategory" class="swal2-input" value="${category}">
-                  </div>
-                  <div>
-                      <label>Availability</label>
-                      <input type="text" id="productAvailability" class="swal2-input" value="${availability}">
-                  </div>
-                  <div>
-                      <label>Stock</label>
-                      <input type="number" id="productStock" class="swal2-input" value="${stock}">
-                  </div>
-              </div>
-              <div style="margin-top: 1rem;">
-                  <label>Description</label>
-                  <textarea id="productDescription" class="swal2-textarea" style="width: 80%; min-height: 120px;">${description}</textarea>
-              </div>
-          `,
-          showCancelButton: true,
-          confirmButtonText: 'Save Changes',
-          customClass: {
-              popup: 'swal2-edit-product'
-          },
-          preConfirm: () => {
-              const name = document.getElementById('productName').value;
-              const id = document.getElementById('productID').value;
-              const price = document.getElementById('productPrice').value;
-              const category = document.getElementById('productCategory').value;
-              const availability = document.getElementById('productAvailability').value;
-              const stock = document.getElementById('productStock').value;
-              const description = document.getElementById('productDescription').value;
+//       Swal.fire({
+//           title: 'Edit Product',
+//           width: '70em',
+//           html: `
+//               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+//                   <div>
+//                       <label>Product Name</label>
+//                       <input type="text" id="productName" class="swal2-input" value="${productName}">
+//                   </div>
+//                   <div>
+//                       <label>Product ID</label>
+//                       <input type="text" id="productID" class="swal2-input" value="${productID}">
+//                   </div>
+//                   <div>
+//                       <label>Price ($)</label>
+//                       <input type="number" id="productPrice" class="swal2-input" value="${price}">
+//                   </div>
+//                   <div>
+//                       <label>Category</label>
+//                       <input type="text" id="productCategory" class="swal2-input" value="${category}">
+//                   </div>
+//                   <div>
+//                       <label>Availability</label>
+//                       <input type="text" id="productAvailability" class="swal2-input" value="${availability}">
+//                   </div>
+//                   <div>
+//                       <label>Stock</label>
+//                       <input type="number" id="productStock" class="swal2-input" value="${stock}">
+//                   </div>
+//               </div>
+//               <div style="margin-top: 1rem;">
+//                   <label>Description</label>
+//                   <textarea id="productDescription" class="swal2-textarea" style="width: 80%; min-height: 120px;">${description}</textarea>
+//               </div>
+//           `,
+//           showCancelButton: true,
+//           confirmButtonText: 'Save Changes',
+//           customClass: {
+//               popup: 'swal2-edit-product'
+//           },
+//           preConfirm: () => {
+//               const name = document.getElementById('productName').value;
+//               const id = document.getElementById('productID').value;
+//               const price = document.getElementById('productPrice').value;
+//               const category = document.getElementById('productCategory').value;
+//               const availability = document.getElementById('productAvailability').value;
+//               const stock = document.getElementById('productStock').value;
+//               const description = document.getElementById('productDescription').value;
 
-              if (row) {
-                  row.querySelector('a.text-dark').innerText = name;
-                  row.querySelector('td.fw-semibold').innerText = id;
-                  row.querySelector('td:nth-child(3)').innerText = `$${price}`;
-                  row.querySelector('td:nth-child(5) .badge').innerText = category;
-                  row.querySelector('td:nth-child(4)').innerHTML = `
-                      <div class="text-muted">
-                          <span class="fw-semibold text-dark">${stock}</span><br> Item Left<br>
-                          <span>155 Sold</span>
-                      </div>
-                  `;
-              }
+//               if (row) {
+//                   row.querySelector('a.text-dark').innerText = name;
+//                   row.querySelector('td.fw-semibold').innerText = id;
+//                   row.querySelector('td:nth-child(3)').innerText = `$${price}`;
+//                   row.querySelector('td:nth-child(5) .badge').innerText = category;
+//                   row.querySelector('td:nth-child(4)').innerHTML = `
+//                       <div class="text-muted">
+//                           <span class="fw-semibold text-dark">${stock}</span><br> Item Left<br>
+//                           <span>155 Sold</span>
+//                       </div>
+//                   `;
+//               }
 
-              if (document.querySelector('h2.fw-bold')) {
-                  document.querySelector('h2.fw-bold').innerText = name;
-              }
-              if (document.querySelector('p.text-muted')) {
-                  document.querySelector('p.text-muted').innerText = `Product ID: ${id}`;
-              }
-              if (document.querySelector('h4.text-danger')) {
-                  document.querySelector('h4.text-danger').innerText = `$${price}`;
-              }
-              if (document.querySelectorAll('p.mb-2')[0]) {
-                  document.querySelectorAll('p.mb-2')[0].innerHTML = `<strong>Category:</strong> ${category}`;
-              }
-              if (document.querySelectorAll('p.mb-2')[1]) {
-                  document.querySelectorAll('p.mb-2')[1].innerHTML = `<strong>Availability:</strong> ${availability}`;
-              }
-              if (document.querySelectorAll('p.mb-2')[2]) {
-                  document.querySelectorAll('p.mb-2')[2].innerHTML = `<strong>Stock:</strong> <span class="badge bg-success">${stock} units</span>`;
-              }
-              if (document.querySelector('p:last-of-type')) {
-                  document.querySelector('p:last-of-type').innerText = description;
-              }
-          }
-      });
-  });
-});
+//               if (document.querySelector('h2.fw-bold')) {
+//                   document.querySelector('h2.fw-bold').innerText = name;
+//               }
+//               if (document.querySelector('p.text-muted')) {
+//                   document.querySelector('p.text-muted').innerText = `Product ID: ${id}`;
+//               }
+//               if (document.querySelector('h4.text-danger')) {
+//                   document.querySelector('h4.text-danger').innerText = `$${price}`;
+//               }
+//               if (document.querySelectorAll('p.mb-2')[0]) {
+//                   document.querySelectorAll('p.mb-2')[0].innerHTML = `<strong>Category:</strong> ${category}`;
+//               }
+//               if (document.querySelectorAll('p.mb-2')[1]) {
+//                   document.querySelectorAll('p.mb-2')[1].innerHTML = `<strong>Availability:</strong> ${availability}`;
+//               }
+//               if (document.querySelectorAll('p.mb-2')[2]) {
+//                   document.querySelectorAll('p.mb-2')[2].innerHTML = `<strong>Stock:</strong> <span class="badge bg-success">${stock} units</span>`;
+//               }
+//               if (document.querySelector('p:last-of-type')) {
+//                   document.querySelector('p:last-of-type').innerText = description;
+//               }
+//           }
+//       });
+//   });
+// });
 
 
 
@@ -765,80 +765,80 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// add product 
-document.getElementById("addProductForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const form = e.target;
+// // add product 
+// document.getElementById("addProductForm").addEventListener("submit", function (e) {
+//   e.preventDefault();
+//   const form = e.target;
 
-  // Build product object
-  const product = {
-    productId: form.productId.value,
-    productName: form.productName.value,
-    productPrice: parseFloat(form.productPrice.value),
-    productCategory: form.productCategory.value,
-    Availability: form.Availability.value === "true",
-    Stock: parseInt(form.Stock.value, 10),
-    description: form.description.value,
-    mainImageFile: form.mainImage.files[0],
-    otherImageFiles: Array.from(form.otherImages.files),
-  };
+//   // Build product object
+//   const product = {
+//     productId: form.productId.value,
+//     productName: form.productName.value,
+//     productPrice: parseFloat(form.productPrice.value),
+//     productCategory: form.productCategory.value,
+//     Availability: form.Availability.value === "true",
+//     Stock: parseInt(form.Stock.value, 10),
+//     description: form.description.value,
+//     mainImageFile: form.mainImage.files[0],
+//     otherImageFiles: Array.from(form.otherImages.files),
+//   };
 
-  // Create a URL for the main image
-  const mainImageURL = URL.createObjectURL(product.mainImageFile);
+//   // Create a URL for the main image
+//   const mainImageURL = URL.createObjectURL(product.mainImageFile);
 
-  // Create new row
-  const newRow = document.createElement("tr");
-  newRow.innerHTML = `
-    <td class="fw-semibold">${product.productId}</td>
-    <td>
-      <div class="d-flex align-items-center gap-3">
-        <div class="bg-light rounded">
-          <img src="${mainImageURL}" alt="${product.productName}" style="width:70px; height:70px;">
-        </div>
-        <div>
-          <a href="#!" class="text-dark fw-semibold text-decoration-none">
-            ${product.productName}
-          </a>
-          <p class="text-muted mb-0 mt-1 small">${product.description}</p>
-        </div>
-      </div>
-    </td>
-    <td>$${product.productPrice.toFixed(2)}</td>
-    <td>
-      <div class="text-muted">
-        <span class="fw-semibold text-dark">${product.Stock}</span><br> Item Left<br>
-        <span>0 Sold</span>
-      </div>
-    </td>
-    <td><span class="badge bg-soft-primary text-primary">${product.productCategory}</span></td>
-    <td>
-      <div class="d-flex align-items-center gap-1">
-        <span class="badge bg-light text-warning">
-          <i class="bi bi-star-fill me-1"></i> 0.0
-        </span>
-        <span class="text-muted small">0 Review</span>
-      </div>
-    </td>
-    <td>
-      <a href="detailsProduct.html" class="btn btn-sm bg-light text-secondary" title="View Details">
-        <i class="bi bi-eye"></i>
-      </a>
-      <button class="btn btn-sm bg-light text-warning" title="Edit">
-        <i class="bi bi-pencil"></i>
-      </button>
-      <button class="btn btn-sm bg-light text-danger" title="Delete">
-        <i class="bi bi-trash"></i>
-      </button>
-    </td>
-  `;
+//   // Create new row
+//   const newRow = document.createElement("tr");
+//   newRow.innerHTML = `
+//     <td class="fw-semibold">${product.productId}</td>
+//     <td>
+//       <div class="d-flex align-items-center gap-3">
+//         <div class="bg-light rounded">
+//           <img src="${mainImageURL}" alt="${product.productName}" style="width:70px; height:70px;">
+//         </div>
+//         <div>
+//           <a href="#!" class="text-dark fw-semibold text-decoration-none">
+//             ${product.productName}
+//           </a>
+//           <p class="text-muted mb-0 mt-1 small">${product.description}</p>
+//         </div>
+//       </div>
+//     </td>
+//     <td>$${product.productPrice.toFixed(2)}</td>
+//     <td>
+//       <div class="text-muted">
+//         <span class="fw-semibold text-dark">${product.Stock}</span><br> Item Left<br>
+//         <span>0 Sold</span>
+//       </div>
+//     </td>
+//     <td><span class="badge bg-soft-primary text-primary">${product.productCategory}</span></td>
+//     <td>
+//       <div class="d-flex align-items-center gap-1">
+//         <span class="badge bg-light text-warning">
+//           <i class="bi bi-star-fill me-1"></i> 0.0
+//         </span>
+//         <span class="text-muted small">0 Review</span>
+//       </div>
+//     </td>
+//     <td>
+//       <a href="detailsProduct.html" class="btn btn-sm bg-light text-secondary" title="View Details">
+//         <i class="bi bi-eye"></i>
+//       </a>
+//       <button class="btn btn-sm bg-light text-warning" title="Edit">
+//         <i class="bi bi-pencil"></i>
+//       </button>
+//       <button class="btn btn-sm bg-light text-danger" title="Delete">
+//         <i class="bi bi-trash"></i>
+//       </button>
+//     </td>
+//   `;
 
-  const tbody = document.getElementById("productTableBody");
+//   const tbody = document.getElementById("productTableBody");
 
-  // 🚀 Ajout au début du tbody (TOP of table)
-  if (tbody.firstChild) {
-    tbody.insertBefore(newRow, tbody.firstChild);
-  } 
-  // Reset form and close modal
-  form.reset();
-  bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-});
+//   // 🚀 Ajout au début du tbody (TOP of table)
+//   if (tbody.firstChild) {
+//     tbody.insertBefore(newRow, tbody.firstChild);
+//   } 
+//   // Reset form and close modal
+//   form.reset();
+//   bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+// });

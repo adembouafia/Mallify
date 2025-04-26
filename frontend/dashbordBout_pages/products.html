@@ -775,15 +775,41 @@
           <!-- Category -->
           <div class="col-md-6">
             <label class="form-label">Product Category</label>
-            <input type="text" class="form-control" name="productCategory" required>
+            <div class="input-group">
+              <select class="form-select" name="productCategory" id="productCategory" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Home & Kitchen">Home & Kitchen</option>
+                <option value="Books">Books</option>
+                <option value="Sports">Sports</option>
+              </select>
+              <button class="btn btn-outline-secondary" type="button" id="addCategoryBtn">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subcategory -->
+          <div class="col-md-6">
+            <label class="form-label">Product Subcategory</label>
+            <div class="input-group">
+              <select class="form-select" name="productSubcategory" id="productSubcategory" required>
+                <option value="" disabled selected>Select a subcategory</option>
+                <!-- Subcategories will be populated based on selected category -->
+              </select>
+              <button class="btn btn-outline-secondary" type="button" id="addSubcategoryBtn">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
           </div>
 
           <!-- Availability -->
           <div class="col-md-6">
             <label class="form-label">Availability</label>
             <select class="form-select" name="Availability" required>
-              <option value="true">Available</option>
-              <option value="false">Not Available</option>
+              <option value="in_stock">In Stock</option>
+              <option value="out_of_stock">Out of Stock</option>
             </select>
           </div>
 
@@ -820,6 +846,57 @@
     </div>
   </div>
 </div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="newCategoryName" class="form-label">Category Name</label>
+          <input type="text" class="form-control" id="newCategoryName" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Subcategory Modal -->
+<div class="modal fade" id="addSubcategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Subcategory</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="subcategoryCategory" class="form-label">Parent Category</label>
+          <select class="form-select" id="subcategoryCategory" required>
+            <!-- Categories will be populated here -->
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="newSubcategoryName" class="form-label">Subcategory Name</label>
+          <input type="text" class="form-control" id="newSubcategoryName" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveSubcategoryBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 
@@ -864,13 +941,8 @@
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="../../assets/js/js_functions/shopAdmin.js"></script>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
-      integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
-      crossorigin="anonymous"
-    ></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
 
     <!--end::Script-->
   </body>
