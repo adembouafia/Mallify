@@ -92,11 +92,10 @@ document.addEventListener("DOMContentLoaded", function () {
     
             xhr.send(loginData);
         }
-  
+
       tryLogin(); // Démarrer la première tentative
     });
-  });
-  
+});
 
 
 
