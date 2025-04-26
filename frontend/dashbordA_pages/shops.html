@@ -370,18 +370,18 @@
         <div class="dashboard-tabs">
           <div class="container-fluid">
             <ul class="nav nav-tabs" id="shopTabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
+              <li class="nav-item">
+                <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" aria-controls="pending" aria-selected="true">
                   <i class="bi bi-hourglass-split"></i> Pending Approval <span class="badge bg-warning">6</span>
                 </button>
               </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab" aria-controls="approved" aria-selected="false">
+              <li class="nav-item">
+                <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" aria-controls="approved" aria-selected="false">
                   <i class="bi bi-check-circle"></i> Approved Shops <span class="badge bg-success">18</span>
                 </button>
               </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">
+              <li class="nav-item">
+                <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" aria-controls="rejected" aria-selected="false">
                   <i class="bi bi-x-circle"></i> Rejected Shops <span class="badge bg-danger">2</span>
                 </button>
               </li>
@@ -410,7 +410,6 @@
                             <li><a class="dropdown-item" href="#">Newest First</a></li>
                             <li><a class="dropdown-item" href="#">Oldest First</a></li>
                             <li><a class="dropdown-item" href="#">Alphabetical (A-Z)</a></li>
-                            <li><a class="dropdown-item" href="#">Rating (High to Low)</a></li>
                           </ul>
                         </div>
                       </div>
@@ -425,10 +424,6 @@
                       <div class="shop-card">
                         <div class="shop-card-header">
                           <div class="shop-card-actions">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="shop1Check">
-                              <label class="form-check-label" for="shop1Check"></label>
-                            </div>
                             <div class="dropdown">
                               <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -473,10 +468,6 @@
                       <div class="shop-card">
                         <div class="shop-card-header">
                           <div class="shop-card-actions">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="shop1Check">
-                              <label class="form-check-label" for="shop1Check"></label>
-                            </div>
                             <div class="dropdown">
                               <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -521,10 +512,6 @@
                       <div class="shop-card">
                         <div class="shop-card-header">
                           <div class="shop-card-actions">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="shop1Check">
-                              <label class="form-check-label" for="shop1Check"></label>
-                            </div>
                             <div class="dropdown">
                               <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -569,10 +556,6 @@
                       <div class="shop-card">
                         <div class="shop-card-header">
                           <div class="shop-card-actions">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="shop1Check">
-                              <label class="form-check-label" for="shop1Check"></label>
-                            </div>
                             <div class="dropdown">
                               <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -644,12 +627,20 @@
                     </div>
                     <div class="col-md-6">
                       <div class="tab-actions">
-                        <button class="btn btn-outline-secondary">
-                          <i class="bi bi-funnel"></i> Filter
-                        </button>
-                        <button class="btn btn-outline-secondary">
-                          <i class="bi bi-sort-down"></i> Sort
-                        </button>
+                        <div class="col-md-6">
+                          <div class="tab-actions">
+                            <div class="dropdown">
+                              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-sort-down"></i> Sort by
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Newest First</a></li>
+                                <li><a class="dropdown-item" href="#">Oldest First</a></li>
+                                <li><a class="dropdown-item" href="#">Alphabetical (A-Z)</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                         <button class="btn btn-outline-primary">
                           <i class="bi bi-download"></i> Export
                         </button>
@@ -773,9 +764,20 @@
                     </div>
                     <div class="col-md-6">
                       <div class="tab-actions">
-                        <button class="btn btn-outline-secondary">
-                          <i class="bi bi-funnel"></i> Filter
-                        </button>
+                        <div class="col-md-6">
+                          <div class="tab-actions">
+                            <div class="dropdown">
+                              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-sort-down"></i> Sort by
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Newest First</a></li>
+                                <li><a class="dropdown-item" href="#">Oldest First</a></li>
+                                <li><a class="dropdown-item" href="#">Alphabetical (A-Z)</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
