@@ -22,6 +22,11 @@ app.use(
   allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 
 app.use(
   helmet({
@@ -30,10 +35,12 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         scriptSrcAttr: ["'unsafe-inline'"],
+        imgSrc: ["'self'", "http://localhost:3000", "data:"]
       },
     },
   })
 );
+
 
 app.use(express.json());
 
@@ -49,7 +56,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(Path.join(__dirname, "frontend", "index.html"));
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
 mongoose
