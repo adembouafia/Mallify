@@ -17,6 +17,11 @@ const shopSchema = new mongoose.Schema({
         type : String,
         required : false
     },
+    status: {
+        type : String,
+        enum : ["Pending" , "Approved" , "Rejected"],
+        default : "Pending"
+    },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "vendor",
