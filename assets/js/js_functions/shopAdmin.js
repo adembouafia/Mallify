@@ -245,82 +245,179 @@ document.querySelectorAll('.editProductBtn').forEach(button => {
   });
 });
 
-// add moderator
-const moderatorForm = document.getElementById("moderatorForm");
-const moderatorTableBody = document.querySelector(".table tbody");
-const avatarPreview = document.getElementById("avatarPreview");
-const avatarInput = document.getElementById("moderatorAvatar");
-const passwordList = [];
 
-avatarInput.addEventListener("change", function () {
+
+
+
+// add moderator
+document.getElementById("moderatorAvatar").addEventListener("change", function() {
+  const avatarPreview = document.getElementById("avatarPreview");
   const file = this.files[0];
+  
   if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-          avatarPreview.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    // Create a URL for the selected image and update the preview
+    const imageUrl = URL.createObjectURL(file);
+    avatarPreview.src = imageUrl;
+  } else {
+    // If no file is selected, show the default image
+    avatarPreview.src = "../../assets/images/dashboard/supermoderator.jpg";
   }
 });
 
-moderatorForm.addEventListener("submit", function (e) {
+document.getElementById("moderatorForm").addEventListener("submit", function (e) {
   e.preventDefault();
-
+  const moderatorTableBody = document.querySelector(".table tbody");
+  const avatarPreview = document.getElementById("avatarPreview");
+  const avatarInput = document.getElementById("moderatorAvatar");
   const name = document.getElementById("moderatorName").value;
   const email = document.getElementById("moderatorEmail").value;
   const password = document.getElementById("moderatorPassword").value;
   const avatarFile = avatarInput.files[0];
 
-  let avatarUrl = "../../assets/images/dashboard/superadmin.jpg";
-  if (avatarFile) {
-      avatarUrl = URL.createObjectURL(avatarFile);
-  }
+  const formData = new FormData();
+  formData.append("moderatorName", name); // Changed to match your model
+  formData.append("email", email);
+  formData.append("moderatorPassword", password); // Changed to match your model
+  if (avatarFile) formData.append("moderatorImage", avatarFile); // Match your model field name
 
-  passwordList.unshift(password);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:3000/moderator/register", true);
 
-  const newRow = document.createElement("tr");
-  newRow.innerHTML = `
-      <td><img src="${avatarUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-      <td>${name}</td>
-      <td>${email}</td>
-      <td>${new Date().toLocaleString()}</td>
-      <td>
+  const token = localStorage.getItem("token");
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+  xhr.onload = function () {
+    if (xhr.status === 201 || xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      const savedModerator = response.moderator;
+      
+      // Create a temporary image to check if the URL is valid
+      let imageUrl;
+      
+      if (avatarFile) {
+        // If we uploaded a file, use a local object URL temporarily
+        imageUrl = URL.createObjectURL(avatarFile);
+      } else if (savedModerator.moderatorImage) {
+        // If the response has an image URL, use it
+        if (savedModerator.moderatorImage.startsWith('http')) {
+          imageUrl = savedModerator.moderatorImage;
+        } else {
+          // If it's a relative path, prepend the base URL
+          imageUrl = `http://localhost:3000/uploads/${savedModerator.moderatorImage}`;
+        }
+      } else {
+        // Fallback to default image
+        imageUrl = "../../assets/images/dashboard/supermoderator.jpg";
+      }
+
+      const newRow = document.createElement("tr");
+      // Add the moderator ID as a data attribute
+      newRow.dataset.moderatorId = savedModerator._id;
+      
+      newRow.innerHTML = `<td><img src="${imageUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+        <td>${savedModerator.moderatorName}</td>
+        <td>${savedModerator.email}</td>
+        <td>${new Date().toLocaleString()}</td>
+        <td>
           <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
               <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger">
+          <button class="btn btn-sm btn-outline-danger btn-delete">
               <i class="bi bi-trash"></i>
           </button>
-      </td>
-  `;
+        </td>`;
+      moderatorTableBody.insertBefore(newRow, moderatorTableBody.firstChild);
 
-  moderatorTableBody.insertBefore(newRow, moderatorTableBody.firstChild);
-  this.reset();
-  avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
+      document.getElementById("moderatorForm").reset();
+      avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg"; // Reset to default image
 
-  const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
-  if (modal) modal.hide();
+      const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
+      modal.hide();
 
-  console.log("Liste des mots de passe :", passwordList);
+      console.log("Moderator added successfully");
+    } else {
+      alert("Error adding moderator.");
+      console.log(xhr.responseText);
+    }
+  };
+
+  xhr.onerror = function () {
+    alert("Network error during request.");
+  };
+
+  xhr.send(formData);
 });
 
+// Delete moderator 
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".btn-delete")) {
+    const row = e.target.closest("tr");
+    const moderatorId = row.dataset.moderatorId;
+    
+    if (!moderatorId) {
+      console.error("Moderator ID not found");
+      return;
+    }
+    
+    if (confirm("Are you sure you want to delete this moderator?")) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("DELETE", `http://localhost:3000/moderator/delete/${moderatorId}`, true);
+      
+      const token = localStorage.getItem("token");
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          row.remove();
+          console.log("Moderator deleted successfully");
+        } else {
+          alert("Error deleting moderator.");
+          console.log(xhr.responseText);
+        }
+      };
+      
+      xhr.onerror = function () {
+        alert("Network error during request.");
+      };
+      
+      xhr.send();
+    }
+  }
+});
+
+// edit moderator
 let editingRow = null;
 let newEditAvatarDataURL = null;
+
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
     editingRow = e.target.closest("tr");
+    const moderatorId = editingRow.dataset.moderatorId;
+    
+    if (!moderatorId) {
+      console.error("Moderator ID not found");
+      return;
+    }
 
     const fullName = editingRow.cells[1].textContent.trim();
     const email = editingRow.cells[2].textContent.trim();
-    const avatarImg = editingRow.querySelector("img")?.src || "";
+    const avatarImg = editingRow.querySelector("img").src;
 
     document.getElementById("editName").value = fullName;
     document.getElementById("editEmail").value = email;
     document.getElementById("editAvatarPreview").src = avatarImg;
+
+    // Reset file input and data URL
     document.getElementById("editAvatar").value = "";
     newEditAvatarDataURL = null;
+    
+    // Log the moderator ID for debugging
+    console.log("Editing moderator with ID:", moderatorId);
   }
 });
+
+// Preview avatar
 document.getElementById("editAvatar").addEventListener("change", function () {
   const file = this.files[0];
   if (file) {
@@ -332,35 +429,280 @@ document.getElementById("editAvatar").addEventListener("change", function () {
     reader.readAsDataURL(file);
   }
 });
+
 document.getElementById("editModeratorForm").addEventListener("submit", function (e) {
   e.preventDefault();
-
   if (editingRow) {
-    const newName = document.getElementById("editName").value;
-    const newEmail = document.getElementById("editEmail").value;
-
-    editingRow.cells[1].textContent = newName;
-    editingRow.cells[2].textContent = newEmail;
-
-    if (newEditAvatarDataURL) {
-      const avatarImg = editingRow.querySelector("img");
-      if (avatarImg) {
-        avatarImg.src = newEditAvatarDataURL;
-      }
+    const moderatorId = editingRow.dataset.moderatorId;
+    
+    if (!moderatorId) {
+      console.error("Moderator ID is missing or null");
+      alert("Error: Moderator ID is missing. Cannot update.");
+      return;
     }
-    const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
-    editModal.hide();
+    
+    const updatedName = document.getElementById("editName").value;
+    const updatedEmail = document.getElementById("editEmail").value;
+    
+    if (newEditAvatarDataURL && newEditAvatarDataURL.startsWith('data:image')) {
+      const formData = new FormData();
+      formData.append("moderatorName", updatedName); // Changed to match your model
+      formData.append("email", updatedEmail);
+      
+      // Convert data URL to File object
+      if (document.getElementById("editAvatar").files.length > 0) {
+        formData.append("moderatorImage", document.getElementById("editAvatar").files[0]);
+      }
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `http://localhost:3000/moderator/update/${moderatorId}`, true);
+      
+      const token = localStorage.getItem("token");
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      }
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            
+            // Update the row in the table
+            editingRow.cells[1].textContent = updatedName;
+            editingRow.cells[2].textContent = updatedEmail;
+            
+            // Update the avatar if we have a new one
+            if (newEditAvatarDataURL) {
+              editingRow.querySelector("img").src = newEditAvatarDataURL;
+            }
+            
+            // Close the modal
+            const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
+            editModal.hide();
+            
+            console.log("Moderator updated successfully:", response);
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            alert("Error updating moderator: " + error.message);
+          }
+        } else {
+          console.error("Error updating moderator:", xhr.status, xhr.responseText);
+          alert("Error updating moderator. Status: " + xhr.status);
+        }
+      };
+      
+      xhr.onerror = function () {
+        console.error("Network error during update");
+        alert("Network error during update!");
+      };
+      
+      xhr.send(formData);
+    } else {
+      // No new image, can use JSON
+      const updateData = JSON.stringify({
+        moderatorName: updatedName, // Changed to match your model
+        email: updatedEmail
+      });
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `http://localhost:3000/moderator/update/${moderatorId}`, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      
+      const token = localStorage.getItem("token");
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      }
+      
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            
+            // Update the row in the table
+            editingRow.cells[1].textContent = updatedName;
+            editingRow.cells[2].textContent = updatedEmail;
+            
+            // Close the modal
+            const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
+            editModal.hide();
+            
+            console.log("Moderator updated successfully:", response);
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            alert("Error updating moderator: " + error.message);
+          }
+        } else {
+          console.error("Error updating moderator:", xhr.status, xhr.responseText);
+          alert("Error updating moderator. Status: " + xhr.status);
+        }
+      };
+      
+      xhr.onerror = function () {
+        console.error("Network error during update");
+        alert("Network error during update!");
+      };
+      
+      xhr.send(updateData);
+    }
   }
 });
-  // delete admin
-  document.addEventListener("click", function (e) {
-    if (e.target.closest(".btn-delete")) {
-      const row = e.target.closest("tr");
-      if (confirm("Are you sure you want to delete this Moderator ?")) {
-        row.remove();
-      }
-    }
-  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const moderatorForm = document.getElementById("moderatorForm");
+// const moderatorTableBody = document.querySelector(".table tbody");
+// const avatarPreview = document.getElementById("avatarPreview");
+// const avatarInput = document.getElementById("moderatorAvatar");
+// const passwordList = [];
+
+// avatarInput.addEventListener("change", function () {
+//   const file = this.files[0];
+//   if (file) {
+//       const reader = new FileReader();
+//       reader.onload = function (e) {
+//           avatarPreview.src = e.target.result;
+//       };
+//       reader.readAsDataURL(file);
+//   }
+// });
+
+// moderatorForm.addEventListener("submit", function (e) {
+//   e.preventDefault();
+
+//   const name = document.getElementById("moderatorName").value;
+//   const email = document.getElementById("moderatorEmail").value;
+//   const password = document.getElementById("moderatorPassword").value;
+//   const avatarFile = avatarInput.files[0];
+
+//   let avatarUrl = "../../assets/images/dashboard/supermoderator.jpg";
+//   if (avatarFile) {
+//       avatarUrl = URL.createObjectURL(avatarFile);
+//   }
+
+//   passwordList.unshift(password);
+
+//   const newRow = document.createElement("tr");
+//   newRow.innerHTML = `
+//       <td><img src="${avatarUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+//       <td>${name}</td>
+//       <td>${email}</td>
+//       <td>${new Date().toLocaleString()}</td>
+//       <td>
+//           <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
+//               <i class="bi bi-pencil"></i>
+//           </button>
+//           <button class="btn btn-sm btn-outline-danger">
+//               <i class="bi bi-trash"></i>
+//           </button>
+//       </td>
+//   `;
+
+//   moderatorTableBody.insertBefore(newRow, moderatorTableBody.firstChild);
+//   this.reset();
+//   avatarPreview.src = "../../assets/images/dashboard/supermoderator.jpg";
+
+//   const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
+//   if (modal) modal.hide();
+
+//   console.log("Liste des mots de passe :", passwordList);
+// });
+
+// let editingRow = null;
+// let newEditAvatarDataURL = null;
+// document.addEventListener("click", function (e) {
+//   if (e.target.closest(".btn-edit")) {
+//     editingRow = e.target.closest("tr");
+
+//     const fullName = editingRow.cells[1].textContent.trim();
+//     const email = editingRow.cells[2].textContent.trim();
+//     const avatarImg = editingRow.querySelector("img")?.src || "";
+
+//     document.getElementById("editName").value = fullName;
+//     document.getElementById("editEmail").value = email;
+//     document.getElementById("editAvatarPreview").src = avatarImg;
+//     document.getElementById("editAvatar").value = "";
+//     newEditAvatarDataURL = null;
+//   }
+// });
+// document.getElementById("editAvatar").addEventListener("change", function () {
+//   const file = this.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = function (e) {
+//       document.getElementById("editAvatarPreview").src = e.target.result;
+//       newEditAvatarDataURL = e.target.result;
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// });
+// document.getElementById("editModeratorForm").addEventListener("submit", function (e) {
+//   e.preventDefault();
+
+//   if (editingRow) {
+//     const newName = document.getElementById("editName").value;
+//     const newEmail = document.getElementById("editEmail").value;
+
+//     editingRow.cells[1].textContent = newName;
+//     editingRow.cells[2].textContent = newEmail;
+
+//     if (newEditAvatarDataURL) {
+//       const avatarImg = editingRow.querySelector("img");
+//       if (avatarImg) {
+//         avatarImg.src = newEditAvatarDataURL;
+//       }
+//     }
+//     const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
+//     editModal.hide();
+//   }
+// });
+
+
+
+
+
+
+
+//   // delete moderator
+//   document.addEventListener("click", function (e) {
+//     if (e.target.closest(".btn-delete")) {
+//       const row = e.target.closest("tr");
+//       if (confirm("Are you sure you want to delete this Moderator ?")) {
+//         row.remove();
+//       }
+//     }
+//   });
+
+
+
+
+
+
+
+
+
+
+
+  
 // Search moderators
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchModeratorInput");
