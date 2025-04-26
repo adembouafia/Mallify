@@ -15,24 +15,19 @@ const subcategories = {
   Sports: ["Fitness", "Outdoor", "Team Sports", "Water Sports", "Winter Sports"],
 }
 
-// Initialize the form
 document.addEventListener("DOMContentLoaded", () => {
-  // Populate category dropdown
   populateCategoryDropdown()
 
-  // Set up event listeners for category change
   document.getElementById("productCategory").addEventListener("change", function () {
     populateSubcategoryDropdown(this.value)
   })
 
-  // Set up event listeners for add category/subcategory buttons
   document.getElementById("addCategoryBtn").addEventListener("click", () => {
     const addCategoryModal = new bootstrap.Modal(document.getElementById("addCategoryModal"))
     addCategoryModal.show()
   })
 
   document.getElementById("addSubcategoryBtn").addEventListener("click", () => {
-    // Populate the parent category dropdown in the subcategory modal
     const subcatCategorySelect = document.getElementById("subcategoryCategory")
     subcatCategorySelect.innerHTML = ""
 
@@ -47,28 +42,21 @@ document.addEventListener("DOMContentLoaded", () => {
     addSubcategoryModal.show()
   })
 
-  // Save new category
   document.getElementById("saveCategoryBtn").addEventListener("click", () => {
     const newCategoryName = document.getElementById("newCategoryName").value.trim()
 
     if (newCategoryName) {
-      // Add to categories array
       const newId = categories.length + 1
       categories.push({ id: newId, name: newCategoryName })
 
-      // Initialize empty subcategories for this category
       subcategories[newCategoryName] = []
 
-      // Update dropdown
       populateCategoryDropdown()
 
-      // Select the new category
       document.getElementById("productCategory").value = newCategoryName
 
-      // Clear subcategory dropdown
       populateSubcategoryDropdown(newCategoryName)
 
-      // Close modal
       const addCategoryModalEl = document.getElementById("addCategoryModal")
       const addCategoryModal = bootstrap.Modal.getInstance(addCategoryModalEl)
       if (addCategoryModal) {
@@ -78,28 +66,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  // Save new subcategory
   document.getElementById("saveSubcategoryBtn").addEventListener("click", () => {
     const parentCategory = document.getElementById("subcategoryCategory").value
     const newSubcategoryName = document.getElementById("newSubcategoryName").value.trim()
 
     if (parentCategory && newSubcategoryName) {
-      // Add to subcategories
+      // Add to 
       if (!subcategories[parentCategory]) {
         subcategories[parentCategory] = []
       }
 
       subcategories[parentCategory].push(newSubcategoryName)
 
-      // If the parent category is currently selected, update the subcategory dropdown
       if (document.getElementById("productCategory").value === parentCategory) {
         populateSubcategoryDropdown(parentCategory)
 
-        // Select the new subcategory
         document.getElementById("productSubcategory").value = newSubcategoryName
       }
 
-      // Close modal
       const addSubcategoryModalEl = document.getElementById("addSubcategoryModal")
       const addSubcategoryModal = bootstrap.Modal.getInstance(addSubcategoryModalEl)
       if (addSubcategoryModal) {
@@ -191,17 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 })
 
-// Helper functions
 function populateCategoryDropdown() {
   const categorySelect = document.getElementById("productCategory")
 
-  // Save current selection if any
   const currentSelection = categorySelect.value
 
-  // Clear dropdown
   categorySelect.innerHTML = ""
 
-  // Add default option
   const defaultOption = document.createElement("option")
   defaultOption.value = ""
   defaultOption.textContent = "Select a category"
@@ -209,7 +189,6 @@ function populateCategoryDropdown() {
   defaultOption.selected = !currentSelection
   categorySelect.appendChild(defaultOption)
 
-  // Add categories
   categories.forEach((category) => {
     const option = document.createElement("option")
     option.value = category.name
@@ -224,10 +203,8 @@ function populateCategoryDropdown() {
 function populateSubcategoryDropdown(categoryName) {
   const subcategorySelect = document.getElementById("productSubcategory")
 
-  // Clear dropdown
   subcategorySelect.innerHTML = ""
 
-  // Add default option
   const defaultOption = document.createElement("option")
   defaultOption.value = ""
   defaultOption.textContent = "Select a subcategory"
@@ -235,7 +212,6 @@ function populateSubcategoryDropdown(categoryName) {
   defaultOption.selected = true
   subcategorySelect.appendChild(defaultOption)
 
-  // Add subcategories for selected category
   if (categoryName && subcategories[categoryName]) {
     subcategories[categoryName].forEach((subcategory) => {
       const option = document.createElement("option")
