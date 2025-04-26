@@ -41,71 +41,62 @@ function previewImage(event) {
 
 //login form 
 document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("loginForm").addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-          alert("Tous les champs sont obligatoires !");
-          return;
-      }
-
-      const loginData = JSON.stringify({ email, password });
-
-      // Tentative admin
-      const xhrAdmin = new XMLHttpRequest();
-      xhrAdmin.open("POST", "http://localhost:3000/admin/login", true);
-      xhrAdmin.setRequestHeader("Content-Type", "application/json");
-      xhrAdmin.onload = function () {
-          if (xhrAdmin.status === 200) {
-              const res = JSON.parse(xhrAdmin.responseText);
-              localStorage.setItem("token", res.token);
-              window.location.href = "../frontend/dashbordA_pages/index.html";
-          } else {
-              // Tentative vendor
-              const xhrVendor = new XMLHttpRequest();
-              xhrVendor.open("POST", "http://localhost:3000/vendor/login", true);
-              xhrVendor.setRequestHeader("Content-Type", "application/json");
-              xhrVendor.onload = function () {
-                  if (xhrVendor.status === 200) {
-                      const res = JSON.parse(xhrVendor.responseText);
-                      localStorage.setItem("token", res.token);
-                      window.location.href = "../frontend/dashbordBout_pages/index.html";
-                  } else {
-                      // Tentative client
-                      const xhrClient = new XMLHttpRequest();
-                      xhrClient.open("POST", "http://localhost:3000/client/login", true);
-                      xhrClient.setRequestHeader("Content-Type", "application/json");
-                      xhrClient.onload = function () {
-                          if (xhrClient.status === 200) {
-                              const res = JSON.parse(xhrClient.responseText);
-                              localStorage.setItem("token", res.token);
-                              window.location.href = "../frontend/index.html";
-                          } else {
-                              try {
-                                  const err = JSON.parse(xhrClient.responseText);
-                                  alert("Erreur : " + (err.message || "Identifiants invalides"));
-                              } catch {
-                                  alert("Erreur inconnue lors de la connexion.");
-                              }
-                          }
-                      };
-                      xhrClient.onerror = () => alert("Erreur réseau lors de la connexion client.");
-                      xhrClient.send(loginData);
-                  }
-              };
-              xhrVendor.onerror = () => alert("Erreur réseau lors de la connexion vendeur.");
-              xhrVendor.send(loginData);
-          }
-      };
-      xhrAdmin.onerror = () => alert("Erreur réseau lors de la connexion admin.");
-      xhrAdmin.send(loginData);
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+    
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+    
+        if (!email || !password) {
+            alert("Tous les champs sont obligatoires !");
+            return;
+        }
+    
+        const loginData = JSON.stringify({ email, password });
+    
+        // Essayer chaque type d'utilisateur
+        const loginEndpoints = [
+            { url: "http://localhost:3000/admin/login", redirect: "../frontend/dashbordA_pages/index.html" },
+            { url: "http://localhost:3000/vendor/login", redirect: "../frontend/dashbordBout_pages/index.html" },
+            { url: "http://localhost:3000/client/login", redirect: "../frontend/index.html" },
+            { url: "http://localhost:3000/moderator/login", redirect: "../frontend/dashbordBout_pages/index.html" },
+        ];
+    
+        // Tentative séquentielle
+        function tryLogin(index = 0) {
+            if (index >= loginEndpoints.length) {
+            alert("Échec de la connexion : vérifiez vos identifiants.");
+            return;
+            }
+    
+            const { url, redirect } = loginEndpoints[index];
+            const xhr = new XMLHttpRequest();
+    
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+    
+            xhr.onload = function () {
+            if (xhr.status === 200) {
+                const res = JSON.parse(xhr.responseText);
+                localStorage.setItem("token", res.token);
+                window.location.href = redirect;
+            } else {
+                tryLogin(index + 1); // Essayer le suivant
+            }
+            };
+    
+            xhr.onerror = function () {
+            alert("Erreur réseau lors de la tentative de connexion.");
+            };
+    
+            xhr.send(loginData);
+        }
+  
+      tryLogin(); // Démarrer la première tentative
+    });
   });
-});
-
-
+  
 
 
 

@@ -45,7 +45,7 @@ exports.addModerator = (req, res) => {
 
 //login a moderator
 exports.login = async (req, res) => {
-    const { email, moderatorPassword } = req.body;
+    const { email, password } = req.body;
 
     try {
         // Find the moderator by email
@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
         }
 
         // Compare password with hashed password
-        const isMatch = await bcrypt.compare(moderatorPassword, moderator.moderatorPassword);
+        const isMatch = await bcrypt.compare(password, moderator.moderatorPassword);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid password" });
         }
