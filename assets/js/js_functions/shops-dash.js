@@ -1,13 +1,15 @@
 function getImageUrl(filename) {
-  // Check if we're on localhost or the file system (file://)
-  const isLocalhost = window.location.hostname === "localhost";
+  // Check if we're on localhost or file://
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const isFileSystem = window.location.protocol === "file:";
 
   if (isLocalhost) {
-    // If on localhost, use the server path
+    // If on localhost, serve from server
     return `http://localhost:3000/uploads/${filename}`;
-  } else {
-    // Otherwise, serve the image as a local file
+  } else if (isFileSystem) {
     return `C:/Users/abkou/OneDrive/Desktop/PFE/code_Principal/Mallify/uploads/${filename}`;
+  } else {
+    return '../../../uploads/${filename}';
   }
 }
 
