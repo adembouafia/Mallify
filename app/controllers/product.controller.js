@@ -1,41 +1,70 @@
 const Product = require("../models/product.model");
 const SubCategory = require("../models/subCategory.model");
 const dotenv = require("dotenv");
+const multer = require("multer");
 dotenv.config();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+}).fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'otherImages', maxCount: 12 }
+]);
 
 // Create a new product
 exports.createProduct = async (req, res) => {
-    try {
-        const {subCategory } = req.body;
-
-        // Vérifier si la sous-catégorie existe
-        const existingSubCategory = await SubCategory.findById(subCategory);
-        if (!existingSubCategory) {
-            return res.status(400).json({
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ 
                 status: "fail",
-                message: "La sous-catégorie spécifiée n'existe pas",
+                message: err.message || "Error uploading files" 
             });
         }
 
-        // Créer un nouveau produit
-        const product = await Product.create({
-            ...req.body,
-            shop: req.shop._id, 
-        });
+        try {
+            const { subCategory } = req.body;
 
-        res.status(201).json({
-            status: "success",
-            data: {
-                product
+            const existingSubCategory = await SubCategory.findById(subCategory);
+            if (!existingSubCategory) {
+                return res.status(400).json({
+                    status: "fail",
+                    message: "La sous-catégorie spécifiée n'existe pas",
+                });
             }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: "fail",
-            message: err.message
-        });
-    }
-}
+
+            const productData = {
+                ...req.body,
+                // shop: req.shop._id ? req.shop._id : null,
+                mainImage: req.files['mainImage'] ? req.files['mainImage'][0].filename : null,
+                otherImages: req.files['otherImages'] ? req.files['otherImages'].map(file => file.filename) : []
+            };
+
+            const product = await Product.create(productData);
+
+            res.status(201).json({
+                status: "success",
+                data: {
+                    product
+                }
+            });
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message
+            });
+        }
+    });
+};
 
 
 

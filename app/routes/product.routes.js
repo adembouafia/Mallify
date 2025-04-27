@@ -3,7 +3,7 @@ const authorize = require("../middlewares/authorize.middleware");
 
 module.exports = (app) => {
     const product = require("../controllers/product.controller");
-    app.post("/product/create", auth, authorize('vendor', 'moderator'), product.createProduct);
+    app.post("/product/create", product.createProduct);
     app.get("/product/get", product.getAllProducts);
     app.get("/product/get/myProducts", auth, authorize('vendor','moderator'), product.getMyProducts);
     app.get("/product/get/:id", product.getProduct);

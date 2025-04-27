@@ -50,16 +50,16 @@ function fetchShops() {
         }
 
         console.log("Shop ID:", shop._id)
-  console.log("Shop Name:", shop.shopName)
-  console.log("Vendor data:", shop.vendor)
-  if (shop.vendor) {
-    console.log("Vendor type:", typeof shop.vendor)
-    if (typeof shop.vendor === "object") {
-      console.log("Vendor keys:", Object.keys(shop.vendor))
-      console.log("Vendor name property:", shop.vendor.vendorName)
-      console.log("Vendor name property:", shop.vendor.name)
-    }
-  }
+        console.log("Shop Name:", shop.shopName)
+        console.log("Vendor data:", shop.vendor)
+        if (shop.vendor) {
+          console.log("Vendor type:", typeof shop.vendor)
+          if (typeof shop.vendor === "object") {
+            console.log("Vendor keys:", Object.keys(shop.vendor))
+            console.log("Vendor name property:", shop.vendor.vendorName)
+            console.log("Vendor name property:", shop.vendor.name)
+          }
+        }
 
         // Categorize by status
         if (shop.status === "Pending") shops.pending.push(shopItem)
