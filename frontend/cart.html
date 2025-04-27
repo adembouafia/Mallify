@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="../assets/css/cart.css">
   </head>
   <body>
+    <div class="preloader">
+      <img src="../assets/preloader/preloader.svg  " alt="Loading ..." class="logo-spinner">
+    </div>
     <!-- ==================== scroll up  ==================== -->
     <div class="progress-wrap">
       <svg
@@ -663,8 +666,10 @@
       <div class="container-cart">
         <div class="cart-layout">
           <div class="cart-main">
+    
+            <!-- desktop table -->
             <div class="cart-table-container">
-              <table class="cart-table">
+              <table class="cart-table" id="cart-table">
                 <thead>
                   <tr>
                     <th>Product</th>
@@ -674,230 +679,41 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="table-product">
-                        <div class="product-thumb">
-                          <a href="product-details.html"><img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product" /></a>
-                        </div>
-                        <div class="product-content">
-                          <h6><a href="product-details.html">Disque Dur MSI 960Go</a></h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="price">179 DT</span></td>
-                    <td>
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                    </td>
-                    <td><span class="price">179 DT</span></td>
-                    <td class="action-buttons">
-                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="table-product">
-                        <div class="product-thumb">
-                          <a href="product-details.html"><img src="../assets/images/products/bureau.png" alt="Product" /></a>
-                        </div>
-                        <div class="product-content">
-                          <h6><a href="product-details.html">Bureau motorisé gaming Ksix avec hauteur réglable - Blanc</a></h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="price">2 399 DT</span></td>
-                    <td>
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                    </td>
-                    <td><span class="price">2 399 DT</span></td>
-                    <td class="action-buttons">
-                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="table-product">
-                        <div class="product-thumb">
-                          <a href="product-details.html"><img src="../assets/images/products/oversize.png" alt="Product" /></a>
-                        </div>
-                        <div class="product-content">
-                          <h6><a href="product-details.html">"Old Money " Oversized Sweat-shirt - Beige</a></h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="price">79 DT</span></td>
-                    <td>
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                    </td>
-                    <td><span class="price">79 DT</span></td>
-                    <td class="action-buttons">
-                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="table-product">
-                        <div class="product-thumb">
-                          <a href="product-details.html"><img src="../assets/images/products/baby-walker.webp" alt="Product" /></a>
-                        </div>
-                        <div class="product-content">
-                          <h6><a href="product-details.html">Wooden Baby Walker</a></h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="price">125 DT</span></td>
-                    <td>
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                    </td>
-                    <td><span class="price">125 DT</span></td>
-                    <td class="action-buttons">
-                      <button class="btn-remove"><i class="ph ph-trash"></i> Remove</button>
-                    </td>
-                  </tr>
+                <tbody id="cart-table-body">
+                  <!-- rows will be injected here -->
                 </tbody>
               </table>
             </div>
-            <div class="cart-cards">
-              <div class="cart-card">
-                <div class="card-product">
-                  <div class="product-thumb">
-                    <a href="product-details.html"><img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="Product 1"></a>
-                  </div>
-                  <div class="product-details">
-                    <h6><a href="product-details.html">Disque Dur MSI 960Go</a></h6>
-                    
-                    <div class="meta col-xl-6">
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                      <span class="price">179 DT</span>
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn-remove">
-                        <i class="ph ph-trash"></i>
-                        <span>Remove</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="cart-card">
-                <div class="card-product">
-                  <div class="product-thumb">
-                    <a href="product-details.html"><img src="../assets/images/products/bureau.png" alt="Product 1"></a>
-                  </div>
-                  <div class="product-details">
-                    <h6><a href="product-details.html">Bureau motorisé gaming Ksix avec hauteur réglable - Blanc</a></h6>
-                    
-                    <div class="meta col-xl-6">
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                      <span class="price">2 399 DT</span>
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn-remove">
-                        <i class="ph ph-trash"></i>
-                        <span>Remove</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="cart-card">
-                <div class="card-product">
-                  <div class="product-thumb">
-                    <a href="product-details.html"><img src="../assets/images/products/oversize.png" alt="Product 1"></a>
-                  </div>
-                  <div class="product-details">
-                    <h6><a href="product-details.html">"Old Money " Oversized Sweat-shirt - Beige</a></h6>
-                    
-                    <div class="meta col-xl-6">
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                      <span class="price">79 DT</span>
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn-remove">
-                        <i class="ph ph-trash"></i>
-                        <span>Remove</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="cart-card">
-                <div class="card-product">
-                  <div class="product-thumb">
-                    <a href="product-details.html"><img src="../assets/images/products/baby-walker.webp" alt="Product 1"></a>
-                  </div>
-                  <div class="product-details">
-                    <h6><a href="product-details.html">Wooden Baby Walker</a></h6>
-                    
-                    <div class="meta col-xl-6">
-                      <div class="quantity-control">
-                        <button class="btn-qty">-</button>
-                        <input type="text" value="1" />
-                        <button class="btn-qty">+</button>
-                      </div>
-                      <span class="price">125 DT</span>
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn-remove">
-                        <i class="ph ph-trash"></i>
-                        <span>Remove</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    
+            <!-- mobile cards -->
+            <div class="cart-cards" id="cart-cards">
+              <!-- cards will be injected here -->
             </div>
-            
+    
           </div>
+    
+          <!-- sidebar totals -->
           <div class="cart-sidebar">
             <h6 class="text-xl mb-32">Cart Totals</h6>
             <div class="cart-summary-box">
               <div class="flex-between">
-                <span >Total</span>
-                <span class="bolder-text">3500 DT</span>
+                <span>Subtotal</span>
+                <span class="bolder-text" id="cart-subtotal">0 DT</span>
               </div>
               <div class="flex-between">
-                <span>Estimated Delivery</span>
-                <span class="bolder-text">Free</span>
+                <span>Delivery Fee</span>
+                <span class="bolder-text" id="delivery-fee">0 DT</span>
               </div>
             </div>
             <div class="cart-summary-box mt-24">
               <div class="flex-between bolder-text">
                 <span>Total</span>
-                <span>3500 DT</span>
+                <span id="final-total-price">0 DT</span>
               </div>
             </div>
             <a href="checkout.html" class="btn btn-main mt-40">Proceed to checkout</a>
           </div>
+    
         </div>
       </div>
     </section>
@@ -992,7 +808,7 @@
     <!-- ========================== Shipping Section End ============================ -->
 
     <!-- ==================== Footer Start Here ==================== -->
-    <footer class="footer py-70 overflow-hidden">
+    <footer class="footer py-80 overflow-hidden">
       <div class="container container-lg">
         <div class="footer-item-two-wrapper d-flex align-items-start flex-wrap">
           <div
@@ -1026,7 +842,7 @@
                 ><i class="ph-fill ph-envelope"></i
               ></span>
               <a
-                href="support@chaabenGroup.com"
+                href="mailto:support@chaabenGroup.com"
                 class="text-md text-gray-900 hover-text-main-600"
                 >support@chaabenGroup.com</a
               >
@@ -1145,7 +961,6 @@
               </li>
             </ul>
           </div>
-
           <div class="footer-item" data-aos="fade-up" data-aos-duration="1200">
             <h6 class="">Shop on The Go</h6>
             <p class="mb-16">Mallify App is available. Get it now</p>
@@ -1166,7 +981,6 @@
                 />
               </a>
             </div>
-
             <ul class="flex-align gap-16">
               <li>
                 <a
@@ -1197,7 +1011,6 @@
         </div>
       </div>
     </footer>
-
     <div class="bottom-footer bg-color-three py-8">
       <div class="container container-lg">
         <div
@@ -1221,5 +1034,6 @@
     <script src="../assets/js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
     <script src="../assets/js/js_functions/cart.js"></script>
+    <script src="../assets/js/js_functions/preloader.js"></script>
   </body>
 </html>

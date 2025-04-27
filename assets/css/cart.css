@@ -12,20 +12,25 @@
   display: flex;
   gap: 24px;
   align-items: flex-start;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 
 /* Table */
 .cart-table-container {
+  flex: 1 1 auto;            /* NEW — allow to grow/shrink inside flex */
+  width: 100%;  
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .cart-table {
-  width: 100%;
+  width: auto;
   min-width: 1000px;
-  border-collapse: collapse;
+  border-collapse: nowrap;
 }
 .cart-table th,
 .cart-table td {
@@ -135,48 +140,248 @@
 }
 
 /* Cards (Mobile) */
+/* Base card styles */
 .cart-cards {
-  display: none;
+  display: flex;
   margin-top: 24px;
   flex-direction: column;
-  gap: 20px;
-  
+  gap: 16px;
+  padding: 0 12px;
+}
+
+/* Hide on desktop AND tablet screens */
+@media (min-width: 768px) {
+  .cart-cards {
+    display: none;
+  }
 }
 
 .cart-card {
-  
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  padding: 16px;
-  
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid #f1f5f9;
+  position: relative;
 }
+
+.cart-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
 .card-product {
   display: flex;
   gap: 16px;
+  align-items: center;
 }
+
+.product-thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-thumb img:hover {
+  transform: scale(1.08);
+}
+
+.product-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .product-details h6 {
   font-size: 16px;
   font-weight: 600;
-  margin: 0 0 6px 0;
+  margin: 0 0 10px 0;
+  color: #0f172a;
 }
-.card-actions {
-  margin-top: 12px;
-  display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
+
+.product-details h6 a {
+  color: #0f172a;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
+
+.product-details h6 a:hover {
+  color: #3b82f6;
+}
+
 .product-details .meta {
-  margin-top: 12px;
+  margin-top: 14px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   font-size: 14px;
   color: #64748b;
 }
 
+/* Quantity controls with perfect sizing */
+.quantity-control {
+  display: flex;
+  align-items: center;
+    padding: 3px;
+
+}
+
+.btn-qty {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: white;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure buttons are properly sized on all devices */
+@media (max-width: 360px) {
+  .btn-qty {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
+
+.btn-qty:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.btn-qty:active {
+  transform: translateY(0);
+}
+
+.quantity-control input {
+  width: 32px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-weight: 600;
+  color: #334155;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+/* Super cool remove button with perfect sizing */
+.card-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-remove {
+  width: 100%;
+  height: 46px;
+  border: none;
+  background: linear-gradient(135deg, #ff4d4d, #f43f5e);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Responsive button sizing for different screen sizes */
+@media (min-width: 375px) {
+  .btn-remove {
+    font-size: 15px;
+    height: 48px;
+  }
+}
+
+@media (min-width: 414px) {
+  .btn-remove {
+    font-size: 16px;
+    height: 50px;
+  }
+}
+
+.btn-remove::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.7s ease;
+}
+
+.btn-remove:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(244, 63, 94, 0.35);
+  background: linear-gradient(135deg, #ff3d3d, #e11d48);
+}
+
+.btn-remove:hover::before {
+  left: 100%;
+}
+
+.btn-remove:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
+}
+
+.btn-remove i {
+  font-size: 18px;
+}
+
+/* Add a subtle pulsing effect to the remove button */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+  }
+  50% {
+    box-shadow: 0 4px 18px rgba(244, 63, 94, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+  }
+}
+
+.btn-remove:hover {
+  animation: pulse 1.5s infinite;
+}
 @media (max-width:1250px) {
   .cart-layout {
     flex-direction: column;
@@ -199,15 +404,12 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .cart-table-container {
     display: none;
   }
-
   .cart-cards {
     display: flex;
-    
   }
-
 }
 
