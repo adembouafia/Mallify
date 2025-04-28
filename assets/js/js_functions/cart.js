@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </td>
-        <td><span class="price">${item.price} DT</span></td>
+        <td><span class="price">${item.price.toFixed(2)} DT</span></td>
         <td>
           <div class="quantity-control">
             <button class="btn-qty" data-action="decrease">-</button>
@@ -130,12 +130,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="btn-qty" data-action="increase">+</button>
           </div>
         </td>
-        <td><span class="price item-subtotal">${sub} DT</span></td>
+        <td><span class="price item-subtotal">${sub.toFixed(2)} DT</span></td>
         <td><button class="btn-remove">Remove</button></td>
       `;
       tableBody.appendChild(tr);
 
-      // mobile card
+      // mobile card - updated to match your existing CSS structure
       const card = document.createElement("div");
       card.className = "cart-card";
       card.dataset.index = idx;
@@ -148,15 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="product-details">
             <h6><a href="${item.link}">${item.name}</a></h6>
-            <p>Unit Price: <span class="price">${item.price} DT</span></p>
+            <p>Unit Price: <span class="price">${item.price.toFixed(2)} DT</span></p>
             <div class="quantity-control">
               <button class="btn-qty" data-action="decrease">-</button>
               <input type="text" value="${item.quantity}" readonly />
               <button class="btn-qty" data-action="increase">+</button>
             </div>
-            <p>Subtotal: <span class="price item-subtotal">${sub} DT</span></p>
-            <button class="btn-remove">Remove</button>
+            <p>Subtotal: <span class="price item-subtotal">${sub.toFixed(2)} DT</span></p>
           </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-remove">REMOVE</button>
         </div>
       `;
       cartCards.appendChild(card);
@@ -171,9 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
       (sum, { price, quantity }) => sum + price * quantity,
       0
     );
-    subtotalEl.textContent = `${subTotal} DT`;
-    deliveryFeeEl.textContent = `${DELIVERY_FEE} DT`;
-    finalTotalEl.textContent = `${subTotal + DELIVERY_FEE} DT`;
+    subtotalEl.textContent = `${subTotal.toFixed(2)} DT`;
+    deliveryFeeEl.textContent = `${DELIVERY_FEE.toFixed(2)} DT`;
+    finalTotalEl.textContent = `${(subTotal + DELIVERY_FEE).toFixed(2)} DT`;
   }
 
   // Update cart item quantity on the server
@@ -233,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
 
     const container = btn.closest("tr, .cart-card");
+    if (!container) return;
+    
     const idx = Number(container.dataset.index);
     if (isNaN(idx)) return;
 

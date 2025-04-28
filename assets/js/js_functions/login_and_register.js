@@ -44,17 +44,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("loginForm");
     form.addEventListener("submit", function (event) {
         event.preventDefault();
-    
+
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
-    
+
+        // Store email in localStorage for later use in checkout
+        localStorage.setItem('loginEmail', email);
+
         if (!email || !password) {
             alert("Tous les champs sont obligatoires !");
             return;
         }
-    
+
         const loginData = JSON.stringify({ email, password });
-    
+
         const loginEndpoints = [
             { 
                 url: "http://localhost:3000/admin/login", 
@@ -84,111 +87,213 @@ document.addEventListener("DOMContentLoaded", function () {
                 userType: "moderator"
             },
         ];
-    
+
         function tryLogin(index = 0) {
             if (index >= loginEndpoints.length) {
                 alert("Échec de la connexion : vérifiez vos identifiants ou votre type de compte.");
                 return;
             }
-    
+
             const { url, redirect, idField, userType } = loginEndpoints[index];
             
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: loginData
-            })
-            .then(response => {
-                console.log(`Trying ${url} - Status: ${response.status}`);
+            // Use XMLHttpRequest instead of fetch
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onload = function() {
+                console.log(`Trying ${url} - Status: ${xhr.status}`);
                 
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Login failed");
-                }
-            })
-            .then(data => {
-                console.log("Response:", data);
-                
-                // Store token
-                localStorage.setItem("token", data.token);
-                
-                // Store user type
-                localStorage.setItem("userType", userType);
-                
-                // Get the correct ID based on user type and response structure
-                let userId = null;
-                
-                // Check all possible locations for the ID
-                if (data[idField]) {
-                    // If ID is directly in the response with the specified field name
-                    userId = data[idField];
-                } else if (userType === "admin" && data.admin && data.admin.id) {
-                    // For admin users with nested admin object
-                    userId = data.admin.id;
-                } else if (data[userType] && data[userType].id) {
-                    // For responses with nested user objects like data.vendor.id
-                    userId = data[userType].id;
-                } else if (data.id) {
-                    // Fallback to generic id field
-                    userId = data.id;
-                } else if (data._id) {
-                    // MongoDB often uses _id
-                    userId = data._id;
-                }
-                
-                // Log the extracted ID for debugging
-                console.log(`Extracted ${userType} ID:`, userId);
-                
-                if (userId) {
-                    localStorage.setItem("userId", userId);
-                } else {
-                    console.warn(`Could not extract ID for ${userType} user`);
-                }
-                
-                // Handle role - specifically check for admin types
-                let role = userType; // Default to the user type
-                
-                if (userType === "admin") {
-                    // For admin endpoint, check for specific role
-                    if (data.admin && data.admin.role) {
-                        role = data.admin.role; // This will be "admin" or "superAdmin"
-                    } else if (data.role) {
-                        role = data.role;
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log("Response:", data);
+                        
+                        // Store token
+                        localStorage.setItem("token", data.token);
+                        
+                        // Store user type
+                        localStorage.setItem("userType", userType);
+                        
+                        // Get the correct ID based on user type and response structure
+                        let userId = null;
+                        
+                        // Check all possible locations for the ID
+                        if (data[idField]) {
+                            // If ID is directly in the response with the specified field name
+                            userId = data[idField];
+                        } else if (userType === "admin" && data.admin && data.admin.id) {
+                            // For admin users with nested admin object
+                            userId = data.admin.id;
+                        } else if (data[userType] && data[userType].id) {
+                            // For responses with nested user objects like data.vendor.id
+                            userId = data[userType].id;
+                        } else if (data.id) {
+                            // Fallback to generic id field
+                            userId = data.id;
+                        } else if (data._id) {
+                            // MongoDB often uses _id
+                            userId = data._id;
+                        }
+                        
+                        // Log the extracted ID for debugging
+                        console.log(`Extracted ${userType} ID:`, userId);
+                        
+                        if (userId) {
+                            localStorage.setItem("userId", userId);
+                        } else {
+                            console.warn(`Could not extract ID for ${userType} user`);
+                        }
+                        
+                        // Handle role - specifically check for admin types
+                        let role = userType; // Default to the user type
+                        
+                        if (userType === "admin") {
+                            // For admin endpoint, check for specific role
+                            if (data.admin && data.admin.role) {
+                                role = data.admin.role; // This will be "admin" or "superAdmin"
+                            } else if (data.role) {
+                                role = data.role;
+                            }
+                        } else if (data.role) {
+                            // For other user types that might have roles
+                            role = data.role;
+                        }
+                        
+                        // Store the role
+                        localStorage.setItem("userRole", role);
+                        
+                        // Extract and store all user data
+                        let userData = data;
+                        
+                        // For client users, extract all data from the client object
+                        if (userType === 'client') {
+                            // Get the client data from the response
+                            let clientData = data;
+                            if (data.client) clientData = data.client;
+                            
+                            // Store all client data in localStorage
+                            storeUserDataInLocalStorage(clientData);
+                            
+                            // Create a standardized object for checkout
+                            const checkoutData = {
+                                // Store both camelCase and lowercase versions for maximum compatibility
+                                firstname: clientData.firstname || '',
+                                firstName: clientData.firstname || '',
+                                lastname: clientData.lastname || '',
+                                lastName: clientData.lastname || '',
+                                email: clientData.email || '',
+                                governorate: clientData.governorate || '',
+                                city: clientData.city || '',
+                                address: clientData.address || '',
+                                phone: clientData.phone || '',
+                                postCode: clientData.postCode || ''
+                            };
+                            
+                            // Store the checkout data
+                            localStorage.setItem('checkoutClientData', JSON.stringify(checkoutData));
+                            console.log("Checkout data saved to localStorage:", checkoutData);
+                        }
+                        
+                        // Determine redirect URL based on role for admin users
+                        let redirectUrl = redirect;
+                        if (typeof redirect === 'object' && (role === 'admin' || role === 'superAdmin')) {
+                            redirectUrl = redirect[role] || redirect.admin;
+                        }
+                        
+                        // Log the role for debugging
+                        console.log(`User logged in as: ${role}`);
+                        
+                        // Show success message before redirecting
+                        showLoginSuccess(userType, redirectUrl);
+                    } catch (error) {
+                        console.error("Error parsing response:", error);
+                        tryLogin(index + 1);
                     }
-                } else if (data.role) {
-                    // For other user types that might have roles
-                    role = data.role;
+                } else {
+                    console.error("Login failed with status:", xhr.status);
+                    tryLogin(index + 1);
                 }
-                
-                // Store the role
-                localStorage.setItem("userRole", role);
-                
-                // Determine redirect URL based on role for admin users
-                let redirectUrl = redirect;
-                if (typeof redirect === 'object' && (role === 'admin' || role === 'superAdmin')) {
-                    redirectUrl = redirect[role] || redirect.admin;
-                }
-                
-                // Log the role for debugging
-                console.log(`User logged in as: ${role}`);
-                
-                // Redirect to the appropriate page
-                window.location.href = redirectUrl;
-            })
-            .catch(error => {
-                console.error("Error:", error);
+            };
+            
+            xhr.onerror = function() {
+                console.error("Network error occurred");
                 tryLogin(index + 1);
-            });
+            };
+            
+            xhr.send(loginData);
+        }
+        
+        // Function to store all user data in localStorage
+        function storeUserDataInLocalStorage(userData) {
+            console.log("Storing user data in localStorage:", userData);
+            
+            // Store each field individually
+            for (const [key, value] of Object.entries(userData)) {
+                if (value !== null && value !== undefined) {
+                    // Skip storing the password
+                    if (key !== 'password') {
+                        // Store the value
+                        localStorage.setItem(`user_${key}`, typeof value === 'object' ? JSON.stringify(value) : value);
+                        console.log(`Stored user_${key}:`, value);
+                    }
+                }
+            }
+            
+            // Store specific fields with more accessible names
+            if (userData.firstname) localStorage.setItem('userFirstName', userData.firstname);
+            if (userData.lastname) localStorage.setItem('userLastName', userData.lastname);
+            if (userData.email) localStorage.setItem('userEmail', userData.email);
+            if (userData._id) localStorage.setItem('userId', userData._id);
+            
+            // Store the complete user data object
+            localStorage.setItem('userData', JSON.stringify(userData));
+            console.log("Complete user data stored in localStorage");
+        }
+
+        // Function to show success message before redirecting
+        function showLoginSuccess(userType, redirectUrl) {
+            // Check if SweetAlert2 is available
+            if (typeof Swal !== 'undefined') {
+                let title = "Connexion réussie!";
+                let text = "";
+                
+                // Customize message based on user type
+                switch(userType) {
+                    case "admin":
+                        text = "Bienvenue dans votre tableau de bord administrateur.";
+                        break;
+                    case "vendor":
+                        text = "Bienvenue dans votre tableau de bord vendeur.";
+                        break;
+                    case "client":
+                        text = "Bienvenue sur notre site!";
+                        break;
+                    case "moderator":
+                        text = "Bienvenue dans votre tableau de bord modérateur.";
+                        break;
+                }
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: title,
+                    text: text,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Redirect after the alert is closed
+                    window.location.href = redirectUrl;
+                });
+            } else {
+                // Fallback if SweetAlert is not available
+                alert("Connexion réussie!");
+                window.location.href = redirectUrl;
+            }
         }
 
         tryLogin();
     });
 });
-
-
 //login validation 
 function validateForm(formId) {
     const form = document.getElementById(formId);
