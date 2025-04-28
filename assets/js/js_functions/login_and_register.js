@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 url: "http://localhost:3000/admin/login", 
                 redirect: {
                     admin: "../dashbordA_pages/index.html",
-                    superAdmin: "../dashbordA_pages/index.html" // You can set different paths if needed
+                    superAdmin: "../dashbordA_pages/index.html" 
                 },
                 idField: "adminId",
                 userType: "admin"
