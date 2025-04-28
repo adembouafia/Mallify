@@ -51,6 +51,11 @@ const productSchema = new mongoose.Schema({
     otherImages: {
         type: [String],  // Array of strings to store filenames of additional images
         default: []
+    },
+
+    productDetails :{
+        type: String,
+        required: true
     }
 
 }, {

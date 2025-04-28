@@ -36,6 +36,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"
     />
+    <link
+      rel="stylesheet"
+      href="../../assets/richtexteditor/rte_theme_default.css"
+    />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -320,120 +324,34 @@
       <main class="app-main">
         <div class="container py-4 px-4">
           <div class="card shadow-sm p-4">
-            <div>
-              <h4 class="mb-0 fw-bold">Product Details</h4>
-            </div>
+            <h4 class="mb-0 fw-bold" style="max-width: 45%;">Product Details</h4>
             <div class="row mt-3">
               <!-- Product Image Slider -->
               <div class="col-lg-6 mb-4 px-5">
-                <div class="slider-for">
-                  <div>
-                    <img
-                      src="../../assets/images/products/bureau.png"
-                      class="img-fluid main-img"
-                      alt="Main image 1"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/beauty.png"
-                      class="img-fluid main-img"
-                      alt="Main image 2"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/cyber-monday-img1.png"
-                      class="img-fluid main-img"
-                      alt="Main image 3"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/bureau.png"
-                      class="img-fluid main-img"
-                      alt="Main image 1"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/beauty.png"
-                      class="img-fluid main-img"
-                      alt="Main image 2"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/cyber-monday-img1.png"
-                      class="img-fluid main-img"
-                      alt="Main image 3"
-                    />
-                  </div>
-                </div>
-                <div class="slider-nav">
-                  <div>
-                    <img
-                      src="../../assets/images/products/bureau.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 1"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/beauty.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 2"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/cyber-monday-img1.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 3"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/bureau.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 1"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/beauty.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 2"
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src="../../assets/images/products/cyber-monday-img1.png"
-                      class="img-thumbnail thumb-img"
-                      alt="Thumbnail 3"
-                    />
-                  </div>
-                </div>
+                <div class="slider-for"></div>
+                <div class="slider-nav"></div>
               </div>
 
               <!-- Product Info -->
-              <div class="col-lg-6 d-flex align-items-center">
+              <div class="col-lg-6 d-flex">
                 <div class="w-100">
                   <h2 class="fw-bold">Modern Office Desk</h2>
                   <p class="text-muted">Product ID: #123456</p>
                   <h4 class="text-danger fw-bold">$80.00</h4>
-              
+
+                  
+                  <p id="product-category">
+                    <strong>Category:</strong> N/A / T-shirts
+                  </p>                                 
+                
                   <p class="mb-2">
-                    <strong>Category:</strong> Office Furniture
-                  </p>
-                  <p class="mb-2">
-                    <strong>Availability:</strong> In Stock
+                    <!--availability-->
                   </p>
                   <p class="mb-2">
                     <strong>Stock:</strong> <span class="badge bg-success">12 units</span>
                   </p>
               
-                  <p>
+                  <p id="product-description" class="mt-3">
                     High quality wooden office desk with metal legs, perfect for
                     home or workplace setups.
                   </p>
@@ -492,6 +410,159 @@
 
       <!--end::App Main-->
 
+      <div
+        class="modal fade"
+        id="editProductModal"
+        tabindex="-1"
+        aria-labelledby="editProductModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editProductModalLabel">
+                Edit Product
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="editProductForm" enctype="multipart/form-data">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="editProductName" class="form-label"
+                      >Product Name</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editProductName"
+                      name="editProductName"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="editProductId" class="form-label"
+                      >Product ID</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editProductId"
+                      name="editProductId"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="editProductPrice" class="form-label"
+                      >Price</label
+                    >
+                    <div class="input-group">
+                      <span class="input-group-text">$</span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="editProductPrice"
+                        name="editProductPrice"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="editStock" class="form-label">Stock</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="editStock"
+                      name="editStock"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="editAvailability" class="form-label"
+                    >Availability</label
+                  >
+                  <select
+                    class="form-select"
+                    id="editAvailability"
+                    name="editAvailability"
+                    required
+                  >
+                    <option value="in_stock">In Stock</option>
+                    <option value="out_of_stock">Out of Stock</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="editDescription" class="form-label"
+                    >Description</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="editDescription"
+                    name="editDescription"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="editRichTextEditor" class="form-label">Product Details</label>
+                  <div id="editRichTextEditor"></div>
+                </div>
+                <div class="mb-3">
+                  <div
+                    id="currentMainImageContainer"
+                    style="display: none"
+                  ></div>
+                  <label for="editMainImage" class="form-label"
+                    >Main Image (Leave empty to keep current image)</label
+                  >
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="editMainImage"
+                    name="editMainImage"
+                    accept="image/*"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="editOtherImages" class="form-label"
+                    >Other Images (Optional)</label
+                  >
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="editOtherImages"
+                    name="editOtherImages"
+                    accept="image/*"
+                    multiple
+                  />
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Update Product
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
@@ -522,14 +593,14 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
-    <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="../../assets/js/js_functions/shopAdmin.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- jQuery + Slick JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="../../assets/js/js_functions/product-details-dash.js"></script>
+    <script src="../../assets/richtexteditor/rte.js"></script>
     <!--end::Script-->
 
     <!-- Slick Slider CSS -->
@@ -537,3 +608,4 @@
     <!--end::Body-->
   </body>
 </html>
+

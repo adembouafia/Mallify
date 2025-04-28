@@ -89,7 +89,15 @@ exports.getAllProducts = async (req, res) => {
 // Get product by ID with populated subCategory
 exports.getProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate('subCategory', 'name');  // Populate subCategory
+        const product = await Product.findById(req.params.id)
+        .populate({
+            path: 'subCategory',
+            populate: {
+            path: 'category', 
+            select: 'categoryName' 
+            },
+            select: 'name' 
+        });
 
         if (!product) {
             return res.status(404).json({
