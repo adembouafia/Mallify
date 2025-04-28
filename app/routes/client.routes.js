@@ -8,4 +8,5 @@ module.exports = (app) => {
     app.post('/client/forgotPassword', client.forgotPassword);
     app.post('/client/reset-password', client.resetPassword);
     app.get('/client/get', auth, authorize('admin', 'superAdmin','vendor','moderator'), client.getAll);
+    app.get('/client/:id', auth, client.getById);
 };

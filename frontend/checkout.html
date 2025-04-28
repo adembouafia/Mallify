@@ -666,13 +666,15 @@
       <div class="container container-lg">
         <div class="row">
           <div class="col-xl-9 col-lg-8">
-            <form action="#" class="pe-xl-5">
+            <form action="#" class="pe-xl-5" id="checkoutForm">
               <div class="row gy-3">
                 <div class="col-sm-6 col-xs-6">
                   <input
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="First Name"
+                    id="firstname"
+                    name="firstname"
                   />
                 </div>
                 <div class="col-sm-6 col-xs-6">
@@ -680,6 +682,8 @@
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="Last Name"
+                    id="lastname"
+                    name="lastname"
                   />
                 </div>
                 <div class="col-12">
@@ -687,6 +691,8 @@
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="Governorate (Sousse , Tunis, etc...)"
+                    id="governorate"
+                    name="governorate"
                   />
                 </div>
                 <div class="col-12">
@@ -694,6 +700,8 @@
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="City"
+                    id="city"
+                    name="city"
                   />
                 </div>
                 <div class="col-12">
@@ -701,6 +709,8 @@
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="House number and street name"
+                    id="address"
+                    name="address"
                   />
                 </div>
                 <div class="col-12">
@@ -708,6 +718,8 @@
                     type="text"
                     class="common-input border-gray-100"
                     placeholder="Post Code"
+                    id="postCode"
+                    name="postCode"
                   />
                 </div>
                 <div class="col-12">
@@ -715,6 +727,8 @@
                     type="number"
                     class="common-input border-gray-100"
                     placeholder="Phone"
+                    id="phone"
+                    name="phone"
                   />
                 </div>
                 <div class="col-12">
@@ -722,9 +736,11 @@
                     type="email"
                     class="common-input border-gray-100"
                     placeholder="Email Address"
+                    id="email"
+                    name="email"
                   />
                 </div>
-
+    
                 <div class="col-12">
                   <div class="my-40">
                     <h6 class="text-lg mb-24">Additional Information</h6>
@@ -732,6 +748,8 @@
                       type="text"
                       class="common-input border-gray-100"
                       placeholder="Notes about your order, e.g. special notes for delivery."
+                      id="notes"
+                      name="notes"
                     />
                   </div>
                 </div>
@@ -745,7 +763,7 @@
                   >Your Orders</span
                 >
               </div>
-
+    
               <div class="border border-gray-100 rounded-8 px-24 py-40 mt-24">
                 <div
                   class="mb-32 pb-32 border-bottom border-gray-100 flex-between gap-8"
@@ -757,12 +775,12 @@
                     >Subtotal</span
                   >
                 </div>
-
+    
                 <div class="flex-between gap-24 mb-32">
                   <div class="flex-align gap-12">
                     <span
                       class="text-gray-900 fw-normal text-md font-heading-two w-144"
-                      >Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5’’</span
+                      >Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5''</span
                     >
                     <span
                       class="text-gray-900 fw-normal text-md font-heading-two"
@@ -867,8 +885,8 @@
                   .
                 </p>
               </div>
-
-              <a href="#" class="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56"
+    
+              <a href="#" class="btn btn-main mt-40 py-18 w-100 rounded-8 mt-56" id="placeOrderBtn"
                 >Place Order</a
               >
             </div>
@@ -1193,5 +1211,7 @@
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/js_functions/preloader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/js_functions/checkout.js"></script>
   </body>
 </html>

@@ -151,3 +151,21 @@ exports.getAll = async (req , res) =>{
         res.status(500).send({message : err.message || "Error fetching clients" });
     }
 }
+exports.getById = async (req, res) => {
+    try {
+        const client = await Client.findById(req.params.id);
+        if (!client) {
+            return res.status(404).send({ message: "Client not found" });
+        }
+        
+        // Check if the requesting user is the client or has admin privileges
+        if (req.userId !== client._id.toString() && 
+            !['admin', 'superAdmin', 'vendor', 'moderator'].includes(req.role)) {
+            return res.status(403).send({ message: "Unauthorized" });
+        }
+        
+        res.status(200).send(client);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
