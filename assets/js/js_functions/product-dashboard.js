@@ -1,466 +1,102 @@
 let categories = []
 const subcategories = {}
 
-const token = localStorage.getItem('token'); 
+const token = localStorage.getItem("token")
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadProducts()
-  loadCategories()
+function loadSubcategories(categoryId, categoryName) {
+  console.log("Loading subcategories for:", categoryId, categoryName)
 
-  document.getElementById("productCategory").addEventListener("change", function () {
-    populateSubcategoryDropdown(this.value)
-  })
+  // If categoryId is invalid, don't make the request
+  if (!categoryId || categoryId === "undefined" || categoryId === "null") {
+    console.warn("Invalid category ID, skipping subcategory load:", categoryId)
+    subcategories[categoryName] = []
+    return Promise.resolve([])
+  }
 
-  document.getElementById("addCategoryBtn").addEventListener("click", () => {
-    const addCategoryModal = new bootstrap.Modal(document.getElementById("addCategoryModal"))
-    addCategoryModal.show()
-  })
-
-  document.getElementById("addSubcategoryBtn").addEventListener("click", () => {
-    const subcatCategorySelect = document.getElementById("subcategoryCategory")
-    subcatCategorySelect.innerHTML = ""
-
-    const defaultOption = document.createElement("option")
-    defaultOption.value = ""
-    defaultOption.textContent = "Select a category"
-    defaultOption.disabled = true
-    defaultOption.selected = true
-    subcatCategorySelect.appendChild(defaultOption)
-
-    categories.forEach((category) => {
-      const option = document.createElement("option")
-      option.value = category._id
-      option.textContent = category.categoryName || category.name 
-      subcatCategorySelect.appendChild(option)
-    })
-
-    document.getElementById("newSubcategoryName").value = ""
-
-    const addSubcategoryModal = new bootstrap.Modal(document.getElementById("addSubcategoryModal"))
-    addSubcategoryModal.show()
-  })
-
-  const categoryList = document.getElementById("categoryList")
-  const subcategoryList = document.getElementById("subcategoryList")
-  const saveCategoryBtn = document.getElementById("saveCategoryBtn")
-  const saveSubcategoryBtn = document.getElementById("saveSubcategoryBtn")
-
-  saveCategoryBtn.addEventListener("click", () => {
-    const categoryName = document.getElementById("newCategoryName").value.trim()
-
-    if (!categoryName) {
-      showAlert("danger", "Category name cannot be empty")
-      return
-    }
-
-    
-    saveCategoryBtn.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
-
-    saveCategoryBtn.disabled = true
-
+  return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", "http://localhost:3000/category/create", true)
-    xhr.setRequestHeader("Content-Type", "application/json")
+    const url = `http://localhost:3000/subcategory/category/${categoryId}`
+
+    xhr.open("GET", url, true)
+
     if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
     }
+
+    xhr.setRequestHeader("Content-Type", "application/json")
 
     xhr.onload = () => {
-      saveCategoryBtn.disabled = false
-      saveCategoryBtn.innerHTML = "Save Category"
+      console.log(`Response for category ${categoryName} (${categoryId}):`, xhr.status, xhr.responseText)
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        const response = JSON.parse(xhr.responseText)
-
-        if (response.status === "success" && response.data && response.data.category) {
-          // Add the new category to the categories array
-          categories.push(response.data.category)
-          subcategories[response.data.category.categoryName] = []
-
-          // Update the category dropdown
-          populateCategoryDropdown()
-          
-          // Set the newly created category as selected
-          const categorySelect = document.getElementById("productCategory")
-          categorySelect.value = response.data.category.categoryName
-
-          // Hide the modal after successful save
-          const addCategoryModalEl = document.getElementById("addCategoryModal")
-          const addCategoryModal = bootstrap.Modal.getInstance(addCategoryModalEl)
-          if (addCategoryModal) {
-            addCategoryModal.hide()
-          }
-          document.getElementById("newCategoryName").value = ""
-
-          showAlert("success", "Category added successfully!")
-        } else {
-          showAlert("danger", response.message || "Failed to add category")
-        }
-      } else {
-        let errorMessage = "Failed to add category"
         try {
           const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
-        } catch (e) {
-          console.error("Error parsing response:", e)
-        }
-        showAlert("danger", errorMessage)
-      }
-    }
 
-    xhr.onerror = () => {
-      saveCategoryBtn.disabled = false
-      saveCategoryBtn.innerHTML = "Save Category"
+          if (response.subCategories && Array.isArray(response.subCategories)) {
+            subcategories[categoryName] = response.subCategories
+            console.log("Successfully loaded subcategories for", categoryName, ":", subcategories[categoryName])
 
-      showAlert("danger", "Network error occurred")
-    }
-
-    console.log("Sending category data:", { categoryName })
-
-    xhr.send(JSON.stringify({ categoryName }))
-  })
-
-  saveSubcategoryBtn.addEventListener("click", () => {
-    const category = document.getElementById("subcategoryCategory").value
-    const name = document.getElementById("newSubcategoryName").value.trim()
-
-    if (!category) {
-      showAlert("danger", "Please select a category")
-      return
-    }
-
-    if (!name) {
-      showAlert("danger", "Subcategory name cannot be empty")
-      return
-    }
-
-    // Add loading state
-    saveSubcategoryBtn.disabled = true
-    saveSubcategoryBtn.innerHTML = 
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
-
-    const xhr = new XMLHttpRequest()
-    xhr.open("POST", "http://localhost:3000/subcategory/create", true)
-    xhr.setRequestHeader("Content-Type", "application/json")
-    
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    }
-
-    xhr.onload = () => {
-      // Reset button state
-      saveSubcategoryBtn.disabled = false
-      saveSubcategoryBtn.innerHTML = "Save Subcategory"
-
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const response = JSON.parse(xhr.responseText)
-
-        // Find the parent category by ID
-        const parentCategory = categories.find((cat) => cat._id === category)
-
-        if (parentCategory && response.status === "success" && response.data && response.data.subcategory) {
-          const categoryName = parentCategory.categoryName || parentCategory.name;
-          
-          // Initialize the subcategories array if it doesn't exist
-          if (!subcategories[categoryName]) {
+            // Check both possible dropdown IDs
+            const currentCategory = document.getElementById("productCategory")?.value || 
+                                   document.getElementById("editProductCategory")?.value
+                                   
+            if (currentCategory === categoryName) {
+              populateSubcategoryDropdown(categoryName)
+            }
+            resolve(response.subCategories)
+          } else {
+            console.log("No subcategories found for", categoryName, "- setting empty array")
             subcategories[categoryName] = []
+            resolve([])
           }
-
-          // Add the new subcategory to the subcategories array
-          subcategories[categoryName].push({
-            _id: response.data.subcategory._id,
-            name: response.data.subcategory.name,
-          })
-
-          // Update the subcategory dropdown if the parent category is currently selected
-          const currentCategory = document.getElementById("productCategory").value
-          if (currentCategory === categoryName) {
-            populateSubcategoryDropdown(categoryName)
-            
-            // Set the newly created subcategory as selected
-            const subcategorySelect = document.getElementById("productSubcategory")
-            subcategorySelect.value = response.data.subcategory.name
-          }
-
-          // Hide the modal after successful save
-          const addSubcategoryModalEl = document.getElementById("addSubcategoryModal")
-          const addSubcategoryModal = bootstrap.Modal.getInstance(addSubcategoryModalEl)
-          if (addSubcategoryModal) {
-            addSubcategoryModal.hide()
-          }
-          document.getElementById("newSubcategoryName").value = ""
-
-          showAlert("success", "Subcategory added successfully!")
-        } else {
-          showAlert("danger", response.message || "Failed to add subcategory")
-        }
-      } else {
-        let errorMessage = "Failed to add subcategory"
-        try {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
         } catch (e) {
-          console.error("Error parsing response:", e)
+          console.error("Error parsing subcategories response:", e)
+          subcategories[categoryName] = []
+          resolve([])
         }
-        showAlert("danger", errorMessage)
+      } else if (xhr.status === 404) {
+        // Handle 404 gracefully - just set an empty array for this category
+        console.log("Category not found (404) for", categoryName, "- setting empty array")
+        subcategories[categoryName] = []
+        resolve([])
+      } else {
+        console.error("Failed to load subcategories for", categoryName, xhr.status, xhr.statusText)
+        subcategories[categoryName] = []
+        resolve([])
       }
     }
 
     xhr.onerror = () => {
-      // Reset button state
-      saveSubcategoryBtn.disabled = false
-      saveSubcategoryBtn.innerHTML = "Save Subcategory"
-      showAlert("danger", "Network error occurred")
-    }
-
-    xhr.send(
-      JSON.stringify({
-        name: name,
-        category: category,
-      }),
-    )
-  })
-
-  // Function to load categories
-  function loadCategoriesOld() {
-    categoryList.innerHTML = "" // Clear existing list
-
-    const xhr = new XMLHttpRequest()
-    xhr.open("GET", "http://localhost:3000/category/get", true)
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const categories = JSON.parse(xhr.responseText)
-
-        // Populate the category list
-        categories.forEach((category) => {
-          const listItem = document.createElement("li")
-          listItem.textContent = category.name
-          listItem.addEventListener("click", () => loadSubcategoriesOld(category._id))
-          categoryList.appendChild(listItem)
-
-          // Populate the category select dropdown
-          const option = document.createElement("option")
-          option.value = category._id
-          option.textContent = category.name
-          document.getElementById("categorySelect").appendChild(option)
-        })
-      } else {
-        alert("Failed to load categories.")
-      }
+      console.error("Network error loading subcategories for", categoryName)
+      subcategories[categoryName] = []
+      reject("Network error")
     }
 
     xhr.send()
-  }
-
-  // Function to load subcategories for a given category ID
-  function loadSubcategoriesOld(categoryId) {
-    subcategoryList.innerHTML = "" // Clear existing list
-
-    const xhr = new XMLHttpRequest()
-    xhr.open("GET", `http://localhost:3000/subcategory/get/category/${categoryId}`, true)
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const subcategories = JSON.parse(xhr.responseText)
-
-        // Populate the subcategory list
-        subcategories.forEach((subcategory) => {
-          const listItem = document.createElement("li")
-          listItem.textContent = subcategory.name
-          subcategoryList.appendChild(listItem)
-        })
-      } else {
-        alert("Failed to load subcategories.")
-      }
-    }
-
-    xhr.send()
-  }
-
-  // Form submission - Connect to backend API
-  document.getElementById("addProductForm").addEventListener("submit", (e) => {
-    e.preventDefault()
-    const form = e.target
-
-    // Validate required fields
-    const requiredFields = [
-      "productName",
-      "productId",
-      "productPrice",
-      "productCategory",
-      "productSubcategory",
-      "Stock",
-      "description",
-    ]
-    let isValid = true
-
-    requiredFields.forEach((field) => {
-      if (!form[field] || !form[field].value.trim()) {
-        showAlert("danger", `${field.replace(/([A-Z])/g, " $1").trim()} is required`)
-        isValid = false
-      }
-    })
-
-    if (!form.mainImage.files[0]) {
-      showAlert("danger", "Main image is required")
-      isValid = false
-    }
-
-    if (!isValid) return
-
-    // Show loading indicator
-    const submitBtn = form.querySelector('button[type="submit"]')
-    const originalBtnText = submitBtn.innerHTML
-    submitBtn.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...'
-    submitBtn.disabled = true
-
-    // Create FormData object to handle file uploads
-    const formData = new FormData()
-
-    // Add all form fields to FormData
-    formData.append("productName", form.productName.value)
-    formData.append("productId", form.productId.value)
-    formData.append("productPrice", form.productPrice.value)
-
-    // Get the subcategory ID based on the selected name
-    const selectedCategory = form.productCategory.value
-    const selectedSubcategory = form.productSubcategory.value
-
-    // Find the subcategory ID
-    let subCategoryId = null
-    if (subcategories[selectedCategory]) {
-      const subcat = subcategories[selectedCategory].find(
-        (sub) => sub.name === selectedSubcategory || sub === selectedSubcategory,
-      )
-      if (subcat && subcat._id) {
-        subCategoryId = subcat._id
-      }
-    }
-
-    if (!subCategoryId) {
-      showAlert("danger", "Invalid subcategory selected")
-      submitBtn.innerHTML = originalBtnText
-      submitBtn.disabled = false
-      return
-    }
-
-    formData.append("subCategory", subCategoryId)
-    formData.append("availability", form.Availability.value === "in_stock" ? "In stock" : "Out of stock")
-    formData.append("stock", form.Stock.value)
-    formData.append("description", form.description.value)
-
-    // Add the files
-    if (form.mainImage.files[0]) {
-      formData.append("mainImage", form.mainImage.files[0])
-    }
-
-    if (form.otherImages.files.length > 0) {
-      for (let i = 0; i < form.otherImages.files.length; i++) {
-        formData.append("otherImages", form.otherImages.files[i])
-      }
-    }
-
-    // Send data to backend
-    const xhr = new XMLHttpRequest()
-    xhr.open("POST", "http://localhost:3000/product/create", true)
-    
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    }
-
-    xhr.onload = () => {
-      submitBtn.innerHTML = originalBtnText
-      submitBtn.disabled = false
-
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const response = JSON.parse(xhr.responseText)
-
-        if (response.status === "success" && response.data && response.data.product) {
-          // Add the new product to the table
-          addProductToTable(response.data.product)
-
-          // Reset form and close modal
-          form.reset()
-          
-          // Hide the modal after successful save
-          const addProductModalEl = document.getElementById("addProductModal")
-          let addProductModal = bootstrap.Modal.getInstance(addProductModalEl)
-          if (!addProductModal) {
-            addProductModal = new bootstrap.Modal(addProductModalEl);
-          }
-          addProductModal.hide()
-
-          showAlert("success", "Product added successfully!")
-
-          // Refresh product list
-          loadProducts()
-        } else {
-          showAlert("danger", response.message || "Failed to add product")
-        }
-      } else {
-        let errorMessage = "Failed to add product"
-        try {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
-        } catch (e) {
-          console.error("Error parsing response:", e)
-        }
-        showAlert("danger", errorMessage)
-      }
-    }
-
-    xhr.onerror = () => {
-      submitBtn.innerHTML = originalBtnText
-      submitBtn.disabled = false
-      showAlert("danger", "Network error occurred")
-    }
-
-    xhr.send(formData)
   })
+}
 
-  // Add event listeners for edit and delete buttons
-  document.addEventListener("click", (e) => {
-    // Edit button
-    if (e.target.closest(".editProductBtn")) {
-      const productId = e.target.closest(".editProductBtn").getAttribute("data-id")
-      editProduct(productId)
-    }
 
-    // Delete button
-    if (e.target.closest(".deleteProductBtn")) {
-      const productId = e.target.closest(".deleteProductBtn").getAttribute("data-id")
-      deleteProduct(productId)
-    }
-  })
-})
-
-// Function to load products from the database
 function loadProducts() {
   const xhr = new XMLHttpRequest()
   xhr.open("GET", "http://localhost:3000/product/get", true)
-  
+
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       const response = JSON.parse(xhr.responseText)
 
-      // Clear the table
       const tbody = document.getElementById("productTableBody")
       tbody.innerHTML = ""
 
-      // Add products to the table
       if (response.status === "success" && response.data && response.data.products) {
         response.data.products.forEach((product) => {
           addProductToTable(product)
         })
 
-        // Update product count in the info box
         const productCountElement = document.querySelector(".info-box:nth-child(1) .info-box-number")
         if (productCountElement) {
           productCountElement.textContent = response.data.products.length
@@ -480,103 +116,83 @@ function loadProducts() {
   xhr.send()
 }
 
-// Function to load categories from the database
+// Also update the loadCategories function to better handle category loading
 function loadCategories() {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/category", true);
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", "http://localhost:3000/category", true)
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const response = JSON.parse(xhr.responseText);
-      console.log("Categories response:", response);
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Categories response:", response)
 
-      if (response.categories && Array.isArray(response.categories)) {
-        categories = response.categories;
-        console.log("Loaded categories:", categories);
+        if (response.categories && Array.isArray(response.categories)) {
+          categories = response.categories.filter((category) => {
+            // Filter out invalid categories
+            if (!category || !category._id || !category.categoryName) {
+              console.warn("Skipping invalid category:", category)
+              return false
+            }
+            return true
+          })
 
-        // Load subcategories for each category
-        categories.forEach((category) => {
-          const categoryName = category.categoryName || category.name; // Handle both field names
-          loadSubcategories(category._id, categoryName);
-        });
+          console.log("Loaded valid categories:", categories)
 
-        // Update category count
-        const categoryCountElement = document.querySelector(".info-box:nth-child(2) .info-box-number");
-        if (categoryCountElement) {
-          categoryCountElement.textContent = categories.length;
+          // Load subcategories for each valid category
+          const promises = categories.map((category) => {
+            const categoryName = category.categoryName
+            const categoryId = category._id
+            return loadSubcategories(categoryId, categoryName).catch((err) => {
+              console.error("Error loading subcategories for", categoryName, err)
+              return []
+            })
+          })
+
+          // Wait for all subcategories to load
+          Promise.all(promises).then(() => {
+            console.log("All subcategories loaded")
+          })
+
+          const categoryCountElement = document.querySelector(".info-box:nth-child(2) .info-box-number")
+          if (categoryCountElement) {
+            categoryCountElement.textContent = categories.length
+          }
+
+          populateCategoryDropdown()
+          populateEditCategoryDropdown()
+        } else {
+          console.warn("No categories found or invalid response format")
+          categories = []
         }
-
-        // Populate dropdown
-        populateCategoryDropdown();
-      } else {
-        console.warn("No categories found or invalid response format");
+      } catch (e) {
+        console.error("Error parsing categories response:", e)
+        categories = []
       }
     } else {
-      showAlert("danger", "Failed to load categories");
+      showAlert("danger", "Failed to load categories")
+      categories = []
     }
-  };
-
-  xhr.onerror = () => {
-    showAlert("danger", "Network error occurred");
-  };
-
-  xhr.send();
-}
-
-
-// Function to load subcategories for a category
-function loadSubcategories(categoryId, categoryName) {
-  const xhr = new XMLHttpRequest();
-  const url = `http://localhost:3000/subcategory/category/${categoryId}`;
-
-  xhr.open("GET", url, true);
-
-  if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
-  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.onerror = () => {
+    showAlert("danger", "Network error occurred while loading categories")
+    categories = []
+  }
 
-  xhr.onload = function () {
-    console.log(`Response for category ${categoryName}:`, xhr.responseText); // Add logging for response
-
-    if (xhr.status >= 200 && xhr.status < 300) {
-      const response = JSON.parse(xhr.responseText);
-
-      // Handle case when subcategories are found
-      if (response.subCategories && Array.isArray(response.subCategories)) {
-        subcategories[categoryName] = response.subCategories; // Ensure using correct field (subCategories)
-
-        // If this is the currently selected category, update the subcategory dropdown
-        const currentCategory = document.getElementById("productCategory").value;
-        if (currentCategory === categoryName) {
-          populateSubcategoryDropdown(categoryName);
-        }
-      } else if (xhr.status === 404 || (response.subCategories && response.subCategories.length === 0)) {
-        // No subcategories found, just initialize an empty array for the category
-        subcategories[categoryName] = [];
-      } else {
-        console.error("Failed to load subcategories for", categoryName, response);
-      }
-    } else {
-      console.error("Failed to load subcategories for", categoryName, xhr.status, xhr.statusText);
-    }
-  };
-
-  xhr.onerror = function () {
-    console.error("Network error loading subcategories for", categoryName);
-  };
-
-  xhr.send();
+  xhr.send()
 }
-
-
 
 function populateCategoryDropdown() {
   const categorySelect = document.getElementById("productCategory")
+  if (!categorySelect) {
+    console.error("Category select element with ID productCategory not found.")
+    return
+  }
+  
   const currentSelection = categorySelect.value
 
   categorySelect.innerHTML = ""
@@ -590,9 +206,11 @@ function populateCategoryDropdown() {
 
   categories.forEach((category) => {
     const option = document.createElement("option")
-    const categoryName = category.categoryName || category.name // Handle both field names
+    const categoryName = category.categoryName
     option.value = categoryName
     option.textContent = categoryName
+    // Store the category ID as a data attribute for easy access
+    option.dataset.id = category._id
     if (categoryName === currentSelection) {
       option.selected = true
     }
@@ -600,11 +218,59 @@ function populateCategoryDropdown() {
   })
 }
 
-function populateSubcategoryDropdown(categoryName) {
-  const subcategorySelect = document.getElementById("productSubcategory")
+function populateEditCategoryDropdown() {
+  const categorySelect = document.getElementById("editProductCategory")
+  if (!categorySelect) return
 
+  categorySelect.innerHTML = ""
+
+  const defaultOption = document.createElement("option")
+  defaultOption.value = ""
+  defaultOption.textContent = "Select a category"
+  defaultOption.disabled = true
+  defaultOption.selected = true
+  categorySelect.appendChild(defaultOption)
+
+  categories.forEach((category) => {
+    const option = document.createElement("option")
+    const categoryName = category.categoryName
+    option.value = categoryName
+    option.textContent = categoryName
+    // Store the category ID as a data attribute for easy access
+    option.dataset.id = category._id
+    categorySelect.appendChild(option)
+  })
+}
+
+// Fixed populateSubcategoryDropdown function to handle both add and edit forms
+function populateSubcategoryDropdown(categoryName, formPrefix = "") {
+  console.log(`Populating subcategory dropdown for category: ${categoryName}, prefix: ${formPrefix}`)
+  
+  // Try both possible element IDs
+  let subcategorySelect = document.getElementById(`${formPrefix}productSubcategory`)
+  
+  // If not found, try the other common ID
+  if (!subcategorySelect) {
+    subcategorySelect = document.getElementById("productSubcategory")
+  }
+  
+  // If still not found, try editProductSubcategory as a fallback
+  if (!subcategorySelect) {
+    subcategorySelect = document.getElementById("editProductSubcategory")
+  }
+
+  // Check if the element exists
+  if (!subcategorySelect) {
+    console.error(`Subcategory select element not found. Tried IDs: ${formPrefix}productSubcategory, productSubcategory, and editProductSubcategory`)
+    return Promise.resolve()
+  }
+
+  console.log(`Found subcategory select element with ID: ${subcategorySelect.id}`)
+  
+  // Clear existing options
   subcategorySelect.innerHTML = ""
 
+  // Add default option
   const defaultOption = document.createElement("option")
   defaultOption.value = ""
   defaultOption.textContent = "Select a subcategory"
@@ -612,21 +278,38 @@ function populateSubcategoryDropdown(categoryName) {
   defaultOption.selected = true
   subcategorySelect.appendChild(defaultOption)
 
+  // Check if categories exist
   if (categoryName && subcategories[categoryName]) {
+    console.log(`Found ${subcategories[categoryName].length} subcategories for ${categoryName}:`, subcategories[categoryName])
+    
     subcategories[categoryName].forEach((subcategory) => {
       const option = document.createElement("option")
-      option.value = subcategory.name || subcategory
-      option.textContent = subcategory.name || subcategory
+      const subName = subcategory.name || subcategory
+      const subId = subcategory._id || ""
+      
+      option.value = subName
+      option.textContent = subName
+      // Store the subcategory ID as a data attribute for easy access
+      if (subId) {
+        option.dataset.id = subId
+      }
+      
       subcategorySelect.appendChild(option)
     })
+    
+    console.log(`Added ${subcategories[categoryName].length} subcategory options to dropdown`)
+  } else {
+    console.log(`No subcategories found for category: ${categoryName}`)
   }
+
+  // Return a resolved promise for chaining
+  return Promise.resolve()
 }
 
 function addProductToTable(product) {
   const tbody = document.getElementById("productTableBody")
   const tr = document.createElement("tr")
 
-  // Create image URL - adjust the path based on your server setup
   const imageUrl = product.mainImage ? `/uploads/${product.mainImage}` : "/images/placeholder-product.png"
 
   tr.innerHTML = `
@@ -679,64 +362,74 @@ function addProductToTable(product) {
 }
 
 function editProduct(productId) {
-  // Fetch product details
+  console.log("Editing product:", productId)
+
   const xhr = new XMLHttpRequest()
   xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true)
-  
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
   }
+
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const response = JSON.parse(xhr.responseText)
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Product data for editing:", response)
 
-      if (response.status === "success" && response.data && response.data.product) {
-        const product = response.data.product
-        const form = document.getElementById("addProductForm")
+        if (response.status === "success" && response.data && response.data.product) {
+          const product = response.data.product
 
-        // Set form values
-        form.productName.value = product.productName
-        form.productId.value = product.productId
-        form.productPrice.value = product.productPrice
-        form.Stock.value = product.stock
-        form.Availability.value = product.availability === "In stock" ? "in_stock" : "out_of_stock"
-        form.description.value = product.description
+          // Set product ID in the edit form
+          const form = document.getElementById("editProductForm")
+          form.dataset.productId = product._id
+          
+          // Store category and subcategory IDs as data attributes for later use
+          form.dataset.categoryId = product.category || ""
+          form.dataset.subcategoryId = product.subCategory?._id || ""
 
-        // Set category and subcategory
-        if (product.subCategory && product.subCategory.category) {
-          const categoryName = getCategoryNameById(product.subCategory.category)
-          if (categoryName) {
-            form.productCategory.value = categoryName
-            populateSubcategoryDropdown(categoryName)
+          // Fill form fields with product data
+          form.editProductName.value = product.productName || ""
+          form.editProductId.value = product.productId || ""
+          form.editProductPrice.value = product.productPrice || ""
+          form.editStock.value = product.stock || ""
+          form.editDescription.value = product.description || ""
+          form.editAvailability.value = product.availability === "In stock" ? "in_stock" : "out_of_stock"
 
-            // Set subcategory after populating dropdown
-            setTimeout(() => {
-              form.productSubcategory.value = product.subCategory.name
-            }, 100)
+          // Show current product images if available
+          const currentMainImageContainer = document.getElementById("currentMainImageContainer")
+          if (currentMainImageContainer) {
+            if (product.mainImage) {
+              currentMainImageContainer.innerHTML = `
+                <div class="mb-2">
+                  <p class="mb-1">Current Main Image:</p>
+                  <img src="/uploads/${product.mainImage}" alt="Current Main Image" class="img-thumbnail" style="max-height: 100px;">
+                  <input type="hidden" name="currentMainImage" value="${product.mainImage}">
+                </div>
+              `
+              currentMainImageContainer.style.display = "block"
+            } else {
+              currentMainImageContainer.style.display = "none"
+            }
           }
+
+          // Show the modal
+          const editProductModalEl = document.getElementById("editProductModal")
+          let editProductModal = bootstrap.Modal.getInstance(editProductModalEl)
+          if (!editProductModal) {
+            editProductModal = new bootstrap.Modal(editProductModalEl)
+          }
+          editProductModal.show()
+        } else {
+          showAlert("danger", "Failed to load product data")
         }
-
-        // Set form mode to edit
-        form.dataset.mode = "edit"
-        form.dataset.productId = productId
-
-        // Update modal title and button text
-        document.getElementById("addProductModalLabel").textContent = "Edit Product"
-        form.querySelector('button[type="submit"]').textContent = "Update Product"
-
-        // Show modal
-        const addProductModalEl = document.getElementById("addProductModal")
-        let addProductModal = bootstrap.Modal.getInstance(addProductModalEl)
-        if (!addProductModal) {
-          addProductModal = new bootstrap.Modal(addProductModalEl);
-        }
-        addProductModal.show()
-      } else {
-        showAlert("danger", "Failed to load product details")
+      } catch (e) {
+        console.error("Error parsing product data:", e)
+        showAlert("danger", "Error processing server response")
       }
     } else {
-      showAlert("danger", "Failed to load product details")
+      showAlert("danger", "Failed to load product data")
     }
   }
 
@@ -747,18 +440,122 @@ function editProduct(productId) {
   xhr.send()
 }
 
+function handleProductUpdate(form) {
+  const productId = form.dataset.productId;
+
+  if (!productId) {
+    showAlert("danger", "Product ID is missing");
+    return;
+  }
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+  submitBtn.disabled = true;
+
+  // Use FormData instead of JSON to handle file uploads
+  const formData = new FormData();
+  
+  // Add basic product data to FormData
+  formData.append("productName", form.editProductName.value);
+  formData.append("productId", form.editProductId.value);
+  formData.append("productPrice", parseFloat(form.editProductPrice.value));
+  formData.append("stock", parseInt(form.editStock.value));
+  formData.append("availability", form.editAvailability.value === "in_stock" ? "In stock" : "Out of stock");
+  formData.append("description", form.editDescription.value);
+
+  // Add category and subcategory IDs from the data attributes we stored
+  if (form.dataset.categoryId) {
+    formData.append("category", form.dataset.categoryId);
+    console.log("Adding category ID:", form.dataset.categoryId);
+  }
+  
+  if (form.dataset.subcategoryId) {
+    formData.append("subCategory", form.dataset.subcategoryId);
+    console.log("Adding subcategory ID:", form.dataset.subcategoryId);
+  }
+  
+  // Add image files if they exist
+  if (form.editMainImage && form.editMainImage.files && form.editMainImage.files[0]) {
+    formData.append("mainImage", form.editMainImage.files[0]);
+  }
+  
+  if (form.editOtherImages && form.editOtherImages.files && form.editOtherImages.files.length > 0) {
+    for (let i = 0; i < form.editOtherImages.files.length; i++) {
+      formData.append("otherImages", form.editOtherImages.files[i]);
+    }
+  }
+
+  // Log the form data for debugging
+  console.log("Form data being sent:");
+  for (const pair of formData.entries()) {
+    console.log(pair[0] + ": " + pair[1]);
+  }
+
+  // Send the update request
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/product/update/${productId}`, true);
+
+  if (token) {
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  }
+  
+  // DO NOT set Content-Type header for FormData - browser will set it automatically
+
+  xhr.onload = () => {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        console.log("Update response:", response);
+        
+        form.reset();
+        
+        const modalEl = document.getElementById("editProductModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) {
+          modal.hide();
+        }
+
+        showAlert("success", "Product updated successfully!");
+        loadProducts(); // Reload product list to reflect changes
+      } catch (e) {
+        console.error("Error parsing response:", e);
+        showAlert("danger", "Error processing server response");
+      }
+    } else {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        showAlert("danger", response.message || "Failed to update product");
+      } catch (e) {
+        showAlert("danger", "Failed to update product");
+      }
+    }
+  };
+
+  xhr.onerror = () => {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+    showAlert("danger", "Network error occurred");
+  };
+
+  // Send FormData
+  xhr.send(formData);
+}
+
 function deleteProduct(productId) {
   if (confirm("Are you sure you want to delete this product?")) {
     const xhr = new XMLHttpRequest()
     xhr.open("DELETE", `http://localhost:3000/product/delete/${productId}`, true)
-    
+
     if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
     }
 
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
-        // Remove from table
         const row = document.querySelector(`.deleteProductBtn[data-id="${productId}"]`).closest("tr")
         if (row) {
           row.remove()
@@ -766,7 +563,6 @@ function deleteProduct(productId) {
 
         showAlert("success", "Product deleted successfully")
 
-        // Refresh product list
         loadProducts()
       } else {
         showAlert("danger", "Failed to delete product")
@@ -781,13 +577,15 @@ function deleteProduct(productId) {
   }
 }
 
+// Update the getCategoryNameById function to be more robust
 function getCategoryNameById(categoryId) {
+  if (!categoryId) return null
+
   const category = categories.find((cat) => cat._id === categoryId)
-  return category ? (category.categoryName || category.name) : null
+  return category ? category.categoryName : null
 }
 
 function showAlert(type, message) {
-  // Create alert element
   const alertDiv = document.createElement("div")
   alertDiv.className = `alert alert-${type} alert-dismissible fade show`
   alertDiv.role = "alert"
@@ -796,62 +594,353 @@ function showAlert(type, message) {
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   `
 
-  // Add to the page
   const container = document.querySelector(".container")
   container.insertBefore(alertDiv, container.firstChild)
 
-  // Auto dismiss after 5 seconds
   setTimeout(() => {
     if (alertDiv.parentNode) {
-      const bsAlert = bootstrap.Alert.getInstance(alertDiv) || new bootstrap.Alert(alertDiv);
+      const bsAlert = bootstrap.Alert.getInstance(alertDiv) || new bootstrap.Alert(alertDiv)
       bsAlert.close()
     }
   }, 5000)
 }
 
-// Handle modal reset when closed
-document.getElementById("addProductModal").addEventListener("hidden.bs.modal", () => {
-  const form = document.getElementById("addProductForm")
+// Now set up the event listeners
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded - initializing product management")
+  
+  loadProducts()
+  loadCategories()
 
-  // Only reset if not in edit mode or explicitly requested
-  if (form.dataset.mode !== "edit") {
-    form.reset()
+  // Add event listener for product category dropdown
+  const productCategoryDropdown = document.getElementById("productCategory")
+  if (productCategoryDropdown) {
+    productCategoryDropdown.addEventListener("change", function() {
+      const selectedCategory = this.value
+      const selectedOption = this.options[this.selectedIndex]
+      const categoryId = selectedOption.dataset.id
+      
+      console.log("Product category changed to:", selectedCategory, "with ID:", categoryId)
+      
+      if (categoryId) {
+        loadSubcategories(categoryId, selectedCategory)
+          .then(() => {
+            populateSubcategoryDropdown(selectedCategory)
+          })
+      } else {
+        console.warn("No category ID found for selected option")
+        populateSubcategoryDropdown(selectedCategory)
+      }
+    })
+  } else {
+    console.error("Product category dropdown not found")
   }
 
-  form.dataset.mode = "create"
-  form.dataset.productId = ""
+  // Add event listener for edit category dropdown
+  const editCategoryDropdown = document.getElementById("editProductCategory")
+  if (editCategoryDropdown) {
+    editCategoryDropdown.addEventListener("change", function() {
+      const selectedCategory = this.value
+      const selectedOption = this.options[this.selectedIndex]
+      const categoryId = selectedOption.dataset.id
+      
+      console.log("Edit category changed to:", selectedCategory, "with ID:", categoryId)
+      
+      if (categoryId) {
+        loadSubcategories(categoryId, selectedCategory)
+          .then(() => {
+            populateSubcategoryDropdown(selectedCategory, "edit")
+          })
+      } else {
+        console.warn("No category ID found for selected option")
+        populateSubcategoryDropdown(selectedCategory, "edit")
+      }
+    })
+  }
 
-  // Reset modal title and button text
-  document.getElementById("addProductModalLabel").textContent = "Add New Product"
-  form.querySelector('button[type="submit"]').textContent = "Add Product"
-})
+  document.getElementById("addCategoryBtn").addEventListener("click", () => {
+    const addCategoryModalEl = document.getElementById("addCategoryModal")
+    const addCategoryModal = new bootstrap.Modal(addCategoryModalEl)
+    addCategoryModal.show()
+  })
 
-// Handle form submission based on mode (create or edit)
-document.getElementById("addProductForm").addEventListener("submit", function (e) {
-  // If in edit mode, handle differently
-  if (this.dataset.mode === "edit" && this.dataset.productId) {
+  document.getElementById("addSubcategoryBtn").addEventListener("click", () => {
+    const subcatCategorySelect = document.getElementById("subcategoryCategory")
+    subcatCategorySelect.innerHTML = ""
+
+    const defaultOption = document.createElement("option")
+    defaultOption.value = ""
+    defaultOption.textContent = "Select a category"
+    defaultOption.disabled = true
+    defaultOption.selected = true
+    subcatCategorySelect.appendChild(defaultOption)
+
+    categories.forEach((category) => {
+      const option = document.createElement("option")
+      option.value = category._id
+      option.textContent = category.categoryName
+      subcatCategorySelect.appendChild(option)
+    })
+
+    document.getElementById("newSubcategoryName").value = ""
+
+    const addSubcategoryModalEl = document.getElementById("addSubcategoryModal")
+    const addSubcategoryModal = new bootstrap.Modal(addSubcategoryModalEl)
+    addSubcategoryModal.show()
+  })
+
+  const saveCategoryBtn = document.getElementById("saveCategoryBtn")
+  const saveSubcategoryBtn = document.getElementById("saveSubcategoryBtn")
+
+  saveCategoryBtn.addEventListener("click", () => {
+    const categoryName = document.getElementById("newCategoryName").value.trim()
+
+    if (!categoryName) {
+      showAlert("danger", "Category name cannot be empty")
+      return
+    }
+
+    // Store original button text
+    const originalBtnText = saveCategoryBtn.innerHTML
+
+    saveCategoryBtn.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
+
+    saveCategoryBtn.disabled = true
+
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/category/create", true)
+    xhr.setRequestHeader("Content-Type", "application/json")
+    if (token) {
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    }
+
+    xhr.onload = () => {
+      // Reset button state
+      saveCategoryBtn.disabled = false
+      saveCategoryBtn.innerHTML = originalBtnText
+
+      console.log("Response:", xhr.responseText)
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const response = JSON.parse(xhr.responseText)
+
+        if (response.category) {
+          categories.push(response.category)
+          subcategories[response.category.categoryName] = []
+
+          populateCategoryDropdown()
+          populateEditCategoryDropdown()
+
+          const categorySelect = document.getElementById("productCategory")
+          categorySelect.value = response.category.categoryName
+
+          const addCategoryModalEl = document.getElementById("addCategoryModal")
+          const addCategoryModal = new bootstrap.Modal(addCategoryModalEl)
+          addCategoryModal.hide()
+
+          document.getElementById("newCategoryName").value = ""
+
+          showAlert("success", response.message || "Category added successfully!")
+        } else {
+          showAlert("danger", response.message || "Failed to add category")
+        }
+      } else {
+        let errorMessage = "Failed to add category"
+        try {
+          const response = JSON.parse(xhr.responseText)
+          errorMessage = response.message || errorMessage
+        } catch (e) {
+          console.error("Error parsing response:", e)
+        }
+        showAlert("danger", errorMessage)
+      }
+    }
+
+    xhr.onerror = () => {
+      saveCategoryBtn.disabled = false
+      saveCategoryBtn.innerHTML = originalBtnText
+
+      showAlert("danger", "Network error occurred")
+    }
+
+    console.log("Sending category data:", { categoryName })
+
+    xhr.send(JSON.stringify({ categoryName }))
+  })
+
+  saveSubcategoryBtn.addEventListener("click", () => {
+    const categoryId = document.getElementById("subcategoryCategory").value
+    const name = document.getElementById("newSubcategoryName").value.trim()
+
+    if (!categoryId) {
+      showAlert("danger", "Please select a category")
+      return
+    }
+
+    if (!name) {
+      showAlert("danger", "Subcategory name cannot be empty")
+      return
+    }
+
+    // Store original button text
+    const originalBtnText = saveSubcategoryBtn.innerHTML
+
+    // Add loading state
+    saveSubcategoryBtn.disabled = true
+    saveSubcategoryBtn.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
+
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/subcategory/create", true)
+    xhr.setRequestHeader("Content-Type", "application/json")
+
+    if (token) {
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    }
+
+    xhr.onload = () => {
+      saveSubcategoryBtn.disabled = false
+      saveSubcategoryBtn.innerHTML = originalBtnText
+
+      console.log("Response:", xhr.responseText)
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const response = JSON.parse(xhr.responseText)
+
+        const newSubcategory =
+          response.subCategory || response.subcategory || (response.data && response.data.subcategory)
+
+        if (newSubcategory) {
+          // Find the parent category by ID
+          const parentCategory = categories.find((cat) => cat._id === categoryId)
+
+          if (parentCategory) {
+            const categoryName = parentCategory.categoryName || parentCategory.name
+
+            if (!subcategories[categoryName]) {
+              subcategories[categoryName] = []
+            }
+
+            subcategories[categoryName].push({
+              _id: newSubcategory._id,
+              name: newSubcategory.name,
+            })
+
+            const productCategorySelect = document.getElementById("productCategory")
+            productCategorySelect.value = categoryName
+
+            populateSubcategoryDropdown(categoryName)
+
+            setTimeout(() => {
+              const productSubcategorySelect = document.getElementById("productSubcategory")
+              productSubcategorySelect.value = newSubcategory.name
+            }, 100)
+
+            loadSubcategories(categoryId, categoryName)
+
+            const addSubcategoryModalEl = document.getElementById("addSubcategoryModal")
+            const addSubcategoryModal = new bootstrap.Modal(addSubcategoryModalEl)
+            if (addSubcategoryModal) {
+              addSubcategoryModal.hide()
+            }
+
+            document.getElementById("newSubcategoryName").value = ""
+
+            showAlert("success", response.message || "Subcategory added successfully!")
+          } else {
+            showAlert("danger", "Parent category not found")
+          }
+        } else {
+          showAlert("danger", response.message || "Failed to add subcategory")
+        }
+      } else {
+        let errorMessage = "Failed to add subcategory"
+        try {
+          const response = JSON.parse(xhr.responseText)
+          errorMessage = response.message || errorMessage
+        } catch (e) {
+          console.error("Error parsing response:", e)
+        }
+        showAlert("danger", errorMessage)
+      }
+    }
+
+    xhr.onerror = () => {
+      saveSubcategoryBtn.disabled = false
+      saveSubcategoryBtn.innerHTML = originalBtnText
+      showAlert("danger", "Network error occurred")
+    }
+
+    console.log("Sending subcategory data:", { name, categoryId })
+
+    xhr.send(
+      JSON.stringify({
+        name: name,
+        category: categoryId,
+      }),
+    )
+  })
+
+  document.getElementById("addProductForm").addEventListener("submit", (e) => {
     e.preventDefault()
+    const form = e.target
 
-    // Show loading indicator
-    const submitBtn = this.querySelector('button[type="submit"]')
+    const requiredFields = [
+      "productName",
+      "productId",
+      "productPrice",
+      "productCategory",
+      "productSubcategory",
+      "Stock",
+      "description",
+    ]
+    let isValid = true
+
+    requiredFields.forEach((field) => {
+      if (!form[field] || !form[field].value.trim()) {
+        showAlert("danger", `${field.replace(/([A-Z])/g, " $1").trim()} is required`)
+        isValid = false
+      }
+    })
+
+    if (!form.mainImage.files[0]) {
+      showAlert("danger", "Main image is required")
+      isValid = false
+    }
+
+    if (!isValid) return
+
+    const submitBtn = form.querySelector('button[type="submit"]')
     const originalBtnText = submitBtn.innerHTML
     submitBtn.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...'
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...'
     submitBtn.disabled = true
 
-    // Create FormData object
     const formData = new FormData()
 
-    // Add all form fields to FormData
-    formData.append("productName", this.productName.value)
-    formData.append("productId", this.productId.value)
-    formData.append("productPrice", this.productPrice.value)
+    formData.append("productName", form.productName.value)
+    formData.append("productId", form.productId.value)
+    formData.append("productPrice", form.productPrice.value)
 
-    // Get the subcategory ID based on the selected name
-    const selectedCategory = this.productCategory.value
-    const selectedSubcategory = this.productSubcategory.value
+    const selectedCategory = form.productCategory.value
+    const selectedSubcategory = form.productSubcategory.value
 
-    // Find the subcategory ID
+    // Find the category ID from the name
+    let categoryId = null
+    const categoryObj = categories.find((cat) => cat.categoryName === selectedCategory)
+    if (categoryObj) {
+      categoryId = categoryObj._id
+      console.log("Found category ID:", categoryId)
+      formData.append("category", categoryId)
+    } else {
+      console.error("Could not find category ID for:", selectedCategory)
+      showAlert("danger", "Invalid category selected")
+      submitBtn.innerHTML = originalBtnText
+      submitBtn.disabled = false
+      return
+    }
+
     let subCategoryId = null
     if (subcategories[selectedCategory]) {
       const subcat = subcategories[selectedCategory].find(
@@ -870,27 +959,25 @@ document.getElementById("addProductForm").addEventListener("submit", function (e
     }
 
     formData.append("subCategory", subCategoryId)
-    formData.append("availability", this.Availability.value === "in_stock" ? "In stock" : "Out of stock")
-    formData.append("stock", this.Stock.value)
-    formData.append("description", this.description.value)
+    formData.append("availability", form.Availability.value === "in_stock" ? "In stock" : "Out of stock")
+    formData.append("stock", form.Stock.value)
+    formData.append("description", form.description.value)
 
-    // Add the files if provided
-    if (this.mainImage.files[0]) {
-      formData.append("mainImage", this.mainImage.files[0])
+    if (form.mainImage.files[0]) {
+      formData.append("mainImage", form.mainImage.files[0])
     }
 
-    if (this.otherImages.files.length > 0) {
-      for (let i = 0; i < this.otherImages.files.length; i++) {
-        formData.append("otherImages", this.otherImages.files[i])
+    if (form.otherImages.files.length > 0) {
+      for (let i = 0; i < form.otherImages.files.length; i++) {
+        formData.append("otherImages", form.otherImages.files[i])
       }
     }
 
-    // Send data to backend
     const xhr = new XMLHttpRequest()
-    xhr.open("PUT", `http://localhost:3000/product/update/${this.dataset.productId}`, true)
-    
+    xhr.open("POST", "http://localhost:3000/product/create", true)
+
     if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
     }
 
     xhr.onload = () => {
@@ -900,27 +987,26 @@ document.getElementById("addProductForm").addEventListener("submit", function (e
       if (xhr.status >= 200 && xhr.status < 300) {
         const response = JSON.parse(xhr.responseText)
 
-        if (response.status === "success") {
-          // Reset form and close modal
-          this.reset()
-          
-          // Hide the modal after successful save
+        if (response.status === "success" && response.data && response.data.product) {
+          addProductToTable(response.data.product)
+
+          form.reset()
+
           const addProductModalEl = document.getElementById("addProductModal")
           let addProductModal = bootstrap.Modal.getInstance(addProductModalEl)
           if (!addProductModal) {
-            addProductModal = new bootstrap.Modal(addProductModalEl);
+            addProductModal = new bootstrap.Modal(addProductModalEl)
           }
           addProductModal.hide()
 
-          showAlert("success", "Product updated successfully!")
+          showAlert("success", "Product added successfully!")
 
-          // Refresh product list
           loadProducts()
         } else {
-          showAlert("danger", response.message || "Failed to update product")
+          showAlert("danger", response.message || "Failed to add product")
         }
       } else {
-        let errorMessage = "Failed to update product"
+        let errorMessage = "Failed to add product"
         try {
           const response = JSON.parse(xhr.responseText)
           errorMessage = response.message || errorMessage
@@ -938,5 +1024,29 @@ document.getElementById("addProductForm").addEventListener("submit", function (e
     }
 
     xhr.send(formData)
+  })
+
+  // Add event listener for the edit product form
+  const editProductForm = document.getElementById("editProductForm")
+  if (editProductForm) {
+    editProductForm.addEventListener("submit", (e) => {
+      e.preventDefault()
+      handleProductUpdate(e.target)
+    })
   }
+
+  // Add event listeners for edit and delete buttons
+  document.addEventListener("click", (e) => {
+    // Edit button
+    if (e.target.closest(".editProductBtn")) {
+      const productId = e.target.closest(".editProductBtn").getAttribute("data-id")
+      editProduct(productId)
+    }
+
+    // Delete button
+    if (e.target.closest(".deleteProductBtn")) {
+      const productId = e.target.closest(".deleteProductBtn").getAttribute("data-id")
+      deleteProduct(productId)
+    }
+  })
 })

@@ -57,10 +57,10 @@ document.addEventListener("DOMContentLoaded", function () {
     
         // Essayer chaque type d'utilisateur
         const loginEndpoints = [
-            { url: "http://localhost:3000/admin/login", redirect: "../frontend/dashbordA_pages/index.html" },
-            { url: "http://localhost:3000/vendor/login", redirect: "../frontend/dashbordBout_pages/index.html" },
-            { url: "http://localhost:3000/client/login", redirect: "../frontend/index.html" },
-            { url: "http://localhost:3000/moderator/login", redirect: "../frontend/dashbordBout_pages/index.html" },
+            { url: "http://localhost:3000/admin/login", redirect: "../dashbordA_pages/index.html" },
+            { url: "http://localhost:3000/vendor/login", redirect: "../dashbordBout_pages/index.html" },
+            { url: "http://localhost:3000/client/login", redirect: "../index.html" },
+            { url: "http://localhost:3000/moderator/login", redirect: "../dashbordBout_pages/index.html" },
         ];
     
         // Tentative séquentielle

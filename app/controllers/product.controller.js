@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    limits: { fileSize: 100 * 1024 * 1024 } 
 }).fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'otherImages', maxCount: 12 }
@@ -66,12 +66,10 @@ exports.createProduct = async (req, res) => {
     });
 };
 
-
-
 // Get all products with populated subCategory
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find().populate('subCategory', 'name');  // Peupler la sous-catégorie
+        const products = await Product.find().populate('subCategory', 'name');  // Populate subCategory
 
         res.status(200).json({
             status: "success",
@@ -86,14 +84,12 @@ exports.getAllProducts = async (req, res) => {
             message: err.message,
         });
     }
-}
-
-
+};
 
 // Get product by ID with populated subCategory
 exports.getProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate('subCategory', 'name');  // Peupler la sous-catégorie
+        const product = await Product.findById(req.params.id).populate('subCategory', 'name');  // Populate subCategory
 
         if (!product) {
             return res.status(404).json({
@@ -114,10 +110,9 @@ exports.getProduct = async (req, res) => {
             message: err.message,
         });
     }
-}
+};
 
-
-
+// Get products belonging to the current shop
 exports.getMyProducts = async (req, res) => {
     try {
         const products = await Product.find({ shop: req.shop._id }).populate('subCategory', 'name');
@@ -137,35 +132,58 @@ exports.getMyProducts = async (req, res) => {
     }
 };
 
-
-
 // Update product by ID
 exports.updateProduct = async (req, res) => {
-    try {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-        if (!product) {
-            return res.status(404).json({
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ 
                 status: "fail",
-                message: "Product not found",
+                message: err.message || "Error uploading files" 
             });
         }
 
-        res.status(200).json({
-            status: "success",
-            data: {
-                product,
+        try {
+            const { subCategory } = req.body;
+
+            // Ensure subCategory exists
+            const existingSubCategory = await SubCategory.findById(subCategory);
+            if (!existingSubCategory) {
+                return res.status(400).json({
+                    status: "fail",
+                    message: "La sous-catégorie spécifiée n'existe pas",
+                });
             }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: "fail",
-            message: err.message,
-        });
-    }
-}
 
+            // Prepare product data
+            const updatedData = {
+                ...req.body,
+                mainImage: req.files['mainImage'] ? req.files['mainImage'][0].filename : req.body.currentMainImage,
+                otherImages: req.files['otherImages'] ? req.files['otherImages'].map(file => file.filename) : req.body.currentOtherImages
+            };
 
+            const product = await Product.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+
+            if (!product) {
+                return res.status(404).json({
+                    status: "fail",
+                    message: "Product not found",
+                });
+            }
+
+            res.status(200).json({
+                status: "success",
+                data: {
+                    product,
+                }
+            });
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message,
+            });
+        }
+    });
+};
 
 // Delete product by ID
 exports.deleteProduct = async (req, res) => {
