@@ -79,3 +79,62 @@ exports.removeFromCart = async (req, res) => {
         res.status(500).json({ message: "Erreur suppression produit du panier", error: err.message });
     }
 };
+// Get cart items for a client
+exports.getCart = async (req, res) => {
+    const { clientId } = req.params;
+
+    try {
+        let cart = await Cart.findOne({ clientId }).populate('items.productId');
+        
+        if (!cart) {
+            return res.status(200).json({ 
+                cart: { items: [] },
+                totalPrice: 0
+            });
+        }
+
+        res.status(200).json({
+            cart,
+            totalPrice: cart.totalPrice
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching cart", error: err.message });
+    }
+};
+
+// Update cart item quantity
+exports.updateCartItem = async (req, res) => {
+    const { clientId, productId, quantity } = req.body;
+
+    try {
+        let cart = await Cart.findOne({ clientId });
+        if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+        const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+        if (itemIndex === -1) return res.status(404).json({ message: "Item not found in cart" });
+
+        // Update quantity
+        cart.items[itemIndex].quantity = quantity;
+
+        // Recalculate total
+        let total = 0;
+        for (const item of cart.items) {
+            const product = await Product.findById(item.productId);
+            if (product) {
+                total += product.productPrice * item.quantity;
+            }
+        }
+        cart.totalPrice = total;
+
+        await cart.save();
+        cart = await Cart.findById(cart._id).populate('items.productId');
+
+        res.status(200).json({
+            message: "Cart updated successfully",
+            cart,
+            totalPrice: cart.totalPrice
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Error updating cart", error: err.message });
+    }
+};

@@ -13,12 +13,114 @@
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/aboutUs.css">
     </head> 
+    <style>
+
+      .text-main-600 {
+          color: #4a6cf7;
+      }
+      
+      .text-28 {
+          font-size: 28px;
+      }
+      
+      .d-flex {
+          display: flex;
+          align-items: center;
+      }
+      
+      /* Modal styles */
+      .modal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 1000;
+          justify-content: center;
+          align-items: center;
+      }
+      
+      .modal-content {
+          background-color: white;
+          padding: 25px;
+          border-radius: 8px;
+          width: 90%;
+          max-width: 500px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+      }
+      
+      .close-btn {
+          font-size: 24px;
+          cursor: pointer;
+          background: none;
+          border: none;
+      }
+      
+      .form-group {
+          margin-bottom: 15px;
+      }
+      
+      label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+      }
+      
+      input, textarea, select {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+      
+      textarea {
+          min-height: 100px;
+          resize: vertical;
+      }
+      
+      .submit-btn {
+          background-color: #4a6cf7;
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+      }
+      
+      .submit-btn:hover {
+          background-color: #3a5cd7;
+      }
+      
+      .success-message {
+          display: none;
+          color: green;
+          margin-top: 15px;
+          text-align: center;
+      }
+      
+      .error-message {
+          display: none;
+          color: red;
+          margin-top: 15px;
+          text-align: center;
+      }
+  </style>
 <body>
   <div class="preloader">
     <img src="../assets/preloader/preloader.svg  " alt="Loading ..." class="logo-spinner">
   </div>
-        <img src="../assets/preloader/1-ezgif.com-video-to-gif-converter.gif" alt="Loading ...">
-      </div> -->
+
 <!-- ==================== scroll up  ==================== -->
 <div class="progress-wrap">
   <svg class="progress-circle svg-content" wiDTh="100%" height="100%" viewBox="-1 -1 102 102">
@@ -654,561 +756,563 @@
             </div>
         </div>
     </div>
-    <!-- ========================= Breadcrumb End =============================== -->
-    
-        <!-- ========================== Product Details Two Start =========================== -->
-    <section class="product-details py-48">
-        <div class="container container-lg">
-            <div class="row gy-4">
-                <div class="col-xl-9">
-                    <div class="row gy-4">
-                        <div class="col-xl-6">
-                            <div class="product-details__left">
-                                
-                                <div class="product-details__thumb-slider border border-gray-100 rounded-16">
-                                    <div class="">
-                                        <div class="product-details__thumb flex-center h-100">
-                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                        </div>
-                                    </div>
-                                    <div class="">
-                                        <div class="product-details__thumb flex-center h-100">
-                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                        </div>
-                                    </div>
-                                    <div class="">
-                                        <div class="product-details__thumb flex-center h-100">
-                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                        </div>
-                                    </div>
-                                    <div class="">
-                                        <div class="product-details__thumb flex-center h-100">
-                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                        </div>
-                                    </div>
-                                    <div class="">
-                                        <div class="product-details__thumb flex-center h-100">
-                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                        </div>
+<!-- ========================= Breadcrumb End =============================== -->
+
+<!-- ========================== Product Details Two Start =========================== -->
+<section class="product-details py-48">
+    <div class="container container-lg">
+        <div class="row gy-4">
+            <div class="col-xl-9">
+                <div class="row gy-4">
+                    <div class="col-xl-6">
+                        <div class="product-details__left">
+                            
+                            <div class="product-details__thumb-slider border border-gray-100 rounded-16">
+                                <div class="">
+                                    <div class="product-details__thumb flex-center h-100">
+                                        <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
                                     </div>
                                 </div>
-                                <div class="mt-24">
-                                    <div class="product-details__images-slider">
-                                        <div>
-                                            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                                                <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
-                                            </div>
-                                        </div>
+                                <div class="">
+                                    <div class="product-details__thumb flex-center h-100">
+                                        <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="product-details__thumb flex-center h-100">
+                                        <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="product-details__thumb flex-center h-100">
+                                        <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="product-details__thumb flex-center h-100">
+                                        <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <div class="product-details__content">
-                                <h5 class="mb-12">Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5’’</h5>
-                                <div class="flex-align flex-wrap gap-12">
-                                    <div class="flex-align gap-12 flex-wrap">
-                                        <div class="flex-align gap-8">
-                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                            <div class="mt-24">
+                                <div class="product-details__images-slider">
+                                    <div>
+                                        <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
                                         </div>
-                                        <span class="text-sm fw-medium text-neutral-600">4.7 Star Rating</span>
-                                        <span class="text-sm fw-medium text-gray-500">(21,671)</span>
                                     </div>
-                                    <span class="text-sm fw-medium text-gray-500">|</span>
-                                    <span class="text-gray-900"> <span class="text-gray-400">SKU:</span>EB4DRP </span>
-                                </div>
-                                <span class="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block"></span>
-                                <p class="text-gray-700">Disque Dur Interne SSD MSI SPATIUM M450 PCIe 4.0 NVMe M.2 - CAPACITÉ 960Go - MÉMOIRE FLASH NON-ET 3D - FACTEUR DE FORME: M.2 2280 - INTERFACE: PCIe Gen4 x4, NVMe 1.4 - DIMENSIONS: 80 x 22 x 2.15 mm - LECTURE SÉQUENTIELLE JUSQU'À 3600 (MO/S) - ÉCRITURE SÉQUENTIELLE JUSQU'À 3000 (MO/S) - Garantie 5 ans</p>
-    
-                                <div class="my-32 flex-align gap-16 flex-wrap">
-                                    <div class="flex-align gap-8">
-                                        <div class="flex-align gap-8 text-main-two-600">
-                                            <i class="ph-fill ph-seal-percent text-xl"></i>
-                                            -10%
+                                    <div>
+                                        <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
                                         </div>
-                                        <h6 class="mb-0">179 DT</h6>
                                     </div>
-                                    <div class="flex-align gap-4">
-                                        <span class="text-gray-700">Regular Price</span>
-                                        <h6 class="text-xl text-gray-400 mb-0 fw-medium">189 DT</h6>
+                                    <div>
+                                        <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                                            <img src="../assets/images/products/disque-dur-interne-msi.jpg" alt="product">
+                                        </div>
                                     </div>
                                 </div>
-                                <span class="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block"></span>
-                                
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3">
-                    <div class="product-details__sidebar py-40 px-32 border border-gray-100 rounded-16">
-
-                        <div class="mb-32">
-                            <label for="stock" class="text-lg mb-8 text-heading fw-semibold d-block">Total Stock: 21</label>
-                            <span class="text-xl d-flex">
-                                <i class="ph ph-location"></i>
-                            </span>
-                            <div class="d-flex rounded-4 overflow-hidden">
-                                <button type="button" class="quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
-                                    <i class="ph ph-minus"></i>
-                                </button>
-                                <input type="number" class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16" id="stock" value="1" min="1">                                <button type="button" class="quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
-                                    <i class="ph ph-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mb-32">
-                            <div class="flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16">
-                                <span class="text-gray-500">Price</span>
-                                <h6 class="text-lg mb-0">179 DT</h6>
-                            </div>
-                            <div class="flex-between flex-wrap gap-8">
-                                <span class="text-gray-500">Shipping</span>
-                                <h6 class="text-lg mb-0">Free</h6>
-                            </div>
-                        </div>
-    
-                        <a href="#" class="btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48">
-                            <i class="ph ph-shopping-cart-simple text-lg"></i>
-                            Add To Cart
-                        </a>
-                        <a href="#" class="btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100">
-                            Buy Now
-                        </a>
-    
-                        <div class="mt-32">
-                            <div class="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14">
-                                <span class="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
-                                    <i class="ph-fill ph-truck"></i>
-                                </span>
-                                <span class="text-sm text-neutral-600">Ship from <span class="fw-semibold">Mallify</span> </span>
-                            </div>
-                            <div class="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0">
-                                <span class="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
-                                    <i class="ph-fill ph-storefront"></i>
-                                </span>
-                                <span class="text-sm text-neutral-600 d-flex ">Sold by:  <span class="fw-semibold">Mytech</span> </span>
-                            </div>
-                        </div>
-    
-                        <div class="mt-32">
-                            <div class="px-32 py-16 rounded-8 border border-gray-100 flex-between gap-8">
-                                <a href="mailto:support@chaabenGroup.com" class="d-flex text-main-600 text-28"><i class="ph-fill ph-chats-teardrop"></i></a>
-                                <span class="h-26 border border-gray-100"></span>
-    
-                                <div class="dropdown on-hover-item">
-                                    <button class="d-flex text-main-600 text-28" type="button">
-                                        <i class="ph-fill ph-share-network"></i>
-                                    </button>
-                                    <div class="on-hover-dropdown common-dropdown border-0 inset-inline-start-auto inset-inline-end-0" >
-                                        <ul class="flex-align gap-16">
-        <li>
-            <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-                <i class="ph-fill ph-facebook-logo"></i>
-            </a>
-        </li>
-        <li>
-            <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-                <i class="ph-fill ph-messenger-logo"></i>
-            </a>
-        </li>
-        <li>
-            <a href="https://www.instagram.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-                <i class="ph-fill ph-instagram-logo"></i>
-            </a>
-        </li>
-        <li>
-            <a href="https://www.whatsapp.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-                <i class="ph-fill ph-whatsapp-logo"></i>
-            </a>
-        </li>
-    </ul>
+                    <div class="col-xl-6">
+                        <div class="product-details__content">
+                            <h5 class="mb-12">Disque Dur Interne MSI Spatium 960Go SSD SATA 2.5’’</h5>
+                            <div class="flex-align flex-wrap gap-12">
+                                <div class="flex-align gap-12 flex-wrap">
+                                    <div class="flex-align gap-8">
+                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
                                     </div>
+                                    <span class="text-sm fw-medium text-neutral-600">4.7 Star Rating</span>
+                                    <span class="text-sm fw-medium text-gray-500">(21,671)</span>
+                                </div>
+                                <span class="text-sm fw-medium text-gray-500">|</span>
+                                <span class="text-gray-900"> <span class="text-gray-400">SKU:</span>EB4DRP </span>
+                            </div>
+                            <span class="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block"></span>
+                            <p class="text-gray-700">Disque Dur Interne SSD MSI SPATIUM M450 PCIe 4.0 NVMe M.2 - CAPACITÉ 960Go - MÉMOIRE FLASH NON-ET 3D - FACTEUR DE FORME: M.2 2280 - INTERFACE: PCIe Gen4 x4, NVMe 1.4 - DIMENSIONS: 80 x 22 x 2.15 mm - LECTURE SÉQUENTIELLE JUSQU'À 3600 (MO/S) - ÉCRITURE SÉQUENTIELLE JUSQU'À 3000 (MO/S) - Garantie 5 ans</p>
+
+                            <div class="my-32 flex-align gap-16 flex-wrap">
+                                <div class="flex-align gap-8">
+                                    <div class="flex-align gap-8 text-main-two-600">
+                                        <i class="ph-fill ph-seal-percent text-xl"></i>
+                                        -10%
+                                    </div>
+                                    <h6 class="mb-0">179 DT</h6>
+                                </div>
+                                <div class="flex-align gap-4">
+                                    <span class="text-gray-700">Regular Price</span>
+                                    <h6 class="text-xl text-gray-400 mb-0 fw-medium">189 DT</h6>
                                 </div>
                             </div>
+                            <span class="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block"></span>
+                            
                         </div>
-    
                     </div>
                 </div>
             </div>
-    
-            <div class="pt-80">
-                <div class="product-dContent border rounded-24">
-                    <div class="product-dContent__header border-bottom border-gray-100 flex-between flex-wrap gap-16">
-                        <ul class="nav common-tab nav-pills mb-3" id="pills-tab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                              <button class="nav-link active" id="pills-description-tab" data-bs-toggle="pill" data-bs-target="#pills-description" type="button" role="tab" aria-controls="pills-description" aria-selected="true">Description</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill" data-bs-target="#pills-reviews" type="button" role="tab" aria-controls="pills-reviews" aria-selected="false">Reviews</button>
-                            </li>
-                        </ul>
-                        <a  class="btn bg-color-one rounded-16 flex-align gap-8 text-main-600 hover-bg-main-600 hover-text-white">
-                            100% Satisfaction Guaranteed
-                        </a>
+            <div class="col-xl-3">
+                <div class="product-details__sidebar py-40 px-32 border border-gray-100 rounded-16">
+
+                    <div class="mb-32">
+                        <label for="stock" class="text-lg mb-8 text-heading fw-semibold d-block">Total Stock: 21</label>
+                        <span class="text-xl d-flex">
+                            <i class="ph ph-location"></i>
+                        </span>
+                        <div class="d-flex rounded-4 overflow-hidden">
+                            <button type="button" class="quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
+                                <i class="ph ph-minus"></i>
+                            </button>
+                            <input type="number" class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16" id="stock" value="1" min="1">                                <button type="button" class="quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
+                                <i class="ph ph-plus"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="product-dContent__box">
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-description" role="tabpanel" aria-labelledby="pills-description-tab" tabindex="0">
-                                <div class="mb-40">
-                                    <h6 class="mb-24">Product Description</h6>
-                                    <p>Upgrade your system with the MSI SPATIUM M450 PCIe 4.0 NVMe SSD — built for speed, reliability, and performance. Whether you're gaming, creating, or multitasking, this high-performance storage solution ensures lightning-fast responsiveness and smooth everyday computing.</p>
-                                    <p>Powered by advanced 3D NAND flash and designed in a sleek M.2 2280 form factor, the SPATIUM M450 offers blazing sequential read speeds up to 3600 MB/s and write speeds up to 3000 MB/s. It supports the latest PCIe Gen4 x4 interface with NVMe 1.4 for ultra-efficient data handling. Compact in size yet powerful at heart, this SSD is perfect for desktops and laptops alike. With a robust 5-year warranty, MSI guarantees long-term durability and performance you can count on.</p>
-                                    <ul class="list-inside mt-32 ms-16">
-                                        <li class="text-gray-400 mb-4">1TB MSI SPATIUM M450 PCIe 4.0 NVMe M.2 Internal SSD</li>
-                                        <li class="text-gray-400 mb-4">High-speed sequential read up to 3600 MB/s and sequential write up to 3000 MB/s</li>
-                                        <li class="text-gray-400 mb-4">Utilizes PCIe Gen4 x4 interface and NVMe 1.4 for improved performance</li>
-                                        <li class="text-gray-400 mb-4">Compact M.2 2280 form factor (80 x 22 x 2.15 mm)</li>
-                                        <li class="text-gray-400 mb-4">Non-3D NAND flash memory</li>
-                                    </ul>
-                                    <ul class="mt-32">
-                                        <li class="text-gray-400 mb-4">5-year warranty for added peace of mind</li>
-                                        <li class="text-gray-400 mb-4">Designed for high-performance computing and gaming applications</li>
-                                    </ul>
+                    <div class="mb-32">
+                        <div class="flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16">
+                            <span class="text-gray-500">Price</span>
+                            <h6 class="text-lg mb-0">179 DT</h6>
+                        </div>
+                        <div class="flex-between flex-wrap gap-8">
+                            <span class="text-gray-500">Shipping</span>
+                            <h6 class="text-lg mb-0">Free</h6>
+                        </div>
+                    </div>
+
+                    <a href="#" class="btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48">
+                        <i class="ph ph-shopping-cart-simple text-lg"></i>
+                        Add To Cart
+                    </a>
+                    <a href="#" class="btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100">
+                        Buy Now
+                    </a>
+
+                    <div class="mt-32">
+                        <div class="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14">
+                            <span class="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
+                                <i class="ph-fill ph-truck"></i>
+                            </span>
+                            <span class="text-sm text-neutral-600">Ship from <span class="fw-semibold">Mallify</span> </span>
+                        </div>
+                        <div class="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0">
+                            <span class="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
+                                <i class="ph-fill ph-storefront"></i>
+                            </span>
+                            <span class="text-sm text-neutral-600 d-flex ">Sold by:  <span class="fw-semibold">Mytech</span> </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-32">
+                        <div class="px-32 py-16 rounded-8 border border-gray-100 flex-between gap-8">
+                          <a href="#" id="reportLink" class="d-flex text-main-600 text-28">
+                            <i class="ph-fill ph-chats-teardrop"></i>
+                        </a>
+                            <span class="h-26 border border-gray-100"></span>
+
+                            <div class="dropdown on-hover-item">
+                                <button class="d-flex text-main-600 text-28" type="button">
+                                    <i class="ph-fill ph-share-network"></i>
+                                </button>
+                                <div class="on-hover-dropdown common-dropdown border-0 inset-inline-start-auto inset-inline-end-0" >
+                                    <ul class="flex-align gap-16">
+    <li>
+        <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+            <i class="ph-fill ph-facebook-logo"></i>
+        </a>
+    </li>
+    <li>
+        <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+            <i class="ph-fill ph-messenger-logo"></i>
+        </a>
+    </li>
+    <li>
+        <a href="https://www.instagram.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+            <i class="ph-fill ph-instagram-logo"></i>
+        </a>
+    </li>
+    <li>
+        <a href="https://www.whatsapp.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+            <i class="ph-fill ph-whatsapp-logo"></i>
+        </a>
+    </li>
+</ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-80">
+            <div class="product-dContent border rounded-24">
+                <div class="product-dContent__header border-bottom border-gray-100 flex-between flex-wrap gap-16">
+                    <ul class="nav common-tab nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="pills-description-tab" data-bs-toggle="pill" data-bs-target="#pills-description" type="button" role="tab" aria-controls="pills-description" aria-selected="true">Description</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill" data-bs-target="#pills-reviews" type="button" role="tab" aria-controls="pills-reviews" aria-selected="false">Reviews</button>
+                        </li>
+                    </ul>
+                    <a  class="btn bg-color-one rounded-16 flex-align gap-8 text-main-600 hover-bg-main-600 hover-text-white">
+                        100% Satisfaction Guaranteed
+                    </a>
+                </div>
+                <div class="product-dContent__box">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-description" role="tabpanel" aria-labelledby="pills-description-tab" tabindex="0">
+                            <div class="mb-40">
+                                <h6 class="mb-24">Product Description</h6>
+                                <p>Upgrade your system with the MSI SPATIUM M450 PCIe 4.0 NVMe SSD — built for speed, reliability, and performance. Whether you're gaming, creating, or multitasking, this high-performance storage solution ensures lightning-fast responsiveness and smooth everyday computing.</p>
+                                <p>Powered by advanced 3D NAND flash and designed in a sleek M.2 2280 form factor, the SPATIUM M450 offers blazing sequential read speeds up to 3600 MB/s and write speeds up to 3000 MB/s. It supports the latest PCIe Gen4 x4 interface with NVMe 1.4 for ultra-efficient data handling. Compact in size yet powerful at heart, this SSD is perfect for desktops and laptops alike. With a robust 5-year warranty, MSI guarantees long-term durability and performance you can count on.</p>
+                                <ul class="list-inside mt-32 ms-16">
+                                    <li class="text-gray-400 mb-4">1TB MSI SPATIUM M450 PCIe 4.0 NVMe M.2 Internal SSD</li>
+                                    <li class="text-gray-400 mb-4">High-speed sequential read up to 3600 MB/s and sequential write up to 3000 MB/s</li>
+                                    <li class="text-gray-400 mb-4">Utilizes PCIe Gen4 x4 interface and NVMe 1.4 for improved performance</li>
+                                    <li class="text-gray-400 mb-4">Compact M.2 2280 form factor (80 x 22 x 2.15 mm)</li>
+                                    <li class="text-gray-400 mb-4">Non-3D NAND flash memory</li>
+                                </ul>
+                                <ul class="mt-32">
+                                    <li class="text-gray-400 mb-4">5-year warranty for added peace of mind</li>
+                                    <li class="text-gray-400 mb-4">Designed for high-performance computing and gaming applications</li>
+                                </ul>
+                                
+                            </div>
+                            <div class="mb-40">
+                                <h6 class="mb-24">Product Specifications</h6>
+                                <ul class="mt-32">
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Product Type:
+                                            <span class="text-gray-500"> Internal SSD</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Product Name:
+                                            <span class="text-gray-500"> MSI SPATIUM M450 PCIe 4.0 NVMe M.2 SSD</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Brand:
+                                            <span class="text-gray-500"> MSI</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Storage Capacity:
+                                            <span class="text-gray-500"> 1TB</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Form Factor:
+                                            <span class="text-gray-500"> M.2 2280</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Interface:
+                                            <span class="text-gray-500"> PCIe Gen4 x4, NVMe 1.4</span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="mb-40">
+                                <h6 class="mb-24">Performance Specifications</h6>
+                                <ul class="mt-32">
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Sequential Read Speed:
+                                            <span class="text-gray-500"> Up to 3600 MB/s</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Sequential Write Speed:
+                                            <span class="text-gray-500"> Up to 3000 MB/s</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            NAND Flash Memory:
+                                            <span class="text-gray-500"> Non-3D NAND</span>
+                                        </span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-heading fw-medium">
+                                            Warranty:
+                                            <span class="text-gray-500"> 5 years</span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="mb-0">
+                                <h6 class="mb-24">More Details</h6>
+                                <ul class="mt-32">
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-gray-500"> High-performance storage for gaming, multimedia, and professional use</span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-gray-500"> Compact and efficient M.2 2280 form factor</span>
+                                    </li>
+                                    <li class="text-gray-400 mb-14 flex-align gap-14">
+                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
+                                            <i class="ph ph-check"></i>
+                                        </span>
+                                        <span class="text-gray-500"> Designed to meet the demands of PCIe Gen4 for maximum throughput</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+
+                        </div>
+                        <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab" tabindex="0">
+                            <div class="row g-4">
+                                <div class="col-lg-6">
+                                    <h6 class="mb-24">Reviews</h6>
+                                    <div class="d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44">
+                                        <img src="../assets/images/team_members/devoloper1.jpg" alt="user image" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
+                                        <div class="flex-grow-1">
+                                            <div class="flex-between align-items-start gap-8 ">
+                                                <div class="">
+                                                    <h6 class="mb-12 text-md">Koussay Ab</h6>
+                                                    <div class="flex-align gap-8">
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                </div>
+                                                <span class="text-gray-800 text-xs">3 Days ago</span>
+                                            </div>
+                                            <h6 class="mb-14 text-md mt-24">Greate Product</h6>
+                                            <p class="text-gray-700">Great value for the price! The MSI SPATIUM M450 offers excellent read/write speeds, making my PC feel much faster. Easy installation and reliable performance, highly recommend it!</p>
+
+                                            <div class="flex-align gap-20 mt-44">
+                                                <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                                                    <i class="ph-bold ph-thumbs-up"></i>
+                                                    Like
+                                                </button>
+                                                <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                                                    <i class="ph-bold ph-arrow-bend-up-left"></i>
+                                                    Replay
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-24">
+                                        <img src="../assets/images/team_members/devoloper2.jpg" alt="" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
+                                        <div class="flex-grow-1">
+                                            <div class="flex-between align-items-start gap-8 ">
+                                                <div class="">
+                                                    <h6 class="mb-12 text-md">Adem Bouafia</h6>
+                                                    <div class="flex-align gap-8">
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                </div>
+                                                <span class="text-gray-800 text-xs">3 Days ago</span>
+                                            </div>
+                                            <h6 class="mb-14 text-md mt-24">Greate Product</h6>
+                                            <p class="text-gray-700">Solid performance and great speed boost, but make sure your motherboard supports PCIe 4.0 to get the full benefit. Overall, a great SSD for the price!</p>
+
+                                            <div class="flex-align gap-20 mt-44">
+                                                <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                                                    <i class="ph-bold ph-thumbs-up"></i>
+                                                    Like
+                                                </button>
+                                                <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                                                    <i class="ph-bold ph-arrow-bend-up-left"></i>
+                                                    Replay
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     
                                 </div>
-                                <div class="mb-40">
-                                    <h6 class="mb-24">Product Specifications</h6>
-                                    <ul class="mt-32">
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Product Type:
-                                                <span class="text-gray-500"> Internal SSD</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Product Name:
-                                                <span class="text-gray-500"> MSI SPATIUM M450 PCIe 4.0 NVMe M.2 SSD</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Brand:
-                                                <span class="text-gray-500"> MSI</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Storage Capacity:
-                                                <span class="text-gray-500"> 1TB</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Form Factor:
-                                                <span class="text-gray-500"> M.2 2280</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Interface:
-                                                <span class="text-gray-500"> PCIe Gen4 x4, NVMe 1.4</span>
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="mb-40">
-                                    <h6 class="mb-24">Performance Specifications</h6>
-                                    <ul class="mt-32">
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Sequential Read Speed:
-                                                <span class="text-gray-500"> Up to 3600 MB/s</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Sequential Write Speed:
-                                                <span class="text-gray-500"> Up to 3000 MB/s</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                NAND Flash Memory:
-                                                <span class="text-gray-500"> Non-3D NAND</span>
-                                            </span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-heading fw-medium">
-                                                Warranty:
-                                                <span class="text-gray-500"> 5 years</span>
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="mb-0">
-                                    <h6 class="mb-24">More Details</h6>
-                                    <ul class="mt-32">
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-gray-500"> High-performance storage for gaming, multimedia, and professional use</span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-gray-500"> Compact and efficient M.2 2280 form factor</span>
-                                        </li>
-                                        <li class="text-gray-400 mb-14 flex-align gap-14">
-                                            <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                                <i class="ph ph-check"></i>
-                                            </span>
-                                            <span class="text-gray-500"> Designed to meet the demands of PCIe Gen4 for maximum throughput</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                
-    
-                            </div>
-                            <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab" tabindex="0">
-                                <div class="row g-4">
-                                    <div class="col-lg-6">
-                                        <h6 class="mb-24">Reviews</h6>
-                                        <div class="d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44">
-                                            <img src="../assets/images/team_members/devoloper1.jpg" alt="user image" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
-                                            <div class="flex-grow-1">
-                                                <div class="flex-between align-items-start gap-8 ">
-                                                    <div class="">
-                                                        <h6 class="mb-12 text-md">Koussay Ab</h6>
-                                                        <div class="flex-align gap-8">
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                    </div>
-                                                    <span class="text-gray-800 text-xs">3 Days ago</span>
+                                <div class="col-lg-6">
+                                    <div class="ms-xxl-5">
+                                        <h6 class="mb-24">Customers Feedback</h6>
+                                        <div class="d-flex flex-wrap gap-44">
+                                            <div class="border border-gray-100 rounded-8 px-40 py-52 flex-center flex-column flex-shrink-0 text-center">
+                                                <h2 class="mb-6 text-main-600">4.8</h2>
+                                                <div class="flex-center gap-8">
+                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
                                                 </div>
-                                                <h6 class="mb-14 text-md mt-24">Greate Product</h6>
-                                                <p class="text-gray-700">Great value for the price! The MSI SPATIUM M450 offers excellent read/write speeds, making my PC feel much faster. Easy installation and reliable performance, highly recommend it!</p>
-    
-                                                <div class="flex-align gap-20 mt-44">
-                                                    <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                        <i class="ph-bold ph-thumbs-up"></i>
-                                                        Like
-                                                    </button>
-                                                    <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                        <i class="ph-bold ph-arrow-bend-up-left"></i>
-                                                        Replay
-                                                    </a>
+                                                <span class="mt-16 text-gray-500">Average Product Rating</span>
+                                            </div>
+                                            <div class="border border-gray-100 rounded-8 px-24 py-40 flex-grow-1">
+                                                <div class="flex-align gap-8 mb-20">
+                                                    <span class="text-gray-900 flex-shrink-0">5</span>
+                                                    <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 70%"></div>
+                                                    </div>
+                                                    <div class="flex-align gap-4">
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                    <span class="text-gray-900 flex-shrink-0">124</span>
+                                                </div>
+                                                <div class="flex-align gap-8 mb-20">
+                                                    <span class="text-gray-900 flex-shrink-0">4</span>
+                                                    <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 50%"></div>
+                                                    </div>
+                                                    <div class="flex-align gap-4">
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                    <span class="text-gray-900 flex-shrink-0">52</span>
+                                                </div>
+                                                <div class="flex-align gap-8 mb-20">
+                                                    <span class="text-gray-900 flex-shrink-0">3</span>
+                                                    <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 35%"></div>
+                                                    </div>
+                                                    <div class="flex-align gap-4">
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                    <span class="text-gray-900 flex-shrink-0">12</span>
+                                                </div>
+                                                <div class="flex-align gap-8 mb-20">
+                                                    <span class="text-gray-900 flex-shrink-0">2</span>
+                                                    <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 20%"></div>
+                                                    </div>
+                                                    <div class="flex-align gap-4">
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                    <span class="text-gray-900 flex-shrink-0">5</span>
+                                                </div>
+                                                <div class="flex-align gap-8 mb-0">
+                                                    <span class="text-gray-900 flex-shrink-0">1</span>
+                                                    <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 5%"></div>
+                                                    </div>
+                                                    <div class="flex-align gap-4">
+                                                        <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                        <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                    </div>
+                                                    <span class="text-gray-900 flex-shrink-0">2</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-start gap-24">
-                                            <img src="../assets/images/team_members/devoloper2.jpg" alt="" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
-                                            <div class="flex-grow-1">
-                                                <div class="flex-between align-items-start gap-8 ">
-                                                    <div class="">
-                                                        <h6 class="mb-12 text-md">Adem Bouafia</h6>
-                                                        <div class="flex-align gap-8">
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                    </div>
-                                                    <span class="text-gray-800 text-xs">3 Days ago</span>
-                                                </div>
-                                                <h6 class="mb-14 text-md mt-24">Greate Product</h6>
-                                                <p class="text-gray-700">Solid performance and great speed boost, but make sure your motherboard supports PCIe 4.0 to get the full benefit. Overall, a great SSD for the price!</p>
-    
-                                                <div class="flex-align gap-20 mt-44">
-                                                    <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                        <i class="ph-bold ph-thumbs-up"></i>
-                                                        Like
-                                                    </button>
-                                                    <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                        <i class="ph-bold ph-arrow-bend-up-left"></i>
-                                                        Replay
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-    
-                                        
                                     </div>
-                                    <div class="col-lg-6">
-                                        <div class="ms-xxl-5">
-                                            <h6 class="mb-24">Customers Feedback</h6>
-                                            <div class="d-flex flex-wrap gap-44">
-                                                <div class="border border-gray-100 rounded-8 px-40 py-52 flex-center flex-column flex-shrink-0 text-center">
-                                                    <h2 class="mb-6 text-main-600">4.8</h2>
-                                                    <div class="flex-center gap-8">
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    </div>
-                                                    <span class="mt-16 text-gray-500">Average Product Rating</span>
-                                                </div>
-                                                <div class="border border-gray-100 rounded-8 px-24 py-40 flex-grow-1">
-                                                    <div class="flex-align gap-8 mb-20">
-                                                        <span class="text-gray-900 flex-shrink-0">5</span>
-                                                        <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
-                                                            <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 70%"></div>
-                                                        </div>
-                                                        <div class="flex-align gap-4">
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                        <span class="text-gray-900 flex-shrink-0">124</span>
-                                                    </div>
-                                                    <div class="flex-align gap-8 mb-20">
-                                                        <span class="text-gray-900 flex-shrink-0">4</span>
-                                                        <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                                                            <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 50%"></div>
-                                                        </div>
-                                                        <div class="flex-align gap-4">
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                        <span class="text-gray-900 flex-shrink-0">52</span>
-                                                    </div>
-                                                    <div class="flex-align gap-8 mb-20">
-                                                        <span class="text-gray-900 flex-shrink-0">3</span>
-                                                        <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
-                                                            <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 35%"></div>
-                                                        </div>
-                                                        <div class="flex-align gap-4">
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                        <span class="text-gray-900 flex-shrink-0">12</span>
-                                                    </div>
-                                                    <div class="flex-align gap-8 mb-20">
-                                                        <span class="text-gray-900 flex-shrink-0">2</span>
-                                                        <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                            <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 20%"></div>
-                                                        </div>
-                                                        <div class="flex-align gap-4">
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                        <span class="text-gray-900 flex-shrink-0">5</span>
-                                                    </div>
-                                                    <div class="flex-align gap-8 mb-0">
-                                                        <span class="text-gray-900 flex-shrink-0">1</span>
-                                                        <div class="progress w-100 bg-gray-100 rounded-pill h-8" role="progressbar" aria-label="Basic example" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100">
-                                                            <div class="progress-bar bg-main-600 rounded-pill" style="wiDTh: 5%"></div>
-                                                        </div>
-                                                        <div class="flex-align gap-4">
-                                                            <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                            <span class="text-xs fw-medium text-gray-400 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        </div>
-                                                        <span class="text-gray-900 flex-shrink-0">2</span>
-                                                    </div>
-                                                </div>
+                                    <div class="ms-xxl-5 pt-24 mt-24 border-top border-gray-100">
+                                        <div class="">
+                                            <h6 class="mb-24">Write a Review</h6>
+                                            <div class="flex-align gap-8">
+                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
                                             </div>
                                         </div>
-                                        <div class="ms-xxl-5 pt-24 mt-24 border-top border-gray-100">
-                                            <div class="">
-                                                <h6 class="mb-24">Write a Review</h6>
-                                                <div class="flex-align gap-8">
-                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+                                        <div class="mt-32">
+                                            <form action="#">   
+                                                <div class="mb-32">
+                                                    <label for="title" class="text-neutral-600 mb-8">Review Title</label>
+                                                    <input type="text" class="common-input rounded-8" id="title" placeholder="Write Your review title here...">
                                                 </div>
-                                            </div>
-                                            <div class="mt-32">
-                                                <form action="#">   
-                                                    <div class="mb-32">
-                                                        <label for="title" class="text-neutral-600 mb-8">Review Title</label>
-                                                        <input type="text" class="common-input rounded-8" id="title" placeholder="Write Your review title here...">
-                                                    </div>
-                                                    <div class="mb-32">
-                                                        <label for="desc" class="text-neutral-600 mb-8">Review Content</label>
-                                                        <textarea class="common-input rounded-8" id="desc" placeholder="Your Comments here ...."></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-main rounded-pill mt-48">Submit Review</button>
-                                                </form>
-                                            </div>
+                                                <div class="mb-32">
+                                                    <label for="desc" class="text-neutral-600 mb-8">Review Content</label>
+                                                    <textarea class="common-input rounded-8" id="desc" placeholder="Your Comments here ...."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-main rounded-pill mt-48">Submit Review</button>
+                                            </form>
                                         </div>
-                                    </div>  
-                                </div>
-                            </div>  
-                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>  
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- ========================== Product Details Two End =========================== -->
+    </div>
+</section>
+<!-- ========================== Product Details Two End =========================== -->
 <!-- ========================== Similar Product Start ============================= -->
 <section class="new-arrival pb-80">
     <div class="container container-lg">
@@ -1452,6 +1556,57 @@
     </div>
  </section>
 <!-- ========================== Similar Product End ============================= -->
+<div id="reportModal" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h2>Submit Product Report</h2>
+          <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      
+      <form id="reportForm">
+          <div class="form-group">
+              <label for="productId">Product ID</label>
+              <input type="text" id="productId" name="productId" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="productName">Product Name</label>
+              <input type="text" id="productName" name="productName" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="reportType">Report Type</label>
+              <select id="reportType" name="reportType" required>
+                  <option value="">Select a report type</option>
+                  <option value="defect">Product Defect</option>
+                  <option value="improvement">Improvement Suggestion</option>
+                  <option value="question">Question</option>
+                  <option value="other">Other</option>
+              </select>
+          </div>
+          
+          <div class="form-group">
+              <label for="reportDetails">Report Details</label>
+              <textarea id="reportDetails" name="reportDetails" required></textarea>
+          </div>
+
+          <div class="form-group">
+              <label for="contactEmail">Your Email (optional)</label>
+              <input type="email" id="contactEmail" name="contactEmail">
+          </div>
+          
+          <button type="submit" class="submit-btn">Submit Report</button>
+      </form>
+      
+      <div id="successMessage" class="success-message">
+          Your report has been submitted successfully!
+      </div>
+      
+      <div id="errorMessage" class="error-message">
+          There was an error submitting your report. Please try again.
+      </div>
+  </div>
+</div>
 
 <!-- ========================== Shipping Section Start ============================ -->
 <section class="shipping mb-24" id="shipping">
@@ -1654,5 +1809,94 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script src="../assets/js/js_functions/preloader.js"></script>
   <script src="../assets/js/js_functions/product_details.js"></script>
+  <script>
+    // Get DOM elements
+    const reportLink = document.getElementById('reportLink');
+    const reportModal = document.getElementById('reportModal');
+    const closeModal = document.getElementById('closeModal');
+    const reportForm = document.getElementById('reportForm');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // Open modal when clicking the report link
+    reportLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportModal.style.display = 'flex';
+    });
+    
+    // Close modal when clicking the close button
+    closeModal.addEventListener('click', function() {
+        reportModal.style.display = 'none';
+        // Reset form and messages
+        reportForm.reset();
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+    });
+    
+    // Close modal when clicking outside the modal content
+    window.addEventListener('click', function(e) {
+        if (e.target === reportModal) {
+            reportModal.style.display = 'none';
+            // Reset form and messages
+            reportForm.reset();
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+    });
+    
+    // Handle form submission
+    reportForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Hide any previous messages
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Get form data
+        const formData = new FormData(reportForm);
+        const reportData = {};
+        
+        // Convert FormData to a regular object
+        for (const [key, value] of formData.entries()) {
+            reportData[key] = value;
+        }
+        
+        // Create XHR request
+        const xhr = new XMLHttpRequest();
+        
+        // Replace with your actual endpoint
+        const endpoint = 'https://your-server-endpoint.com/api/reports';
+        
+        xhr.open('POST', endpoint, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Success
+                successMessage.style.display = 'block';
+                reportForm.reset();
+                
+                // Close modal after 3 seconds
+                setTimeout(function() {
+                    reportModal.style.display = 'none';
+                    successMessage.style.display = 'none';
+                }, 3000);
+            } else {
+                // Error
+                errorMessage.style.display = 'block';
+                console.error('XHR Error:', xhr.statusText, xhr.responseText);
+            }
+        };
+        
+        xhr.onerror = function() {
+            // Network error
+            errorMessage.style.display = 'block';
+            console.error('Network Error');
+        };
+        
+        // Send the data
+        xhr.send(JSON.stringify(reportData));
+    });
+</script>
     </body>
 </html>

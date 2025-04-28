@@ -55,50 +55,138 @@ document.addEventListener("DOMContentLoaded", function () {
     
         const loginData = JSON.stringify({ email, password });
     
-        // Essayer chaque type d'utilisateur
         const loginEndpoints = [
-            { url: "http://localhost:3000/admin/login", redirect: "../dashbordA_pages/index.html" },
-            { url: "http://localhost:3000/vendor/login", redirect: "../dashbordBout_pages/index.html" },
-            { url: "http://localhost:3000/client/login", redirect: "../index.html" },
-            { url: "http://localhost:3000/moderator/login", redirect: "../dashbordBout_pages/index.html" },
+            { 
+                url: "http://localhost:3000/admin/login", 
+                redirect: {
+                    admin: "../dashbordA_pages/index.html",
+                    superAdmin: "../dashbordA_pages/index.html" // You can set different paths if needed
+                },
+                idField: "adminId",
+                userType: "admin"
+            },
+            { 
+                url: "http://localhost:3000/vendor/login", 
+                redirect: "../dashbordBout_pages/index.html",
+                idField: "vendorId",
+                userType: "vendor"
+            },
+            { 
+                url: "http://localhost:3000/client/login", 
+                redirect: "../index.html",
+                idField: "clientId",
+                userType: "client"
+            },
+            { 
+                url: "http://localhost:3000/moderator/login", 
+                redirect: "../dashbordBout_pages/index.html",
+                idField: "moderatorId",
+                userType: "moderator"
+            },
         ];
     
-        // Tentative séquentielle
         function tryLogin(index = 0) {
             if (index >= loginEndpoints.length) {
-            alert("Échec de la connexion : vérifiez vos identifiants.");
-            return;
+                alert("Échec de la connexion : vérifiez vos identifiants ou votre type de compte.");
+                return;
             }
     
-            const { url, redirect } = loginEndpoints[index];
-            const xhr = new XMLHttpRequest();
-    
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-    
-            xhr.onload = function () {
-            if (xhr.status === 200) {
-                const res = JSON.parse(xhr.responseText);
-                localStorage.setItem("token", res.token);
-                localStorage.setItem("userId", res.userId);
-                localStorage.setItem("role", res.role); 
-                window.location.href = redirect;
-            } else {
-                tryLogin(index + 1); // Essayer le suivant
-            }
-            };
-    
-            xhr.onerror = function () {
-            alert("Erreur réseau lors de la tentative de connexion.");
-            };
-    
-            xhr.send(loginData);
+            const { url, redirect, idField, userType } = loginEndpoints[index];
+            
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: loginData
+            })
+            .then(response => {
+                console.log(`Trying ${url} - Status: ${response.status}`);
+                
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Login failed");
+                }
+            })
+            .then(data => {
+                console.log("Response:", data);
+                
+                // Store token
+                localStorage.setItem("token", data.token);
+                
+                // Store user type
+                localStorage.setItem("userType", userType);
+                
+                // Get the correct ID based on user type and response structure
+                let userId = null;
+                
+                // Check all possible locations for the ID
+                if (data[idField]) {
+                    // If ID is directly in the response with the specified field name
+                    userId = data[idField];
+                } else if (userType === "admin" && data.admin && data.admin.id) {
+                    // For admin users with nested admin object
+                    userId = data.admin.id;
+                } else if (data[userType] && data[userType].id) {
+                    // For responses with nested user objects like data.vendor.id
+                    userId = data[userType].id;
+                } else if (data.id) {
+                    // Fallback to generic id field
+                    userId = data.id;
+                } else if (data._id) {
+                    // MongoDB often uses _id
+                    userId = data._id;
+                }
+                
+                // Log the extracted ID for debugging
+                console.log(`Extracted ${userType} ID:`, userId);
+                
+                if (userId) {
+                    localStorage.setItem("userId", userId);
+                } else {
+                    console.warn(`Could not extract ID for ${userType} user`);
+                }
+                
+                // Handle role - specifically check for admin types
+                let role = userType; // Default to the user type
+                
+                if (userType === "admin") {
+                    // For admin endpoint, check for specific role
+                    if (data.admin && data.admin.role) {
+                        role = data.admin.role; // This will be "admin" or "superAdmin"
+                    } else if (data.role) {
+                        role = data.role;
+                    }
+                } else if (data.role) {
+                    // For other user types that might have roles
+                    role = data.role;
+                }
+                
+                // Store the role
+                localStorage.setItem("userRole", role);
+                
+                // Determine redirect URL based on role for admin users
+                let redirectUrl = redirect;
+                if (typeof redirect === 'object' && (role === 'admin' || role === 'superAdmin')) {
+                    redirectUrl = redirect[role] || redirect.admin;
+                }
+                
+                // Log the role for debugging
+                console.log(`User logged in as: ${role}`);
+                
+                // Redirect to the appropriate page
+                window.location.href = redirectUrl;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                tryLogin(index + 1);
+            });
         }
 
-      tryLogin(); // Démarrer la première tentative
+        tryLogin();
     });
 });
-
 
 
 //login validation 

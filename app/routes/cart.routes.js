@@ -3,4 +3,6 @@ module.exports = (app) => {
 
     app.post('/cart/add', cart.addToCart);
     app.delete('/cart/remove', cart.removeFromCart);
+    app.get('/cart/:clientId', cart.getCart);
+    app.put('/cart/update', cart.updateCartItem);
 }
