@@ -80,6 +80,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (xhr.status === 200) {
                 const res = JSON.parse(xhr.responseText);
                 localStorage.setItem("token", res.token);
+                localStorage.setItem("userId", res.userId);
+                localStorage.setItem("role", res.role); 
                 window.location.href = redirect;
             } else {
                 tryLogin(index + 1); // Essayer le suivant

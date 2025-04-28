@@ -660,34 +660,46 @@
         <div class="row gy-5">
             <div class="col-lg-8">
                 <div class="contact-box border border-gray-100 rounded-16 px-24 py-40">
-                    <form action="#">
-                        <h6 class="mb-32">Make Custom Request</h6>
-                        <div class="row gy-4">
-                            <div class="col-sm-6 col-xs-6">
-                                <label for="name" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">Full Name <span class="text-danger text-xl line-height-1">*</span> </label>
-                                <input type="text" class="common-input px-16" id="name" placeholder="Full name">
-                            </div>
-                            <div class="col-sm-6 col-xs-6">
-                                <label for="email" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">Email Address <span class="text-danger text-xl line-height-1">*</span> </label>
-                                <input type="email" class="common-input px-16" id="email" placeholder="Email address">
-                            </div>
-                            <div class="col-sm-6 col-xs-6">
-                                <label for="phone" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">Phone Number<span class="text-danger text-xl line-height-1">*</span> </label>
-                                <input type="number" class="common-input px-16" id="phone" placeholder="Phone Number*">
-                            </div>
-                            <div class="col-sm-6 col-xs-6">
-                                <label for="subject" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">Subject <span class="text-danger text-xl line-height-1">*</span> </label>
-                                <input type="text" class="common-input px-16" id="subject" placeholder="Subject">
-                            </div>
-                            <div class="col-sm-12">
-                                <label for="message" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">Message <span class="text-danger text-xl line-height-1">*</span> </label>
-                                <textarea class="common-input px-16" id="message" placeholder="Type your message"></textarea>
-                            </div>
-                            <div class="col-sm-12 mt-32">
-                                <button type="submit" class="btn btn-main py-18 px-32 rounded-8">Send</button>
-                            </div>
+                  <form id="reportForm">
+                    <h6 class="mb-32">Make Custom Request</h6>
+                    <div class="row gy-4">
+                        <div class="col-sm-6 col-xs-6">
+                            <label for="name" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">
+                                Full Name <span class="text-danger text-xl line-height-1">*</span>
+                            </label>
+                            <input type="text" class="common-input px-16" id="name" name="name" placeholder="Full name" required>
                         </div>
-                    </form>
+                        <div class="col-sm-6 col-xs-6">
+                            <label for="email" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">
+                                Email Address <span class="text-danger text-xl line-height-1">*</span>
+                            </label>
+                            <input type="email" class="common-input px-16" id="email" name="email" placeholder="Email address" required>
+                        </div>
+                        <div class="col-sm-6 col-xs-6">
+                            <label for="phone" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">
+                                Phone Number<span class="text-danger text-xl line-height-1">*</span>
+                            </label>
+                            <input type="number" class="common-input px-16" id="phone" name="phone" placeholder="Phone Number*" required>
+                        </div>
+                        <div class="col-sm-6 col-xs-6">
+                            <label for="subject" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">
+                                Subject <span class="text-danger text-xl line-height-1">*</span>
+                            </label>
+                            <input type="text" class="common-input px-16" id="subject" name="subject" placeholder="Subject" required>
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="message" class="flex-align gap-4 text-sm font-heading-two text-gray-900 fw-semibold mb-4">
+                                Message <span class="text-danger text-xl line-height-1">*</span>
+                            </label>
+                            <textarea class="common-input px-16" id="message" name="message" placeholder="Type your message" required></textarea>
+                        </div>
+                        <div class="col-sm-12 mt-32">
+                            <button type="submit" class="btn btn-main py-18 px-32 rounded-8">Send</button>
+                        </div>
+                    </div>
+                </form>
+                
+                
                 </div>
             </div>
             <div class="col-lg-4">
@@ -906,6 +918,7 @@
 <script src="../assets/js/main.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 <script src="../assets/js/js_functions/preloader.js"></script>
+<script src="../assets/js/js_functions/reports.js"></script>
 
     </body>
 </html>

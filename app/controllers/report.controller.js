@@ -102,3 +102,53 @@ exports.getAllReports = async (req, res) => {
         });
     }
 };
+exports.deleteReport = async (req, res) => {
+    try {
+        const report = await Report.findByIdAndDelete(req.params.id);
+        
+        if (!report) {
+            return res.status(404).json({ message: 'Rapport non trouvé' });
+        }
+        
+        res.status(200).json({ 
+            message: 'Rapport supprimé avec succès',
+            deletedReport: report
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Erreur lors de la suppression du rapport',
+            error: err.message
+        });
+    }
+};
+
+// Update report status
+exports.updateReportStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        
+        if (!status) {
+            return res.status(400).json({ message: 'Le statut est requis' });
+        }
+        
+        const report = await Report.findByIdAndUpdate(
+            req.params.id, 
+            { status: status },
+            { new: true }
+        );
+        
+        if (!report) {
+            return res.status(404).json({ message: 'Rapport non trouvé' });
+        }
+        
+        res.status(200).json({
+            message: 'Statut du rapport mis à jour avec succès',
+            updatedReport: report
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Erreur lors de la mise à jour du statut du rapport',
+            error: err.message
+        });
+    }
+};

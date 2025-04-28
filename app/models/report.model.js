@@ -10,7 +10,7 @@ const reportSchema = new mongoose.Schema({
         type: String,
         enum: ['Platform', 'Product', 'Vendor', 'Moderator'],
         required: true
-    },
+    }, 
     targetId: {
         type: mongoose.Schema.Types.ObjectId,
         required: function () {
