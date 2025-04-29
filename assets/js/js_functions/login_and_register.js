@@ -1395,5 +1395,5 @@ if (typeof Swal === "undefined") {
     setTimeout(() => {
       // Redirect to home page
       window.location.href = "index.html"
-    }, 2000)
+    }, 1000)
   }

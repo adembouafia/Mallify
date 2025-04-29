@@ -167,9 +167,7 @@
 
                 <li class="user-footer">
                   <a href="Settings.html" class="btn btn-default btn-flat">Settings </a>
-                  <a href="#" class="btn btn-default btn-flat float-end"
-                    >Sign out</a
-                  >
+                  <a href="#" class="btn btn-default btn-flat float-end" onclick="handleLogout()">Sign out</a>
                 </li>
                 
               </ul>
@@ -1483,6 +1481,9 @@
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="../../assets/js/js_functions/shopAdmin.js"></script>
+
+    <!-- Add this in the <head> or before your script tags -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"

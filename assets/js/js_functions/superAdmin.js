@@ -569,8 +569,96 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+function showToast(title, message, type) {
+  // Check if SweetAlert2 is available
+  if (typeof window.Swal !== "undefined") {
+    // Define custom icons based on type
+    let iconHtml = '';
+    let iconColor = '';
+    
+    switch(type) {
+      case 'success':
+        iconHtml = '<div style="font-size: 24px; font-weight: bold;">✓</div>';
+        iconColor = '#00e676';
+        break;
+      case 'error':
+        iconHtml = '<div style="font-size: 24px; font-weight: bold;">✕</div>';
+        iconColor = '#ff1744';
+        break;
+      case 'warning':
+        iconHtml = '<div style="font-size: 24px; font-weight: bold;">!</div>';
+        iconColor = '#ff9100';
+        break;
+      case 'info':
+      default:
+        iconHtml = '<div style="font-size: 24px; font-weight: bold;">i</div>';
+        iconColor = '#40c4ff';
+        break;
+    }
+    
+    window.Swal.fire({
+      title: `<span style="font-weight:bold;">${title}</span>`,
+      html: `
+        <div style="display: flex; align-items: center;">
+          <div style="width: 30px; height: 30px; border-radius: 50%; background-color: ${iconColor}; display: flex; justify-content: center; align-items: center; color: white; margin-right: 10px;">
+            ${iconHtml}
+          </div>
+          <p style="margin:0;">${message}</p>
+        </div>
+      `,
+      showConfirmButton: false,
+      toast: true,
+      position: "top-end",
+      timer: 2000,
+      timerProgressBar: true,
+      background: "#1e1e2f",
+      color: "#fff",
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", window.Swal.stopTimer)
+        toast.addEventListener("mouseleave", window.Swal.resumeTimer)
+      },
+      customClass: {
+        popup: "cool-toast-popup",
+        timerProgressBar: "cool-toast-timer",
+      },
+    })
+  } else {
+    // Fallback to console if SweetAlert2 is not available
+    console.log(`${type.toUpperCase()}: ${title} - ${message}`)
+  }
+}
+
+
+function showAlert(options) {
+  if (typeof Swal !== "undefined") {
+    if (!options.input && !options.showCancelButton && !options.showConfirmButton) {
+      showToast(options.title, options.text || "", options.icon || "info")
+      if (options.then) {
+        setTimeout(() => {
+          options.then()
+        }, 2000)
+      }
+      return Promise.resolve()
+    } else {
+      return Swal.fire(options)
+    }
+  } else {
+    alert(options.text || options.title)
+    if (options.then) {
+      options.then()
+    }
+    return Promise.resolve()
+  }
+}
 
 
 
+function handleLogout() {
+  localStorage.clear()
 
-
+  showToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success")
+  setTimeout(() => {
+    // Redirect to home page
+    window.location.href = "../index.html"
+  }, 1000)
+}
