@@ -398,6 +398,7 @@ exports.deleteProduct = async (req, res) => {
 
 
 
+
 // Add review to product
 exports.addReview = async (req, res) => {
   try {
@@ -439,12 +440,14 @@ exports.addReview = async (req, res) => {
     } else {
       // Add new review
       product.reviews.push({
-        userId: req.user.id,
-        userName: req.user.name || req.user.email.split("@")[0], // Use name or email username
+        productId: product._id,
+        clientId: req.user.id,
+        clientName: req.user.name || req.user.email.split("@")[0],
         rating,
         title,
         comment,
       })
+      
     }
 
     // Save the product (pre-save hook will calculate average rating)
@@ -471,7 +474,6 @@ exports.getProductReviews = async (req, res) => {
   try {
     const productId = req.params.id
 
-    // Find the product
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({
@@ -499,58 +501,46 @@ exports.getProductReviews = async (req, res) => {
 // Delete a review
 exports.deleteReview = async (req, res) => {
   try {
-    const productId = req.params.productId
-    const reviewId = req.params.reviewId
+    const { productId, reviewId } = req.params;
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ status: "fail", message: "Product not found" });
 
-    // Find the product
-    const product = await Product.findById(productId)
-    if (!product) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Product not found",
-      })
+    const review = product.reviews.id(reviewId);
+    if (!review) return res.status(404).json({ status: "fail", message: "Review not found" });
+
+    console.log("req.user =", req.user);
+    console.log("review.clientId =", review.clientId);
+
+    if (
+      (!review.clientId || review.clientId.toString() !== req.user.id) &&
+      !["admin", "moderator", "vendor"].includes(req.user.role)
+    ) {
+      return res.status(403).json({ status: "fail", message: "Not authorized to delete this review" });
     }
 
-    // Find the review
-    const reviewIndex = product.reviews.findIndex((review) => review._id.toString() === reviewId)
-
-    if (reviewIndex === -1) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Review not found",
-      })
-    }
-
-    // Check if user is authorized to delete this review
-    const review = product.reviews[reviewIndex]
-    if (review.userId.toString() !== req.user.id && !["admin", "moderator"].includes(req.user.role)) {
-      return res.status(403).json({
-        status: "fail",
-        message: "You are not authorized to delete this review",
-      })
-    }
-
-    // Remove the review
-    product.reviews.splice(reviewIndex, 1)
-
-    // Save the product (pre-save hook will recalculate average rating)
-    await product.save()
+    product.reviews = product.reviews.filter(r => r._id.toString() !== reviewId);
+    await product.save();
 
     res.status(200).json({
       status: "success",
+      message: "Review deleted",
       data: {
         reviews: product.reviews,
         averageRating: product.averageRating,
-        reviewCount: product.reviewCount,
-      },
-    })
+        reviewCount: product.reviewCount
+      }
+    });
   } catch (err) {
-    res.status(400).json({
+    console.error("Delete review error:", err);
+    res.status(500).json({
       status: "fail",
-      message: err.message,
-    })
+      message: "Server error",
+      error: err.message
+    });
   }
-}
+};
+
+
 
 // Get user's review for a product
 exports.getUserReview = async (req, res) => {

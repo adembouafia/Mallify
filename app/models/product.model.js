@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 // Review schema as a subdocument
 const reviewSchema = new mongoose.Schema(
     {
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            required: true
+          },
         clientId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Client",
