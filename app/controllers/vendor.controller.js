@@ -93,7 +93,8 @@ exports.login = async (req, res) => {
         const token = jwt.sign({
             id: vendor._id,
             email: vendor.email,
-            role: vendor.role
+            role: vendor.role,
+            shopId: vendor.shop
         }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
         res.send({

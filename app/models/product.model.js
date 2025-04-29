@@ -41,15 +41,15 @@ const productSchema = new mongoose.Schema({
     },
     shop: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Shop",
-        required: false  // Shop is not always required
+        ref: "shop",
+        required: true  
     },
     mainImage: {
         type: String,
-        required: false  // Optional, as not all products may have a main image
+        required: true  
     },
     otherImages: {
-        type: [String],  // Array of strings to store filenames of additional images
+        type: [String], 
         default: []
     },
 
@@ -59,7 +59,7 @@ const productSchema = new mongoose.Schema({
     }
 
 }, {
-    timestamps: true  // Adds createdAt and updatedAt timestamps to the document
+    timestamps: true  
 });
 
 module.exports = mongoose.model("Product", productSchema);

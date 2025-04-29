@@ -99,9 +99,21 @@ function loadSubcategories(categoryId, categoryName) {
   });
 }
 
+
 function loadProducts() {
+  // Get user data from localStorage to determine role
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+  
+  // Prepare URL with query parameters if needed
+  let url = "http://localhost:3000/product/get/myProducts";
+  
+  // For admin/moderator, we may need to specify a shopId
+  if ((userData.role === "admin" || userData.role === "moderator") && userData.managingShopId) {
+    url += `?shopId=${userData.managingShopId}`;
+  }
+  
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/product/get", true);
+  xhr.open("GET", url, true);
 
   if (token) {
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -109,42 +121,67 @@ function loadProducts() {
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const response = JSON.parse(xhr.responseText);
+      try {
+        const response = JSON.parse(xhr.responseText);
+        console.log("Products loaded:", response);
 
-      const tbody = document.getElementById("productTableBody");
-      tbody.innerHTML = "";
-
-      if (
-        response.status === "success" &&
-        response.data &&
-        response.data.products
-      ) {
-        response.data.products.forEach((product) => {
-          addProductToTable(product);
-        });
-
-        const productCountElement = document.querySelector(
-          ".info-box:nth-child(1) .info-box-number"
-        );
-        if (productCountElement) {
-          productCountElement.textContent = response.data.products.length;
+        const tbody = document.getElementById("productTableBody");
+        if (!tbody) {
+          console.error("Product table body element not found");
+          return;
         }
-      } else {
-        showAlert("warning", "No products found");
+
+        tbody.innerHTML = "";
+
+        if (
+          response.status === "success" &&
+          response.data &&
+          response.data.products &&
+          response.data.products.length > 0
+        ) {
+          response.data.products.forEach((product) => {
+            addProductToTable(product);
+          });
+
+          const productCountElement = document.querySelector(
+            ".info-box:nth-child(1) .info-box-number"
+          );
+          if (productCountElement) {
+            productCountElement.textContent = response.data.products.length;
+          }
+          
+          // If response contains shopId for admin/moderator, store it for future use
+          if (response.data.shopId && (userData.role === "admin" || userData.role === "moderator")) {
+            userData.managingShopId = response.data.shopId;
+            localStorage.setItem("userData", JSON.stringify(userData));
+          }
+        } else {
+          console.log("No products found in response");
+          showAlert("warning", "No products found");
+        }
+      } catch (e) {
+        console.error("Error parsing products response:", e);
+        showAlert("danger", "Error processing server response");
       }
     } else {
-      showAlert("danger", "Failed to load products");
+      console.error("Failed to load products:", xhr.status, xhr.statusText);
+      try {
+        const errorResponse = JSON.parse(xhr.responseText);
+        showAlert("danger", errorResponse.message || "Failed to load products");
+      } catch (e) {
+        showAlert("danger", "Failed to load products");
+      }
     }
   };
 
   xhr.onerror = () => {
+    console.error("Network error occurred while loading products");
     showAlert("danger", "Network error occurred");
   };
 
   xhr.send();
 }
 
-// Also update the loadCategories function to better handle category loading
 function loadCategories() {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "http://localhost:3000/category", true);
@@ -276,7 +313,6 @@ function populateEditCategoryDropdown() {
   });
 }
 
-// Fixed populateSubcategoryDropdown function to handle both add and edit forms
 function populateSubcategoryDropdown(categoryName, formPrefix = "") {
   console.log(
     `Populating subcategory dropdown for category: ${categoryName}, prefix: ${formPrefix}`
@@ -1049,9 +1085,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("addProductForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const form = e.target;
-
+    e.preventDefault()
+    const form = e.target
+  
     const requiredFields = [
       "productName",
       "productId",
@@ -1060,151 +1096,152 @@ document.addEventListener("DOMContentLoaded", () => {
       "productSubcategory",
       "Stock",
       "description",
-    ];
-    let isValid = true;
-
+    ]
+    let isValid = true
+  
     requiredFields.forEach((field) => {
       if (!form[field] || !form[field].value.trim()) {
-        showAlert(
-          "danger",
-          `${field.replace(/([A-Z])/g, " $1").trim()} is required`
-        );
-        isValid = false;
+        showAlert("danger", `${field.replace(/([A-Z])/g, " $1").trim()} is required`)
+        isValid = false
       }
-    });
-
+    })
+  
     if (!form.mainImage.files[0]) {
-      showAlert("danger", "Main image is required");
-      isValid = false;
+      showAlert("danger", "Main image is required")
+      isValid = false
     }
-
-    if (!isValid) return;
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
+  
+    if (!isValid) return
+  
+    const submitBtn = form.querySelector('button[type="submit"]')
+    const originalBtnText = submitBtn.innerHTML
     submitBtn.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...';
-    submitBtn.disabled = true;
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...'
+    submitBtn.disabled = true
+  
+    const formData = new FormData()
+  
+    formData.append("productName", form.productName.value)
+    formData.append("productId", form.productId.value)
+    formData.append("productPrice", form.productPrice.value)
+    formData.append("productDetails", editor1.getHTMLCode())
+  
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}")
+    
 
-    const formData = new FormData();
+    if (userData.role === "admin" || userData.role === "moderator") {
 
-    formData.append("productName", form.productName.value);
-    formData.append("productId", form.productId.value);
-    formData.append("productPrice", form.productPrice.value);
-    formData.append("productDetails" , editor1.getHTMLCode())
-
-    const selectedCategory = form.productCategory.value;
-    const selectedSubcategory = form.productSubcategory.value;
-
-    let categoryId = null;
-    const categoryObj = categories.find(
-      (cat) => cat.categoryName === selectedCategory
-    );
-    if (categoryObj) {
-      categoryId = categoryObj._id;
-      console.log("Found category ID:", categoryId);
-      formData.append("category", categoryId);
-    } else {
-      console.error("Could not find category ID for:", selectedCategory);
-      showAlert("danger", "Invalid category selected");
-      submitBtn.innerHTML = originalBtnText;
-      submitBtn.disabled = false;
-      return;
+      const shopId = userData.managingShopId || form.shopId?.value
+      
+      if (shopId) {
+        formData.append("shopId", shopId)
+      } else {
+        console.warn("Shop ID is required for admins and moderators")
+      }
     }
-
-    let subCategoryId = null;
+  
+    const selectedCategory = form.productCategory.value
+    const selectedSubcategory = form.productSubcategory.value
+  
+    let categoryId = null
+    const categoryObj = categories.find((cat) => cat.categoryName === selectedCategory)
+    if (categoryObj) {
+      categoryId = categoryObj._id
+      console.log("Found category ID:", categoryId)
+      formData.append("category", categoryId)
+    } else {
+      console.error("Could not find category ID for:", selectedCategory)
+      showAlert("danger", "Invalid category selected")
+      submitBtn.innerHTML = originalBtnText
+      submitBtn.disabled = false
+      return
+    }
+  
+    let subCategoryId = null
     if (subcategories[selectedCategory]) {
       const subcat = subcategories[selectedCategory].find(
-        (sub) => sub.name === selectedSubcategory || sub === selectedSubcategory
-      );
+        (sub) => sub.name === selectedSubcategory || sub === selectedSubcategory,
+      )
       if (subcat && subcat._id) {
-        subCategoryId = subcat._id;
+        subCategoryId = subcat._id
       }
     }
-
+  
     if (!subCategoryId) {
-      showAlert("danger", "Invalid subcategory selected");
-      submitBtn.innerHTML = originalBtnText;
-      submitBtn.disabled = false;
-      return;
+      showAlert("danger", "Invalid subcategory selected")
+      submitBtn.innerHTML = originalBtnText
+      submitBtn.disabled = false
+      return
     }
-
-    formData.append("subCategory", subCategoryId);
-    formData.append(
-      "availability",
-      form.Availability.value === "in_stock" ? "In stock" : "Out of stock"
-    );
-    formData.append("stock", form.Stock.value);
-    formData.append("description", form.description.value);
-
+  
+    formData.append("subCategory", subCategoryId)
+    formData.append("availability", form.Availability.value === "in_stock" ? "In stock" : "Out of stock")
+    formData.append("stock", form.Stock.value)
+    formData.append("description", form.description.value)
+  
     if (form.mainImage.files[0]) {
-      formData.append("mainImage", form.mainImage.files[0]);
+      formData.append("mainImage", form.mainImage.files[0])
     }
-
+  
     if (form.otherImages.files.length > 0) {
       for (let i = 0; i < form.otherImages.files.length; i++) {
-        formData.append("otherImages", form.otherImages.files[i]);
+        formData.append("otherImages", form.otherImages.files[i])
       }
     }
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:3000/product/create", true);
-
+  
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/product/create", true)
+  
     if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
     }
-
+  
     xhr.onload = () => {
-      submitBtn.innerHTML = originalBtnText;
-      submitBtn.disabled = false;
-
+      submitBtn.innerHTML = originalBtnText
+      submitBtn.disabled = false
+  
       if (xhr.status >= 200 && xhr.status < 300) {
-        const response = JSON.parse(xhr.responseText);
-
-        if (
-          response.status === "success" &&
-          response.data &&
-          response.data.product
-        ) {
-          addProductToTable(response.data.product);
-
-          form.reset();
-
-          const addProductModalEl = document.getElementById("addProductModal");
-          let addProductModal = bootstrap.Modal.getInstance(addProductModalEl);
+        const response = JSON.parse(xhr.responseText)
+  
+        if (response.status === "success" && response.data && response.data.product) {
+          addProductToTable(response.data.product)
+  
+          form.reset()
+  
+          const addProductModalEl = document.getElementById("addProductModal")
+          let addProductModal = bootstrap.Modal.getInstance(addProductModalEl)
           if (!addProductModal) {
-            addProductModal = new bootstrap.Modal(addProductModalEl);
+            addProductModal = new bootstrap.Modal(addProductModalEl)
           }
-          addProductModal.hide();
-          form.reset();
-          showAlert("success", "Product added successfully!");
-
-          loadProducts();
+          addProductModal.hide()
+          form.reset()
+          showAlert("success", "Product added successfully!")
+  
+          loadProducts()
         } else {
-          showAlert("danger", response.message || "Failed to add product");
+          showAlert("danger", response.message || "Failed to add product")
         }
       } else {
-        let errorMessage = "Failed to add product";
+        let errorMessage = "Failed to add product"
         try {
-          const response = JSON.parse(xhr.responseText);
-          errorMessage = response.message || errorMessage;
+          const response = JSON.parse(xhr.responseText)
+          errorMessage = response.message || errorMessage
         } catch (e) {
-          console.error("Error parsing response:", e);
+          console.error("Error parsing response:", e)
         }
-        showAlert("danger", errorMessage);
+        showAlert("danger", errorMessage)
       }
-    };
-
+    }
+  
     xhr.onerror = () => {
-      submitBtn.innerHTML = originalBtnText;
-      submitBtn.disabled = false;
-      showAlert("danger", "Network error occurred");
-    };
+      submitBtn.innerHTML = originalBtnText
+      submitBtn.disabled = false
+      showAlert("danger", "Network error occurred")
+    }
+  
+    xhr.send(formData)
+  })
 
-    xhr.send(formData);
-  });
-
-  // Add event listener for the edit product form
   const editProductForm = document.getElementById("editProductForm");
   if (editProductForm) {
     editProductForm.addEventListener("submit", (e) => {
@@ -1213,7 +1250,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Add event listeners for edit and delete buttons
   document.addEventListener("click", (e) => {
     // Edit button
     if (e.target.closest(".editProductBtn")) {

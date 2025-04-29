@@ -18,7 +18,7 @@ module.exports = (app) => {
     app.post('/moderator/login', moderator.login);
     app.post('/moderator/forgotPassword', moderator.forgotPassword);
     app.post('/moderator/reset-password', moderator.resetPassword);
-    app.get('/moderator/all', auth, authorize('vendor'), moderator.getAll);
+    app.get('/moderators/shop/:shopId', moderator.getModeratorsByShop);
     app.put('/moderator/update/:id', auth, authorize('moderator' , 'vendor'), upload.single("moderatorImage"), moderator.updateModerator);
     app.delete('/moderator/delete/:id', auth, authorize('moderator' , 'vendor'), moderator.deleteModerator);
 };

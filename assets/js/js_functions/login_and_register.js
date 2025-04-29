@@ -172,7 +172,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             let clientData = data;
                             if (data.client) clientData = data.client;
                             
-                            // Store all client data in localStorage
                             storeUserDataInLocalStorage(clientData);
                             
                             // Create a standardized object for checkout
@@ -294,6 +293,8 @@ document.addEventListener("DOMContentLoaded", function () {
         tryLogin();
     });
 });
+
+
 //login validation 
 function validateForm(formId) {
     const form = document.getElementById(formId);
@@ -413,11 +414,6 @@ document.getElementById("vendorForm").addEventListener("submit", function (e) {
 
     xhr.send(formData); // Envoie les données, y compris l'image
 });
-
-
-
-
-
 
 
 

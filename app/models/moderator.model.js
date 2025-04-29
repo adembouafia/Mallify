@@ -32,6 +32,10 @@ const moderatorSchema = new mongoose.Schema(
 
     resetPasswordExpires: {
         type: Date,
+    },
+    shop: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "shop"
     }
     
     },

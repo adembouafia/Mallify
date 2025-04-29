@@ -1,9 +1,9 @@
 // Sidebar toggle
-document.addEventListener('DOMContentLoaded', () => {
-  const CLASS_NAME_SIDEBAR_COLLAPSE = 'sidebar-collapse';
-  const CLASS_NAME_SIDEBAR_OPEN = 'sidebar-open';
+document.addEventListener("DOMContentLoaded", () => {
+  const CLASS_NAME_SIDEBAR_COLLAPSE = "sidebar-collapse";
+  const CLASS_NAME_SIDEBAR_OPEN = "sidebar-open";
   const SELECTOR_SIDEBAR_TOGGLE = '[data-lte-toggle="sidebar"]';
-  const SELECTOR_APP_SIDEBAR = '.app-sidebar';
+  const SELECTOR_APP_SIDEBAR = ".app-sidebar";
 
   class PushMenu {
     constructor(element) {
@@ -32,17 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const pushMenuInstances = [];
 
-  document.querySelectorAll(SELECTOR_SIDEBAR_TOGGLE).forEach(btn => {
+  document.querySelectorAll(SELECTOR_SIDEBAR_TOGGLE).forEach((btn) => {
     const pushMenu = new PushMenu(btn);
     pushMenuInstances.push(pushMenu);
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
       pushMenu.toggle();
     });
   });
 
   // Close sidebar when clicking outside
-  document.addEventListener('click', (e) => {
+  document.addEventListener("click", (e) => {
     const sidebar = document.querySelector(SELECTOR_APP_SIDEBAR);
     const toggleBtn = document.querySelector(SELECTOR_SIDEBAR_TOGGLE);
 
@@ -60,88 +60,89 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
 // nav-treeview
-document.addEventListener('DOMContentLoaded', () => {
-  const treeviewToggles = document.querySelectorAll('.nav-item > .nav-link');
-  treeviewToggles.forEach(toggle => {
-      toggle.addEventListener('click', (e) => {
-          const parentItem = toggle.closest('.nav-item');
-          const submenu = parentItem.querySelector('.nav-treeview');
-          if (submenu) {
-              e.preventDefault();
-              submenu.classList.toggle('show');
-              parentItem.classList.toggle('menu-open');
-              const arrow = toggle.querySelector('.nav-arrow');
-              if (arrow) {
-                  arrow.classList.toggle('bi-chevron-down');
-              }
-          }
-      });
+document.addEventListener("DOMContentLoaded", () => {
+  const treeviewToggles = document.querySelectorAll(".nav-item > .nav-link");
+  treeviewToggles.forEach((toggle) => {
+    toggle.addEventListener("click", (e) => {
+      const parentItem = toggle.closest(".nav-item");
+      const submenu = parentItem.querySelector(".nav-treeview");
+      if (submenu) {
+        e.preventDefault();
+        submenu.classList.toggle("show");
+        parentItem.classList.toggle("menu-open");
+        const arrow = toggle.querySelector(".nav-arrow");
+        if (arrow) {
+          arrow.classList.toggle("bi-chevron-down");
+        }
+      }
+    });
   });
 
-  const activeSubItems = document.querySelectorAll('.nav-treeview .nav-link.active');
-  activeSubItems.forEach(item => {
-      const treeview = item.closest('.nav-treeview');
-      if (treeview) {
-          treeview.classList.add('show');
-          const parentItem = treeview.closest('.nav-item');
-          if (parentItem) {
-              parentItem.classList.add('menu-open');
-              const arrow = parentItem.querySelector('.nav-arrow');
-              if (arrow) {
-                  arrow.classList.add('bi-chevron-down');
-              }
-          }
+  const activeSubItems = document.querySelectorAll(
+    ".nav-treeview .nav-link.active"
+  );
+  activeSubItems.forEach((item) => {
+    const treeview = item.closest(".nav-treeview");
+    if (treeview) {
+      treeview.classList.add("show");
+      const parentItem = treeview.closest(".nav-item");
+      if (parentItem) {
+        parentItem.classList.add("menu-open");
+        const arrow = parentItem.querySelector(".nav-arrow");
+        if (arrow) {
+          arrow.classList.add("bi-chevron-down");
+        }
       }
+    }
   });
 });
 
 // report cards toggle
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   const SELECTOR_COLLAPSE = '[data-lte-toggle="card-collapse"]';
   const SELECTOR_REMOVE = '[data-lte-toggle="card-remove"]';
   const SELECTOR_MAXIMIZE = '[data-lte-toggle="card-maximize"]';
 
-  document.querySelectorAll(SELECTOR_COLLAPSE).forEach(button => {
-      button.addEventListener('click', () => {
-          const card = button.closest('.card');
-          card.classList.toggle('collapsed-card');
-      });
+  document.querySelectorAll(SELECTOR_COLLAPSE).forEach((button) => {
+    button.addEventListener("click", () => {
+      const card = button.closest(".card");
+      card.classList.toggle("collapsed-card");
+    });
   });
 
-  document.querySelectorAll(SELECTOR_REMOVE).forEach(button => {
-      button.addEventListener('click', () => {
-          const card = button.closest('.card');
-          card.remove();
-      });
+  document.querySelectorAll(SELECTOR_REMOVE).forEach((button) => {
+    button.addEventListener("click", () => {
+      const card = button.closest(".card");
+      card.remove();
+    });
   });
 
-  document.querySelectorAll(SELECTOR_MAXIMIZE).forEach(button => {
-      button.addEventListener('click', () => {
-          const card = button.closest('.card');
-          card.classList.toggle('maximized-card');
-          document.documentElement.classList.toggle('maximized-card');
-      });
+  document.querySelectorAll(SELECTOR_MAXIMIZE).forEach((button) => {
+    button.addEventListener("click", () => {
+      const card = button.closest(".card");
+      card.classList.toggle("maximized-card");
+      document.documentElement.classList.toggle("maximized-card");
+    });
   });
 });
 
 // Slick carousel
-document.addEventListener('DOMContentLoaded', function () {
-  jQuery('.slider-for').slick({
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      arrows: false,
-      fade: false,
-      asNavFor: '.slider-nav'
+document.addEventListener("DOMContentLoaded", function () {
+  jQuery(".slider-for").slick({
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    fade: false,
+    asNavFor: ".slider-nav",
   });
 
-  jQuery('.slider-nav').slick({
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      asNavFor: '.slider-for',
-      dots: false,
-      focusOnSelect: true
+  jQuery(".slider-nav").slick({
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    asNavFor: ".slider-for",
+    dots: false,
+    focusOnSelect: true,
   });
 });
 
@@ -245,75 +246,70 @@ document.addEventListener('DOMContentLoaded', function () {
 //   });
 // });
 
-
-
-
-
 // add moderator
-document.getElementById("moderatorAvatar").addEventListener("change", function() {
-  const avatarPreview = document.getElementById("avatarPreview");
-  const file = this.files[0];
-  
-  if (file) {
-    // Create a URL for the selected image and update the preview
-    const imageUrl = URL.createObjectURL(file);
-    avatarPreview.src = imageUrl;
-  } else {
-    // If no file is selected, show the default image
-    avatarPreview.src = "../../assets/images/dashboard/supermoderator.jpg";
-  }
-});
+document
+  .getElementById("moderatorAvatar")
+  .addEventListener("change", function () {
+    const avatarPreview = document.getElementById("avatarPreview");
+    const file = this.files[0];
 
-document.getElementById("moderatorForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const moderatorForm = document.getElementById("moderatorForm");
-  const moderatorTableBody = document.querySelector(".table tbody");
-  const avatarPreview = document.getElementById("avatarPreview");
-  const avatarInput = document.getElementById("moderatorAvatar");
-  const name = document.getElementById("moderatorName").value;
-  const email = document.getElementById("moderatorEmail").value;
-  const password = document.getElementById("moderatorPassword").value;
-  const avatarFile = avatarInput.files[0];
+    if (file) {
+      avatarPreview.src = URL.createObjectURL(file);
+    } else {
+      avatarPreview.src = "../../assets/images/dashboard/supermoderator.jpg";
+    }
+  });
 
-  const formData = new FormData();
-  formData.append("moderatorName", name); // Changed to match your model
-  formData.append("email", email);
-  formData.append("moderatorPassword", password); // Changed to match your model
-  if (avatarFile) formData.append("moderatorImage", avatarFile); // Match your model field name
+document
+  .getElementById("moderatorForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000/moderator/register", true);
+    const moderatorForm = document.getElementById("moderatorForm");
+    const moderatorTableBody = document.querySelector(".table tbody");
+    const avatarPreview = document.getElementById("avatarPreview");
+    const avatarInput = document.getElementById("moderatorAvatar");
+    const name = document.getElementById("moderatorName").value;
+    const email = document.getElementById("moderatorEmail").value;
+    const password = document.getElementById("moderatorPassword").value;
+    const avatarFile = avatarInput.files[0];
 
-  const token = localStorage.getItem("token");
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    const registerUrl = "http://localhost:3000/moderator/register";
 
-  xhr.onload = function () {
-    if (xhr.status === 201 || xhr.status === 200) {
-      const response = JSON.parse(xhr.responseText);
-      const savedModerator = response.moderator;
-      
-      // Create a temporary image to check if the URL is valid
-      let imageUrl;
-      
-      if (avatarFile) {
-        // If we uploaded a file, use a local object URL temporarily
-        imageUrl = URL.createObjectURL(avatarFile);
-      } else if (savedModerator.moderatorImage) {
-        // If the response has an image URL, use it
-        if (savedModerator.moderatorImage.startsWith('http')) {
-          imageUrl = savedModerator.moderatorImage;
+    const formData = new FormData();
+    formData.append("moderatorName", name);
+    formData.append("email", email);
+    formData.append("moderatorPassword", password);
+    // formData.append("shopId", shopId);
+
+    if (avatarFile) formData.append("moderatorImage", avatarFile);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", registerUrl, true);
+
+    const token = localStorage.getItem("token");
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.onload = function () {
+      if (xhr.status === 201 || xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        const savedModerator = response.moderator;
+
+        let imageUrl;
+
+        if (avatarFile) {
+          imageUrl = URL.createObjectURL(avatarFile);
+        } else if (savedModerator.moderatorImage) {
+          imageUrl = savedModerator.moderatorImage.startsWith("http")
+            ? savedModerator.moderatorImage
+            : `http://localhost:3000/${savedModerator.moderatorImage}`;
         } else {
-          // If it's a relative path, prepend the base URL
-          imageUrl = `http://localhost:3000/uploads/${savedModerator.moderatorImage}`;
+          imageUrl = "../../assets/images/dashboard/supermoderator.jpg";
         }
-      } else {
-        // Fallback to default image
-        imageUrl = "../../assets/images/dashboard/supermoderator.jpg";
-      }
 
-      const newRow = document.createElement("tr");
-      // Add the moderator ID as a data attribute      
-      newRow.innerHTML = `<td><img src="${imageUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+        <td><img src="${imageUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
         <td>${savedModerator.moderatorName}</td>
         <td>${savedModerator.email}</td>
         <td>${new Date().toLocaleString()}</td>
@@ -325,49 +321,52 @@ document.getElementById("moderatorForm").addEventListener("submit", function (e)
               <i class="bi bi-trash"></i>
           </button>
         </td>`;
-      moderatorTableBody.insertBefore(newRow, moderatorTableBody.firstChild);
-      
-      moderatorForm.reset(); 
-      avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg"; // Reset to default image
 
-      const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
-      modal.hide();
+        moderatorTableBody.insertBefore(newRow, moderatorTableBody.firstChild);
+        moderatorForm.reset();
+        avatarPreview.src = "../../assets/images/dashboard/supermoderator.jpg";
 
-      console.log("Moderator added successfully");
-    } else {
-      alert("Error adding moderator.");
-      console.log(xhr.responseText);
-    }
-  };
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("addModeratorModal")
+        );
+        modal.hide();
+      } else {
+        alert("Error adding moderator.");
+        console.log(xhr.responseText);
+      }
+    };
 
-  xhr.onerror = function () {
-    alert("Network error during request.");
-  };
+    xhr.onerror = function () {
+      alert("Network error during request.");
+    };
 
-  xhr.send(formData);
-});
+    xhr.send(formData);
+  });
 // end add moderator
 
-
-// Delete moderator 
+// Delete moderator
 document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-delete")) {
     const row = e.target.closest("tr");
     const moderatorId = row.dataset.moderatorId;
-    
+
     if (!moderatorId) {
       console.error("Moderator ID not found");
       return;
     }
-    
+
     if (confirm("Are you sure you want to delete this moderator?")) {
       const xhr = new XMLHttpRequest();
-      xhr.open("DELETE", `http://localhost:3000/moderator/delete/${moderatorId}`, true);
-      
+      xhr.open(
+        "DELETE",
+        `http://localhost:3000/moderator/delete/${moderatorId}`,
+        true
+      );
+
       const token = localStorage.getItem("token");
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.setRequestHeader("Content-Type", "application/json");
-      
+
       xhr.onload = function () {
         if (xhr.status === 200) {
           row.remove();
@@ -377,17 +376,16 @@ document.addEventListener("click", function (e) {
           console.log(xhr.responseText);
         }
       };
-      
+
       xhr.onerror = function () {
         alert("Network error during request.");
       };
-      
+
       xhr.send();
     }
   }
 });
 // end delete moderator
-
 
 // edit moderator
 let editingRow = null;
@@ -397,7 +395,7 @@ document.addEventListener("click", function (e) {
   if (e.target.closest(".btn-edit")) {
     editingRow = e.target.closest("tr");
     const moderatorId = editingRow.dataset.moderatorId;
-    
+
     if (!moderatorId) {
       console.error("Moderator ID not found");
       return;
@@ -414,7 +412,7 @@ document.addEventListener("click", function (e) {
     // Reset file input and data URL
     document.getElementById("editAvatar").value = "";
     newEditAvatarDataURL = null;
-    
+
     // Log the moderator ID for debugging
     console.log("Editing moderator with ID:", moderatorId);
   }
@@ -433,160 +431,198 @@ document.getElementById("editAvatar").addEventListener("change", function () {
   }
 });
 
-document.getElementById("editModeratorForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  if (editingRow) {
-    const moderatorId = editingRow.dataset.moderatorId;
-    
-    if (!moderatorId) {
-      console.error("Moderator ID is missing or null");
-      alert("Error: Moderator ID is missing. Cannot update.");
-      return;
-    }
-    
-    const updatedName = document.getElementById("editName").value;
-    const updatedEmail = document.getElementById("editEmail").value;
-    
-    if (newEditAvatarDataURL && newEditAvatarDataURL.startsWith('data:image')) {
-      const formData = new FormData();
-      formData.append("moderatorName", updatedName); // Changed to match your model
-      formData.append("email", updatedEmail);
-      
-      // Convert data URL to File object
-      if (document.getElementById("editAvatar").files.length > 0) {
-        formData.append("moderatorImage", document.getElementById("editAvatar").files[0]);
+document
+  .getElementById("editModeratorForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (editingRow) {
+      const moderatorId = editingRow.dataset.moderatorId;
+
+      if (!moderatorId) {
+        console.error("Moderator ID is missing or null");
+        alert("Error: Moderator ID is missing. Cannot update.");
+        return;
       }
-      
-      const xhr = new XMLHttpRequest();
-      xhr.open("PUT", `http://localhost:3000/moderator/update/${moderatorId}`, true);
-      
-      const token = localStorage.getItem("token");
-      if (token) {
-        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      }
-      
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            
-            // Update the row in the table
-            editingRow.cells[1].textContent = updatedName;
-            editingRow.cells[2].textContent = updatedEmail;
-            
-            // Update the avatar if we have a new one
-            if (newEditAvatarDataURL) {
-              editingRow.querySelector("img").src = newEditAvatarDataURL;
+
+      const updatedName = document.getElementById("editName").value;
+      const updatedEmail = document.getElementById("editEmail").value;
+
+      if (
+        newEditAvatarDataURL &&
+        newEditAvatarDataURL.startsWith("data:image")
+      ) {
+        const formData = new FormData();
+        formData.append("moderatorName", updatedName); // Changed to match your model
+        formData.append("email", updatedEmail);
+
+        // Convert data URL to File object
+        if (document.getElementById("editAvatar").files.length > 0) {
+          formData.append(
+            "moderatorImage",
+            document.getElementById("editAvatar").files[0]
+          );
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "PUT",
+          `http://localhost:3000/moderator/update/${moderatorId}`,
+          true
+        );
+
+        const token = localStorage.getItem("token");
+        if (token) {
+          xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+        }
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+
+              // Update the row in the table
+              editingRow.cells[1].textContent = updatedName;
+              editingRow.cells[2].textContent = updatedEmail;
+
+              // Update the avatar if we have a new one
+              if (newEditAvatarDataURL) {
+                editingRow.querySelector("img").src = newEditAvatarDataURL;
+              }
+
+              // Close the modal
+              const editModal = bootstrap.Modal.getInstance(
+                document.getElementById("editModeratorModal")
+              );
+              editModal.hide();
+
+              console.log("Moderator updated successfully:", response);
+            } catch (error) {
+              console.error("Error parsing response:", error);
+              alert("Error updating moderator: " + error.message);
             }
-            
-            // Close the modal
-            const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
-            editModal.hide();
-            
-            console.log("Moderator updated successfully:", response);
-          } catch (error) {
-            console.error("Error parsing response:", error);
-            alert("Error updating moderator: " + error.message);
+          } else {
+            console.error(
+              "Error updating moderator:",
+              xhr.status,
+              xhr.responseText
+            );
+            alert("Error updating moderator. Status: " + xhr.status);
           }
-        } else {
-          console.error("Error updating moderator:", xhr.status, xhr.responseText);
-          alert("Error updating moderator. Status: " + xhr.status);
+        };
+
+        xhr.onerror = function () {
+          console.error("Network error during update");
+          alert("Network error during update!");
+        };
+
+        xhr.send(formData);
+      } else {
+        // No new image, can use JSON
+        const updateData = JSON.stringify({
+          moderatorName: updatedName, // Changed to match your model
+          email: updatedEmail,
+        });
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "PUT",
+          `http://localhost:3000/moderator/update/${moderatorId}`,
+          true
+        );
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        const token = localStorage.getItem("token");
+        if (token) {
+          xhr.setRequestHeader("Authorization", `Bearer ${token}`);
         }
-      };
-      
-      xhr.onerror = function () {
-        console.error("Network error during update");
-        alert("Network error during update!");
-      };
-      
-      xhr.send(formData);
-    } else {
-      // No new image, can use JSON
-      const updateData = JSON.stringify({
-        moderatorName: updatedName, // Changed to match your model
-        email: updatedEmail
-      });
-      
-      const xhr = new XMLHttpRequest();
-      xhr.open("PUT", `http://localhost:3000/moderator/update/${moderatorId}`, true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      
-      const token = localStorage.getItem("token");
-      if (token) {
-        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+
+              // Update the row in the table
+              editingRow.cells[1].textContent = updatedName;
+              editingRow.cells[2].textContent = updatedEmail;
+
+              // Close the modal
+              const editModal = bootstrap.Modal.getInstance(
+                document.getElementById("editModeratorModal")
+              );
+              editModal.hide();
+
+              console.log("Moderator updated successfully:", response);
+            } catch (error) {
+              console.error("Error parsing response:", error);
+              alert("Error updating moderator: " + error.message);
+            }
+          } else {
+            console.error(
+              "Error updating moderator:",
+              xhr.status,
+              xhr.responseText
+            );
+            alert("Error updating moderator. Status: " + xhr.status);
+          }
+        };
+
+        xhr.onerror = function () {
+          console.error("Network error during update");
+          alert("Network error during update!");
+        };
+
+        xhr.send(updateData);
       }
-      
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            
-            // Update the row in the table
-            editingRow.cells[1].textContent = updatedName;
-            editingRow.cells[2].textContent = updatedEmail;
-            
-            // Close the modal
-            const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
-            editModal.hide();
-            
-            console.log("Moderator updated successfully:", response);
-          } catch (error) {
-            console.error("Error parsing response:", error);
-            alert("Error updating moderator: " + error.message);
-          }
-        } else {
-          console.error("Error updating moderator:", xhr.status, xhr.responseText);
-          alert("Error updating moderator. Status: " + xhr.status);
-        }
-      };
-      
-      xhr.onerror = function () {
-        console.error("Network error during update");
-        alert("Network error during update!");
-      };
-      
-      xhr.send(updateData);
     }
-  }
-});
+  });
 //end edit moderator
-
-
 
 //get moderators
 function getModerators() {
   const moderatorTableBody = document.querySelector(".table tbody");
-  moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
+  moderatorTableBody.innerHTML =
+    '<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
 
   const token = localStorage.getItem("token");
   if (!token) {
-    moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Authentication token not found. Please log in again.</td></tr>';
+    moderatorTableBody.innerHTML =
+      '<tr><td colspan="5" class="text-center">Authentication token not found. Please log in again.</td></tr>';
     return;
   }
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/moderator/all", true); // ✅ route des modérateurs
+  xhr.open(
+    "GET",
+    `http://localhost:3000/moderator/all/moderators/shop/${shopId}`,
+    true
+  ); // ✅ route des modérateurs
   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.responseText);
       const moderators = response.moderators || response;
 
-      moderatorTableBody.innerHTML = '';
+      moderatorTableBody.innerHTML = "";
 
       if (Array.isArray(moderators) && moderators.length > 0) {
-        moderators.forEach(mod => {
+        moderators.forEach((mod) => {
           const row = document.createElement("tr");
           const modId = mod._id;
           const imgId = `moderator-img-${modId}`;
-          const imagePath = mod.moderatorImage ? (mod.moderatorImage.startsWith('/') ? mod.moderatorImage : `/${mod.moderatorImage}`) : null;
-          const createdAt = new Date(mod.createdAt || Date.now()).toLocaleString();
+          const imagePath = mod.moderatorImage
+            ? mod.moderatorImage.startsWith("/")
+              ? mod.moderatorImage
+              : `/${mod.moderatorImage}`
+            : null;
+          const createdAt = new Date(
+            mod.createdAt || Date.now()
+          ).toLocaleString();
 
           row.dataset.moderatorId = modId;
           row.innerHTML = `
             <td><img id="${imgId}" src="../../assets/images/dashboard/default-profile.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-            <td>${mod.moderatorName || 'Unknown'}</td>
-            <td>${mod.email || 'No email'}</td>
+            <td>${mod.moderatorName || "Unknown"}</td>
+            <td>${mod.email || "No email"}</td>
             <td>${createdAt}</td>
             <td>
               <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editModeratorModal">
@@ -627,69 +663,63 @@ function getModerators() {
           }
         });
       } else {
-        moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No moderators found</td></tr>';
+        moderatorTableBody.innerHTML =
+          '<tr><td colspan="5" class="text-center">No moderators found</td></tr>';
       }
     } else {
       console.error("Error fetching moderators:", xhr.responseText);
-      moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error loading moderators</td></tr>';
+      moderatorTableBody.innerHTML =
+        '<tr><td colspan="5" class="text-center">Error loading moderators</td></tr>';
     }
   };
 
   xhr.onerror = function () {
     console.error("Network error while fetching moderators");
-    moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error</td></tr>';
+    moderatorTableBody.innerHTML =
+      '<tr><td colspan="5" class="text-center">Network error</td></tr>';
   };
 
   xhr.send();
 }
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   getModerators(); // 👈 appel automatique après chargement
 });
 //end get moderators
 
-
-
-
-
-
-
-
-
-
-
-  
 // Search moderators
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchModeratorInput");
   const searchButton = document.getElementById("searchModeratorBtn");
-  const moderatorTableRows = document.querySelectorAll("#moderatorTable tbody tr");
+  const moderatorTableRows = document.querySelectorAll(
+    "#moderatorTable tbody tr"
+  );
 
   function filterRows() {
-      const searchText = searchInput.value.toLowerCase().trim();
+    const searchText = searchInput.value.toLowerCase().trim();
 
-      moderatorTableRows.forEach((row) => {
-          const rowText = row.textContent.toLowerCase();
-          row.style.display = rowText.includes(searchText) ? "" : "none";
-      });
+    moderatorTableRows.forEach((row) => {
+      const rowText = row.textContent.toLowerCase();
+      row.style.display = rowText.includes(searchText) ? "" : "none";
+    });
   }
 
   searchButton.addEventListener("click", filterRows);
   searchInput.addEventListener("input", filterRows);
 });
 // filtrer par number of row "pagination "
-const entriesSelect = document.getElementById('entriesSelect');
-const table = document.getElementById('moderatorTable');
-const tbody = table.querySelector('tbody');
-const paginationInfo = document.getElementById('paginationInfo');
+const entriesSelect = document.getElementById("entriesSelect");
+const table = document.getElementById("moderatorTable");
+const tbody = table.querySelector("tbody");
+const paginationInfo = document.getElementById("paginationInfo");
 
 function updatePagination() {
-  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const rows = Array.from(tbody.querySelectorAll("tr"));
   const selectedCount = parseInt(entriesSelect.value);
   const totalRows = rows.length;
 
   // Hide/show rows
   rows.forEach((row, index) => {
-    row.style.display = index < selectedCount ? '' : 'none';
+    row.style.display = index < selectedCount ? "" : "none";
   });
 
   // Update info text
@@ -698,46 +728,48 @@ function updatePagination() {
 }
 
 // Event when select changes
-entriesSelect.addEventListener('change', updatePagination);
+entriesSelect.addEventListener("change", updatePagination);
 
 // Call on page load
-window.addEventListener('load', updatePagination);
+window.addEventListener("load", updatePagination);
 
 // filtrer les Moderators
 function sortTable(type, direction) {
-  const table = document.getElementById('moderatorTable');
-  const tbody = table.querySelector('tbody');
-  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const table = document.getElementById("moderatorTable");
+  const tbody = table.querySelector("tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
 
   let colIndex;
-  if (type === 'name') colIndex = 1;
-  else if (type === 'email') colIndex = 2;
-  else if (type === 'date') colIndex = 3;
+  if (type === "name") colIndex = 1;
+  else if (type === "email") colIndex = 2;
+  else if (type === "date") colIndex = 3;
 
   rows.sort((a, b) => {
     const textA = a.cells[colIndex].textContent.trim();
     const textB = b.cells[colIndex].textContent.trim();
 
-    if (type === 'date') {
+    if (type === "date") {
       const dateA = parseDate(textA);
       const dateB = parseDate(textB);
-      return direction === 'asc' ? dateA - dateB : dateB - dateA;
+      return direction === "asc" ? dateA - dateB : dateB - dateA;
     } else {
       const valA = textA.toLowerCase();
       const valB = textB.toLowerCase();
-      if (valA < valB) return direction === 'asc' ? -1 : 1;
-      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      if (valA < valB) return direction === "asc" ? -1 : 1;
+      if (valA > valB) return direction === "asc" ? 1 : -1;
       return 0;
     }
   });
 
-  rows.forEach(row => tbody.appendChild(row));
+  rows.forEach((row) => tbody.appendChild(row));
 }
 
 // Date parser that works with "YYYY-MM-DD HH:mm" or "DD/MM/YYYY HH:mm"
 function parseDate(dateStr) {
   const [datePart] = dateStr.trim().split(" ");
-  const parts = datePart.includes('/') ? datePart.split('/') : datePart.split('-');
+  const parts = datePart.includes("/")
+    ? datePart.split("/")
+    : datePart.split("-");
 
   if (parts[0].length === 4) {
     // format: YYYY-MM-DD
@@ -749,23 +781,23 @@ function parseDate(dateStr) {
 }
 
 // Handle filter dropdown
-document.addEventListener('DOMContentLoaded', () => {
-  const filterSelect = document.getElementById('filterSelect');
+document.addEventListener("DOMContentLoaded", () => {
+  const filterSelect = document.getElementById("filterSelect");
 
   if (filterSelect) {
-    filterSelect.addEventListener('change', () => {
+    filterSelect.addEventListener("change", () => {
       const selected = filterSelect.value;
-      if (selected === 'name-asc') sortTable('name', 'asc');
-      else if (selected === 'name-desc') sortTable('name', 'desc');
-      else if (selected === 'email-asc') sortTable('email', 'asc');
-      else if (selected === 'email-desc') sortTable('email', 'desc');
-      else if (selected === 'date-asc') sortTable('date', 'asc');
-      else if (selected === 'date-desc') sortTable('date', 'desc');
+      if (selected === "name-asc") sortTable("name", "asc");
+      else if (selected === "name-desc") sortTable("name", "desc");
+      else if (selected === "email-asc") sortTable("email", "asc");
+      else if (selected === "email-desc") sortTable("email", "desc");
+      else if (selected === "date-asc") sortTable("date", "asc");
+      else if (selected === "date-desc") sortTable("date", "desc");
     });
   }
 });
 
-// // add product 
+// // add product
 // document.getElementById("addProductForm").addEventListener("submit", function (e) {
 //   e.preventDefault();
 //   const form = e.target;
@@ -837,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //   // 🚀 Ajout au début du tbody (TOP of table)
 //   if (tbody.firstChild) {
 //     tbody.insertBefore(newRow, tbody.firstChild);
-//   } 
+//   }
 //   // Reset form and close modal
 //   form.reset();
 //   bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
