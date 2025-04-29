@@ -10770,4 +10770,57 @@ input[type=number] {
     width: 100%;
     height: 100%;
 }
-/*----------------------------------------------------------------------------------------------------*/
+/*--------------------------------login button transformation ----------------------------------------*/
+/* Enhanced dropdown styling */
+.account-dropdown-wrapper {
+    display: inline-block;
+  }
+  
+  .account-dropdown-menu {
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  
+  .dropdown-item {
+    color: #333;
+    transition: all 0.2s ease;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+  }
+  
+  /* Animation for dropdown */
+  .account-dropdown-menu:not(.d-none) {
+    animation: fadeInDown 0.3s ease-out;
+  }
+  
+  @keyframes fadeInDown {
+    from { 
+      opacity: 0; 
+      transform: translateY(-15px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  /* Hover effect for the account button */
+  .account-dropdown-wrapper button:hover {
+    cursor: pointer;
+  }
+  
+  /* Add a subtle indicator that it's a dropdown */
+  .account-dropdown-wrapper button::after {
+    content: '';
+    display: inline-block;
+    margin-left: 8px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid currentColor;
+    vertical-align: middle;
+  }
