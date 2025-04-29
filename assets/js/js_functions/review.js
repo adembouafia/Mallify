@@ -335,3 +335,242 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load reviews on page load
     loadReviews();
   });
+
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Elements
+    const reviewsTab = document.getElementById("reviews-tab")
+    const reviewsContainer = document.getElementById("vendor-reviews-container")
+    const reviewStats = document.getElementById("vendor-review-stats")
+    const ratingFilter = document.getElementById("rating-filter")
+    const sortBy = document.getElementById("sort-by")
+    
+    // Get product ID from hidden input or data attribute
+    const productId = document.getElementById("product-id").value
+    
+    let reviews = []
+    let filteredReviews = []
+    
+    // Load reviews for a product
+    function loadReviews() {
+      if (!productId) return
+      
+      // Show loading state
+      reviewsContainer.innerHTML = '<div class="text-center py-24">Loading reviews...</div>'
+      
+      // Make XHR request to get reviews
+      const xhr = new XMLHttpRequest()
+      xhr.open("GET", `/product/${productId}/reviews`, true)
+      xhr.setRequestHeader("Authorization", `Bearer ${getAuthToken()}`)
+      
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const response = JSON.parse(xhr.responseText)
+          
+          if (response.status === "success") {
+            reviews = response.data.reviews
+            filteredReviews = [...reviews]
+            updateReviewStats(response.data.averageRating, response.data.reviewCount)
+            applyFiltersAndSort()
+          } else {
+            reviewsContainer.innerHTML = '<div class="alert alert-danger">Failed to load reviews</div>'
+          }
+        } else {
+          reviewsContainer.innerHTML = '<div class="alert alert-danger">Error loading reviews</div>'
+        }
+      }
+      
+      xhr.onerror = () => {
+        reviewsContainer.innerHTML = '<div class="alert alert-danger">Network error while loading reviews</div>'
+      }
+      
+      xhr.send()
+    }
+    
+    // Apply filters and sort
+    function applyFiltersAndSort() {
+      // Apply rating filter
+      const ratingValue = ratingFilter.value
+      if (ratingValue !== "all") {
+        filteredReviews = reviews.filter(review => review.rating === parseInt(ratingValue))
+      } else {
+        filteredReviews = [...reviews]
+      }
+      
+      // Apply sorting
+      const sortValue = sortBy.value
+      switch (sortValue) {
+        case "newest":
+          filteredReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          break
+        case "oldest":
+          filteredReviews.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+          break
+        case "highest":
+          filteredReviews.sort((a, b) => b.rating - a.rating)
+          break
+        case "lowest":
+          filteredReviews.sort((a, b) => a.rating - b.rating)
+          break
+      }
+      
+      displayReviews(filteredReviews)
+    }
+    
+    // Display reviews in the container
+    function displayReviews(reviews) {
+      if (!reviews || reviews.length === 0) {
+        reviewsContainer.innerHTML = '<div class="text-center py-24">No reviews yet for this product.</div>'
+        return
+      }
+      
+      let html = ''
+      
+      reviews.forEach(review => {
+        const date = new Date(review.createdAt).toLocaleDateString()
+        
+        html += `
+          <div class="card mb-16">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div>
+                <strong>${review.userName}</strong>
+                <small class="text-muted ms-8">${date}</small>
+              </div>
+              <div class="rating">
+                ${getRatingStars(review.rating)}
+              </div>
+            </div>
+            <div class="card-body">
+              ${review.title ? `<h6 class="mb-8">${review.title}</h6>` : ''}
+              <p class="card-text">${review.comment}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+              <button class="btn btn-danger btn-sm delete-review" data-review-id="${review._id}">
+                <i class="ph-fill ph-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        `
+      })
+      
+      reviewsContainer.innerHTML = html
+      
+      // Add event listeners to delete buttons
+      document.querySelectorAll('.delete-review').forEach(button => {
+        button.addEventListener('click', function() {
+          const reviewId = this.dataset.reviewId
+          if (confirm('Are you sure you want to delete this review?')) {
+            deleteReview(reviewId)
+          }
+        })
+      })
+    }
+    
+    // Generate HTML for rating stars
+    function getRatingStars(rating) {
+      let starsHtml = ""
+      
+      for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+          starsHtml += '<i class="ph-fill ph-star text-warning-600"></i>'
+        } else {
+          starsHtml += '<i class="ph-fill ph-star text-gray-300"></i>'
+        }
+      }
+      
+      return starsHtml
+    }
+    
+    // Update review statistics
+    function updateReviewStats(avgRating, reviewCount) {
+      if (!reviewStats) return
+      
+      reviewStats.innerHTML = `
+        <div class="fw-bold">${avgRating}</div>
+        <div class="rating">
+          ${getRatingStars(Math.round(avgRating))}
+        </div>
+        <div class="text-muted">(${reviewCount} ${reviewCount === 1 ? "review" : "reviews"})</div>
+      `
+    }
+    
+    // Delete a review
+    function deleteReview(reviewId) {
+      const xhr = new XMLHttpRequest()
+      xhr.open("DELETE", `/product/${productId}/review/${reviewId}`, true)
+      xhr.setRequestHeader("Authorization", `Bearer ${getAuthToken()}`)
+      
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const response = JSON.parse(xhr.responseText)
+          
+          if (response.status === "success") {
+            // Remove the review from our arrays
+            reviews = reviews.filter(review => review._id !== reviewId)
+            filteredReviews = filteredReviews.filter(review => review._id !== reviewId)
+            
+            // Update review stats
+            updateReviewStats(response.data.averageRating, response.data.reviewCount)
+            
+            // Re-display the reviews
+            applyFiltersAndSort()
+            
+            // Show success message
+            showAlert("success", "Review deleted successfully")
+          } else {
+            showAlert("danger", response.message || "Failed to delete review")
+          }
+        } else {
+          showAlert("danger", "Error deleting review")
+        }
+      }
+      
+      xhr.onerror = () => {
+        showAlert("danger", "Network error while deleting review")
+      }
+      
+      xhr.send()
+    }
+    
+    // Show alert message
+    function showAlert(type, message) {
+      const alertDiv = document.createElement("div")
+      alertDiv.className = `alert alert-${type}`
+      alertDiv.textContent = message
+      
+      // Insert alert at the top of the reviews container
+      reviewsContainer.insertAdjacentElement('beforebegin', alertDiv)
+      
+      // Auto dismiss after 5 seconds
+      setTimeout(() => {
+        alertDiv.remove()
+      }, 5000)
+    }
+    
+    // Helper function to get auth token from localStorage
+    function getAuthToken() {
+      return localStorage.getItem("token")
+    }
+    
+    // Event listeners
+    if (reviewsTab) {
+      reviewsTab.addEventListener("click", () => {
+        // Load reviews when the tab is clicked
+        loadReviews()
+      })
+    }
+    
+    if (ratingFilter) {
+      ratingFilter.addEventListener("change", applyFiltersAndSort)
+    }
+    
+    if (sortBy) {
+      sortBy.addEventListener("change", applyFiltersAndSort)
+    }
+    
+    // If reviews tab is active on page load, load reviews
+    if (document.querySelector(".tab-pane.active#reviews")) {
+      loadReviews()
+    }
+  })
