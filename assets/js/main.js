@@ -1204,5 +1204,85 @@
     
     
 })(jQuery);
-
+// Modern Dropdown Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize dropdowns
+  function initDropdowns() {
+    const dropdowns = document.querySelectorAll('.mallify-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+      const trigger = dropdown.querySelector('.mallify-dropdown-trigger');
+      const list = dropdown.querySelector('.mallify-dropdown-list');
+      const selectedText = dropdown.querySelector('.mallify-selected-text');
+      
+      // Toggle dropdown on trigger click
+      trigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Close all other dropdowns
+        dropdowns.forEach(otherDropdown => {
+          if (otherDropdown !== dropdown) {
+            otherDropdown.classList.remove('active');
+          }
+        });
+        
+        // Toggle this dropdown
+        dropdown.classList.toggle('active');
+      });
+      
+      // Handle item selection
+      if (list) {
+        const items = list.querySelectorAll('a');
+        items.forEach(item => {
+          item.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Update selected text
+            if (selectedText) {
+              selectedText.textContent = this.textContent.trim();
+            }
+            
+            // Store selected value if needed
+            const value = this.getAttribute('data-value');
+            if (value) {
+              trigger.setAttribute('data-selected', value);
+              
+              // You can trigger a custom event if needed
+              const changeEvent = new CustomEvent('mallify:change', {
+                detail: { value: value }
+              });
+              dropdown.dispatchEvent(changeEvent);
+            }
+            
+            // Close dropdown
+            dropdown.classList.remove('active');
+          });
+        });
+      }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.mallify-dropdown')) {
+        dropdowns.forEach(dropdown => {
+          dropdown.classList.remove('active');
+        });
+      }
+    });
+    
+    // Close dropdowns on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        dropdowns.forEach(dropdown => {
+          dropdown.classList.remove('active');
+        });
+      }
+    });
+  }
+  
+  // Initialize
+  initDropdowns();
+});
 

@@ -101,95 +101,39 @@
 
       <!-- form Category Start -->
       <div class="flex-align gap-16">
-        <div class="select-dropdown-for-home-two d-lg-none d-block bg-main-two-50">
-          <ul class="header-top__right style-two flex-align flex-wrap">
-            <li
-              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
-            >
-              <a href="#" class="selected-text text-heading text-sm py-8"
-                >Eng</a
-              >
-              <ul
-                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-              >
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    English
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    Japan
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    French
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    Germany
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li
-              class="on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white"
-            >
-              <a href="#" class="selected-text text-heading text-sm py-8"
-                >USD</a
-              >
-              <ul
-                class="selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8"
-              >
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    USD
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    Yen
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    Franc
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0"
-                  >
-                    EURO
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
+        <div class="mallify-dropdown-container">
+          <!-- Language Dropdown -->
+          <div id="mallify-lang-dropdown" class="mallify-dropdown">
+            <button id="mallify-lang-trigger" class="mallify-dropdown-trigger">
+              <span class="mallify-selected-text">Eng</span>
+              <svg class="mallify-dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <ul id="mallify-lang-list" class="mallify-dropdown-list">
+              <li><a href="javascript:void(0)" data-value="en">English</a></li>
+              <li><a href="javascript:void(0)" data-value="jp">Japan</a></li>
+              <li><a href="javascript:void(0)" data-value="fr">French</a></li>
+              <li><a href="javascript:void(0)" data-value="de">Germany</a></li>
+            </ul>
+          </div>
+          
+          <!-- Currency Dropdown -->
+          <div id="mallify-currency-dropdown" class="mallify-dropdown">
+            <button id="mallify-currency-trigger" class="mallify-dropdown-trigger">
+              <span class="mallify-selected-text">USD</span>
+              <svg class="mallify-dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <ul id="mallify-currency-list" class="mallify-dropdown-list">
+              <li><a href="javascript:void(0)" data-value="usd">USD</a></li>
+              <li><a href="javascript:void(0)" data-value="yen">Yen</a></li>
+              <li><a href="javascript:void(0)" data-value="franc">Franc</a></li>
+              <li><a href="javascript:void(0)" data-value="euro">EURO</a></li>
+              <li><a href="javascript:void(0)" data-value="bdt">BDT</a></li>
+            </ul>
+          </div>
         </div>
 
         <form action="#" class="flex-align flex-wrap form-location-wrapper">
