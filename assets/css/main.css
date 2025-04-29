@@ -10772,9 +10772,6 @@ input[type=number] {
 }
 
 /*--------------------------------toast  ----------------------------------------*/
-/* Toast Notification Styles for SweetAlert2 */
-
-/* Main toast container */
 .cool-toast-popup {
     border-radius: 8px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;

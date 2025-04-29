@@ -1,3 +1,4 @@
+
 let categories = [];
 const subcategories = {};
 var editor1 = new RichTextEditor("#richTextEditor");
@@ -157,26 +158,26 @@ function loadProducts() {
           }
         } else {
           console.log("No products found in response");
-          showAlert("warning", "No products found");
+          showToast("warning", "No products found");
         }
       } catch (e) {
         console.error("Error parsing products response:", e);
-        showAlert("danger", "Error processing server response");
+        showToast("danger", "Error processing server response");
       }
     } else {
       console.error("Failed to load products:", xhr.status, xhr.statusText);
       try {
         const errorResponse = JSON.parse(xhr.responseText);
-        showAlert("danger", errorResponse.message || "Failed to load products");
+        showToast("danger", errorResponse.message || "Failed to load products");
       } catch (e) {
-        showAlert("danger", "Failed to load products");
+        showToast("danger", "Failed to load products");
       }
     }
   };
 
   xhr.onerror = () => {
     console.error("Network error occurred while loading products");
-    showAlert("danger", "Network error occurred");
+    showToast("danger", "Network error occurred");
   };
 
   xhr.send();
@@ -244,13 +245,13 @@ function loadCategories() {
         categories = [];
       }
     } else {
-      showAlert("danger", "Failed to load categories");
+      showToast("danger", "Failed to load categories");
       categories = [];
     }
   };
 
   xhr.onerror = () => {
-    showAlert("danger", "Network error occurred while loading categories");
+    showToast("danger", "Network error occurred while loading categories");
     categories = [];
   };
 
@@ -569,19 +570,19 @@ function editProduct(productId) {
             }
           }, 300);
         } else {
-          showAlert("danger", "Failed to load product data");
+          showToast("danger", "Failed to load product data");
         }
       } catch (e) {
         console.error("Error parsing product data:", e);
-        showAlert("danger", "Error processing server response");
+        showToast("danger", "Error processing server response");
       }
     } else {
-      showAlert("danger", "Failed to load product data");
+      showToast("danger", "Failed to load product data");
     }
   };
 
   xhr.onerror = () => {
-    showAlert("danger", "Network error occurred");
+    showToast("danger", "Network error occurred");
   };
 
   xhr.send();
@@ -591,7 +592,7 @@ function handleProductUpdate(form) {
   const productId = form.dataset.productId;
 
   if (!productId) {
-    showAlert("danger", "Product ID is missing");
+    showToast("danger", "Product ID is missing");
     return;
   }
 
@@ -689,18 +690,18 @@ function handleProductUpdate(form) {
           modal.hide();
         }
 
-        showAlert("success", "Product updated successfully!");
+        showToast("success", "Product updated successfully!");
         loadProducts(); // Reload product list to reflect changes
       } catch (e) {
         console.error("Error parsing response:", e);
-        showAlert("danger", "Error processing server response");
+        showToast("danger", "Error processing server response");
       }
     } else {
       try {
         const response = JSON.parse(xhr.responseText);
-        showAlert("danger", response.message || "Failed to update product");
+        showToast("danger", response.message || "Failed to update product");
       } catch (e) {
-        showAlert("danger", "Failed to update product");
+        showToast("danger", "Failed to update product");
       }
     }
   };
@@ -708,7 +709,7 @@ function handleProductUpdate(form) {
   xhr.onerror = () => {
     submitBtn.innerHTML = originalBtnText;
     submitBtn.disabled = false;
-    showAlert("danger", "Network error occurred");
+    showToast("danger", "Network error occurred");
   };
 
   // Send FormData
@@ -737,16 +738,16 @@ function deleteProduct(productId) {
           row.remove();
         }
 
-        showAlert("success", "Product deleted successfully");
+        showToast("success", "Product deleted successfully");
 
         loadProducts();
       } else {
-        showAlert("danger", "Failed to delete product");
+        showToast("danger", "Failed to delete product");
       }
     };
 
     xhr.onerror = () => {
-      showAlert("danger", "Network error occurred");
+      showToast("danger", "Network error occurred");
     };
 
     xhr.send();
@@ -761,25 +762,86 @@ function getCategoryNameById(categoryId) {
   return category ? category.categoryName : null;
 }
 
-function showAlert(type, message) {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-  alertDiv.role = "alert";
-  alertDiv.innerHTML = `
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  `;
 
-  const container = document.querySelector(".container");
-  container.insertBefore(alertDiv, container.firstChild);
+function showToast(title, message, type) {
+  // Check if SweetAlert2 is available
+  if (typeof window.Swal !== "undefined") {
+    // Define custom icons based on type
+    let iconHtml = ""
+    let iconColor = ""
 
-  setTimeout(() => {
-    if (alertDiv.parentNode) {
-      const bsAlert =
-        bootstrap.Alert.getInstance(alertDiv) || new bootstrap.Alert(alertDiv);
-      bsAlert.close();
+    switch (type) {
+      case "success":
+        iconHtml = '<div style="font-size: 24px;">✅</div>'
+        iconColor = "#00e676"
+        break
+      case "error":
+        iconHtml = '<div style="font-size: 24px;">❌</div>'
+        iconColor = "#ff1744"
+        break
+      case "warning":
+        iconHtml = '<div style="font-size: 24px;">⚠️</div>'
+        iconColor = "#ff9100"
+        break
+      case "info":
+      default:
+        iconHtml = '<div style="font-size: 24px;">ℹ️</div>'
+        iconColor = "#40c4ff"
+        break
     }
-  }, 5000);
+
+    window.Swal.fire({
+      title: `<span style="font-weight:bold;">${title}</span>`,
+      html: `
+        <div style="display: flex; align-items: center;">
+          <div style="width: 30px; height: 30px; border-radius: 50%; background-color: ${iconColor}; display: flex; justify-content: center; align-items: center; color: white; margin-right: 10px;">
+            ${iconHtml}
+          </div>
+          <p style="margin:0;">${message}</p>
+        </div>
+      `,
+      showConfirmButton: false,
+      toast: true,
+      position: "top-end",
+      timer: 2000,
+      timerProgressBar: true,
+      background: "#1e1e2f",
+      color: "#fff",
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", window.Swal.stopTimer)
+        toast.addEventListener("mouseleave", window.Swal.resumeTimer)
+      },
+      customClass: {
+        popup: "cool-toast-popup",
+        timerProgressBar: "cool-toast-timer",
+      },
+    })
+  } else {
+    // Fallback to console if SweetAlert2 is not available
+    console.log(`${type.toUpperCase()}: ${title} - ${message}`)
+  }
+}
+
+function showAlert(options) {
+  if (typeof Swal !== "undefined") {
+    if (!options.input && !options.showCancelButton && !options.showConfirmButton) {
+      showToast(options.title, options.text || "", options.icon || "info")
+      if (options.then) {
+        setTimeout(() => {
+          options.then()
+        }, 2000)
+      }
+      return Promise.resolve()
+    } else {
+      return Swal.fire(options)
+    }
+  } else {
+    alert(options.text || options.title)
+    if (options.then) {
+      options.then()
+    }
+    return Promise.resolve()
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -882,7 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .value.trim();
 
     if (!categoryName) {
-      showAlert("danger", "Category name cannot be empty");
+      showToast("danger", "Category name cannot be empty");
       return;
     }
 
@@ -929,12 +991,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
           document.getElementById("newCategoryName").value = "";
 
-          showAlert(
+          showToast(
             "success",
             response.message || "Category added successfully!"
           );
         } else {
-          showAlert("danger", response.message || "Failed to add category");
+          showToast("danger", response.message || "Failed to add category");
         }
       } else {
         let errorMessage = "Failed to add category";
@@ -944,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
           console.error("Error parsing response:", e);
         }
-        showAlert("danger", errorMessage);
+        showToast("danger", errorMessage);
       }
     };
 
@@ -952,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
       saveCategoryBtn.disabled = false;
       saveCategoryBtn.innerHTML = originalBtnText;
 
-      showAlert("danger", "Network error occurred");
+      showToast("danger", "Network error occurred");
     };
 
     console.log("Sending category data:", { categoryName });
@@ -965,12 +1027,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const name = document.getElementById("newSubcategoryName").value.trim();
 
     if (!categoryId) {
-      showAlert("danger", "Please select a category");
+      showToast("danger", "Please select a category");
       return;
     }
 
     if (!name) {
-      showAlert("danger", "Subcategory name cannot be empty");
+      showToast("danger", "Subcategory name cannot be empty");
       return;
     }
 
@@ -1046,15 +1108,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.getElementById("newSubcategoryName").value = "";
 
-            showAlert(
+            showToast(
               "success",
               response.message || "Subcategory added successfully!"
             );
           } else {
-            showAlert("danger", "Parent category not found");
+            showToast("danger", "Parent category not found");
           }
         } else {
-          showAlert("danger", response.message || "Failed to add subcategory");
+          showToast("danger", response.message || "Failed to add subcategory");
         }
       } else {
         let errorMessage = "Failed to add subcategory";
@@ -1064,14 +1126,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
           console.error("Error parsing response:", e);
         }
-        showAlert("danger", errorMessage);
+        showToast("danger", errorMessage);
       }
     };
 
     xhr.onerror = () => {
       saveSubcategoryBtn.disabled = false;
       saveSubcategoryBtn.innerHTML = originalBtnText;
-      showAlert("danger", "Network error occurred");
+      showToast("danger", "Network error occurred");
     };
 
     console.log("Sending subcategory data:", { name, categoryId });
@@ -1101,13 +1163,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
     requiredFields.forEach((field) => {
       if (!form[field] || !form[field].value.trim()) {
-        showAlert("danger", `${field.replace(/([A-Z])/g, " $1").trim()} is required`)
+        showToast("danger", `${field.replace(/([A-Z])/g, " $1").trim()} is required`)
         isValid = false
       }
     })
   
     if (!form.mainImage.files[0]) {
-      showAlert("danger", "Main image is required")
+      showToast("danger", "Main image is required")
       isValid = false
     }
   
@@ -1151,7 +1213,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("category", categoryId)
     } else {
       console.error("Could not find category ID for:", selectedCategory)
-      showAlert("danger", "Invalid category selected")
+      showToast("danger", "Invalid category selected")
       submitBtn.innerHTML = originalBtnText
       submitBtn.disabled = false
       return
@@ -1168,7 +1230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     if (!subCategoryId) {
-      showAlert("danger", "Invalid subcategory selected")
+      showToast("danger", "Invalid subcategory selected")
       submitBtn.innerHTML = originalBtnText
       submitBtn.disabled = false
       return
@@ -1215,11 +1277,11 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           addProductModal.hide()
           form.reset()
-          showAlert("success", "Product added successfully!")
+          showToast("success", "Product added successfully!")
   
           loadProducts()
         } else {
-          showAlert("danger", response.message || "Failed to add product")
+          showToast("danger", response.message || "Failed to add product")
         }
       } else {
         let errorMessage = "Failed to add product"
@@ -1229,14 +1291,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
           console.error("Error parsing response:", e)
         }
-        showAlert("danger", errorMessage)
+        showToast("danger", errorMessage)
       }
     }
   
     xhr.onerror = () => {
       submitBtn.innerHTML = originalBtnText
       submitBtn.disabled = false
-      showAlert("danger", "Network error occurred")
+      showToast("danger", "Network error occurred")
     }
   
     xhr.send(formData)
@@ -1268,3 +1330,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+

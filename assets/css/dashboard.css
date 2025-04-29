@@ -6869,6 +6869,8 @@ color: white;
   animation: placeholder-wave 2s linear infinite;
 }
 
+
+
 @keyframes placeholder-wave {
   100% {
     -webkit-mask-position: -200% 0%;
