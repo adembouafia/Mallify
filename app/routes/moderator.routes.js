@@ -14,11 +14,11 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
     const moderator = require("../controllers/moderator.controller");
-    app.post('/moderator/register',auth , authorize('vendor'),moderator.addModerator);
+    app.post('/moderator/register', auth, authorize('vendor'), moderator.addModerator);
     app.post('/moderator/login', moderator.login);
     app.post('/moderator/forgotPassword', moderator.forgotPassword);
     app.post('/moderator/reset-password', moderator.resetPassword);
-    app.get('/moderators/shop/:shopId', moderator.getModeratorsByShop);
-    app.put('/moderator/update/:id', auth, authorize('moderator' , 'vendor'), upload.single("moderatorImage"), moderator.updateModerator);
-    app.delete('/moderator/delete/:id', auth, authorize('moderator' , 'vendor'), moderator.deleteModerator);
+    app.get('/moderator/shop', auth, authorize('vendor'), moderator.getModeratorByShop);
+    app.put('/moderator/update/:id', auth, authorize('moderator', 'vendor'), upload.single("moderatorImage"), moderator.updateModerator);
+    app.delete('/moderator/delete/:id', auth, authorize('moderator', 'vendor'), moderator.deleteModerator);
 };

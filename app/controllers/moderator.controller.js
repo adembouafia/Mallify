@@ -5,233 +5,241 @@ const dotenv = require("dotenv");
 const multer = require("multer");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const shop = require("../models/shop.model");
 dotenv.config();
 
 // Multer storage configuration
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Specify upload directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); // Set unique filename
-  },
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");  // Specify upload directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);  // Set unique filename
+    }
 });
 
-const upload = multer({ storage: storage }).single("moderatorImage");
+const upload = multer({ storage: storage }).single("moderatorImage"); 
 
-//add a new moderator
+// Add a new moderator
 exports.addModerator = (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).send({ message: "Error uploading image." });
-    }
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).send({ message: "Error uploading image." });
+        }
+        
+        try {
+            const shopId = req.user.shopId;
+            
+            if (!shopId) {
+                return res.status(400).send({ message: "Vendor is not associated with a shop" });
+            }
+            
+            const moderator = new Moderator({
+                moderatorName: req.body.moderatorName,
+                email: req.body.email,
+                moderatorPassword: req.body.moderatorPassword,
+                moderatorImage: req.file ? req.file.filename : null,
+                shop: shopId 
+            });
+
+            const savedModerator = await moderator.save();
+            res.status(201).send({ 
+                message: "Moderator added successfully", 
+                moderator: savedModerator 
+            });
+            
+        } catch (err) {
+            return res.status(500).send({ message: err.message });
+        }
+    });
+};
+
+// Login a moderator
+exports.login = async (req, res) => {
+    const { email, password } = req.body;
 
     try {
-      const { moderatorName, email, moderatorPassword } = req.body;
+        const moderator = await Moderator.findOne({ email }).populate('shop');
+        if (!moderator) {
+            return res.status(400).json({ message: "Email not found" });
+        }
 
-      const userData = req.user;
-      const shopId = userData.shopId;
+        const isMatch = await bcrypt.compare(password, moderator.moderatorPassword);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid password" });
+        }
 
-      const existingShop = await shop.findById(shopId);
-      if (!existingShop) {
-        return res.status(400).send({ message: "Invalid shop ID." });
-      }
+        const token = jwt.sign({
+            id: moderator._id,
+            email: moderator.email,
+            role: moderator.role,
+            shopId: moderator.shop?._id
+        }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-      const hashedPassword = await bcrypt.hash(moderatorPassword, 10);
-
-      const moderator = new Moderator({
-        moderatorName,
-        email,
-        moderatorPassword: hashedPassword,
-        moderatorImage: req.file?.path,
-        shopId: shopId,
-      });
-
-      const savedModerator = await moderator.save();
-
-      res.status(201).send({
-        message: "Moderator added successfully",
-        moderator: savedModerator,
-      });
+        // Send response with token and moderator data
+        res.send({
+            message: "Login successful",
+            token,
+            moderator: {
+                id: moderator._id,
+                moderatorName: moderator.moderatorName,
+                email: moderator.email,
+                shop: moderator.shop
+            }
+        });
     } catch (err) {
-      return res.status(500).send({ message: err.message });
+        res.status(500).send({ message: err.message || "Error logging in" });
     }
-  });
 };
 
-//login a moderator
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Find the moderator by email
-    const moderator = await Moderator.findOne({ email });
-    if (!moderator) {
-      return res.status(400).json({ message: "Email not found" });
+// Get all moderators for the vendor's shop
+exports.getModeratorByShop = async (req, res) => {
+    try {
+        const shopId = req.user.shopId;
+        
+        if (!shopId) {
+            return res.status(400).send({ message: "Vendor is not associated with a shop" });
+        }
+        const moderators = await Moderator.find({ shop: shopId }).populate('shop');
+        res.status(200).send({ moderators });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error fetching moderators" });
     }
-
-    // Compare password with hashed password
-    const isMatch = await bcrypt.compare(password, moderator.moderatorPassword);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid password" });
-    }
-
-    // Generate a JWT token for the moderator
-    const token = jwt.sign(
-      {
-        id: moderator._id,
-        email: moderator.email,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    // Send response with token and moderator data
-    res.send({
-      message: "Login successful",
-      token,
-      moderator: {
-        id: moderator._id,
-        moderatorName: moderator.moderatorName,
-        email: moderator.email,
-      },
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message || "Error logging in" });
-  }
 };
 
-//get all moderators
-exports.getModeratorsByShop = async (req, res) => {
-  const { shopId } = req.params;
-
-  try {
-    const moderators = await Moderator.find({ shopId });
-    res.status(200).send({ moderators });
-  } catch (err) {
-    res
-      .status(500)
-      .send({ message: err.message || "Error fetching moderators" });
-  }
-};
-
-//forgot password
+// Forgot password
 exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  try {
-    const moderator = await Moderator.findOne({ email });
-    if (!moderator) {
-      return res.status(404).send({ message: "Moderator not found" });
+    try {
+        const moderator = await Moderator.findOne({ email });
+        if (!moderator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+
+        const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Ex: "A1B2C3"
+        moderator.resetPasswordCode = resetCode;
+        moderator.resetPasswordExpires = Date.now() + 3600000; 
+
+        await moderator.save();
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        const mailOptions = {
+            to: moderator.email,
+            from: process.env.EMAIL_USER,
+            subject: "Moderator Password Reset Code",
+            text: `You have requested a password reset.\n\nYour reset code is: ${resetCode}\n\nIf you did not request this, please ignore this email.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.send({ message: "Reset code sent to your email." });
+    } catch (err) {
+        console.error("Error sending reset code:", err);
+        res.status(500).send({ message: "Error sending reset code" });
     }
-
-    const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Ex: "A1B2C3"
-    moderator.resetPasswordCode = resetCode;
-    moderator.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-
-    await moderator.save();
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      to: moderator.email,
-      from: process.env.EMAIL_USER,
-      subject: "Moderator Password Reset Code",
-      text: `You have requested a password reset.\n\nYour reset code is: ${resetCode}\n\nIf you did not request this, please ignore this email.`,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.send({ message: "Reset code sent to your email." });
-  } catch (err) {
-    console.error("Error sending reset code:", err);
-    res.status(500).send({ message: "Error sending reset code" });
-  }
 };
 
 // Reset Password
 exports.resetPassword = async (req, res) => {
-  const { code, newPassword } = req.body;
+    const { code, newPassword } = req.body;
 
-  try {
-    const moderator = await Moderator.findOne({
-      resetPasswordCode: code,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
+    try {
+        const moderator = await Moderator.findOne({
+            resetPasswordCode: code,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
 
-    if (!moderator) {
-      return res
-        .status(400)
-        .send({ message: "Invalid or expired reset code." });
+        if (!moderator) {
+            return res.status(400).send({ message: "Invalid or expired reset code." });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        moderator.moderatorPassword = hashedPassword;
+        moderator.resetPasswordCode = undefined;
+        moderator.resetPasswordExpires = undefined;
+
+        await moderator.save();
+        res.send({ message: "Password has been reset successfully." });
+    } catch (err) {
+        res.status(500).send({ message: "Error resetting password" });
     }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    moderator.moderatorPassword = hashedPassword;
-    moderator.resetPasswordCode = undefined;
-    moderator.resetPasswordExpires = undefined;
-
-    await moderator.save();
-    res.send({ message: "Password has been reset successfully." });
-  } catch (err) {
-    res.status(500).send({ message: "Error resetting password" });
-  }
 };
 
-//update moderator
+// Update moderator
 exports.updateModerator = async (req, res) => {
-  const { id } = req.params;
-  const { moderatorName, email, password, role } = req.body;
+    const { id } = req.params;
+    const { moderatorName, email, password } = req.body;
 
-  try {
-    const updateData = {
-      moderatorName,
-      email,
-      password,
-      role,
-    };
+    try {
+        const shopId = req.user.shopId;
+        const moderator = await Moderator.findById(id);
+        
+        if (!moderator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+        
+        if (req.user.role === 'vendor' && moderator.shop.toString() !== shopId.toString()) {
+            return res.status(403).send({ message: "You can only update moderators from your shop" });
+        }
 
-    if (req.file) {
-      updateData.moderatorImage = `uploads/${req.file.filename}`;
+        const updateData = {
+            moderatorName,
+            email
+        };
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updateData.moderatorPassword = hashedPassword;
+        }
+
+        if (req.file) {
+            updateData.moderatorImage = req.file.filename;
+        }
+
+        const updatedModerator = await Moderator.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        );
+
+        res.status(200).send({ 
+            message: "Moderator updated successfully", 
+            moderator: updatedModerator 
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
     }
-
-    const updatedModerator = await Moderator.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
-
-    if (!updatedModerator) {
-      return res.status(404).send({ message: "Moderator not found" });
-    }
-
-    res.status(200).send({
-      message: "Moderator updated successfully",
-      moderator: updatedModerator,
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
 };
 
-//delete moderator
+// Delete moderator
 exports.deleteModerator = async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    const deletedModerator = await Moderator.findByIdAndDelete(id);
-    if (!deletedModerator) {
-      return res.status(404).send({ message: "Moderator not found" });
+    try {
+        const shopId = req.user.shopId;
+        const moderator = await Moderator.findById(id);
+        
+        if (!moderator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+        
+        if (req.user.role === 'vendor' && moderator.shop.toString() !== shopId.toString()) {
+            return res.status(403).send({ message: "You can only delete moderators from your shop" });
+        }
+
+        const deletedModerator = await Moderator.findByIdAndDelete(id);
+        res.status(200).send({ 
+            message: "Moderator deleted successfully", 
+            moderator: deletedModerator 
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
     }
-    res.status(200).send({
-      message: "Moderator deleted successfully",
-      moderator: deletedModerator,
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
 };

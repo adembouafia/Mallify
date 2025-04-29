@@ -14,6 +14,10 @@ const orderSchema = new mongoose.Schema({
   dateCommande: {
     type: Date,
     default: Date.now,
+  },
+  shop: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "shop"
   }
 });
 

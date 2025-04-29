@@ -7,6 +7,8 @@ const Invoice = require('../models/invoice.model');
 exports.createOrder = async (req, res) => {
     const { idPanier } = req.body;
     try {
+
+        const shopId = req.user.shopId
         const cart = await Cart.findById(idPanier);
         if (!cart) {
             return res.status(404).json({ 
@@ -14,26 +16,34 @@ exports.createOrder = async (req, res) => {
             });
         }
 
+        if (cart.shop != shopId) {
+            return res.status(400).json({ 
+                message: 'Le panier ne correspond pas à la boutique' 
+            });
+        }
+
         const order = new Order({
             idPanier: cart._id,
-            idClient: cart.clientId
+            idClient: cart.clientId,
+            shop : shopId
         });
 
         await order.save();
 
         const invoice = new Invoice({
             idCommande: order._id,
-            montantTotal: cart.totalPrice
+            montantTotal: cart.totalPrice,
+            shop: shopId,
+            idClient: cart.clientId,
         });
 
         await invoice.save();
 
         const populatedOrder = await Order.findById(order._id)
             .populate('idPanier')
-            .populate('idClient');
+            .populate('idClient')
+            .populate('shop');
 
-        // cart.items = [];
-        // await cart.save();
 
         res.status(201).json({ 
             message: 'Commande créée avec succès', 

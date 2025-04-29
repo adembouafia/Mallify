@@ -29,6 +29,10 @@ const reportSchema = new mongoose.Schema({
         type: String,
         enum: ['Pending', 'Resolved'],
         default: 'Pending'
+    },
+    shop: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "shop"
     }
 },
 {
