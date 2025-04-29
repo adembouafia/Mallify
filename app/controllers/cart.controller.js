@@ -5,6 +5,10 @@ const Product = require('../models/product.model');
 exports.addToCart = async (req, res) => {
     const { clientId, productId, quantity } = req.body;
 
+    if (!clientId || !productId || typeof quantity !== 'number') {
+        return res.status(400).json({ message: "Champs manquants ou invalides." });
+    }
+
     try {
         const product = await Product.findById(productId);
         if (!product) {
@@ -44,6 +48,7 @@ exports.addToCart = async (req, res) => {
         res.status(500).json({ message: "Erreur ajout panier", error: err.message });
     }
 };
+
 
 
 // Supprimer un produit du panier
@@ -136,5 +141,31 @@ exports.updateCartItem = async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ message: "Error updating cart", error: err.message });
+    }
+};
+
+
+//clear cart
+exports.clearCart = async (req, res) => {
+    const { clientId } = req.params;
+
+    try {
+        const deletedCart = await Cart.findOneAndDelete({ idClient: clientId });
+
+        if (!deletedCart) {
+            return res.status(404).json({
+                message: "Aucun panier trouvé pour ce client"
+            });
+        }
+
+        res.status(200).json({
+            message: "Panier supprimé avec succès",
+            cart: deletedCart
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Erreur lors de la suppression du panier",
+            error: error.message
+        });
     }
 };
