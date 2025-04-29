@@ -395,3 +395,227 @@ exports.deleteProduct = async (req, res) => {
     });
   }
 };
+
+
+// Add review to product
+exports.addReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body
+    const productId = req.params.id
+
+    // Validate input
+    if (!rating || !comment) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Rating and comment are required",
+      })
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Rating must be between 1 and 5",
+      })
+    }
+
+    // Find the product
+    const product = await Product.findById(productId)
+    if (!product) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      })
+    }
+
+    // Check if user already reviewed this product
+    const existingReviewIndex = product.reviews.findIndex((review) => review.userId.toString() === req.user.id)
+
+    if (existingReviewIndex !== -1) {
+      // Update existing review
+      product.reviews[existingReviewIndex].rating = rating
+      product.reviews[existingReviewIndex].comment = comment
+    } else {
+      // Add new review
+      product.reviews.push({
+        userId: req.user.id,
+        userName: req.user.name || req.user.email.split("@")[0], // Use name or email username
+        rating,
+        comment,
+      })
+    }
+
+    // Save the product (pre-save hook will calculate average rating)
+    await product.save()
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews: product.reviews,
+        averageRating: product.averageRating,
+        reviewCount: product.reviewCount,
+      },
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}
+
+// Get reviews for a product
+// Add review to product
+exports.addReview = async (req, res) => {
+  try {
+    const { rating, title, comment } = req.body
+    const productId = req.params.id
+
+    // Validate input
+    if (!rating || !comment) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Rating and comment are required",
+      })
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Rating must be between 1 and 5",
+      })
+    }
+
+    // Find the product
+    const product = await Product.findById(productId)
+    if (!product) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      })
+    }
+
+    // Check if user already reviewed this product
+    const existingReviewIndex = product.reviews.findIndex((review) => review.userId.toString() === req.user.id)
+
+    if (existingReviewIndex !== -1) {
+      // Update existing review
+      product.reviews[existingReviewIndex].rating = rating
+      product.reviews[existingReviewIndex].title = title || product.reviews[existingReviewIndex].title
+      product.reviews[existingReviewIndex].comment = comment
+    } else {
+      // Add new review
+      product.reviews.push({
+        userId: req.user.id,
+        userName: req.user.name || req.user.email.split("@")[0], // Use name or email username
+        rating,
+        title,
+        comment,
+      })
+    }
+
+    // Save the product (pre-save hook will calculate average rating)
+    await product.save()
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews: product.reviews,
+        averageRating: product.averageRating,
+        reviewCount: product.reviewCount,
+      },
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}
+
+// Delete a review
+exports.deleteReview = async (req, res) => {
+  try {
+    const productId = req.params.productId
+    const reviewId = req.params.reviewId
+
+    // Find the product
+    const product = await Product.findById(productId)
+    if (!product) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      })
+    }
+
+    // Find the review
+    const reviewIndex = product.reviews.findIndex((review) => review._id.toString() === reviewId)
+
+    if (reviewIndex === -1) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Review not found",
+      })
+    }
+
+    // Check if user is authorized to delete this review
+    const review = product.reviews[reviewIndex]
+    if (review.userId.toString() !== req.user.id && !["admin", "moderator"].includes(req.user.role)) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You are not authorized to delete this review",
+      })
+    }
+
+    // Remove the review
+    product.reviews.splice(reviewIndex, 1)
+
+    // Save the product (pre-save hook will recalculate average rating)
+    await product.save()
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews: product.reviews,
+        averageRating: product.averageRating,
+        reviewCount: product.reviewCount,
+      },
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}
+
+// Get user's review for a product
+exports.getUserReview = async (req, res) => {
+  try {
+    const productId = req.params.id
+    const userId = req.user.id
+
+    // Find the product
+    const product = await Product.findById(productId)
+    if (!product) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      })
+    }
+
+    // Find the user's review
+    const review = product.reviews.find((review) => review.userId.toString() === userId)
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        review: review || null,
+      },
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}

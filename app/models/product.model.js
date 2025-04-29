@@ -1,4 +1,36 @@
 const mongoose = require("mongoose");
+// Review schema as a subdocument
+const reviewSchema = new mongoose.Schema(
+    {
+        clientId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Client",
+            required: true,
+        },
+      clientName: {
+        type: String,
+        required: true,
+      },
+      rating: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5,
+      },
+      title: {
+        type: String,
+        trim: true,
+      },
+      comment: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    },
+    {
+      timestamps: true,
+    },
+  )
 
 const productSchema = new mongoose.Schema({
     productName: {
@@ -57,9 +89,35 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     }
+    ,
+    // Add reviews array to the product schema
+    reviews: [reviewSchema],
+    // Add average rating field
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    // Add review count field
+    reviewCount: {
+      type: Number,
+      default: 0,
+    },
 
-}, {
+}, 
+{
     timestamps: true  
 });
+
+productSchema.pre("save", function (next) {
+    if (this.reviews.length > 0) {
+      const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0)
+      this.averageRating = Math.round((totalRating / this.reviews.length) * 10) / 10 
+      this.reviewCount = this.reviews.length
+    } else {
+      this.averageRating = 0
+      this.reviewCount = 0
+    }
+    next()
+  })
 
 module.exports = mongoose.model("Product", productSchema);

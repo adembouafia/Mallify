@@ -122,14 +122,14 @@
 .profile-nav__menu li a:hover {
   color: #4f46e5;
 }
-.account-wrapper {
+.account-wrapper-profile {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 @media (min-width: 992px) {
-  .account-wrapper {
+  .account-wrapper-profile {
     flex-direction: row;
   }
 

@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="../assets/css/aos.css">
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/aboutUs.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     </head> 
     <style>
 
@@ -1223,30 +1224,43 @@
                                         </div>
                                     </div>
                                     <div class="ms-xxl-5 pt-24 mt-24 border-top border-gray-100">
-                                        <div class="">
-                                            <h6 class="mb-24">Write a Review</h6>
-                                            <div class="flex-align gap-8">
-                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                            </div>
-                                        </div>
-                                        <div class="mt-32">
-                                            <form action="#">   
-                                                <div class="mb-32">
-                                                    <label for="title" class="text-neutral-600 mb-8">Review Title</label>
-                                                    <input type="text" class="common-input rounded-8" id="title" placeholder="Write Your review title here...">
-                                                </div>
-                                                <div class="mb-32">
-                                                    <label for="desc" class="text-neutral-600 mb-8">Review Content</label>
-                                                    <textarea class="common-input rounded-8" id="desc" placeholder="Your Comments here ...."></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-main rounded-pill mt-48">Submit Review</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                      <div class="">
+                                          <h6 class="mb-24">Write a Review</h6>
+                                          <div class="rating-stars flex-align gap-8">
+                                              <span class="text-15 fw-medium text-gray-300 d-flex"><i class="ph-fill ph-star"></i></span>
+                                              <span class="text-15 fw-medium text-gray-300 d-flex"><i class="ph-fill ph-star"></i></span>
+                                              <span class="text-15 fw-medium text-gray-300 d-flex"><i class="ph-fill ph-star"></i></span>
+                                              <span class="text-15 fw-medium text-gray-300 d-flex"><i class="ph-fill ph-star"></i></span>
+                                              <span class="text-15 fw-medium text-gray-300 d-flex"><i class="ph-fill ph-star"></i></span>
+                                          </div>
+                                      </div>
+                                      <div class="mt-32">
+                                          <form id="review-form">   
+                                              <!-- Hidden inputs for product ID and rating -->
+                                              <input type="hidden" id="product-id" value="<%= product._id %>">
+                                              <input type="hidden" id="rating-input" name="rating" value="">
+                                              
+                                              <div class="mb-32">
+                                                  <label for="review-title" class="text-neutral-600 mb-8">Review Title</label>
+                                                  <input type="text" class="common-input rounded-8" id="review-title" placeholder="Write Your review title here...">
+                                              </div>
+                                              <div class="mb-32">
+                                                  <label for="review-comment" class="text-neutral-600 mb-8">Review Content</label>
+                                                  <textarea class="common-input rounded-8" id="review-comment" placeholder="Your Comments here ...."></textarea>
+                                              </div>
+                                              <button type="submit" id="submit-review" class="btn btn-main rounded-pill mt-48">Submit Review</button>
+                                          </form>
+                                      </div>
+                                      
+                                      <!-- Add a container for displaying reviews -->
+                                      <div class="mt-48">
+                                          <h6 class="mb-24">Customer Reviews</h6>
+                                          <div id="review-stats" class="mb-24"></div>
+                                          <div id="reviews-container">
+                                              <div class="text-center py-24">Loading reviews...</div>
+                                          </div>
+                                      </div>
+                                  </div>
                                 </div>  
                             </div>
                         </div>  
@@ -1754,6 +1768,7 @@
   <script src="../assets/js/js_functions/preloader.js"></script>
   <script src="../assets/js/js_functions/product_details.js"></script>
   <script src="../assets/js/js_functions/login_and_register.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     // Get DOM elements
     const reportLink = document.getElementById('reportLink');
@@ -1843,5 +1858,6 @@
         xhr.send(JSON.stringify(reportData));
     });
 </script>
+<script src="../assets/js/js_functions/review.js"></script>
     </body>
 </html>

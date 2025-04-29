@@ -10770,57 +10770,167 @@ input[type=number] {
     width: 100%;
     height: 100%;
 }
-/*--------------------------------login button transformation ----------------------------------------*/
-/* Enhanced dropdown styling */
-.account-dropdown-wrapper {
-    display: inline-block;
+
+/*--------------------------------toast  ----------------------------------------*/
+/* Toast Notification Styles for SweetAlert2 */
+
+/* Main toast container */
+.cool-toast-popup {
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+    padding: 12px 20px !important;
+    max-width: 350px !important;
+    width: auto !important;
+    border-left: 4px solid transparent !important;
   }
   
-  .account-dropdown-menu {
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+  /* Success toast border */
+  .swal2-icon.swal2-success + .swal2-html-container,
+  .swal2-icon.swal2-success + .swal2-title {
+    border-color: #00e676 !important;
   }
   
-  .dropdown-item {
-    color: #333;
-    transition: all 0.2s ease;
+  /* Error toast border */
+  .swal2-icon.swal2-error + .swal2-html-container,
+  .swal2-icon.swal2-error + .swal2-title {
+    border-color: #ff1744 !important;
   }
   
-  .dropdown-item:hover {
-    background-color: #f8f9fa;
-    transform: translateX(3px);
+  /* Warning toast border */
+  .swal2-icon.swal2-warning + .swal2-html-container,
+  .swal2-icon.swal2-warning + .swal2-title {
+    border-color: #ff9100 !important;
   }
   
-  /* Animation for dropdown */
-  .account-dropdown-menu:not(.d-none) {
-    animation: fadeInDown 0.3s ease-out;
+  /* Info toast border */
+  .swal2-icon.swal2-info + .swal2-html-container,
+  .swal2-icon.swal2-info + .swal2-title {
+    border-color: #40c4ff !important;
   }
   
-  @keyframes fadeInDown {
-    from { 
-      opacity: 0; 
-      transform: translateY(-15px); 
+  /* Toast title styling */
+  .cool-toast-popup .swal2-title {
+    font-size: 16px !important;
+    margin-bottom: 5px !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Toast message styling */
+  .cool-toast-popup .swal2-html-container {
+    font-size: 14px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+  
+  /* Toast icon styling */
+  .cool-toast-popup .swal2-icon {
+    margin: 0 15px 0 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px !important;
+  }
+  
+  /* Success icon color */
+  .cool-toast-popup .swal2-success {
+    color: #00e676 !important;
+  }
+  
+  /* Error icon color */
+  .cool-toast-popup .swal2-error {
+    color: #ff1744 !important;
+  }
+  
+  /* Warning icon color */
+  .cool-toast-popup .swal2-warning {
+    color: #ff9100 !important;
+  }
+  
+  /* Info icon color */
+  .cool-toast-popup .swal2-info {
+    color: #40c4ff !important;
+  }
+  
+  /* Timer progress bar styling */
+  .cool-toast-timer {
+    height: 3px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+  
+  /* Success timer color */
+  .swal2-icon.swal2-success ~ .cool-toast-timer {
+    background: linear-gradient(to right, transparent, #00e676) !important;
+  }
+  
+  /* Error timer color */
+  .swal2-icon.swal2-error ~ .cool-toast-timer {
+    background: linear-gradient(to right, transparent, #ff1744) !important;
+  }
+  
+  /* Warning timer color */
+  .swal2-icon.swal2-warning ~ .cool-toast-timer {
+    background: linear-gradient(to right, transparent, #ff9100) !important;
+  }
+  
+  /* Info timer color */
+  .swal2-icon.swal2-info ~ .cool-toast-timer {
+    background: linear-gradient(to right, transparent, #40c4ff) !important;
+  }
+  
+  /* Toast animation */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
     }
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
+    to {
+      transform: translateX(0);
+      opacity: 1;
     }
   }
   
-  /* Hover effect for the account button */
-  .account-dropdown-wrapper button:hover {
-    cursor: pointer;
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
   }
   
-  /* Add a subtle indicator that it's a dropdown */
-  .account-dropdown-wrapper button::after {
-    content: '';
-    display: inline-block;
-    margin-left: 8px;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid currentColor;
-    vertical-align: middle;
+  .swal2-toast-show {
+    animation: slideInRight 0.3s ease-out;
   }
+  
+  .swal2-toast-hide {
+    animation: slideOutRight 0.3s ease-in forwards;
+  }
+  
+  /* Hover effect */
+  .cool-toast-popup:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4) !important;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  /* Layout for toast content */
+  .cool-toast-popup .swal2-content {
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* Dark theme background and text colors */
+  .cool-toast-popup {
+    background: #1e1e2f !important;
+    color: #fff !important;
+  }
+  

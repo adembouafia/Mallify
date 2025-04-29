@@ -9,4 +9,10 @@ module.exports = (app) => {
     app.get("/product/get/:id", product.getProduct);
     app.put("/product/update/:id", auth, authorize('vendor', 'moderator'), product.updateProduct);
     app.delete("/product/delete/:id", auth, authorize('vendor', 'moderator'), product.deleteProduct);
+
+     // Review routes
+  app.post("/product/:id/review", auth, product.addReview)
+  app.get("/product/:id/reviews", product.getProductReviews)
+  app.get("/product/:id/user-review", auth, product.getUserReview)
+  app.delete("/product/:productId/review/:reviewId", auth, product.deleteReview)
 };
