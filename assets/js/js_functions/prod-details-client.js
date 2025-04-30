@@ -176,109 +176,121 @@ function fetchShopDetails(shopId, shopNameElement) {
     xhr.send()
 }
 
-
-// Function to update performance specifications
-
-
-// Function to set up image slider
 function setupImageSlider(product) {
-    // Clear existing sliders
-    const mainSlider = document.querySelector(".product-details__thumb-slider")
-    const thumbSlider = document.querySelector(".product-details__images-slider")
+    const sliderFor = document.querySelector('.product-details__thumb-slider');
+    const sliderNav = document.querySelector('.product-details__images-slider');
 
-    if (!mainSlider || !thumbSlider) return
+    if (!sliderFor || !sliderNav) return;
 
-    mainSlider.innerHTML = ""
-    thumbSlider.innerHTML = ""
+    // Vider les anciens sliders
+    sliderFor.innerHTML = '';
+    sliderNav.innerHTML = '';
 
-    // Add main image and other images
-    const images = []
-
-    // Add main image if available
+    // Ajouter l’image principale
     if (product.mainImage) {
-    images.push(`/uploads/${product.mainImage}`)
-    }
+        const mainImageUrl = `/uploads/${product.mainImage}`;
 
-    // Add other images if available
-    if (product.otherImages && product.otherImages.length > 0) {
-    product.otherImages.forEach((image) => {
-        images.push(`/uploads/${image}`)
-    })
-    }
-
-    // If no images were added, add a placeholder
-    if (images.length === 0) {
-    images.push("/assets/images/products/placeholder-product.jpg")
-    }
-
-    // Create slides for main slider
-    images.forEach((imageUrl) => {
-    const slide = document.createElement("div")
-    slide.innerHTML = `
+        const mainSlide = document.createElement('div');
+        mainSlide.innerHTML = `
             <div class="product-details__thumb flex-center h-100">
-                <img src="${imageUrl}" alt="${product.productName || "Product"}">
-            </div>
-        `
-    mainSlider.appendChild(slide)
+                <img src="${mainImageUrl}" class="img-fluid main-img" alt="${product.productName}">
+            </div>`;
+        sliderFor.appendChild(mainSlide);
 
-    // Create thumbnail for thumb slider
-    const thumb = document.createElement("div")
-    thumb.innerHTML = `
+        const mainThumb = document.createElement('div');
+        mainThumb.innerHTML = `
             <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
-                <img src="${imageUrl}" alt="${product.productName || "Product"}">
-            </div>
-        `
-    thumbSlider.appendChild(thumb)
-    })
+                <img src="${mainImageUrl}" class="img-thumbnail thumb-img" alt="${product.productName}">
+            </div>`;
+        sliderNav.appendChild(mainThumb);
+    }
 
-    // Initialize slick slider
+    // Ajouter les autres images
+    if (product.otherImages && product.otherImages.length > 0) {
+        product.otherImages.forEach(image => {
+            const imageUrl = `/uploads/${image}`;
+
+            const slide = document.createElement('div');
+            slide.innerHTML = `
+                <div class="product-details__thumb flex-center h-100">
+                    <img src="${imageUrl}" class="img-fluid main-img" alt="${product.productName}">
+                </div>`;
+            sliderFor.appendChild(slide);
+
+            const thumb = document.createElement('div');
+            thumb.innerHTML = `
+                <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                    <img src="${imageUrl}" class="img-thumbnail thumb-img" alt="${product.productName}">
+                </div>`;
+            sliderNav.appendChild(thumb);
+        });
+    }
+
+    // Fallback si aucune image
+    if (sliderFor.children.length === 0) {
+        const placeholder = "/images/placeholder-product.png";
+
+        const placeholderSlide = document.createElement('div');
+        placeholderSlide.innerHTML = `
+            <div class="product-details__thumb flex-center h-100">
+                <img src="${placeholder}" class="img-fluid main-img" alt="Placeholder">
+            </div>`;
+        sliderFor.appendChild(placeholderSlide);
+
+        const placeholderThumb = document.createElement('div');
+        placeholderThumb.innerHTML = `
+            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                <img src="${placeholder}" class="img-thumbnail thumb-img" alt="Placeholder">
+            </div>`;
+        sliderNav.appendChild(placeholderThumb);
+    }
+
+    // Initialiser slick
     try {
-    // Destroy existing sliders if they exist
-    if (typeof jQuery !== "undefined" && jQuery(".product-details__thumb-slider").hasClass("slick-initialized")) {
-        jQuery(".product-details__thumb-slider").slick("unslick")
-    }
-    if (typeof jQuery !== "undefined" && jQuery(".product-details__images-slider").hasClass("slick-initialized")) {
-        jQuery(".product-details__images-slider").slick("unslick")
-    }
+        if (typeof jQuery !== 'undefined') {
+            const $for = jQuery('.product-details__thumb-slider');
+            const $nav = jQuery('.product-details__images-slider');
 
-    // Initialize main slider
-    if (typeof jQuery !== "undefined") {
-        jQuery(".product-details__thumb-slider").slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        fade: true,
-        asNavFor: ".product-details__images-slider",
-        })
+            if ($for.hasClass('slick-initialized')) $for.slick('unslick');
+            if ($nav.hasClass('slick-initialized')) $nav.slick('unslick');
 
-        // Initialize thumbnail slider
-        jQuery(".product-details__images-slider").slick({
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        asNavFor: ".product-details__thumb-slider",
-        dots: false,
-        centerMode: false,
-        focusOnSelect: true,
-        responsive: [
-            {
-            breakpoint: 768,
-            settings: {
+            $for.slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '.product-details__images-slider'
+            });
+
+            $nav.slick({
                 slidesToShow: 3,
-            },
-            },
-            {
-            breakpoint: 480,
-            settings: {
-                slidesToShow: 2,
-            },
-            },
-        ],
-        })
-    }
+                slidesToScroll: 1,
+                asNavFor: '.product-details__thumb-slider',
+                dots: false,
+                centerMode: true,
+                focusOnSelect: true,
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    }
+                ]
+            });
+        }
     } catch (e) {
-    console.error("Error initializing slick slider:", e)
+        console.error("Error initializing slick slider:", e);
     }
 }
+
+
 
 // Function to load product reviews
 function loadProductReviews(productId) {
