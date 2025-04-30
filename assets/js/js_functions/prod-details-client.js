@@ -6,6 +6,10 @@ function getUrlParameter(name) {
 
 let currentProduct = null
 
+function getUserToken() {
+    return localStorage.getItem("token") || sessionStorage.getItem("token");
+}
+
 // Function to load product details
 function loadProductDetails() {
     const productId = getUrlParameter("id")
@@ -295,7 +299,7 @@ function setupImageSlider(product) {
 // Function to load product reviews
 function loadProductReviews(productId) {
     const xhr = new XMLHttpRequest()
-    xhr.open("GET", `http://localhost:3000/reviews/product/${productId}`, true)
+    xhr.open("GET", `http://localhost:3000/product/${productId}/reviews`, true)
 
     xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
@@ -326,31 +330,69 @@ function loadProductReviews(productId) {
 
 // Function to display reviews
 function displayReviews(reviews) {
-    const reviewsContainer = document.querySelector("#pills-reviews")
-    if (!reviewsContainer) return
+    const container = document.querySelector("#pills-reviews .col-lg-6:first-of-type");
 
-    // If no reviews, show a message
+    if (!container) return;
+
+    // Supprimer les anciens avis
+    const oldReviews = container.querySelectorAll(".review-item");
+    oldReviews.forEach((r) => r.remove());
+
     if (!reviews || reviews.length === 0) {
-    const noReviewsElement = document.createElement("div")
-    noReviewsElement.className = "text-center py-24"
-    noReviewsElement.textContent = "No reviews yet. Be the first to review this product!"
-    reviewsContainer.appendChild(noReviewsElement)
-    return
+        const noReviews = document.createElement("div");
+        noReviews.className = "text-center py-24";
+        noReviews.textContent = "No reviews yet. Be the first to review this product!";
+        container.appendChild(noReviews);
+        return;
     }
 
-    // Display the first two reviews in the existing structure
-    const reviewElements = reviewsContainer.querySelectorAll(".d-flex.align-items-start.gap-24")
+    reviews.forEach((review) => {
+        const el = document.createElement("div");
+        el.className = "d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44 review-item";
+        el.innerHTML = `
+            <img src="/assets/images/team_members/devoloper1.jpg" alt="user image" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
+            <div class="flex-grow-1">
+                <div class="flex-between align-items-start gap-8">
+                    <div>
+                        <h6 class="mb-12 text-md">${review.clientName || "Anonymous"}</h6>
+                        <div class="flex-align gap-8 stars">${renderStars(review.rating)}</div>
+                    </div>
+                    <span class="text-gray-800 text-xs">${formatDateDiff(review.createdAt)}</span>
+                </div>
+                <h6 class="mb-14 text-md mt-24">${review.title || "Review"}</h6>
+                <p class="text-gray-700">${review.comment || "No comment provided"}</p>
 
-    if (reviewElements && reviewElements.length > 0 && reviews.length > 0) {
-    // Update first review
-    updateReviewElement(reviewElements[0], reviews[0])
-
-    // Update second review if available
-    if (reviewElements.length > 1 && reviews.length > 1) {
-        updateReviewElement(reviewElements[1], reviews[1])
-    }
-    }
+                <div class="flex-align gap-20 mt-44">
+                    <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                        <i class="ph-bold ph-thumbs-up"></i> Like
+                    </button>
+                    <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                        <i class="ph-bold ph-arrow-bend-up-left"></i> Replay
+                    </a>
+                </div>
+            </div>
+        `;
+        container.appendChild(el);
+    });
 }
+function renderStars(rating) {
+    let stars = "";
+    for (let i = 0; i < 5; i++) {
+        stars += `<span class="text-15 fw-medium ${i < rating ? "text-warning-600" : "text-gray-300"} d-flex">
+                    <i class="ph-fill ph-star"></i>
+                  </span>`;
+    }
+    return stars;
+}
+
+function formatDateDiff(dateStr) {
+    const reviewDate = new Date(dateStr);
+    const now = new Date();
+    const diffTime = Math.abs(now - reviewDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} ${diffDays === 1 ? "Day" : "Days"} ago`;
+}
+
 
 // Function to update a review element with data
 function updateReviewElement(element, review) {
@@ -443,101 +485,76 @@ function getDefaultPercentage(rating) {
         return 0
     }
 }
-
-// Function to handle review submission
-function handleReviewSubmit(event) {
-    event.preventDefault()
-
-    const productId = getUrlParameter("id")
-    const ratingInput = document.getElementById("rating-input")
-    const titleInput = document.getElementById("review-title")
-    const contentInput = document.getElementById("review-comment")
-
-    if (!productId) {
-    showAlert("danger", "Product ID is missing")
-    return
-    }
-
-    if (!ratingInput.value) {
-    showAlert("danger", "Please select a rating")
-    return
-    }
-
-    if (!titleInput.value) {
-    showAlert("danger", "Please enter a review title")
-    return
-    }
-
-    if (!contentInput.value) {
-    showAlert("danger", "Please enter review content")
-    return
-    }
-
-    const submitBtn = event.target.querySelector('button[type="submit"]')
-    const originalBtnText = submitBtn.innerHTML
-    submitBtn.innerHTML =
-    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
-    submitBtn.disabled = true
-
+// Assure-toi d’inclure cette fonction dans ton script prod-details-client.js
+async function handleReviewSubmit(event) {
+    event.preventDefault();
+  
+    const productId = getUrlParameter("id");
+    const ratingInput = document.getElementById("rating-input");
+    const titleInput = document.getElementById("review-title");
+    const contentInput = document.getElementById("review-comment");
+    const token = getUserToken();
+  
+    // Validation basique
+    if (!productId) return showAlert("danger", "Product ID is missing");
+    if (!ratingInput.value) return showAlert("danger", "Please select a rating");
+    if (!titleInput.value) return showAlert("danger", "Please enter a review title");
+    if (!contentInput.value) return showAlert("danger", "Please enter review content");
+    if (!token) return showAlert("danger", "You must be logged in to submit a review");
+  
+    // Préparation des données
     const reviewData = {
-    productId: productId,
-    rating: Number.parseInt(ratingInput.value),
-    title: titleInput.value,
-    content: contentInput.value,
+      rating: parseInt(ratingInput.value, 10),
+      title: titleInput.value.trim(),
+      comment: contentInput.value.trim(),
+      productDetails: JSON.stringify(currentProduct) 
+    };
+  
+    console.log("Sending reviewData:", reviewData);
+  
+    // UI feedback
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...`;
+    submitBtn.disabled = true;
+  
+    try {
+      const res = await fetch(`http://localhost:3000/product/${productId}/review`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(reviewData)
+      });
+  
+      const data = await res.json();
+      console.log("Server responded:", data);
+  
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to submit review");
+      }
+  
+      // succès
+      showAlert("success", "Review submitted successfully!");
+      event.target.reset();
+      ratingInput.value = "";
+      // réinitialise les étoiles si nécessaire
+      document.querySelectorAll(".rating-stars .text-15").forEach(star => {
+        star.classList.replace("text-warning-600", "text-gray-300");
+      });
+      loadProductReviews(productId);
+  
+    } catch (err) {
+      console.error("Submission error:", err);
+      showAlert("danger", err.message);
+    } finally {
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
     }
+  }
+  
 
-    const xhr = new XMLHttpRequest()
-    xhr.open("POST", "http://localhost:3000/reviews/add", true)
-    xhr.setRequestHeader("Content-Type", "application/json")
-
-    xhr.onload = () => {
-    submitBtn.innerHTML = originalBtnText
-    submitBtn.disabled = false
-
-    if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-        const response = JSON.parse(xhr.responseText)
-
-        if (response.status === "success") {
-            showAlert("success", "Review submitted successfully!")
-
-            // Reset form
-            event.target.reset()
-            ratingInput.value = ""
-
-            // Reset stars
-            const stars = document.querySelectorAll(".rating-stars .text-15")
-            stars.forEach((star) => {
-            star.className = star.className.replace("text-warning-600", "text-gray-300")
-            })
-
-            // Reload reviews
-            loadProductReviews(productId)
-        } else {
-            showAlert("danger", response.message || "Failed to submit review")
-        }
-        } catch (e) {
-        console.error("Error parsing response:", e)
-        showAlert("danger", "Error processing server response")
-        }
-    } else {
-        try {
-        const response = JSON.parse(xhr.responseText)
-        showAlert("danger", response.message || "Failed to submit review")
-        } catch (e) {
-        showAlert("danger", "Failed to submit review")
-        }
-    }
-    }
-
-    xhr.onerror = () => {
-    submitBtn.innerHTML = originalBtnText
-    submitBtn.disabled = false
-    showAlert("danger", "Network error occurred")
-    }
-
-    xhr.send(JSON.stringify(reviewData))
-}
 
 // Function to handle quantity changes
 function setupQuantityButtons() {
@@ -834,8 +851,7 @@ function initializePriceDisplay() {
 
 // Add these helper functions if they don't exist
 function getUserId() {
-    // Get user ID from localStorage, cookie, or session storage
-    // This depends on how your authentication system works
+
     return localStorage.getItem("userId") || sessionStorage.getItem("userId")
 }
 

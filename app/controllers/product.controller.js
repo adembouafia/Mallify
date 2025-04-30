@@ -402,56 +402,48 @@ exports.deleteProduct = async (req, res) => {
 // Add review to product
 exports.addReview = async (req, res) => {
   try {
-    const { rating, title, comment } = req.body
-    const productId = req.params.id
+    const { rating, title, comment } = req.body;
+    const productId = req.params.id;
+
+    console.log("Received data:", { rating, title, comment, productId });  // Log received data
 
     // Validate input
     if (!rating || !comment) {
       return res.status(400).json({
         status: "fail",
         message: "Rating and comment are required",
-      })
+      });
     }
 
     if (rating < 1 || rating > 5) {
       return res.status(400).json({
         status: "fail",
         message: "Rating must be between 1 and 5",
-      })
+      });
     }
 
     // Find the product
-    const product = await Product.findById(productId)
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
         status: "fail",
         message: "Product not found",
-      })
+      });
     }
 
-    // Check if user already reviewed this product
-    const existingReviewIndex = product.reviews.findIndex((review) => review.userId.toString() === req.user.id)
+    console.log("Product found:", product);  // Log product data
 
-    if (existingReviewIndex !== -1) {
-      // Update existing review
-      product.reviews[existingReviewIndex].rating = rating
-      product.reviews[existingReviewIndex].title = title || product.reviews[existingReviewIndex].title
-      product.reviews[existingReviewIndex].comment = comment
-    } else {
-      // Add new review
-      product.reviews.push({
-        productId: product._id,
-        clientId: req.user.id,
-        clientName: req.user.name || req.user.email.split("@")[0],
-        rating,
-        title,
-        comment,
-      })
-      
-    }
+    product.reviews.push({
+           productId:    product._id,
+          clientId:     req.user.id,
+           clientName:   req.user.name || req.user.email.split("@")[0],
+           rating,
+          title:        title.trim(),
+          comment:      comment.trim()
+        });
 
     // Save the product (pre-save hook will calculate average rating)
-    await product.save()
+    await product.save();
 
     res.status(200).json({
       status: "success",
@@ -460,14 +452,16 @@ exports.addReview = async (req, res) => {
         averageRating: product.averageRating,
         reviewCount: product.reviewCount,
       },
-    })
+    });
   } catch (err) {
+    console.error("Error processing review:", err);  // Log any error
     res.status(400).json({
       status: "fail",
       message: err.message,
-    })
+    });
   }
-}
+};
+
 
 // Get reviews for a product
 exports.getProductReviews = async (req, res) => {

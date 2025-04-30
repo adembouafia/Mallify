@@ -873,74 +873,12 @@
                           <div class="mb-40">
                             <p></p>
                             </div>
-
                         </div>
                         <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab" tabindex="0">
                             <div class="row g-4">
                                 <div class="col-lg-6">
                                     <h6 class="mb-24">Reviews</h6>
-                                    <div class="d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44">
-                                        <img src="../assets/images/team_members/devoloper1.jpg" alt="user image" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
-                                        <div class="flex-grow-1">
-                                            <div class="flex-between align-items-start gap-8 ">
-                                                <div class="">
-                                                    <h6 class="mb-12 text-md">Koussay Ab</h6>
-                                                    <div class="flex-align gap-8">
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    </div>
-                                                </div>
-                                                <span class="text-gray-800 text-xs">3 Days ago</span>
-                                            </div>
-                                            <h6 class="mb-14 text-md mt-24">Greate Product</h6>
-                                            <p class="text-gray-700">Great value for the price! The MSI SPATIUM M450 offers excellent read/write speeds, making my PC feel much faster. Easy installation and reliable performance, highly recommend it!</p>
-
-                                            <div class="flex-align gap-20 mt-44">
-                                                <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                    <i class="ph-bold ph-thumbs-up"></i>
-                                                    Like
-                                                </button>
-                                                <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                    <i class="ph-bold ph-arrow-bend-up-left"></i>
-                                                    Replay
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start gap-24">
-                                        <img src="../assets/images/team_members/devoloper2.jpg" alt="" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
-                                        <div class="flex-grow-1">
-                                            <div class="flex-between align-items-start gap-8 ">
-                                                <div class="">
-                                                    <h6 class="mb-12 text-md">Adem Bouafia</h6>
-                                                    <div class="flex-align gap-8">
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                        <span class="text-15 fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
-                                                    </div>
-                                                </div>
-                                                <span class="text-gray-800 text-xs">3 Days ago</span>
-                                            </div>
-                                            <h6 class="mb-14 text-md mt-24">Greate Product</h6>
-                                            <p class="text-gray-700">Solid performance and great speed boost, but make sure your motherboard supports PCIe 4.0 to get the full benefit. Overall, a great SSD for the price!</p>
-
-                                            <div class="flex-align gap-20 mt-44">
-                                                <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                    <i class="ph-bold ph-thumbs-up"></i>
-                                                    Like
-                                                </button>
-                                                <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                                                    <i class="ph-bold ph-arrow-bend-up-left"></i>
-                                                    Replay
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                               
 
                                     
                                 </div>
@@ -1046,9 +984,6 @@
                                       </div>
                                       <div class="mt-32">
                                           <form id="review-form">   
-                                              <!-- Hidden inputs for product ID and rating -->
-                                              <input type="hidden" id="product-id" value="<%= product._id %>">
-                                              <input type="hidden" id="rating-input" name="rating" value="">
                                               
                                               <div class="mb-32">
                                                   <label for="review-title" class="text-neutral-600 mb-8">Review Title</label>
@@ -1064,6 +999,7 @@
                                       
                                       <!-- Add a container for displaying reviews -->
                                       <div class="mt-48">
+                                        <input type="hidden" id="rating-input" name="rating" value="">
                                           <h6 class="mb-24">Customer Reviews</h6>
                                           <div id="review-stats" class="mb-24"></div>
                                           <div id="reviews-container">
