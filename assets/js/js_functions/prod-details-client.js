@@ -1,0 +1,1211 @@
+
+function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get(name)
+}
+
+let currentProduct = null
+
+// Function to load product details
+function loadProductDetails() {
+    const productId = getUrlParameter("id")
+
+    if (!productId) {
+    showAlert("danger", "Product ID is missing from URL")
+    return
+    }
+
+    const xhr = new XMLHttpRequest()
+    xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true)
+
+    xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+        const response = JSON.parse(xhr.responseText)
+
+        if (response.status === "success" && response.data && response.data.product) {
+            currentProduct = response.data.product // Store the product
+            displayProductDetails(currentProduct)
+            setupImageSlider(currentProduct)
+            loadProductReviews(productId)
+
+            // Initialize price display and shipping fee
+            initializePriceDisplay()
+
+            // Setup quantity buttons ONLY after loading product
+            setupQuantityButtons()
+        } else {
+            showAlert("danger", "Failed to load product data")
+        }
+        } catch (e) {
+        console.error("Error parsing product data:", e)
+        showAlert("danger", "Error processing server response")
+        }
+    } else {
+        showAlert("danger", "Failed to load product data")
+    }
+    }
+
+    xhr.onerror = () => {
+    showAlert("danger", "Network error occurred")
+    }
+
+    xhr.send()
+}
+
+// Function to display product details
+function displayProductDetails(product) {
+    // Update product name
+    const productNameElement = document.querySelector(".product-details__content h5")
+    if (productNameElement) {
+    productNameElement.textContent = product.productName || "Product Name Not Available"
+    }
+
+    // Update product ID/SKU
+    const skuElement = document.querySelector(".flex-align.flex-wrap.gap-12 + span + span")
+    if (skuElement) {
+    skuElement.innerHTML = `<span class="text-gray-400">SKU:</span>${product.productId || "N/A"}`
+    }
+
+    // Update price
+    const priceElement = document.querySelector(".flex-align.gap-8 h6")
+    if (priceElement) {
+    priceElement.textContent = `${product.productPrice || 0} DT`
+    }
+
+    // Update regular price if available
+    const regularPriceElement = document.querySelector(".flex-align.gap-4 h6")
+    if (regularPriceElement && product.regularPrice) {
+    regularPriceElement.textContent = `${product.regularPrice} DT`
+    }
+
+    // Update discount percentage if available
+    const discountElement = document.querySelector(".flex-align.gap-8.text-main-two-600")
+    if (discountElement && product.regularPrice && product.productPrice) {
+    const discount = Math.round(((product.regularPrice - product.productPrice) / product.regularPrice) * 100)
+    if (discount > 0) {
+        discountElement.innerHTML = `<i class="ph-fill ph-seal-percent text-xl"></i> -${discount}%`
+    } else {
+        discountElement.parentElement.style.display = "none"
+    }
+    }
+
+    // Update description
+    const descriptionElement = document.querySelector(".product-details__content p.text-gray-700")
+    if (descriptionElement) {
+    descriptionElement.textContent = product.description || "No description available"
+    }
+
+    // Update detailed description in tab
+    const descTabContent = document.querySelector("#pills-description")
+    if (descTabContent) {
+    // Use productDetails if available, otherwise use description
+    const detailedDescription = document.querySelector("#pills-description p:first-of-type")
+    if (detailedDescription) {
+        detailedDescription.textContent =
+        product.productDetails || product.description || "No detailed description available"
+    }
+    }
+
+    // Update stock information
+    const stockElement = document.querySelector('label[for="stock"]')
+    if (stockElement) {
+    stockElement.textContent = `Total Stock: ${product.stock || 0}`
+    }
+
+    // Update availability
+    const availabilityElement = document.querySelector(
+    ".product-dContent__box .mb-40:nth-of-type(2) ul li:nth-of-type(4) .text-gray-500",
+    )
+    if (availabilityElement) {
+    availabilityElement.textContent = ` ${product.availability || "N/A"}`
+    }
+
+
+
+    // Update shop name
+    const shopNameElement = document.querySelector(
+    ".px-16.py-8.bg-main-50.rounded-8.flex-between.gap-24.mb-0 .text-sm.text-neutral-600.d-flex .fw-semibold",
+    )
+    if (shopNameElement) {
+    // Check if shop is populated as an object with shopName
+    if (product.shop && typeof product.shop === "object" && product.shop.shopName) {
+        shopNameElement.textContent = product.shop.shopName
+    }
+    // Check if shop is just an ID (string or ObjectId)
+    else if (product.shop) {
+        // Fetch shop details using the shop ID
+        fetchShopDetails(product.shop, shopNameElement)
+    } else {
+        shopNameElement.textContent = "Shop"
+    }
+    }
+}
+
+// Function to fetch shop details
+function fetchShopDetails(shopId, shopNameElement) {
+    const xhr = new XMLHttpRequest()
+    xhr.open("GET", `http://localhost:3000/shop/public/${shopId}`, true)
+
+    xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+        const response = JSON.parse(xhr.responseText)
+
+        if (response.status === "success" && response.data && response.data.shop) {
+            shopNameElement.textContent = response.data.shop.shopName || "Unknown Shop"
+        } else {
+            shopNameElement.textContent = "Shop"
+            console.error("Failed to load shop data")
+        }
+        } catch (e) {
+        console.error("Error parsing shop data:", e)
+        shopNameElement.textContent = "Shop"
+        }
+    } else {
+        console.error("Failed to load shop data")
+        shopNameElement.textContent = "Shop"
+    }
+    }
+
+    xhr.onerror = () => {
+    console.error("Network error occurred while fetching shop data")
+    shopNameElement.textContent = "Shop"
+    }
+
+    xhr.send()
+}
+
+
+// Function to update performance specifications
+
+
+// Function to set up image slider
+function setupImageSlider(product) {
+    // Clear existing sliders
+    const mainSlider = document.querySelector(".product-details__thumb-slider")
+    const thumbSlider = document.querySelector(".product-details__images-slider")
+
+    if (!mainSlider || !thumbSlider) return
+
+    mainSlider.innerHTML = ""
+    thumbSlider.innerHTML = ""
+
+    // Add main image and other images
+    const images = []
+
+    // Add main image if available
+    if (product.mainImage) {
+    images.push(`/uploads/${product.mainImage}`)
+    }
+
+    // Add other images if available
+    if (product.otherImages && product.otherImages.length > 0) {
+    product.otherImages.forEach((image) => {
+        images.push(`/uploads/${image}`)
+    })
+    }
+
+    // If no images were added, add a placeholder
+    if (images.length === 0) {
+    images.push("/assets/images/products/placeholder-product.jpg")
+    }
+
+    // Create slides for main slider
+    images.forEach((imageUrl) => {
+    const slide = document.createElement("div")
+    slide.innerHTML = `
+            <div class="product-details__thumb flex-center h-100">
+                <img src="${imageUrl}" alt="${product.productName || "Product"}">
+            </div>
+        `
+    mainSlider.appendChild(slide)
+
+    // Create thumbnail for thumb slider
+    const thumb = document.createElement("div")
+    thumb.innerHTML = `
+            <div class="max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8">
+                <img src="${imageUrl}" alt="${product.productName || "Product"}">
+            </div>
+        `
+    thumbSlider.appendChild(thumb)
+    })
+
+    // Initialize slick slider
+    try {
+    // Destroy existing sliders if they exist
+    if (typeof jQuery !== "undefined" && jQuery(".product-details__thumb-slider").hasClass("slick-initialized")) {
+        jQuery(".product-details__thumb-slider").slick("unslick")
+    }
+    if (typeof jQuery !== "undefined" && jQuery(".product-details__images-slider").hasClass("slick-initialized")) {
+        jQuery(".product-details__images-slider").slick("unslick")
+    }
+
+    // Initialize main slider
+    if (typeof jQuery !== "undefined") {
+        jQuery(".product-details__thumb-slider").slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+        fade: true,
+        asNavFor: ".product-details__images-slider",
+        })
+
+        // Initialize thumbnail slider
+        jQuery(".product-details__images-slider").slick({
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        asNavFor: ".product-details__thumb-slider",
+        dots: false,
+        centerMode: false,
+        focusOnSelect: true,
+        responsive: [
+            {
+            breakpoint: 768,
+            settings: {
+                slidesToShow: 3,
+            },
+            },
+            {
+            breakpoint: 480,
+            settings: {
+                slidesToShow: 2,
+            },
+            },
+        ],
+        })
+    }
+    } catch (e) {
+    console.error("Error initializing slick slider:", e)
+    }
+}
+
+// Function to load product reviews
+function loadProductReviews(productId) {
+    const xhr = new XMLHttpRequest()
+    xhr.open("GET", `http://localhost:3000/reviews/product/${productId}`, true)
+
+    xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+        const response = JSON.parse(xhr.responseText)
+
+        if (response.status === "success" && response.data && response.data.reviews) {
+            displayReviews(response.data.reviews)
+            updateReviewStats(response.data.stats)
+        } else {
+            console.log("No reviews found or error loading reviews")
+            // Don't show an alert for this, just log it
+        }
+        } catch (e) {
+        console.error("Error parsing reviews data:", e)
+        }
+    } else {
+        console.error("Failed to load reviews")
+    }
+    }
+
+    xhr.onerror = () => {
+    console.error("Network error occurred while loading reviews")
+    }
+
+    xhr.send()
+}
+
+// Function to display reviews
+function displayReviews(reviews) {
+    const reviewsContainer = document.querySelector("#pills-reviews")
+    if (!reviewsContainer) return
+
+    // If no reviews, show a message
+    if (!reviews || reviews.length === 0) {
+    const noReviewsElement = document.createElement("div")
+    noReviewsElement.className = "text-center py-24"
+    noReviewsElement.textContent = "No reviews yet. Be the first to review this product!"
+    reviewsContainer.appendChild(noReviewsElement)
+    return
+    }
+
+    // Display the first two reviews in the existing structure
+    const reviewElements = reviewsContainer.querySelectorAll(".d-flex.align-items-start.gap-24")
+
+    if (reviewElements && reviewElements.length > 0 && reviews.length > 0) {
+    // Update first review
+    updateReviewElement(reviewElements[0], reviews[0])
+
+    // Update second review if available
+    if (reviewElements.length > 1 && reviews.length > 1) {
+        updateReviewElement(reviewElements[1], reviews[1])
+    }
+    }
+}
+
+// Function to update a review element with data
+function updateReviewElement(element, review) {
+    if (!element || !review) return
+
+    // Update reviewer name
+    const nameElement = element.querySelector("h6.text-md")
+    if (nameElement) {
+    nameElement.textContent = review.userName || "Anonymous"
+    }
+
+    // Update rating stars
+    const starsContainer = element.querySelector(".flex-align.gap-8")
+    if (starsContainer) {
+    starsContainer.innerHTML = ""
+    for (let i = 0; i < 5; i++) {
+        const star = document.createElement("span")
+        star.className = `text-15 fw-medium ${i < review.rating ? "text-warning-600" : "text-gray-300"} d-flex`
+        star.innerHTML = '<i class="ph-fill ph-star"></i>'
+        starsContainer.appendChild(star)
+    }
+    }
+
+    // Update date
+    const dateElement = element.querySelector(".text-gray-800.text-xs")
+    if (dateElement) {
+    const reviewDate = new Date(review.createdAt)
+    const now = new Date()
+    const diffTime = Math.abs(now - reviewDate)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    dateElement.textContent = `${diffDays} ${diffDays === 1 ? "Day" : "Days"} ago`
+    }
+
+    // Update title
+    const titleElement = element.querySelector("h6.text-md.mt-24")
+    if (titleElement) {
+    titleElement.textContent = review.title || "Review"
+    }
+
+    // Update content
+    const contentElement = element.querySelector("p.text-gray-700")
+    if (contentElement) {
+    contentElement.textContent = review.content || "No comment provided"
+    }
+}
+
+// Function to update review statistics
+function updateReviewStats(stats) {
+    if (!stats) return
+
+    // Update average rating
+    const avgRatingElement = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 h2")
+    if (avgRatingElement) {
+    avgRatingElement.textContent = stats.averageRating.toFixed(1) || "0.0"
+    }
+
+    // Update rating bars
+    for (let i = 5; i >= 1; i--) {
+    const barElement = document.querySelector(`.progress-bar[style*="wiDth: ${getDefaultPercentage(i)}%"]`)
+    const countElement = barElement
+        ?.closest(".flex-align.gap-8")
+        ?.querySelector(".text-gray-900.flex-shrink-0:last-child")
+
+    if (barElement && stats.ratingCounts) {
+        const count = stats.ratingCounts[i] || 0
+        const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0
+        barElement.style.width = `${percentage}%`
+
+        if (countElement) {
+        countElement.textContent = count.toString()
+        }
+    }
+    }
+}
+
+// Helper function to get default percentage for rating bars
+function getDefaultPercentage(rating) {
+    switch (rating) {
+    case 5:
+        return 70
+    case 4:
+        return 50
+    case 3:
+        return 35
+    case 2:
+        return 20
+    case 1:
+        return 5
+    default:
+        return 0
+    }
+}
+
+// Function to handle review submission
+function handleReviewSubmit(event) {
+    event.preventDefault()
+
+    const productId = getUrlParameter("id")
+    const ratingInput = document.getElementById("rating-input")
+    const titleInput = document.getElementById("review-title")
+    const contentInput = document.getElementById("review-comment")
+
+    if (!productId) {
+    showAlert("danger", "Product ID is missing")
+    return
+    }
+
+    if (!ratingInput.value) {
+    showAlert("danger", "Please select a rating")
+    return
+    }
+
+    if (!titleInput.value) {
+    showAlert("danger", "Please enter a review title")
+    return
+    }
+
+    if (!contentInput.value) {
+    showAlert("danger", "Please enter review content")
+    return
+    }
+
+    const submitBtn = event.target.querySelector('button[type="submit"]')
+    const originalBtnText = submitBtn.innerHTML
+    submitBtn.innerHTML =
+    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...'
+    submitBtn.disabled = true
+
+    const reviewData = {
+    productId: productId,
+    rating: Number.parseInt(ratingInput.value),
+    title: titleInput.value,
+    content: contentInput.value,
+    }
+
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/reviews/add", true)
+    xhr.setRequestHeader("Content-Type", "application/json")
+
+    xhr.onload = () => {
+    submitBtn.innerHTML = originalBtnText
+    submitBtn.disabled = false
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+        const response = JSON.parse(xhr.responseText)
+
+        if (response.status === "success") {
+            showAlert("success", "Review submitted successfully!")
+
+            // Reset form
+            event.target.reset()
+            ratingInput.value = ""
+
+            // Reset stars
+            const stars = document.querySelectorAll(".rating-stars .text-15")
+            stars.forEach((star) => {
+            star.className = star.className.replace("text-warning-600", "text-gray-300")
+            })
+
+            // Reload reviews
+            loadProductReviews(productId)
+        } else {
+            showAlert("danger", response.message || "Failed to submit review")
+        }
+        } catch (e) {
+        console.error("Error parsing response:", e)
+        showAlert("danger", "Error processing server response")
+        }
+    } else {
+        try {
+        const response = JSON.parse(xhr.responseText)
+        showAlert("danger", response.message || "Failed to submit review")
+        } catch (e) {
+        showAlert("danger", "Failed to submit review")
+        }
+    }
+    }
+
+    xhr.onerror = () => {
+    submitBtn.innerHTML = originalBtnText
+    submitBtn.disabled = false
+    showAlert("danger", "Network error occurred")
+    }
+
+    xhr.send(JSON.stringify(reviewData))
+}
+
+// Function to handle quantity changes
+function setupQuantityButtons() {
+    const minusBtnOrig = document.querySelector(".quantity__minus")
+    const plusBtnOrig = document.querySelector(".quantity__plus")
+    const quantityInput = document.getElementById("side-price-insert-prod")
+
+    if (!minusBtnOrig || !plusBtnOrig || !quantityInput || !currentProduct) return
+    const maxStock = currentProduct.stock || 0
+    const minusBtn = minusBtnOrig.cloneNode(true)
+    const plusBtn = plusBtnOrig.cloneNode(true)
+    minusBtnOrig.parentNode.replaceChild(minusBtn, minusBtnOrig)
+    plusBtnOrig.parentNode.replaceChild(plusBtn, plusBtnOrig)
+    quantityInput.value = Math.min(Math.max(Number.parseInt(quantityInput.value) || 1, 1), maxStock)
+    minusBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    let current = quantityInput.valueAsNumber || 1
+    current = current - 1
+    if (current < 1) current = 1
+    quantityInput.value = current
+    updateTotalPrice()
+    })
+
+    plusBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    let current = quantityInput.valueAsNumber || 1
+    current = current + 1
+    if (current > maxStock) {
+        current = maxStock
+        showSweetAlert("warning", "Stock Limit", "Cannot add more than available stock")
+    }
+    quantityInput.value = current
+    updateTotalPrice()
+    })
+    quantityInput.addEventListener("input", () => {
+    let val = quantityInput.valueAsNumber
+    if (isNaN(val) || val < 1) {
+        val = 1
+    } else if (val > maxStock) {
+        val = maxStock
+        showSweetAlert("warning", "Stock Limit", "Cannot add more than available stock")
+    }
+    quantityInput.value = val
+    updateTotalPrice()
+    })
+
+    quantityInput.addEventListener("keypress", (e) => {
+    if (!/[0-9]/.test(e.key)) e.preventDefault()
+    })
+
+    updateTotalPrice()
+}
+
+// Function to update total price based on quantity
+function updateTotalPrice() {
+    if (!currentProduct) return
+    const quantityInput = document.getElementById("side-price-insert-prod")
+    const priceElement = document.getElementById("side-price-prod")
+    if (quantityInput && priceElement) {
+    const quantity = Number.parseInt(quantityInput.value) || 1
+    const unitPrice = currentProduct.productPrice || 0
+    const totalPrice = (quantity * unitPrice).toFixed(2)
+    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${totalPrice} DT</h6>`
+    }
+}
+
+// Replace the setupAddToCartButton function with this corrected version
+function setupAddToCartButton() {
+    const addToCartBtn = document.querySelector(".btn.btn-main")
+
+    if (addToCartBtn) {
+    // Remove any existing event listeners
+    const newAddToCartBtn = addToCartBtn.cloneNode(true)
+    addToCartBtn.parentNode.replaceChild(newAddToCartBtn, addToCartBtn)
+
+    newAddToCartBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        const productId = getUrlParameter("id")
+        const quantity = Number.parseInt(document.getElementById("side-price-insert-prod").value)
+
+        if (!productId) {
+        showSweetAlert("error", "Error", "Product ID is missing")
+        return
+        }
+
+        // Check if user is logged in
+        const userId = getUserId()
+
+        if (!userId) {
+        // Store current product page URL before redirecting
+        localStorage.setItem("redirectAfterLogin", window.location.href)
+
+        // Show sweet alert
+        showSweetAlert("warning", "Sign In Required", "Please sign in to add items to your cart")
+
+        // Redirect to account page after a short delay
+        setTimeout(() => {
+            window.location.href = "/account.html"
+        }, 1500)
+        } else {
+        // User is logged in, add to cart in database
+        addToCart(productId, quantity, false, userId)
+        }
+    })
+    }
+}
+
+// Replace the addToCart function with this corrected version
+function addToCart(productId, quantity, redirectToCheckout = false, userId) {
+    // If no userId, use localStorage for temporary storage
+    if (!userId) {
+    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const existingProductIndex = cart.findIndex((item) => item.productId === productId)
+
+    if (existingProductIndex !== -1) {
+        cart[existingProductIndex].quantity += quantity
+    } else {
+        cart.push({
+        productId: productId,
+        quantity: quantity,
+        })
+    }
+    localStorage.setItem("cart", JSON.stringify(cart))
+
+    updateCartCount(cart)
+
+    if (redirectToCheckout) {
+        window.location.href = "/checkout.html"
+    } else {
+        showSweetAlert("success", "Success", "Product added to cart!")
+    }
+    return
+    }
+
+    // User is logged in, add to cart in database
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/cart/add", true)
+    xhr.setRequestHeader("Content-Type", "application/json")
+
+    // Show loading indicator
+    const loadingIndicator = document.createElement("div")
+    loadingIndicator.className = "loading-indicator"
+    loadingIndicator.innerHTML =
+    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding to cart...'
+    document.body.appendChild(loadingIndicator)
+
+    xhr.onload = () => {
+    // Remove loading indicator
+    if (document.body.contains(loadingIndicator)) {
+        document.body.removeChild(loadingIndicator)
+    }
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+        const response = JSON.parse(xhr.responseText)
+
+        // Update cart count in UI
+        const cartCountElement = document.querySelector(".cart-count")
+        if (cartCountElement && response.cart && response.cart.items) {
+            const totalItems = response.cart.items.reduce((total, item) => total + item.quantity, 0)
+            cartCountElement.textContent = totalItems
+        }
+
+        if (redirectToCheckout) {
+            window.location.href = "/checkout.html"
+        } else {
+            showSweetAlert("success", "Success", "Product added to cart!")
+        }
+        } catch (e) {
+        console.error("Error parsing response:", e)
+        showSweetAlert("error", "Error", "Error processing server response")
+        }
+    } else {
+        try {
+        const response = JSON.parse(xhr.responseText)
+        showSweetAlert("error", "Error", response.message || "Failed to add product to cart")
+        } catch (e) {
+        showSweetAlert("error", "Error", "Failed to add product to cart")
+        }
+    }
+    }
+
+    xhr.onerror = () => {
+    // Remove loading indicator
+    if (document.body.contains(loadingIndicator)) {
+        document.body.removeChild(loadingIndicator)
+    }
+    showSweetAlert("error", "Error", "Network error occurred")
+    }
+
+    xhr.send(
+    JSON.stringify({
+        clientId: userId,
+        productId: productId,
+        quantity: quantity,
+    }),
+    )
+}
+
+// Function to setup rating stars
+function setupRatingStars() {
+    const stars = document.querySelectorAll(".rating-stars .text-15")
+    const ratingInput = document.getElementById("rating-input")
+
+    if (stars.length > 0 && ratingInput) {
+    stars.forEach((star, index) => {
+        star.addEventListener("click", () => {
+        // Set rating value
+        ratingInput.value = index + 1
+
+        // Update star colors
+        stars.forEach((s, i) => {
+            if (i <= index) {
+            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            } else {
+            s.className = s.className.replace("text-warning-600", "text-gray-300")
+            }
+        })
+        })
+
+        // Add hover effect
+        star.addEventListener("mouseenter", () => {
+        stars.forEach((s, i) => {
+            if (i <= index) {
+            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            }
+        })
+        })
+
+        star.addEventListener("mouseleave", () => {
+        const rating = Number.parseInt(ratingInput.value) || 0
+        stars.forEach((s, i) => {
+            if (i < rating) {
+            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            } else {
+            s.className = s.className.replace("text-warning-600", "text-gray-300")
+            }
+        })
+        })
+    })
+    }
+}
+
+// Function to show alerts
+function showAlert(type, message) {
+    const alertDiv = document.createElement("div")
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`
+    alertDiv.role = "alert"
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `
+
+    const container = document.querySelector(".container")
+    container.insertBefore(alertDiv, container.firstChild)
+
+    // Declare bootstrap here to avoid undefined variable error
+    let bsAlert
+    try {
+    bsAlert = new bootstrap.Alert(alertDiv)
+    } catch (error) {
+    console.error("Bootstrap Alert not properly initialized:", error)
+    }
+
+    setTimeout(() => {
+    if (alertDiv.parentNode) {
+        if (bsAlert && bsAlert.close) {
+        bsAlert.close()
+        } else {
+        // Fallback to removing the element if bsAlert is not available or close method is missing
+        alertDiv.parentNode.removeChild(alertDiv)
+        }
+    }
+    }, 5000)
+}
+
+// Function to initialize price display
+function initializePriceDisplay() {
+    if (!currentProduct) return
+
+    // Set initial price display
+    const priceElement = document.getElementById("side-price-prod")
+    if (priceElement) {
+    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${currentProduct.productPrice.toFixed(2)} DT</h6>`
+    }
+
+    // Set shipping fee to always be 15 DT
+    const shippingElement = document.getElementById("shipping-fee")
+    if (shippingElement) {
+    shippingElement.textContent = "15 DT"
+    }
+}
+
+// Add these helper functions if they don't exist
+function getUserId() {
+    // Get user ID from localStorage, cookie, or session storage
+    // This depends on how your authentication system works
+    return localStorage.getItem("userId") || sessionStorage.getItem("userId")
+}
+
+
+// Add this function to check for pending cart items after login
+function checkPendingCartItems() {
+    const pendingItem = localStorage.getItem("pendingCartItem")
+
+    if (pendingItem) {
+    try {
+        const item = JSON.parse(pendingItem)
+        const currentTime = new Date().getTime()
+
+        // Only process if the pending item is less than 30 minutes old
+        if (currentTime - item.timestamp < 30 * 60 * 1000) {
+        const userId = getUserId()
+
+        if (userId) {
+            // User is now logged in, add the pending item to cart
+            addToCart(item.productId, item.quantity, false, userId)
+
+            // Clear the pending item
+            localStorage.removeItem("pendingCartItem")
+        }
+        } else {
+        // Item is too old, remove it
+        localStorage.removeItem("pendingCartItem")
+        }
+    } catch (e) {
+        console.error("Error processing pending cart item:", e)
+        localStorage.removeItem("pendingCartItem")
+    }
+    }
+}
+
+// Add CSS for the toast notification
+const toastStyle = document.createElement("style")
+toastStyle.textContent = `
+.cool-toast {
+    position: fixed;
+    top: 20px;
+    right: -350px;
+    width: 320px;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 0;
+    z-index: 9999;
+    overflow: hidden;
+    transition: right 0.3s ease;
+}
+
+.cool-toast.show {
+    right: 20px;
+}
+
+.cool-toast-content {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+
+.cool-toast-icon {
+    background-color: #2563eb;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.cool-toast-icon i {
+    font-size: 20px;
+}
+
+.cool-toast-message {
+    flex-grow: 1;
+}
+
+.cool-toast-message h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.cool-toast-message p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.cool-toast-progress {
+    height: 3px;
+    background-color: #2563eb;
+    width: 0%;
+}
+
+@keyframes toast-progress {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+`
+document.head.appendChild(toastStyle)
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded - initializing product details page")
+
+    // Load SweetAlert2 if it's not already loaded
+    if (typeof Swal === "undefined") {
+    const sweetAlertScript = document.createElement("script")
+    sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+    document.head.appendChild(sweetAlertScript)
+    }
+
+    // Check if jQuery is loaded
+    if (typeof jQuery === "undefined") {
+    console.error("jQuery is not loaded. Ensure it is included in your HTML.")
+    return
+    }
+
+    // Check if we need to redirect after login
+    if (getUserId()) {
+    checkRedirectAfterLogin()
+    }
+
+    loadProductDetails()
+    setupAddToCartButton()
+    setupBuyNowButton()
+    setupRatingStars()
+    const reviewForm = document.getElementById("review-form")
+    if (reviewForm) {
+    reviewForm.addEventListener("submit", handleReviewSubmit)
+    }
+})
+
+// Log a message to confirm the script is loaded
+console.log("Product details client script loaded")
+
+function setupBuyNowButton() {
+    const buyNowBtn = document.querySelector(".btn.btn-secondary")
+
+    if (buyNowBtn) {
+    // Remove any existing event listeners
+    const newBuyNowBtn = buyNowBtn.cloneNode(true)
+    buyNowBtn.parentNode.replaceChild(newBuyNowBtn, buyNowBtn)
+
+    newBuyNowBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        const productId = getUrlParameter("id")
+        const quantity = Number.parseInt(document.getElementById("side-price-insert-prod").value)
+
+        if (!productId) {
+        showSweetAlert("error", "Error", "Product ID is missing")
+        return
+        }
+
+        // Check if user is logged in
+        const userId = getUserId()
+
+        if (!userId) {
+        // User is not logged in, show sign in/sign up prompt
+        showAuthModal()
+        } else {
+        // User is logged in, add to cart in database and redirect to checkout
+        addToCart(productId, quantity, true, userId)
+        }
+    })
+    }
+}
+
+// Declare jQuery and bootstrap as global variables if they are not already
+if (typeof jQuery === "undefined") {
+    var jQuery = window.jQuery
+}
+
+if (typeof bootstrap === "undefined") {
+    var bootstrap = window.bootstrap
+}
+
+function updateCartCount(cart) {
+    const cartCountElement = document.querySelector(".cart-count")
+    if (cartCountElement) {
+    cartCountElement.textContent = cart.reduce((total, item) => total + item.quantity, 0)
+    }
+}
+
+// Add this function to check for redirect after login
+function checkRedirectAfterLogin() {
+    const redirectUrl = localStorage.getItem("redirectAfterLogin")
+    if (redirectUrl) {
+    localStorage.removeItem("redirectAfterLogin")
+    // If we're already on the product page, just reload it
+    if (redirectUrl === window.location.href) {
+        window.location.reload()
+    } else {
+        window.location.href = redirectUrl
+    }
+    }
+}
+
+// Add this to your DOMContentLoaded event
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded - initializing product details page")
+
+    // Load SweetAlert2 if it's not already loaded
+    if (typeof Swal === "undefined") {
+    const sweetAlertScript = document.createElement("script")
+    sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+    document.head.appendChild(sweetAlertScript)
+    }
+
+    // Check if jQuery is loaded
+    if (typeof jQuery === "undefined") {
+    console.error("jQuery is not loaded. Ensure it is included in your HTML.")
+    return
+    }
+
+    // Check if we need to redirect after login
+    if (getUserId()) {
+    checkRedirectAfterLogin()
+    }
+
+    loadProductDetails()
+    setupAddToCartButton()
+    setupBuyNowButton()
+    setupRatingStars()
+    const reviewForm = document.getElementById("review-form")
+    if (reviewForm) {
+    reviewForm.addEventListener("submit", handleReviewSubmit)
+    }
+})
+
+// Replace the showSweetAlert function with this enhanced version
+function showSweetAlert(icon, title, text) {
+    // Check if SweetAlert2 is available
+    if (typeof Swal !== "undefined") {
+    Swal.fire({
+        icon: icon, // 'success', 'error', 'warning', 'info', 'question'
+        title: title,
+        text: text,
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        position: "top-end",
+        toast: true,
+        customClass: {
+        popup: "modern-toast",
+        title: "modern-toast-title",
+        htmlContainer: "modern-toast-content",
+        timerProgressBar: "modern-toast-progress",
+        },
+        iconColor: "white",
+        showClass: {
+        popup: "animate__animated animate__fadeInRight animate__faster",
+        },
+        hideClass: {
+        popup: "animate__animated animate__fadeOutRight animate__faster",
+            },
+        })
+        } else {
+        // Fallback to regular alert if SweetAlert is not available
+        showAlert(icon === "error" ? "danger" : icon, text)
+        }
+    }
+    
+    // Replace the sweetAlertStyle with this enhanced styling
+    const sweetAlertStyle = document.createElement("style")
+    sweetAlertStyle.textContent = `
+    .modern-toast {
+        padding: 12px 16px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        min-width: 320px !important;
+        max-width: 380px !important;
+        overflow: hidden !important;
+    }
+    
+    .modern-toast.swal2-icon-success {
+        background: linear-gradient(135deg, #28c76f, #1f9d57) !important;
+    }
+    
+    .modern-toast.swal2-icon-error {
+        background: linear-gradient(135deg, #ea5455, #c73e3f) !important;
+    }
+    
+    .modern-toast.swal2-icon-warning {
+        background: linear-gradient(135deg, #ff9f43, #e67e22) !important;
+    }
+    
+    .modern-toast.swal2-icon-info {
+        background: linear-gradient(135deg, #00cfe8, #1e9ff2) !important;
+    }
+    
+    .modern-toast .swal2-icon {
+        margin: 0 12px 0 0 !important;
+        height: 2em !important;
+        width: 2em !important;
+    }
+    
+    .modern-toast .swal2-icon-content {
+        font-size: 1.5em !important;
+    }
+    
+    .modern-toast-title {
+        color: white !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .modern-toast-content {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+    }
+    
+    .modern-toast-progress {
+        height: 4px !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        position: absolute !important;
+        background: rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    /* Animation classes */
+    @keyframes fadeInRight {
+        from {
+        opacity: 0;
+        transform: translate3d(100%, 0, 0);
+        }
+        to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        }
+    }
+    
+    @keyframes fadeOutRight {
+        from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        }
+        to {
+        opacity: 0;
+        transform: translate3d(100%, 0, 0);
+        }
+    }
+    
+    .animate__animated {
+        animation-duration: 0.5s;
+        animation-fill-mode: both;
+    }
+    
+    .animate__faster {
+        animation-duration: 0.3s;
+    }
+    
+    .animate__fadeInRight {
+        animation-name: fadeInRight;
+    }
+    
+    .animate__fadeOutRight {
+        animation-name: fadeOutRight;
+    }
+    `
+    
+    // Add this to the DOMContentLoaded event to load animate.css if needed
+    document.addEventListener("DOMContentLoaded", () => {
+        // Load SweetAlert2 if it's not already loaded
+        if (typeof Swal === "undefined") {
+        const sweetAlertScript = document.createElement("script")
+        sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+        document.head.appendChild(sweetAlertScript)
+        }
+    
+        // Rest of your existing code...
+    })
+    

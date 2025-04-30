@@ -704,7 +704,7 @@
     </div>
 <!-- ========================= Breadcrumb End =============================== -->
 
-<!-- ========================== Product Details Two Start =========================== -->
+<!-- ========================== Product Details  Start =========================== -->
 <section class="product-details py-48">
     <div class="container container-lg">
         <div class="row gy-4">
@@ -800,10 +800,6 @@
                                     </div>
                                     <h6 class="mb-0">179 DT</h6>
                                 </div>
-                                <div class="flex-align gap-4">
-                                    <span class="text-gray-700">Regular Price</span>
-                                    <h6 class="text-xl text-gray-400 mb-0 fw-medium">189 DT</h6>
-                                </div>
                             </div>
                             <span class="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block"></span>
                             
@@ -823,7 +819,8 @@
                             <button type="button" class="quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
                                 <i class="ph ph-minus"></i>
                             </button>
-                            <input type="number" class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16" id="stock" value="1" min="1">                                <button type="button" class="quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
+                            <input type="number" class="quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16" id="side-price-insert-prod" value="1" min="1">    
+                            <button type="button" class="quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white">
                                 <i class="ph ph-plus"></i>
                             </button>
                         </div>
@@ -831,20 +828,17 @@
                     <div class="mb-32">
                         <div class="flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16">
                             <span class="text-gray-500">Price</span>
-                            <h6 class="text-lg mb-0">179 DT</h6>
+                            <h6 class="text-lg mb-0" id="side-price-prod"></h6>
                         </div>
                         <div class="flex-between flex-wrap gap-8">
                             <span class="text-gray-500">Shipping</span>
-                            <h6 class="text-lg mb-0">Free</h6>
+                            <h6 class="text-lg mb-0" id="shipping-fee"></h6>
                         </div>
                     </div>
 
-                    <a href="#" class="btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48">
+                    <a href="#" id="add-toCart-button" class="btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48">
                         <i class="ph ph-shopping-cart-simple text-lg"></i>
                         Add To Cart
-                    </a>
-                    <a href="#" class="btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100">
-                        Buy Now
                     </a>
 
                     <div class="mt-32">
@@ -858,7 +852,7 @@
                             <span class="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
                                 <i class="ph-fill ph-storefront"></i>
                             </span>
-                            <span class="text-sm text-neutral-600 d-flex ">Sold by:  <span class="fw-semibold">Mytech</span> </span>
+                            <span class="text-sm text-neutral-600 d-flex ">Sold by:  <span class="fw-semibold" id="shop-name-detail"></span> </span>
                         </div>
                     </div>
 
@@ -875,27 +869,27 @@
                                 </button>
                                 <div class="on-hover-dropdown common-dropdown border-0 inset-inline-start-auto inset-inline-end-0" >
                                     <ul class="flex-align gap-16">
-    <li>
-        <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-            <i class="ph-fill ph-facebook-logo"></i>
-        </a>
-    </li>
-    <li>
-        <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-            <i class="ph-fill ph-messenger-logo"></i>
-        </a>
-    </li>
-    <li>
-        <a href="https://www.instagram.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-            <i class="ph-fill ph-instagram-logo"></i>
-        </a>
-    </li>
-    <li>
-        <a href="https://www.whatsapp.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
-            <i class="ph-fill ph-whatsapp-logo"></i>
-        </a>
-    </li>
-</ul>
+                                      <li>
+                                          <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+                                              <i class="ph-fill ph-facebook-logo"></i>
+                                          </a>
+                                      </li>
+                                      <li>
+                                          <a href="https://www.facebook.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+                                              <i class="ph-fill ph-messenger-logo"></i>
+                                          </a>
+                                      </li>
+                                      <li>
+                                          <a href="https://www.instagram.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+                                              <i class="ph-fill ph-instagram-logo"></i>
+                                          </a>
+                                      </li>
+                                      <li>
+                                          <a href="https://www.whatsapp.com" class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white">
+                                              <i class="ph-fill ph-whatsapp-logo"></i>
+                                          </a>
+                                      </li>
+                                  </ul>
                                 </div>
                             </div>
                         </div>
@@ -923,147 +917,9 @@
                 <div class="product-dContent__box">
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade show active" id="pills-description" role="tabpanel" aria-labelledby="pills-description-tab" tabindex="0">
-                            <div class="mb-40">
-                                <h6 class="mb-24">Product Description</h6>
-                                <p>Upgrade your system with the MSI SPATIUM M450 PCIe 4.0 NVMe SSD — built for speed, reliability, and performance. Whether you're gaming, creating, or multitasking, this high-performance storage solution ensures lightning-fast responsiveness and smooth everyday computing.</p>
-                                <p>Powered by advanced 3D NAND flash and designed in a sleek M.2 2280 form factor, the SPATIUM M450 offers blazing sequential read speeds up to 3600 MB/s and write speeds up to 3000 MB/s. It supports the latest PCIe Gen4 x4 interface with NVMe 1.4 for ultra-efficient data handling. Compact in size yet powerful at heart, this SSD is perfect for desktops and laptops alike. With a robust 5-year warranty, MSI guarantees long-term durability and performance you can count on.</p>
-                                <ul class="list-inside mt-32 ms-16">
-                                    <li class="text-gray-400 mb-4">1TB MSI SPATIUM M450 PCIe 4.0 NVMe M.2 Internal SSD</li>
-                                    <li class="text-gray-400 mb-4">High-speed sequential read up to 3600 MB/s and sequential write up to 3000 MB/s</li>
-                                    <li class="text-gray-400 mb-4">Utilizes PCIe Gen4 x4 interface and NVMe 1.4 for improved performance</li>
-                                    <li class="text-gray-400 mb-4">Compact M.2 2280 form factor (80 x 22 x 2.15 mm)</li>
-                                    <li class="text-gray-400 mb-4">Non-3D NAND flash memory</li>
-                                </ul>
-                                <ul class="mt-32">
-                                    <li class="text-gray-400 mb-4">5-year warranty for added peace of mind</li>
-                                    <li class="text-gray-400 mb-4">Designed for high-performance computing and gaming applications</li>
-                                </ul>
-                                
+                          <div class="mb-40">
+                            <p></p>
                             </div>
-                            <div class="mb-40">
-                                <h6 class="mb-24">Product Specifications</h6>
-                                <ul class="mt-32">
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Product Type:
-                                            <span class="text-gray-500"> Internal SSD</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Product Name:
-                                            <span class="text-gray-500"> MSI SPATIUM M450 PCIe 4.0 NVMe M.2 SSD</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Brand:
-                                            <span class="text-gray-500"> MSI</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Storage Capacity:
-                                            <span class="text-gray-500"> 1TB</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Form Factor:
-                                            <span class="text-gray-500"> M.2 2280</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Interface:
-                                            <span class="text-gray-500"> PCIe Gen4 x4, NVMe 1.4</span>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="mb-40">
-                                <h6 class="mb-24">Performance Specifications</h6>
-                                <ul class="mt-32">
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Sequential Read Speed:
-                                            <span class="text-gray-500"> Up to 3600 MB/s</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Sequential Write Speed:
-                                            <span class="text-gray-500"> Up to 3000 MB/s</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            NAND Flash Memory:
-                                            <span class="text-gray-500"> Non-3D NAND</span>
-                                        </span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-heading fw-medium">
-                                            Warranty:
-                                            <span class="text-gray-500"> 5 years</span>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="mb-0">
-                                <h6 class="mb-24">More Details</h6>
-                                <ul class="mt-32">
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-gray-500"> High-performance storage for gaming, multimedia, and professional use</span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-gray-500"> Compact and efficient M.2 2280 form factor</span>
-                                    </li>
-                                    <li class="text-gray-400 mb-14 flex-align gap-14">
-                                        <span class="w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle">
-                                            <i class="ph ph-check"></i>
-                                        </span>
-                                        <span class="text-gray-500"> Designed to meet the demands of PCIe Gen4 for maximum throughput</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            
 
                         </div>
                         <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab" tabindex="0">
@@ -1860,6 +1716,7 @@
     });
 </script>
 <script src="../assets/js/js_functions/review.js"></script>
+<script src="../assets/js/js_functions/prod-details-client.js"></script>
 
     </body>
 </html>
