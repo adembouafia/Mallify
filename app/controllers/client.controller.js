@@ -53,19 +53,67 @@ exports.login = async (req , res) =>{
         } , process.env.JWT_SECRET , {expiresIn : "1h"});
 
         res.send({
-            message : 'login successfully',
-            token ,
-            client : {
-                id : client._id ,
-                firstname : client.firstname,
-                lastname : client.lastname ,
-                email : client.email ,
+            message: "login successfully",
+            token,
+            client: {
+              id: client._id,
+              firstname: client.firstname,
+              lastname: client.lastname,
+              email: client.email,
+              dateOfBirth: client.dateOfBirth,
+              phoneNumber: client.phoneNumber,
+              gender: client.gender,
+              role: client.role
             }
-        })
+          })
+          
     }catch(err){
         res.status(500).send({message : err.message || "Error logging in" });
     }
 }
+exports.update = async (req, res) => {
+    const clientId = req.params.id;
+    const {
+        firstname,
+        lastname,
+        email,
+        dateOfBirth,
+        phoneNumber,
+        gender
+    } = req.body;
+
+    try {
+        const client = await Client.findById(clientId);
+        if (!client) {
+            return res.status(404).send({ message: "Client not found" });
+        }
+
+        // Check if email is changing, and ensure uniqueness
+        if (email && email !== client.email) {
+            const existingClient = await Client.findOne({ email });
+            const existingVendor = await Vendor.findOne({ email });
+
+            if (existingClient || existingVendor) {
+                return res.status(400).send({ message: "Email already exists" });
+            }
+
+            client.email = email;
+        }           
+
+        if (firstname) client.firstname = firstname;
+        if (lastname) client.lastname = lastname;
+        if (dateOfBirth) client.dateOfBirth = dateOfBirth;
+        if (phoneNumber) client.phoneNumber = phoneNumber;
+        if (gender) client.gender = gender;
+
+        const updatedClient = await client.save();
+        res.status(200).send({ message: "Client updated successfully", client: updatedClient });
+
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error updating client information" });
+    }
+};
+
 
 
 //reset password
@@ -121,7 +169,7 @@ exports.resetPassword = async (req, res) => {
   try {
     const client = await Client.findOne({
       resetPasswordCode: code,
-      resetPasswordExpires: { $gt: Date.now() }, // Vérifie que le code n'a pas expiré
+      resetPasswordExpires: { $gt: Date.now() },
     });
 
     if (!client) {
@@ -138,9 +186,62 @@ exports.resetPassword = async (req, res) => {
     res.send({ message: "Password has been reset." });
   } catch (err) {
     res.status(500).send({ message: "Error resetting password" });
-  }
+}
 };
 
+
+exports.changePassword = async (req, res) => {
+    try {
+      const { userId, currentPassword, newPassword } = req.body;
+      
+      // Validate request data
+      if (!userId || !currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing required fields'
+        });
+      }
+      
+      // Find user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+      
+      // Verify current password
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+      
+      // Hash new password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      
+      // Update user password
+      user.password = hashedPassword;
+      await user.save();
+      
+      // Return success response
+      return res.status(200).json({
+        success: true,
+        message: 'Password changed successfully'
+      });
+      
+    } catch (error) {
+      console.error('Password change error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Server error occurred'
+      });
+    }
+  };
 
 //get all clients 
 exports.getAll = async (req , res) =>{

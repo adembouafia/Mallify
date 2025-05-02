@@ -384,18 +384,30 @@ if (typeof Swal === "undefined") {
         if (data.email) {
           localStorage.setItem("userEmail", data.email)
         }
-  
-        // Don't store any images, we'll use first letter avatars for all users
-        // Clear any existing image data to ensure we use the letter approach
+
+        // Optional fields
+if (data.phoneNumber) {
+  localStorage.setItem("userPhone", data.phoneNumber)
+}
+if (data.gender) {
+  localStorage.setItem("userGender", data.gender)
+}
+if (data.dateOfBirth) {
+  try {
+    const date = new Date(data.dateOfBirth)
+    localStorage.setItem("userBirthday", date.toISOString().split("T")[0])
+  } catch (e) {
+    localStorage.setItem("userBirthday", data.dateOfBirth)
+  }
+}
+
         localStorage.removeItem("userProfilePicture")
         localStorage.removeItem("shopLogo")
         localStorage.removeItem("adminImage")
   
-        // Store the complete user data object
         localStorage.setItem("userData", JSON.stringify(data))
       }
   
-      // Function to fetch additional user data after login
       function fetchAdditionalUserData(userId, userType, token, callback) {
         // Define the endpoint based on user type
         let endpoint = null
@@ -1084,10 +1096,7 @@ if (typeof Swal === "undefined") {
         dropdownMenu.classList.add("d-none")
       }, 300)
     }
-  
-    // Try multiple possible selectors for account buttons
     const accountSelectors = [
-      // Desktop account buttons
       '.header-middle .header-right a[href="account.html"]',
       '.header-right a[href="account.html"]',
       'a[href="account.html"].d-flex',

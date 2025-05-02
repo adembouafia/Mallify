@@ -22,6 +22,18 @@ const ClientSchema = new mongoose.Schema(
         type : String ,
         required : true
     },
+    dateOfBirth :{
+        type : Date,
+        required : false 
+    },
+    phoneNumber : {
+        type : String,
+        required : false 
+    },
+     gender : {
+        type : String,
+        required : false
+    },
     role: {
         type: String,
         default: "client"
