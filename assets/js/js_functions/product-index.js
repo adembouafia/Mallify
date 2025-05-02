@@ -73,7 +73,6 @@ function fetchAndPopulateDeals() {
     xhr.send();
 }
 
-// Generate star rating dynamically
 function generateStarRating(rating = 0) {
     const fullStars = Math.round(rating);
     let html = '';
@@ -83,7 +82,6 @@ function generateStarRating(rating = 0) {
     return html;
 }
 
-// Function to create a product card dynamically
 function createProductCard(product) {
     const imageUrl = product.mainImage ? `http://localhost:3000/uploads/${product.mainImage}` : '/placeholder.jpg';
     const rating = product.averageRating || 0;
@@ -131,21 +129,21 @@ function createProductCard(product) {
             <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} DT</span>
             <span class="text-heading text-md fw-semibold ">${price} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
         </div>
-        <a href="cart.html?add=${id}" class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" tabindex="0">
-            Add To Cart <i class="ph ph-shopping-cart"></i> 
-        </a>
+            <button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>
         </div>
     </div>
     `;
     return wrapper;
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
     fetchAndPopulateDeals();
 });
-
-
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -185,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 })
 
-// Function to check if products are in the wishlist when page loads
 function checkWishlistStatus() {
     const token = localStorage.getItem("token")
     const clientId = localStorage.getItem("userId")
@@ -227,7 +224,6 @@ function checkWishlistStatus() {
     xhr.send()
 }
 
-// Function to add product to wishlist
 function addToWishlist(clientId, productId, token, button, icon, originalIconClass) {
     const xhr = new XMLHttpRequest()
     xhr.open("POST", "http://localhost:3000/favoris/add", true)
@@ -264,7 +260,6 @@ function addToWishlist(clientId, productId, token, button, icon, originalIconCla
     xhr.send(data)
 }
 
-// Function to remove product from wishlist
 function removeFromWishlist(clientId, productId, token, button, icon, originalIconClass) {
     const xhr = new XMLHttpRequest()
     xhr.open("DELETE", "http://localhost:3000/favoris/remove", true)
@@ -313,3 +308,115 @@ style.textContent = `
     }
 `
 document.head.appendChild(style)
+
+
+
+function addToCart(productId, buttonElement) {
+    const token = localStorage.getItem("token");
+    const clientId = localStorage.getItem("userId");
+
+    if (!token || !clientId) {
+        showToast("Authentication Required", "Please log in to add items to your cart.", "warning");
+        return;
+    }
+
+    const originalHTML = buttonElement.innerHTML;
+    buttonElement.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Adding...`;
+    buttonElement.disabled = true;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/cart/add", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            buttonElement.innerHTML = originalHTML;
+            buttonElement.disabled = false;
+
+            if (xhr.status === 200) {
+                showToast("Success", "Product added to cart!", "success");
+            } else {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    showToast("Error", response.message || "Failed to add product to cart.", "error");
+                } catch (e) {
+                    showToast("Error", "An error occurred. Please try again.", "error");
+                }
+            }
+        }
+    };
+
+    const data = JSON.stringify({ clientId, productId, quantity: 1 });
+    xhr.send(data);
+}
+
+
+
+document.addEventListener("click", function (event) {
+    const cartBtn = event.target.closest(".product-card__cart");
+    if (cartBtn) {
+        event.preventDefault();
+        const productId = cartBtn.getAttribute("data-product-id");
+        addToCart(productId, cartBtn);
+    }
+});
+
+
+
+
+function showToast(title, message, type) {
+    if (typeof window.Swal !== "undefined") {
+        let iconHtml = '';
+        let iconColor = '';
+        
+        switch(type) {
+            case 'success':
+            iconHtml = '<div style="font-size: 24px; font-weight: bold;">✓</div>';
+            iconColor = '#00e676';
+            break;
+            case 'error':
+            iconHtml = '<div style="font-size: 24px; font-weight: bold;">✕</div>';
+            iconColor = '#ff1744';
+            break;
+            case 'warning':
+            iconHtml = '<div style="font-size: 24px; font-weight: bold;">!</div>';
+            iconColor = '#ff9100';
+            break;
+            case 'info':
+            default:
+            iconHtml = '<div style="font-size: 24px; font-weight: bold;">i</div>';
+            iconColor = '#40c4ff';
+            break;
+        }
+
+        window.Swal.fire({
+            title: `<span style="font-weight:bold;">${title}</span>`,
+            html: `
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background-color: ${iconColor}; display: flex; justify-content: center; align-items: center; color: white; margin-right: 10px;">
+                    ${iconHtml}
+                    </div>
+                    <p style="margin:0;">${message}</p>
+                </div>
+            `,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+            timer: 2000,
+            timerProgressBar: true,
+            background: "#1e1e2f",
+            color: "#fff",
+            didOpen: (toast) => {
+                toast.addEventListener("mouseenter", window.Swal.stopTimer)
+                toast.addEventListener("mouseleave", window.Swal.resumeTimer)
+            },
+            customClass: {
+                popup: "cool-toast-popup",
+                timerProgressBar: "cool-toast-timer",
+            },
+        })
+    } else {
+        console.log(`${type.toUpperCase()}: ${title} - ${message}`)
+    }
+}
