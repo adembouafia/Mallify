@@ -1,4 +1,3 @@
-
 function getUrlParameter(name) {
     const urlParams = new URLSearchParams(window.location.search)
     return urlParams.get(name)
@@ -100,16 +99,14 @@ function displayProductDetails(product) {
     descriptionElement.textContent = product.description || "No description available"
     }
 
-    // Update detailed description in tab
-    const descTabContent = document.querySelector("#pills-description")
+    const descTabContent = document.querySelector("#pills-description");
     if (descTabContent) {
-    // Use productDetails if available, otherwise use description
-    const detailedDescription = document.querySelector("#pills-description p:first-of-type")
-    if (detailedDescription) {
-        detailedDescription.textContent =
-        product.productDetails || product.description || "No detailed description available"
+        const detailedDescription = document.querySelector("#pills-description p:first-of-type");
+        if (detailedDescription) {
+            detailedDescription.innerHTML = product.productDetails || "No detailed description available";
+        }
     }
-    }
+    
 
     // Update stock information
     const stockElement = document.querySelector('label[for="stock"]')
@@ -333,8 +330,6 @@ function displayReviews(reviews) {
     const container = document.querySelector("#pills-reviews .col-lg-6:first-of-type");
 
     if (!container) return;
-
-    // Supprimer les anciens avis
     const oldReviews = container.querySelectorAll(".review-item");
     oldReviews.forEach((r) => r.remove());
 
@@ -380,7 +375,7 @@ function renderStars(rating) {
     for (let i = 0; i < 5; i++) {
         stars += `<span class="text-15 fw-medium ${i < rating ? "text-warning-600" : "text-gray-300"} d-flex">
                     <i class="ph-fill ph-star"></i>
-                  </span>`;
+                </span>`;
     }
     return stars;
 }
@@ -964,20 +959,17 @@ document.head.appendChild(toastStyle)
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded - initializing product details page")
 
-    // Load SweetAlert2 if it's not already loaded
     if (typeof Swal === "undefined") {
     const sweetAlertScript = document.createElement("script")
     sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
     document.head.appendChild(sweetAlertScript)
     }
 
-    // Check if jQuery is loaded
     if (typeof jQuery === "undefined") {
     console.error("jQuery is not loaded. Ensure it is included in your HTML.")
     return
     }
 
-    // Check if we need to redirect after login
     if (getUserId()) {
     checkRedirectAfterLogin()
     }
@@ -1018,11 +1010,9 @@ function setupBuyNowButton() {
         const userId = getUserId()
 
         if (!userId) {
-        // User is not logged in, show sign in/sign up prompt
         showAuthModal()
         } else {
-        // User is logged in, add to cart in database and redirect to checkout
-        addToCart(productId, quantity, true, userId)
+            addToCart(productId, quantity, true, userId)
         }
     })
     }
@@ -1058,7 +1048,6 @@ function checkRedirectAfterLogin() {
     }
 }
 
-// Add this to your DOMContentLoaded event
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded - initializing product details page")
 
@@ -1075,7 +1064,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return
     }
 
-    // Check if we need to redirect after login
     if (getUserId()) {
     checkRedirectAfterLogin()
     }
@@ -1121,119 +1109,116 @@ function showSweetAlert(icon, title, text) {
         // Fallback to regular alert if SweetAlert is not available
         showAlert(icon === "error" ? "danger" : icon, text)
         }
+}
+
+// Replace the sweetAlertStyle with this enhanced styling
+const sweetAlertStyle = document.createElement("style")
+sweetAlertStyle.textContent = `
+.modern-toast {
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    min-width: 320px !important;
+    max-width: 380px !important;
+    overflow: hidden !important;
+}
+
+.modern-toast.swal2-icon-success {
+    background: linear-gradient(135deg, #28c76f, #1f9d57) !important;
+}
+
+.modern-toast.swal2-icon-error {
+    background: linear-gradient(135deg, #ea5455, #c73e3f) !important;
+}
+
+.modern-toast.swal2-icon-warning {
+    background: linear-gradient(135deg, #ff9f43, #e67e22) !important;
+}
+
+.modern-toast.swal2-icon-info {
+    background: linear-gradient(135deg, #00cfe8, #1e9ff2) !important;
+}
+
+.modern-toast .swal2-icon {
+    margin: 0 12px 0 0 !important;
+    height: 2em !important;
+    width: 2em !important;
+}
+
+.modern-toast .swal2-icon-content {
+    font-size: 1.5em !important;
+}
+
+.modern-toast-title {
+    color: white !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+}
+
+.modern-toast-content {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+}
+
+.modern-toast-progress {
+    height: 4px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    position: absolute !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Animation classes */
+@keyframes fadeInRight {
+    from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
     }
-    
-    // Replace the sweetAlertStyle with this enhanced styling
-    const sweetAlertStyle = document.createElement("style")
-    sweetAlertStyle.textContent = `
-    .modern-toast {
-        padding: 12px 16px !important;
-        border-radius: 12px !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-        backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        min-width: 320px !important;
-        max-width: 380px !important;
-        overflow: hidden !important;
+    to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
     }
-    
-    .modern-toast.swal2-icon-success {
-        background: linear-gradient(135deg, #28c76f, #1f9d57) !important;
+}
+
+@keyframes fadeOutRight {
+    from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
     }
-    
-    .modern-toast.swal2-icon-error {
-        background: linear-gradient(135deg, #ea5455, #c73e3f) !important;
+    to {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
     }
-    
-    .modern-toast.swal2-icon-warning {
-        background: linear-gradient(135deg, #ff9f43, #e67e22) !important;
+}
+
+.animate__animated {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+}
+
+.animate__faster {
+    animation-duration: 0.3s;
+}
+
+.animate__fadeInRight {
+    animation-name: fadeInRight;
+}
+
+.animate__fadeOutRight {
+    animation-name: fadeOutRight;
+}
+`
+
+// Add this to the DOMContentLoaded event to load animate.css if needed
+document.addEventListener("DOMContentLoaded", () => {
+    // Load SweetAlert2 if it's not already loaded
+    if (typeof Swal === "undefined") {
+    const sweetAlertScript = document.createElement("script")
+    sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+    document.head.appendChild(sweetAlertScript)
     }
-    
-    .modern-toast.swal2-icon-info {
-        background: linear-gradient(135deg, #00cfe8, #1e9ff2) !important;
-    }
-    
-    .modern-toast .swal2-icon {
-        margin: 0 12px 0 0 !important;
-        height: 2em !important;
-        width: 2em !important;
-    }
-    
-    .modern-toast .swal2-icon-content {
-        font-size: 1.5em !important;
-    }
-    
-    .modern-toast-title {
-        color: white !important;
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        margin-bottom: 4px !important;
-    }
-    
-    .modern-toast-content {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-size: 0.9rem !important;
-        margin: 0 !important;
-    }
-    
-    .modern-toast-progress {
-        height: 4px !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        position: absolute !important;
-        background: rgba(255, 255, 255, 0.3) !important;
-    }
-    
-    /* Animation classes */
-    @keyframes fadeInRight {
-        from {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0);
-        }
-        to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-        }
-    }
-    
-    @keyframes fadeOutRight {
-        from {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-        }
-        to {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0);
-        }
-    }
-    
-    .animate__animated {
-        animation-duration: 0.5s;
-        animation-fill-mode: both;
-    }
-    
-    .animate__faster {
-        animation-duration: 0.3s;
-    }
-    
-    .animate__fadeInRight {
-        animation-name: fadeInRight;
-    }
-    
-    .animate__fadeOutRight {
-        animation-name: fadeOutRight;
-    }
-    `
-    
-    // Add this to the DOMContentLoaded event to load animate.css if needed
-    document.addEventListener("DOMContentLoaded", () => {
-        // Load SweetAlert2 if it's not already loaded
-        if (typeof Swal === "undefined") {
-        const sweetAlertScript = document.createElement("script")
-        sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
-        document.head.appendChild(sweetAlertScript)
-        }
-    
-        // Rest of your existing code...
-    })
-    
+})
