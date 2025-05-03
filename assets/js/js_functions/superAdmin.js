@@ -1,18 +1,14 @@
-//sidebar toggle
 document.addEventListener('DOMContentLoaded', () => {
-    // Constants
     const CLASS_NAME_SIDEBAR_COLLAPSE = 'sidebar-collapse';
     const CLASS_NAME_SIDEBAR_OPEN = 'sidebar-open';
     const SELECTOR_SIDEBAR_TOGGLE = '[data-lte-toggle="sidebar"]';
     const SELECTOR_APP_SIDEBAR = '.app-sidebar';
-    // PushMenu Class
     class PushMenu {
         constructor(element) {
             this._element = element;
             this._sidebar = document.querySelector(SELECTOR_APP_SIDEBAR);
         }
 
-        // Toggle the sidebar
         toggle() {
             if (document.body.classList.contains(CLASS_NAME_SIDEBAR_COLLAPSE)) {
                 this.expand();
@@ -21,13 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Expand the sidebar
         expand() {
             document.body.classList.remove(CLASS_NAME_SIDEBAR_COLLAPSE);
             document.body.classList.add(CLASS_NAME_SIDEBAR_OPEN);
         }
 
-        // Collapse the sidebar
         collapse() {
             document.body.classList.remove(CLASS_NAME_SIDEBAR_OPEN);
             document.body.classList.add(CLASS_NAME_SIDEBAR_COLLAPSE);
@@ -35,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    // Initialize PushMenu and add event listeners
     const sidebarToggle = document.querySelectorAll(SELECTOR_SIDEBAR_TOGGLE);
     sidebarToggle.forEach(btn => {
         const pushMenu = new PushMenu(btn);
@@ -108,11 +101,11 @@ adminForm.addEventListener("submit", function (e) {
   const avatarFile = avatarInput.files[0];
 
   const formData = new FormData();
-  formData.append("firstname", name); // 🟡 adapte si nécessaire
-  formData.append("lastname", name); // 🟡 adapte si nécessaire
+  formData.append("firstname", name); 
+  formData.append("lastname", name); 
   formData.append("email", email);
   formData.append("password", password);
-  if (avatarFile) formData.append("adminImage", avatarFile); // le nom doit correspondre à .single("adminImage")
+  if (avatarFile) formData.append("adminImage", avatarFile);
 
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "http://localhost:3000/admin/add", true);
@@ -124,25 +117,17 @@ adminForm.addEventListener("submit", function (e) {
     if (xhr.status === 201 || xhr.status === 200) {
       const response = JSON.parse(xhr.responseText);
       const savedAdmin = response.admin;
-      
-      // Create a temporary image to check if the URL is valid
       let imageUrl;
       
       if (avatarFile) {
-        // If we uploaded a file, use a local object URL temporarily
-        // This ensures we see the image immediately without waiting for server processing
         imageUrl = URL.createObjectURL(avatarFile);
       } else if (savedAdmin.adminImage) {
-        // If the response has an image URL, use it
-        // Check if it's a relative or absolute URL
         if (savedAdmin.adminImage.startsWith('http')) {
           imageUrl = savedAdmin.adminImage;
         } else {
-          // If it's a relative path, prepend the base URL
           imageUrl = `http://localhost:3000${savedAdmin.adminImage}`;
         }
       } else {
-        // Fallback to default image
         imageUrl = "../../assets/images/dashboard/superadmin.jpg";
       }
 

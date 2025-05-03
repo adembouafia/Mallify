@@ -407,7 +407,7 @@ function rejectShop(shopId, reason) {
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       showToast("Shop rejected successfully", "success")
-      fetchShops() // Refresh data
+      fetchShops()
     } else {
       showToast("Error rejecting shop", "danger")
     }
