@@ -49,18 +49,6 @@ function fetchShops() {
           reason: shop.rejectionReason || "",
         }
 
-        console.log("Shop ID:", shop._id)
-        console.log("Shop Name:", shop.shopName)
-        console.log("Vendor data:", shop.vendor)
-        if (shop.vendor) {
-          console.log("Vendor type:", typeof shop.vendor)
-          if (typeof shop.vendor === "object") {
-            console.log("Vendor keys:", Object.keys(shop.vendor))
-            console.log("Vendor name property:", shop.vendor.vendorName)
-            console.log("Vendor name property:", shop.vendor.name)
-          }
-        }
-
         // Categorize by status
         if (shop.status === "Pending") shops.pending.push(shopItem)
         else if (shop.status === "Approved") shops.approved.push(shopItem)
@@ -84,7 +72,6 @@ function fetchShops() {
 
 // Update dashboard statistics
 function updateStatistics() {
-  // Update count displays
   document.querySelector(".stat-card.primary .stat-card-number").textContent =
     shops.pending.length + shops.approved.length + shops.rejected.length
 
@@ -94,7 +81,6 @@ function updateStatistics() {
 
   document.querySelector(".stat-card.danger .stat-card-number").textContent = shops.rejected.length
 
-  // Update tab badges
   document.querySelector("#pending-tab .badge").textContent = shops.pending.length
   document.querySelector("#approved-tab .badge").textContent = shops.approved.length
   document.querySelector("#rejected-tab .badge").textContent = shops.rejected.length
@@ -175,7 +161,8 @@ function displayShopDetails(shop) {
       actionButton.className = "btn btn-success"
       actionButton.onclick = () => {
         const modal = document.getElementById("shopDetailsModal")
-        const bsModal = bootstrap.Modal.getInstance(modal)
+        // Get the Bootstrap modal instance
+        const bsModal = bootstrap.Modal.getInstance(modal);
         bsModal.hide()
         approveShop(shop._id)
       }
@@ -186,7 +173,8 @@ function displayShopDetails(shop) {
         const reason = prompt("Provide a reason for rejection:")
         if (reason) {
           const modal = document.getElementById("shopDetailsModal")
-          const bsModal = bootstrap.Modal.getInstance(modal)
+          // Get the Bootstrap modal instance
+          const bsModal = bootstrap.Modal.getInstance(modal);
           bsModal.hide()
           rejectShop(shop._id, reason)
         }
@@ -196,7 +184,8 @@ function displayShopDetails(shop) {
       actionButton.className = "btn btn-success"
       actionButton.onclick = () => {
         const modal = document.getElementById("shopDetailsModal")
-        const bsModal = bootstrap.Modal.getInstance(modal)
+        // Get the Bootstrap modal instance
+        const bsModal = bootstrap.Modal.getInstance(modal);
         bsModal.hide()
         approveShop(shop._id)
       }
@@ -271,7 +260,6 @@ function renderPendingShops() {
     container.appendChild(shopCard)
   })
 
-  // Add event listeners to the newly created buttons
   addShopCardEventListeners()
 }
 
@@ -384,8 +372,11 @@ function approveShop(shopId) {
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
+      const updatedShop = JSON.parse(xhr.responseText);
+      
+      updateLocalShopData(updatedShop);
+      
       showToast("Shop approved successfully", "success")
-      fetchShops() // Refresh data
     } else {
       showToast("Error approving shop", "danger")
     }
@@ -406,8 +397,11 @@ function rejectShop(shopId, reason) {
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
+      const updatedShop = JSON.parse(xhr.responseText);
+      
+      updateLocalShopData(updatedShop);
+      
       showToast("Shop rejected successfully", "success")
-      fetchShops()
     } else {
       showToast("Error rejecting shop", "danger")
     }
@@ -421,8 +415,57 @@ function rejectShop(shopId, reason) {
     JSON.stringify({
       status: "Rejected",
       rejectionReason: reason,
-    }),
+    })
   )
+}
+
+// Mettre à jour les données localement sans refetch complet
+function updateLocalShopData(updatedShop) {
+  const shopItem = {
+    id: updatedShop._id,
+    name: updatedShop.shopName,
+    image:
+      updatedShop.shopLogo && updatedShop.shopLogo.trim() !== ""
+        ? `/uploads/${updatedShop.shopLogo}`
+        : "/assets/images/products/aboutUs.jpg",
+    location: updatedShop.adresse || "No address provided",
+    description: updatedShop.shopdescription || "No description provided",
+    date: new Date(updatedShop.createdAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    owner: {
+      name: updatedShop.vendor ? updatedShop.vendor.vendorName || "Unknown" : "Unknown",
+      email: updatedShop.vendor ? updatedShop.vendor.email || "No email" : "No email",
+      phone: updatedShop.vendor ? updatedShop.vendor.phone || "No phone" : "No phone",
+      avatar: updatedShop.vendor && updatedShop.vendor.profilePicture
+        ? `/uploads/${updatedShop.vendor.profilePicture}`
+        : '/uploads/admin.jpg'
+    },          
+    shopId: `#SH${updatedShop._id.slice(-4).toUpperCase()}`,
+    status: updatedShop.status,
+    reason: updatedShop.rejectionReason || "",
+  };
+  
+  const allCategories = ['pending', 'approved', 'rejected'];
+  allCategories.forEach(category => {
+    const index = shops[category].findIndex(shop => shop.id === updatedShop._id);
+    if (index !== -1) {
+      shops[category].splice(index, 1);
+    }
+  });
+  
+  if (updatedShop.status === "Pending") {
+    shops.pending.push(shopItem);
+  } else if (updatedShop.status === "Approved") {
+    shops.approved.push(shopItem);
+  } else if (updatedShop.status === "Rejected") {
+    shops.rejected.push(shopItem);
+  }
+  
+  updateDashboard();
+  updateStatistics();
 }
 
 // Delete shop
@@ -434,8 +477,10 @@ function deleteShop(shopId) {
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
+      // Supprimer le shop des données locales
+      removeShopFromLocalData(shopId);
+      
       showToast("Shop deleted successfully", "success")
-      fetchShops() // Refresh data
     } else {
       showToast("Error deleting shop", "danger")
     }
@@ -448,9 +493,22 @@ function deleteShop(shopId) {
   xhr.send()
 }
 
+// Supprimer un shop des données locales
+function removeShopFromLocalData(shopId) {
+  const allCategories = ['pending', 'approved', 'rejected'];
+  allCategories.forEach(category => {
+    const index = shops[category].findIndex(shop => shop.id === shopId);
+    if (index !== -1) {
+      shops[category].splice(index, 1);
+    }
+  });
+  
+  updateDashboard();
+  updateStatistics();
+}
+
 // Add event listeners to shop cards
 function addShopCardEventListeners() {
-  // Approve buttons
   document.querySelectorAll(".approve-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
       e.preventDefault()
@@ -459,7 +517,6 @@ function addShopCardEventListeners() {
     })
   })
 
-  // Reject buttons
   document.querySelectorAll(".reject-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
       e.preventDefault()
@@ -471,7 +528,6 @@ function addShopCardEventListeners() {
     })
   })
 
-  // View buttons
   document.querySelectorAll(".view-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
       e.preventDefault()
@@ -480,7 +536,6 @@ function addShopCardEventListeners() {
     })
   })
 
-  // Delete buttons
   document.querySelectorAll(".delete-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
       e.preventDefault()
@@ -492,7 +547,6 @@ function addShopCardEventListeners() {
 
 // Add event listeners to shop table rows
 function addShopTableEventListeners() {
-  // View buttons
   document.querySelectorAll("#approved .view-shop").forEach((button) => {
     button.addEventListener("click", function () {
       const shopId = this.dataset.shopId
@@ -500,16 +554,13 @@ function addShopTableEventListeners() {
     })
   })
 
-  // Edit buttons
   document.querySelectorAll("#approved .edit-shop").forEach((button) => {
     button.addEventListener("click", function () {
       const shopId = this.dataset.shopId
-      // Implement edit functionality if needed
       console.log("Edit shop:", shopId)
     })
   })
 
-  // Delete buttons
   document.querySelectorAll("#approved .delete-shop").forEach((button) => {
     button.addEventListener("click", function () {
       const shopId = this.dataset.shopId
@@ -527,7 +578,6 @@ function updateDashboard() {
 
 // Show toast notification
 function showToast(message, type = "info") {
-  // Check if toast container exists, if not create it
   let toastContainer = document.querySelector(".toast-container")
   if (!toastContainer) {
     toastContainer = document.createElement("div")
@@ -535,7 +585,6 @@ function showToast(message, type = "info") {
     document.body.appendChild(toastContainer)
   }
 
-  // Create toast element
   const toastId = "toast-" + Date.now()
   const toast = document.createElement("div")
   toast.className = `toast align-items-center text-white bg-${type} border-0`
@@ -567,18 +616,14 @@ function showToast(message, type = "info") {
 
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
-  // Fetch shops data when page loads
   fetchShops()
 
-  // Add event listener for tab changes to refresh data
   const shopTabs = document.querySelectorAll('button[data-bs-toggle="tab"]')
   shopTabs.forEach((tab) => {
     tab.addEventListener("shown.bs.tab", () => {
-      // You could refresh data for the specific tab if needed
     })
   })
 
-  // Add event listener for search
   const searchInput = document.querySelector(".dashboard-search input")
   if (searchInput) {
     searchInput.addEventListener("keyup", function (e) {
@@ -587,7 +632,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (searchTerm) {
           filterShops(searchTerm)
         } else {
-          updateDashboard() // Reset to show all shops
+          updateDashboard() 
         }
       }
     })
@@ -599,7 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (searchTerm) {
           filterShops(searchTerm)
         } else {
-          updateDashboard() // Reset to show all shops
+          updateDashboard() 
         }
       })
     }
@@ -612,111 +657,31 @@ function filterShops(searchTerm) {
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
+      shop.location.toLowerCase().includes(searchTerm)
   )
 
   const filteredApproved = shops.approved.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
+      shop.location.toLowerCase().includes(searchTerm)
   )
 
   const filteredRejected = shops.rejected.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
+      shop.location.toLowerCase().includes(searchTerm)
   )
 
-  // Store original shops
   const originalShops = { ...shops }
 
-  // Replace with filtered shops
   shops.pending = filteredPending
   shops.approved = filteredApproved
   shops.rejected = filteredRejected
 
-  // Update UI
   updateDashboard()
-
-  // Restore original shops
   shops = originalShops
 }
 
-
-
-//progress bar
-
-function showProgressBar() {
-  // Check if progress bar container exists, if not create it
-  let progressContainer = document.querySelector(".progress-container")
-  if (!progressContainer) {
-    progressContainer = document.createElement("div")
-    progressContainer.className = "progress-container position-fixed top-0 start-0 end-0"
-    progressContainer.style.zIndex = "1050"
-    
-    const progressBar = document.createElement("div")
-    progressBar.className = "progress"
-    progressBar.style.height = "4px"
-    progressBar.style.borderRadius = "0"
-    
-    const progressIndicator = document.createElement("div")
-    progressIndicator.className = "progress-bar bg-primary"
-    progressIndicator.id = "main-progress-bar"
-    progressIndicator.setAttribute("role", "progressbar")
-    progressIndicator.setAttribute("aria-valuenow", "0")
-    progressIndicator.setAttribute("aria-valuemin", "0")
-    progressIndicator.setAttribute("aria-valuemax", "100")
-    
-    progressBar.appendChild(progressIndicator)
-    progressContainer.appendChild(progressBar)
-    document.body.appendChild(progressContainer)
-  }
-  
-  // Reset progress bar
-  const progressBar = document.getElementById("main-progress-bar")
-  if (progressBar) {
-    progressBar.style.width = "0%"
-    progressBar.style.transition = "width 0.2s ease"
-    
-    // Start progress animation
-    setTimeout(() => {
-      progressBar.style.width = "30%"
-    }, 100)
-    
-    setTimeout(() => {
-      progressBar.style.width = "70%"
-    }, 300)
-  }
-}
-
-function hideProgressBar(success = true) {
-  const progressBar = document.getElementById("main-progress-bar")
-  if (progressBar) {
-    // Complete the progress bar
-    progressBar.style.width = "100%"
-    
-    // Change color based on success/failure
-    if (success) {
-      progressBar.className = "progress-bar bg-success"
-    } else {
-      progressBar.className = "progress-bar bg-danger"
-    }
-    
-    // Hide after completion
-    setTimeout(() => {
-      const container = document.querySelector(".progress-container")
-      if (container) {
-        container.style.opacity = "0"
-        container.style.transition = "opacity 0.3s ease"
-        
-        setTimeout(() => {
-          if (container.parentNode) {
-            container.parentNode.removeChild(container)
-          }
-        }, 300)
-      }
-    }, 500)
-  }
-}
+const bootstrap = window.bootstrap;
