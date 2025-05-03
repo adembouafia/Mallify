@@ -776,35 +776,6 @@ function loadWishlistFromDatabase() {
     xhr.send()
   }
   
-  function initializeProfileImageUpload() {
-    const imageInput = document.getElementById("profileImageInput")
-    const profileImage = document.getElementById("profileImage")
-    const editBtn = document.getElementById("editImageBtn")
-  
-    if (!imageInput || !profileImage || !editBtn) return
-    editBtn.addEventListener("click", () => {
-      imageInput.click()
-    })
-
-    imageInput.addEventListener("change", function () {
-      const file = this.files[0]
-      if (file) {
-        const reader = new FileReader()
-  
-        reader.onload = (e) => {
-          profileImage.src = e.target.result
-
-          localStorage.setItem("userProfileImage", e.target.result)
-
-          alert(
-            "Profile image updated locally. Note: The image is not saved to the server as the upload API is not available.",
-          )
-        }
-  
-        reader.readAsDataURL(file)
-      }
-    })
-  }
   function setupLogout() {
     const logoutLink = document.querySelector("#logout a")
     if (logoutLink) {
@@ -819,208 +790,252 @@ function loadWishlistFromDatabase() {
       })
     }
   }
+  function initializeProfileImageUpload() {
+    const imageInput = document.getElementById("profileImageInput")
+    const profileImage = document.getElementById("profileImage")
+    const editBtn = document.getElementById("editImageBtn")
+    
+    if (!imageInput || !profileImage || !editBtn) return
+    
+    // Load profile image from database when page loads
+    loadProfileImageFromDatabase()
+    
+    // Set up event listeners
+    editBtn.addEventListener("click", () => {
+      imageInput.click()
+    })
   
-  // Function to handle password change
- // passwordManager.js - Client-side code
-document.addEventListener("DOMContentLoaded", () => {
-    // Get form element
-    const passwordForm = document.querySelector(".password-form");
-    
-    // Setup password visibility toggles
-    setupPasswordToggles();
-    
-    // Handle form submission
-    if (passwordForm) {
-      passwordForm.addEventListener("submit", handlePasswordChange);
-    }
-    
-    // Load profile image if available
-    loadProfileImage();
-  });
-  
-  /**
-   * Set up password visibility toggle functionality
-   */
-  function setupPasswordToggles() {
-    const toggleButtons = document.querySelectorAll(".toggle-password");
-    
-    toggleButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        const targetId = button.getAttribute("data-target");
-        const passwordInput = document.getElementById(targetId);
-        
-        // Toggle between password and text type
-        if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-          button.classList.remove("ph-eye-slash");
-          button.classList.add("ph-eye");
-        } else {
-          passwordInput.type = "password";
-          button.classList.remove("ph-eye");
-          button.classList.add("ph-eye-slash");
+    imageInput.addEventListener("change", function() {
+      const file = this.files[0]
+      if (file) {
+        // Validate file type and size
+        if (!validateImageFile(file)) {
+          return
         }
-      });
-    });
-  }
-  
-  /**
-   * Handle password change form submission
-   * @param {Event} e - Form submit event
-   */
-  async function handlePasswordChange(e) {
-    e.preventDefault();
+        
+        // Show preview immediately for better UX
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          profileImage.src = e.target.result
+        }
+        reader.readAsDataURL(file)
+        
+        // Upload to server using XHR
+        uploadProfileImageToServer(file)
+      }
+    })
     
-    // Get password values
-    const currentPassword = document.getElementById("current-password").value;
-    const newPassword = document.getElementById("new-password").value;
-    const confirmPassword = document.getElementById("confirm-password").value;
-    
-    // Validate form inputs
-    if (!validatePasswordInputs(currentPassword, newPassword, confirmPassword)) {
-      return;
+    function validateImageFile(file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPEG, PNG, etc.)');
+        return false;
+      }
+      
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image file is too large. Please select an image under 5MB.');
+        return false;
+      }
+      
+      return true;
     }
     
-    // Get user ID and auth token
-    const userId = getUserId();
-    const token = getAuthToken();
-    
-    if (!userId || !token) {
-      showNotification("Authentication information missing. Please log in again.", "error");
-      return;
-    }
-    
-    // Show loading state
-    const submitBtn = e.target.querySelector(".submit-btn");
-    setButtonLoading(submitBtn, true);
-    
-    try {
-      // Send password change request
-      const response = await fetch("/client/changePassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId,
-          currentPassword,
-          newPassword
-        })
-      });
+    function loadProfileImageFromDatabase() {
+      const userId = localStorage.getItem("userId")
+      if (!userId) {
+        console.error("User ID not found")
+        profileImage.src = "/images/default-profile.png" // Default image
+        return
+      }
       
-      // Handle response
-      const data = await response.json();
+      console.log("Loading profile image for user ID:", userId)
       
-      if (response.ok && data.success) {
-        showNotification("Password changed successfully!", "success");
-        e.target.reset(); // Clear form
+      const xhr = new XMLHttpRequest()
+      xhr.open("GET", `/client/${userId}`, true)
+      
+      // Add authentication token
+      const token = localStorage.getItem("token")
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+      }
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const userData = JSON.parse(xhr.responseText)
+              console.log("User data received for profile image:", userData)
+              
+              // Check for profile picture in the user data
+              let profilePictureName = null
+              
+              if (userData.profilePicture) {
+                profilePictureName = userData.profilePicture
+              } else if (userData.client && userData.client.profilePicture) {
+                profilePictureName = userData.client.profilePicture
+              }
+              
+              if (profilePictureName) {
+                // Construct the path to the image in the uploads directory
+                profileImage.src = `/uploads/${profilePictureName}`
+                console.log("Profile image path:", `/uploads/${profilePictureName}`)
+                
+                // Add error handler in case the image doesn't load
+                profileImage.onerror = function() {
+                  console.error("Failed to load profile image from path:", profileImage.src)
+                  profileImage.src = "/images/default-profile.png"
+                }
+              } else {
+                // No profile picture found
+                profileImage.src = "/images/default-profile.png"
+                console.log("No profile picture found in user data")
+              }
+            } catch (error) {
+              console.error("Error parsing user data:", error)
+              profileImage.src = "/images/default-profile.png"
+            }
+          } else if (xhr.status === 403) {
+            console.error("Error loading profile image. Status:", xhr.status)
+            console.error("Response:", xhr.responseText)
+            profileImage.src = "/images/default-profile.png"
+          } else {
+            console.error("Error loading profile image. Status:", xhr.status)
+            profileImage.src = "/images/default-profile.png"
+          }
+        }
+      }
+      
+      xhr.onerror = function() {
+        console.error("Request error while loading profile image")
+        profileImage.src = "/images/default-profile.png"
+      }
+      
+      xhr.send()
+    } // Function to load profile image from database using XHR
+
+    
+    function setProfileImage(imagePath) {
+      if (!imagePath) {
+        profileImage.src = "/images/default-profile.png"
+        return
+      }
+      
+      console.log("Setting profile image with path:", imagePath)
+      
+      // Handle different path formats
+      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        // Full URL
+        profileImage.src = imagePath
+      } else if (imagePath.startsWith('/')) {
+        // Absolute path
+        profileImage.src = imagePath
       } else {
-        const errorMessage = data.message || "An error occurred";
-        showNotification(`Error: ${errorMessage}`, "error");
-        
-        // Handle specific error cases
-        if (response.status === 401) {
-          console.error("Authentication failed. Current password may be incorrect.");
+        // Relative path - assume it's a filename in the uploads directory
+        profileImage.src = `/uploads/${imagePath}`
+      }
+    }
+    
+    function uploadProfileImageToServer(file) {
+      const userId = localStorage.getItem("userId")
+      if (!userId) {
+        console.error("User ID not found")
+        alert("Cannot upload image: User ID not found")
+        return
+      }
+      
+      console.log("Uploading profile image for user ID:", userId)
+      console.log("File to upload:", file.name, file.type, file.size)
+      
+      // Show loading indicator
+      const loadingIndicator = document.createElement('div')
+      loadingIndicator.className = 'profile-image-loading'
+      loadingIndicator.innerHTML = 'Uploading...'
+      profileImage.parentNode.appendChild(loadingIndicator)
+      
+      const xhr = new XMLHttpRequest()
+      // Use the dedicated profile picture endpoint
+      xhr.open("POST", `/client/profile-picture/${userId}`, true)
+      
+      // Add authentication token
+      const token = localStorage.getItem("token")
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+      }
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          // Remove loading indicator
+          if (loadingIndicator.parentNode) {
+            loadingIndicator.parentNode.removeChild(loadingIndicator)
+          }
+          
+          console.log("Upload response status:", xhr.status)
+          console.log("Upload response text:", xhr.responseText)
+          
+          if (xhr.status === 200) {
+            try {
+              const result = JSON.parse(xhr.responseText)
+              console.log("Profile image update successful:", result)
+              
+              // Get the profile picture filename from the response
+              let profilePictureName = null
+              
+              if (result.client && result.client.profilePicture) {
+                profilePictureName = result.client.profilePicture
+              } else if (result.profilePicture) {
+                profilePictureName = result.profilePicture
+              }
+              
+              if (profilePictureName) {
+                // Construct the path to the image in the uploads directory
+                profileImage.src = `/uploads/${profilePictureName}`
+                console.log("Updated profile image path:", `/uploads/${profilePictureName}`)
+              }
+              
+              alert("Profile image updated successfully!")
+            } catch (error) {
+              console.error("Error parsing server response:", error)
+              alert("Error updating profile image. Please try again.")
+            }
+          } else if (xhr.status === 403) {
+            try {
+              const errorResponse = JSON.parse(xhr.responseText)
+              console.error("Authorization error:", errorResponse)
+              alert("Authorization error: " + (errorResponse.message || "You don't have permission to update this profile"))
+            } catch (e) {
+              alert("Authorization error: You don't have permission to update this profile")
+            }
+          } else if (xhr.status === 500) {
+            try {
+              const errorResponse = JSON.parse(xhr.responseText)
+              console.error("Server error:", errorResponse)
+              alert("Server error: " + (errorResponse.message || "Unknown error"))
+            } catch (e) {
+              alert("Server error occurred. Please try again later.")
+            }
+          } else {
+            console.error("Error uploading profile image. Status:", xhr.status)
+            alert("Failed to upload profile image. Please try again.")
+          }
         }
       }
-    } catch (error) {
-      console.error("Password change request failed:", error);
-      showNotification("Network or server error. Please try again later.", "error");
-    } finally {
-      // Reset button state
-      setButtonLoading(submitBtn, false);
-    }
-  }
-  
-  /**
-   * Validate password inputs
-   * @param {string} current - Current password
-   * @param {string} newPass - New password
-   * @param {string} confirm - Confirm password
-   * @returns {boolean} - Whether validation passed
-   */
-  function validatePasswordInputs(current, newPass, confirm) {
-    // Check if all fields are filled
-    if (!current || !newPass || !confirm) {
-      showNotification("All password fields are required", "error");
-      return false;
-    }
-    
-    // Check if new passwords match
-    if (newPass !== confirm) {
-      showNotification("New passwords do not match", "error");
-      return false;
-    }
-    
-    // Check password strength
-    if (newPass.length < 8) {
-      showNotification("New password must be at least 8 characters long", "error");
-      return false;
-    }
-    
-    return true;
-  }
-  
-  /**
-   * Set button loading state
-   * @param {HTMLElement} button - Button element
-   * @param {boolean} isLoading - Whether button is in loading state
-   */
-  function setButtonLoading(button, isLoading) {
-    if (isLoading) {
-      button.originalText = button.innerHTML;
-      button.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processing...';
-      button.disabled = true;
-    } else {
-      button.innerHTML = button.originalText || '<i class="ph ph-arrow-clockwise"></i> Update Password';
-      button.disabled = false;
-    }
-  }
-  
-  /**
-   * Show notification to user
-   * @param {string} message - Notification message
-   * @param {string} type - Notification type (success, error, info)
-   */
-  function showNotification(message, type = "info") {
-    // You can replace this with a custom notification system
-    if (type === "error") {
-      alert(message);
-    } else {
-      alert(message);
-    }
-  }
-  
-  /**
-   * Get current user ID from available sources
-   * @returns {string|null} - User ID or null if not found
-   */
-  function getUserId() {
-    // Try multiple sources for user ID
-    if (window.currentUserData) {
-      return currentUserData.id || currentUserData._id || currentUserData.userId;
-    }
-    
-    return localStorage.getItem("userId") || sessionStorage.getItem("userId");
-  }
-  
-  /**
-   * Get authentication token
-   * @returns {string} - Auth token or empty string
-   */
-  function getAuthToken() {
-    return localStorage.getItem("token") || sessionStorage.getItem("token") || "";
-  }
-  
-  /**
-   * Load profile image if available
-   */
-  function loadProfileImage() {
-    const profileImage = document.getElementById("profileImage");
-    if (profileImage) {
-      const savedImage = localStorage.getItem("userProfileImage");
-      if (savedImage) {
-        profileImage.src = savedImage;
+      
+      xhr.onerror = function() {
+        // Remove loading indicator
+        if (loadingIndicator.parentNode) {
+          loadingIndicator.parentNode.removeChild(loadingIndicator)
+        }
+        
+        console.error("Network error occurred while uploading profile image")
+        alert("Network error while uploading profile image. Please try again.")
       }
+      
+      // Create FormData and append the file
+      const formData = new FormData()
+      formData.append("profilePicture", file)
+      
+      // Send the request
+      xhr.send(formData)
     }
   }

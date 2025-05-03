@@ -5,7 +5,77 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const Vendor = require("../models/vendor.model");
 const crypto = require("crypto");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 dotenv.config();
+
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, ext);
+    cb(null, `profile-${Date.now()}-${baseName}${ext}`);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Only image files are allowed"), false);
+  },
+});
+
+exports.uploadProfilePicture = (req, res) => {
+  upload.single("profilePicture")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message || "Upload failed" });
+    }
+
+    const clientId = req.params.id;
+
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const client = await Client.findById(clientId);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found" });
+      }
+
+      // Supprimer ancienne image si existante
+      if (client.profilePicture) {
+        const oldPath = path.join("uploads", client.profilePicture);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      client.profilePicture = req.file.filename;
+      const updatedClient = await client.save();
+
+      res.status(200).json({
+        message: "Profile picture updated successfully",
+        client: {
+          id: updatedClient._id,
+          firstname: updatedClient.firstname,
+          lastname: updatedClient.lastname,
+          email: updatedClient.email,
+          profilePicture: updatedClient.profilePicture,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message || "Server error" });
+    }
+  });
+};
 
 //register 
 exports.register = async (req , res) =>{
@@ -79,7 +149,8 @@ exports.update = async (req, res) => {
         email,
         dateOfBirth,
         phoneNumber,
-        gender
+        gender,
+        profilePicture
     } = req.body;
 
     try {
@@ -105,6 +176,7 @@ exports.update = async (req, res) => {
         if (dateOfBirth) client.dateOfBirth = dateOfBirth;
         if (phoneNumber) client.phoneNumber = phoneNumber;
         if (gender) client.gender = gender;
+        if (profilePicture) client.profilePicture = profilePicture;
 
         const updatedClient = await client.save();
         res.status(200).send({ message: "Client updated successfully", client: updatedClient });
@@ -190,58 +262,6 @@ exports.resetPassword = async (req, res) => {
 };
 
 
-exports.changePassword = async (req, res) => {
-    try {
-      const { userId, currentPassword, newPassword } = req.body;
-      
-      // Validate request data
-      if (!userId || !currentPassword || !newPassword) {
-        return res.status(400).json({
-          success: false,
-          message: 'Missing required fields'
-        });
-      }
-      
-      // Find user by ID
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
-      }
-      
-      // Verify current password
-      const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({
-          success: false,
-          message: 'Current password is incorrect'
-        });
-      }
-      
-      // Hash new password
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-      
-      // Update user password
-      user.password = hashedPassword;
-      await user.save();
-      
-      // Return success response
-      return res.status(200).json({
-        success: true,
-        message: 'Password changed successfully'
-      });
-      
-    } catch (error) {
-      console.error('Password change error:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error occurred'
-      });
-    }
-  };
 
 //get all clients 
 exports.getAll = async (req , res) =>{
@@ -259,11 +279,6 @@ exports.getById = async (req, res) => {
             return res.status(404).send({ message: "Client not found" });
         }
         
-        // Check if the requesting user is the client or has admin privileges
-        if (req.userId !== client._id.toString() && 
-            !['admin', 'superAdmin', 'vendor', 'moderator'].includes(req.role)) {
-            return res.status(403).send({ message: "Unauthorized" });
-        }
         
         res.status(200).send(client);
     } catch (err) {

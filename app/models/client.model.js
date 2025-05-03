@@ -30,7 +30,7 @@ const ClientSchema = new mongoose.Schema(
         type : String,
         required : false 
     },
-     gender : {
+    gender : {
         type : String,
         required : false
     },
@@ -46,6 +46,10 @@ const ClientSchema = new mongoose.Schema(
     },
     resetPasswordCode: {
       type: String
+    },
+    profilePicture: {
+      type: String,
+      required: false
     }
   },
   {

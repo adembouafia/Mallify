@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// Review schema as a subdocument
 const reviewSchema = new mongoose.Schema(
     {
         productId: {

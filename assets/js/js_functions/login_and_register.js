@@ -433,6 +433,7 @@ try {
 }
 }
 
+
       localStorage.removeItem("userProfilePicture")
       localStorage.removeItem("shopLogo")
       localStorage.removeItem("adminImage")
@@ -457,7 +458,6 @@ try {
           callback()
           return
         case "moderator":
-          // No specific endpoint for single moderator in the routes
           callback()
           return
         default:
@@ -1428,13 +1428,9 @@ function initializeAccountDropdowns() {
 
 // Logout handler function
 function handleLogout() {
-  // Clear all localStorage items
   localStorage.clear()
-
-  // Show logout success message if SweetAlert2 is available
   showToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success")
   setTimeout(() => {
-    // Redirect to home page
     window.location.href = "index.html"
   }, 1000)
 }
