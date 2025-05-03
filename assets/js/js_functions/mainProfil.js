@@ -1039,3 +1039,514 @@ function loadWishlistFromDatabase() {
       xhr.send(formData)
     }
   }
+
+
+  // Orders management script
+// Orders management script for profile page
+function initializeOrdersSection() {
+  // DOM elements
+  const ordersListContainer = document.querySelector('.orders-list');
+  const searchInput = document.getElementById('my-orders-search');
+  const filterSelect = document.getElementById('my-orders-filter');
+  const prevButton = document.getElementById('my-orders-prev');
+  const nextButton = document.getElementById('my-orders-next');
+  const pageNumbers = document.querySelector('.page-numbers');
+  
+  // State variables
+  let allOrders = [];
+  let filteredOrders = [];
+  let currentPage = 1;
+  const ordersPerPage = 5;
+  
+  // Initialize
+  loadOrders();
+  
+  // Add event listeners
+  if (searchInput) {
+    searchInput.addEventListener('input', handleSearch);
+  }
+  
+  if (filterSelect) {
+    filterSelect.addEventListener('change', handleFilter);
+  }
+  
+  if (prevButton) {
+    prevButton.addEventListener('click', goToPreviousPage);
+  }
+  
+  if (nextButton) {
+    nextButton.addEventListener('click', goToNextPage);
+  }
+  
+  // Function to load orders from the database using the new endpoint
+  function loadOrders() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      showError('User ID not found. Please log in again.');
+      return;
+    }
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showError('Authentication token not found. Please log in again.');
+      return;
+    }
+    
+    // Show loading state
+    if (ordersListContainer) {
+      ordersListContainer.innerHTML = '<div class="loading-orders">Loading your orders...</div>';
+    }
+    
+    console.log(`Fetching orders for client ID: ${userId}`);
+    
+    const xhr = new XMLHttpRequest();
+    // Use the new endpoint you've created
+    xhr.open('GET', `/client/${userId}/orders`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        console.log(`Response received. Status: ${xhr.status}`);
+        
+        if (xhr.status === 200) {
+          try {
+            const orders = JSON.parse(xhr.responseText);
+            console.log('Orders loaded successfully:', orders);
+            
+            if (orders && Array.isArray(orders)) {
+              if (orders.length === 0) {
+                if (ordersListContainer) {
+                  ordersListContainer.innerHTML = '<div class="no-orders-found">You have no orders yet.</div>';
+                }
+                return;
+              }
+              
+              allOrders = orders;
+              filteredOrders = [...allOrders];
+              
+              // Initial render
+              renderOrders();
+              setupPagination();
+            } else {
+              console.error('Invalid order data format:', orders);
+              showError('Invalid order data format received from server.');
+            }
+          } catch (error) {
+            console.error('Error parsing orders data:', error);
+            showError('Error loading orders. Please try again later.');
+          }
+        } else if (xhr.status === 403 || xhr.status === 401) {
+          console.error('Authentication error:', xhr.responseText);
+          showError('Authentication error. Please log in again.');
+        } else {
+          console.error('Error loading orders. Status:', xhr.status);
+          showError('Error loading orders. Please try again later.');
+        }
+      }
+    };
+    
+    xhr.onerror = function() {
+      console.error('Network error while loading orders');
+      showError('Network error. Please check your connection and try again.');
+    };
+    
+    xhr.send();
+  }
+  
+  // Function to render orders
+  function renderOrders() {
+    if (!ordersListContainer) return;
+    
+    // Clear the container
+    ordersListContainer.innerHTML = '';
+    
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * ordersPerPage;
+    const endIndex = startIndex + ordersPerPage;
+    const ordersToDisplay = filteredOrders.slice(startIndex, endIndex);
+    
+    if (ordersToDisplay.length === 0) {
+      ordersListContainer.innerHTML = '<div class="no-orders-found">No orders found.</div>';
+      return;
+    }
+    
+    // Render each order
+    ordersToDisplay.forEach(order => {
+      const orderCard = createOrderCard(order);
+      ordersListContainer.appendChild(orderCard);
+    });
+    
+    // Add event listeners to the newly created buttons
+    addOrderButtonListeners();
+  }
+  
+  // Function to create an order card
+  function createOrderCard(order) {
+    const orderCard = document.createElement('div');
+    orderCard.className = 'order-card';
+    orderCard.id = `my-order-${order._id}`;
+    
+    // Format date
+    const orderDate = new Date(order.createdAt || order.date || new Date());
+    const formattedDate = orderDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    // Calculate totals
+    const subtotal = calculateSubtotal(order.products || []);
+    const total = order.totalAmount || subtotal;
+    
+    // Create order header
+    const orderHeader = document.createElement('div');
+    orderHeader.className = 'order-header';
+    orderHeader.innerHTML = `
+      <span class="order-id">#ORD-${order._id.substring(0, 5)}</span>
+      <span class="order-date">${formattedDate}</span>
+      <span class="order-status ${order.status.toLowerCase()}">${capitalizeFirstLetter(order.status)}</span>
+    `;
+    
+    // Create products list
+    const productsListContainer = document.createElement('div');
+    productsListContainer.className = 'order-products-list';
+    
+    // Add each product
+    (order.products || []).forEach((product, index) => {
+      const productItem = document.createElement('div');
+      productItem.className = 'order-product-item';
+      productItem.id = `my-order-item-${index}-${order._id}`;
+      
+      // Get product details (handle different property structures)
+      const productName = product.name || (product.product ? product.product.name : 'Product');
+      const productSku = product.sku || (product.product ? product.product.sku : 'N/A');
+      const productPrice = product.price || (product.product ? product.product.price : 0);
+      const productQty = product.quantity || 1;
+      
+      // Get product image path
+      const imagePath = product.image || (product.product ? product.product.image : '../assets/images/products/placeholder.png');
+      
+      productItem.innerHTML = `
+        <div class="product-image">
+          <img src="${imagePath}" alt="${productName}">
+        </div>
+        <div class="product-info">
+          <h3>${productName}</h3>
+          <p class="product-sku">SKU: ${productSku}</p>
+          <div class="product-meta">
+            <span class="product-price">${productPrice} DT</span>
+            <span class="product-qty">Qty: ${productQty}</span>
+          </div>
+        </div>
+      `;
+      
+      productsListContainer.appendChild(productItem);
+    });
+    
+    // Create order summary
+    const orderSummary = document.createElement('div');
+    orderSummary.className = 'order-summary';
+    orderSummary.innerHTML = `
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>${subtotal} DT</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>${total} DT</span>
+      </div>
+    `;
+    
+    // Create order footer with appropriate buttons based on status
+    const orderFooter = document.createElement('div');
+    orderFooter.className = 'order-footer';
+    
+    // Different buttons based on order status
+    if (order.status.toLowerCase() === 'delivered') {
+      orderFooter.innerHTML = `
+        <button class="order-action review" id="review-order-${order._id}">
+          <i class="ph ph-star"></i> Leave Review
+        </button>
+        <button class="order-action receipt" id="receipt-order-${order._id}">
+          <i class="ph ph-file-text"></i> View Receipt
+        </button>
+      `;
+    } else if (order.status.toLowerCase() === 'cancelled') {
+      orderFooter.innerHTML = `
+        <button class="order-action receipt" id="receipt-order-${order._id}">
+          <i class="ph ph-file-text"></i> View Receipt
+        </button>
+      `;
+    } else {
+      orderFooter.innerHTML = `
+        <button class="order-action track" id="track-order-${order._id}">
+          <i class="ph ph-map-pin"></i> Track Order
+        </button>
+        <button class="order-action receipt" id="receipt-order-${order._id}">
+          <i class="ph ph-file-text"></i> Receipt
+        </button>
+      `;
+    }
+    
+    // Assemble the order card
+    orderCard.appendChild(orderHeader);
+    orderCard.appendChild(productsListContainer);
+    orderCard.appendChild(orderSummary);
+    orderCard.appendChild(orderFooter);
+    
+    return orderCard;
+  }
+  
+  // Function to calculate subtotal
+  function calculateSubtotal(products) {
+    return products.reduce((total, product) => {
+      const price = product.price || (product.product ? product.product.price : 0);
+      const quantity = product.quantity || 1;
+      return total + (price * quantity);
+    }, 0);
+  }
+  
+  // Function to add event listeners to order buttons
+  function addOrderButtonListeners() {
+    // Track order buttons
+    document.querySelectorAll('.order-action.track').forEach(button => {
+      button.addEventListener('click', function() {
+        const orderId = this.id.replace('track-order-', '');
+        trackOrder(orderId);
+      });
+    });
+    
+    // Receipt buttons
+    document.querySelectorAll('.order-action.receipt').forEach(button => {
+      button.addEventListener('click', function() {
+        const orderId = this.id.replace('receipt-order-', '');
+        viewReceipt(orderId);
+      });
+    });
+    
+    // Review buttons
+    document.querySelectorAll('.order-action.review').forEach(button => {
+      button.addEventListener('click', function() {
+        const orderId = this.id.replace('review-order-', '');
+        leaveReview(orderId);
+      });
+    });
+  }
+  
+  // Function to handle search
+  function handleSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    if (searchTerm === '') {
+      // If search is empty, just apply the current filter
+      handleFilter();
+      return;
+    }
+    
+    // Filter orders based on search term and current filter
+    const currentFilter = filterSelect.value;
+    
+    filteredOrders = allOrders.filter(order => {
+      // Check if order matches the current filter
+      if (currentFilter !== 'all' && order.status.toLowerCase() !== currentFilter) {
+        return false;
+      }
+      
+      // Search in order ID
+      if (order._id.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // Search in products
+      for (const product of (order.products || [])) {
+        const productName = product.name || (product.product ? product.product.name : '');
+        const productSku = product.sku || (product.product ? product.product.sku : '');
+        
+        if (productName.toLowerCase().includes(searchTerm) || 
+            productSku.toLowerCase().includes(searchTerm)) {
+          return true;
+        }
+      }
+      
+      return false;
+    });
+    
+    // Reset to first page and render
+    currentPage = 1;
+    renderOrders();
+    setupPagination();
+  }
+  
+  // Function to handle filter
+  function handleFilter() {
+    const filterValue = filterSelect.value;
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    
+    if (filterValue === 'all' && searchTerm === '') {
+      filteredOrders = [...allOrders];
+    } else {
+      filteredOrders = allOrders.filter(order => {
+        // Apply status filter
+        if (filterValue !== 'all' && order.status.toLowerCase() !== filterValue) {
+          return false;
+        }
+        
+        // Apply search filter if there's a search term
+        if (searchTerm !== '') {
+          // Search in order ID
+          if (order._id.toLowerCase().includes(searchTerm)) {
+            return true;
+          }
+          
+          // Search in products
+          let productMatch = false;
+          for (const product of (order.products || [])) {
+            const productName = product.name || (product.product ? product.product.name : '');
+            const productSku = product.sku || (product.product ? product.product.sku : '');
+            
+            if (productName.toLowerCase().includes(searchTerm) || 
+                productSku.toLowerCase().includes(searchTerm)) {
+              productMatch = true;
+              break;
+            }
+          }
+          
+          return productMatch;
+        }
+        
+        return true;
+      });
+    }
+    
+    // Reset to first page and render
+    currentPage = 1;
+    renderOrders();
+    setupPagination();
+  }
+  
+  // Function to set up pagination
+  function setupPagination() {
+    if (!pageNumbers) return;
+    
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+    
+    // Update page numbers
+    pageNumbers.innerHTML = '';
+    
+    // Determine which page numbers to show
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = Math.min(totalPages, startPage + 2);
+    
+    // Adjust if we're at the end
+    if (endPage - startPage < 2 && startPage > 1) {
+      startPage = Math.max(1, endPage - 2);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      const pageNumber = document.createElement('span');
+      pageNumber.className = `page-number ${i === currentPage ? 'active' : ''}`;
+      pageNumber.id = `my-orders-page-${i}`;
+      pageNumber.textContent = i;
+      pageNumber.addEventListener('click', () => goToPage(i));
+      pageNumbers.appendChild(pageNumber);
+    }
+    
+    // Update button states
+    if (prevButton) {
+      prevButton.classList.toggle('disabled', currentPage === 1);
+    }
+    
+    if (nextButton) {
+      nextButton.classList.toggle('disabled', currentPage === totalPages || totalPages === 0);
+    }
+  }
+  
+  // Function to go to a specific page
+  function goToPage(page) {
+    currentPage = page;
+    renderOrders();
+    setupPagination();
+  }
+  
+  // Function to go to the previous page
+  function goToPreviousPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      renderOrders();
+      setupPagination();
+    }
+  }
+  
+  // Function to go to the next page
+  function goToNextPage() {
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderOrders();
+      setupPagination();
+    }
+  }
+  
+  // Function to track an order
+  function trackOrder(orderId) {
+    console.log(`Tracking order: ${orderId}`);
+    // Implement your tracking logic here
+    alert(`Tracking information for order #${orderId} will be displayed here.`);
+  }
+  
+  // Function to view a receipt
+  function viewReceipt(orderId) {
+    console.log(`Viewing receipt for order: ${orderId}`);
+    
+    // Find the order
+    const order = allOrders.find(o => o._id === orderId);
+    if (!order) {
+      alert('Order not found');
+      return;
+    }
+    
+    // You could open a modal or navigate to a receipt page
+    // For now, we'll just show an alert with some order details
+    const orderDate = new Date(order.createdAt || order.date || new Date()).toLocaleDateString();
+    const total = order.totalAmount || calculateSubtotal(order.products || []);
+    
+    alert(`
+      Receipt for Order #${orderId}
+      Date: ${orderDate}
+      Status: ${order.status}
+      Total: ${total} DT
+      
+      A detailed receipt will be displayed or downloaded here.
+    `);
+  }
+  
+  // Function to leave a review
+  function leaveReview(orderId) {
+    console.log(`Leaving review for order: ${orderId}`);
+    // Implement your review logic here
+    alert(`You can leave a review for order #${orderId} here.`);
+  }
+  
+  // Helper function to show errors
+  function showError(message) {
+    if (ordersListContainer) {
+      ordersListContainer.innerHTML = `<div class="error-message">${message}</div>`;
+    } else {
+      console.error(message);
+    }
+  }
+  
+  // Helper function to capitalize first letter
+  function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+}
+
+// Call the initialization function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if we're on the orders section
+  if (document.querySelector('.orders-list')) {
+    initializeOrdersSection();
+  }
+});

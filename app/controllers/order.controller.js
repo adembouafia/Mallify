@@ -190,3 +190,20 @@ exports.deleteOrder = async (req, res) => {
     })
   }
 }
+
+
+//get all orders for a client
+exports.getOrdersByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.id;    
+    const orders = await Order.find({ client: clientId })
+      .populate('products.product')
+      .sort({ createdAt: -1 });     
+    
+    res.status(200).send(orders);
+    
+  } catch (err) {
+    console.error('Error fetching client orders:', err);
+    res.status(500).send({ message: err.message || "Error retrieving orders for this client" });
+  }
+};
