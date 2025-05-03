@@ -1,4 +1,5 @@
 const Category = require('../models/category.model'); 
+const SubCategory = require('../models/subCategory.model');
 
 //new category
 exports.createCategory = async (req, res) => {
@@ -73,5 +74,40 @@ exports.getCategoryById = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erreur serveur lors de la récupération de la catégorie' });
+    }
+};
+
+
+
+//get categories with subcategories
+exports.getCategoriesWithSubCategories = async (req, res) => {
+    try {
+        // First, get all categories
+        const categories = await Category.find();
+        
+        // Create an array to hold our results
+        const result = [];
+        
+        // For each category, find its subcategories
+        for (const category of categories) {
+            // Find subcategories for this category
+            const subCategories = await SubCategory.find({ category: category._id });
+            
+            // Add this category with its subcategories to our result
+            result.push({
+                _id: category._id,
+                categoryName: category.categoryName,
+                subCategories: subCategories
+            });
+        }
+        
+        // Send the result
+        return res.status(200).json({ categories: result });
+    } catch (error) {
+        console.error("Error in getCategoriesWithSubCategories:", error);
+        return res.status(500).json({ 
+            message: 'Erreur lors du chargement des catégories avec sous-catégories', 
+            error: error.message 
+        });
     }
 };

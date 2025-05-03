@@ -8805,8 +8805,9 @@ input:focus-visible {
     border-radius: 6px;
     visibility: hidden;
     opacity: 0;
-    overflow: hidden;
-    height: 100%;
+    overflow: visible; 
+    height: auto;
+    max-height: 400px; 
 }
 
 .submenus-submenu__list li a {
