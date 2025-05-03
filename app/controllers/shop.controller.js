@@ -35,37 +35,41 @@ exports.getShopById = async (req, res) => {
 // Update shop status
 exports.updateShopStatus = async (req, res) => {
   try {
-    const { status, rejectionReason } = req.body
+    const { status, rejectionReason } = req.body;
 
     if (!["Pending", "Approved", "Rejected"].includes(status))
-      return res.status(400).send({ message: "Invalid or missing status" })
+      return res.status(400).send({ message: "Invalid or missing status" });
 
     if (status === "Rejected" && !rejectionReason)
-      return res.status(400).send({ message: "Rejection reason is required" })
+      return res.status(400).send({ message: "Rejection reason is required" });
 
-    const shop = await Shop.findById(req.params.id).populate("vendor")
-    if (!shop) return res.status(404).send({ message: "Shop not found" })
+    const shop = await Shop.findById(req.params.id).populate("vendor");
+    if (!shop) return res.status(404).send({ message: "Shop not found" });
 
+    // Mettre à jour le statut du shop
+    const updateData = { status };
+    
+    // Ajouter la raison de rejet si nécessaire
     if (status === "Rejected") {
-      // Update shop with rejection status and reason
-      const updatedShop = await Shop.findByIdAndUpdate(
-        req.params.id,
-        {
-            status,
-            rejectionReason,
-        },
-        { new: true },
-    ).populate("vendor")
-
-      // Return the updated shop
-      return res.send(updatedShop)
+      updateData.rejectionReason = rejectionReason;
+    } else if (status === "Approved") {
+      // Effacer la raison de rejet si le shop est approuvé
+      updateData.rejectionReason = undefined;
     }
 
+    const updatedShop = await Shop.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).populate("vendor");
+
+    // Retourner le shop mis à jour
+    return res.send(updatedShop);
   } catch (err) {
-    console.error("Error updating shop status:", err)
-    res.status(500).send({ message: err.message || "Error updating shop status" })
+    console.error("Error updating shop status:", err);
+    res.status(500).send({ message: err.message || "Error updating shop status" });
   }
-}
+};
 
 // Delete shop
 exports.deleteShop = async (req, res) => {

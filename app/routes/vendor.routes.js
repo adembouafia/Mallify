@@ -1,6 +1,5 @@
 const auth = require("../middlewares/auth.middleware");
 const authorize = require("../middlewares/authorize.middleware");
-const checkShopApproved = require("../middlewares/checkShopApproved.middleware");
 
 module.exports = (app) => {
     const vendor = require("../controllers/vendor.controller");

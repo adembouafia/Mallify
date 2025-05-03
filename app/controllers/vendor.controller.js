@@ -74,7 +74,6 @@ exports.register = (req, res) => {
 
 
 
-
 // Vendor login
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -90,6 +89,30 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Invalid password" });
         }
 
+        // Récupérer le shop associé au vendor pour vérifier son statut
+        const shop = await Shop.findById(vendor.shop);
+        
+        if (!shop) {
+            return res.status(404).json({ message: "Shop not found" });
+        }
+
+        // Vérifier le statut du shop
+        if (shop.status === "Pending") {
+            return res.status(403).json({ 
+                message: "Votre boutique est en cours d'étude par l'administration.",
+                status: "Pending"
+            });
+        }
+
+        if (shop.status === "Rejected") {
+            return res.status(403).json({ 
+                message: "Votre boutique a été rejetée.",
+                reason: shop.rejectionReason,
+                status: "Rejected"
+            });
+        }
+
+        // Si le shop est approuvé, continuer avec la connexion normale
         const token = jwt.sign({
             id: vendor._id,
             email: vendor.email,
