@@ -46,14 +46,11 @@ exports.updateShopStatus = async (req, res) => {
     const shop = await Shop.findById(req.params.id).populate("vendor");
     if (!shop) return res.status(404).send({ message: "Shop not found" });
 
-    // Mettre à jour le statut du shop
     const updateData = { status };
     
-    // Ajouter la raison de rejet si nécessaire
     if (status === "Rejected") {
       updateData.rejectionReason = rejectionReason;
     } else if (status === "Approved") {
-      // Effacer la raison de rejet si le shop est approuvé
       updateData.rejectionReason = undefined;
     }
 
@@ -63,7 +60,6 @@ exports.updateShopStatus = async (req, res) => {
       { new: true }
     ).populate("vendor");
 
-    // Retourner le shop mis à jour
     return res.send(updatedShop);
   } catch (err) {
     console.error("Error updating shop status:", err);

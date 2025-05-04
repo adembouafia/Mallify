@@ -543,12 +543,12 @@ function fetchAndPopulateTopSelling() {
 
 
 
-function createProductCardTrending(product) {
-    
-}
+// function createProductCardTrending(product) {
+
+// }
 
 
 
-function fetchAndPopulateTrendingProducts(){
+// function fetchAndPopulateTrendingProducts(){
 
-}
+// }
