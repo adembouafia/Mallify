@@ -77,13 +77,14 @@ exports.createOrder = async (req, res) => {
     const invoices = []
 
     for (const [shopId, data] of Object.entries(itemsByShop)) {
-      // Create order with complete cart data
+      // Create order with complete cart data and set the orderStatus field
       const order = new Order({
         idPanier: cart._id,
         idClient: cart.clientId,
         shop: shopId,
         cartData: data.cartData, // Store complete cart data
         orderTotal: data.total,
+        orderStatus: 'pending', // Explicitly set the order status to 'pending'
       })
 
       await order.save()
@@ -119,7 +120,7 @@ exports.createOrder = async (req, res) => {
     })
   }
 }
-
+  
 // Get all orders
 exports.getOrdersByShop = async (req, res) => {
   try {
@@ -196,8 +197,8 @@ exports.deleteOrder = async (req, res) => {
 exports.getOrdersByClientId = async (req, res) => {
   try {
     const clientId = req.params.id;    
-    const orders = await Order.find({ client: clientId })
-      .populate('products.product')
+    const orders = await Order.find({ idClient: clientId })
+      .populate('idClient')
       .sort({ createdAt: -1 });     
     
     res.status(200).send(orders);

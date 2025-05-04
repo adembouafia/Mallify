@@ -233,10 +233,8 @@ function showAlert(options) {
 
 
 function handleLogout() {
-  // Clear all localStorage items
-  localStorage.clear()
 
-  // Show logout success message if SweetAlert2 is available
+  localStorage.clear()
   showToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success")
   setTimeout(() => {
     // Redirect to home page

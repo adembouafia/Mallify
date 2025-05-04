@@ -728,7 +728,7 @@ input#your-password, input#confirm-password {
     padding-inline-end: 50px;
 }
 
-.password-show-hide {
+/* .password-show-hide {
     position: absolute;
     inset-inline-end: 20px;
     z-index: 5;
@@ -736,7 +736,7 @@ input#your-password, input#confirm-password {
     inset-block-start: 50%;
     transform: translateY(-50%);
     color: hsl(var(--black)/0.4);
-}
+} */
 
 /* Number Arrow None */
 input::-webkit-outer-spin-button,

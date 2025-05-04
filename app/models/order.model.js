@@ -51,6 +51,11 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  orderStatus :{
+    type: String,
+    enum: ['pending', 'completed', 'cancelled'],
+    default: 'pending'
+  }
 })
 
 module.exports = mongoose.model("Order", orderSchema)
