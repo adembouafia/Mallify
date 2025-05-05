@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const response = JSON.parse(xhr.responseText);
                         
                         if (response.status === 'success' && response.data && response.data.products) {
+                            // Filter to get only products from this shop
                             allProducts = response.data.products.filter(product => 
                                 product.shop && product.shop._id === shopId);
                                 
@@ -434,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ? `../uploads/${product.mainImage}` 
             : '../assets/images/products/oversize.png';
         
-        // Get average rating and review count (safely)
+        // Get average rating and review count (safely) for individual products
         const averageRating = product.averageRating || 0;
         const formattedRating = averageRating.toFixed(1);
         const reviewCount = product.reviewCount || 0;
@@ -466,8 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="text-xs fw-medium text-gray-500">${formattedRating}</span>
                     <span class="text-xs fw-medium text-gray-500">(${reviewCount})</span>
                 </div>
-
-                <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">Fulfilled by Mallify</span>
 
                 <div class="product-card__price mt-16 mb-30">
                     ${product.productoldPrice ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${product.productoldPrice} DT</span>` : ''}
