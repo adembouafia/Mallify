@@ -369,6 +369,12 @@ function approveShop(shopId) {
   const xhr = new XMLHttpRequest()
   xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
   xhr.setRequestHeader("Content-Type", "application/json")
+  
+  // Add authorization header if available
+  const token = localStorage.getItem("token")
+  if (token) {
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
@@ -378,7 +384,16 @@ function approveShop(shopId) {
       
       showToast("Shop approved successfully", "success")
     } else {
-      showToast("Error approving shop", "danger")
+      let errorMessage = "Error approving shop";
+      try {
+        if (xhr.responseText) {
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
+        }
+      } catch (e) {
+        console.error("Error parsing response:", e);
+      }
+      showToast(errorMessage, "danger");
     }
   }
 
@@ -394,6 +409,12 @@ function rejectShop(shopId, reason) {
   const xhr = new XMLHttpRequest()
   xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
   xhr.setRequestHeader("Content-Type", "application/json")
+  
+  // Add authorization header if available
+  const token = localStorage.getItem("token")
+  if (token) {
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
@@ -403,7 +424,16 @@ function rejectShop(shopId, reason) {
       
       showToast("Shop rejected successfully", "success")
     } else {
-      showToast("Error rejecting shop", "danger")
+      let errorMessage = "Error rejecting shop";
+      try {
+        if (xhr.responseText) {
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
+        }
+      } catch (e) {
+        console.error("Error parsing response:", e);
+      }
+      showToast(errorMessage, "danger")
     }
   }
 

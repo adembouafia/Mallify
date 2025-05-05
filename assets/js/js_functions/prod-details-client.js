@@ -123,23 +123,20 @@ function displayProductDetails(product) {
     }
 
 
-
-    // Update shop name
-    const shopNameElement = document.querySelector(
-    ".px-16.py-8.bg-main-50.rounded-8.flex-between.gap-24.mb-0 .text-sm.text-neutral-600.d-flex .fw-semibold",
-    )
+    // Update shop name - Fixed to use the correct element selector
+    const shopNameElement = document.getElementById("shop-name-detail");
     if (shopNameElement) {
-    // Check if shop is populated as an object with shopName
-    if (product.shop && typeof product.shop === "object" && product.shop.shopName) {
-        shopNameElement.textContent = product.shop.shopName
-    }
-    // Check if shop is just an ID (string or ObjectId)
-    else if (product.shop) {
-        // Fetch shop details using the shop ID
-        fetchShopDetails(product.shop, shopNameElement)
-    } else {
-        shopNameElement.textContent = "Shop"
-    }
+        // Check if shop is populated as an object with shopName
+        if (product.shop && typeof product.shop === "object" && product.shop.shopName) {
+            shopNameElement.textContent = product.shop.shopName;
+        }
+        // Check if shop is just an ID (string or ObjectId)
+        else if (product.shop) {
+            // Fetch shop details using the shop ID
+            fetchShopDetails(product.shop, shopNameElement);
+        } else {
+            shopNameElement.textContent = "Shop";
+        }
     }
 }
 
@@ -712,6 +709,12 @@ function addToCart(productId, quantity, redirectToCheckout = false, userId) {
         if (cartCountElement && response.cart && response.cart.items) {
             const totalItems = response.cart.items.reduce((total, item) => total + item.quantity, 0)
             cartCountElement.textContent = totalItems
+        }
+        
+        // Immediately update cart count in real-time using the global counter function
+        const token = localStorage.getItem("token")
+        if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
+            window.mallifyCounters.fetchCartCount(userId, token);
         }
 
         if (redirectToCheckout) {

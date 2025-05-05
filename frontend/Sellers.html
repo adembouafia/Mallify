@@ -605,21 +605,19 @@
         <!-- Top Search -->
          <div class="d-flex align-items-center justify-content-between flex-wrap mb-48 gap-16">
              <form action="#" class="input-group w-100 max-w-418">
-                 <input type="text" class="form-control common-input rounded-start-3" placeholder="Searching...">
+                 <input type="text" class="form-control common-input rounded-start-3" placeholder="Search for sellers...">
                  <button type="submit" class="input-group-text border-0 bg-main-two-600 rounded-end-3 text-white text-2xl hover-bg-main-two-700 px-24">
                      <i class="ph ph-magnifying-glass"></i>
                  </button>
              </form>
      
              <div class="d-flex align-items-center justify-content-between justify-content-sm-end gap-16 flex-grow-1">
-                 <div class="text-gray-600 text-md flex-shrink-0"> <span class="text-neutral-900 fw-semibold">52</span> Results Found</div>
+                 <div class="text-gray-600 text-md flex-shrink-0"> <span class="text-neutral-900 fw-semibold">0</span> Results Found</div>
                  <div class="d-flex align-items-center gap-8 d-sm-flex d-none">
                     <button type="button" class="grid-btn text-2xl d-flex w-48 h-48 border border-neutral-100 rounded-8 justify-content-center align-items-center border-main-600 text-white bg-main-600"><i class="ph ph-squares-four"></i></button>
                     <button type="button" class="list-btn text-2xl d-flex w-48 h-48 border border-neutral-100 rounded-8 justify-content-center align-items-center"><i class="ph ph-list-bullets"></i></button>
                  </div>
-                 <button type="button" class="w-48 h-48 d-lg-none d-flex flex-center border border-gray-100 rounded-6 text-2xl sidebar-btn">
-                    <i class="ph-bold ph-funnel"></i>
-                </button>
+                 
              </div>
          </div>
         <!-- Top Search End -->
@@ -629,53 +627,14 @@
         <div class="row">
             <div class="vendors">
                 <!-- Vendors Start -->
-                <div class="list-grid-wrapper vendors-two-item-wrapper grid-cols-4">
-                    <div class="vendors-two-item rounded-12 overflow-hidden bg-color-three border border-neutral-50 hover-border-main-two-600 transition-2" id="shops-container">
-                        <div class="vendors-two-item__top bg-overlay style-two position-relative">
-                            <div class="vendors-two-item__thumbs h-210">
-                                <img src="../assets/images/sellers/background.jpg" alt="cover_image" class="cover-img"> 
-                            </div>
-                            <div class="position-absolute top-0 inset-inline-start-0 w-100 h-100 p-24 z-1 d-flex flex-column justify-content-between">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <span class="w-80 h-80 flex-center bg-white rounded-circle flex-shrink-0">
-                                        <img src="../assets/images/sellers/fashion_logo.png" alt="logo">
-                                    </span>
-                                    
-                                </div>
-                                <div class="mt-16">
-                                    <h6 class="text-white fw-semibold mb-12 text-center">
-                                        <a href="vendor-details.html" >Fashion </a>
-                                    </h6>
-                                    
-                                </div>
+                <div class="list-grid-wrapper vendors-two-item-wrapper">
+                    <div id="shops-container">
+                        <!-- Shop cards will be dynamically inserted here by JavaScript -->
+                        <div class="loading-indicator text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
                         </div>
-                        <div class="vendors-two-item__content p-24 flex-grow-1">
-                            <div class="d-flex flex-column gap-14">
-                                <div class="flex-align gap-8">
-                                    <span class="flex-center text-main-two-600 text-2xl flex-shrink-0">
-                                        <i class="ph ph-map-pin-line"></i>
-                                    </span>
-                                    <p class="text-md text-gray-900">hammam sousse - sousse -tunisie</p>
-                                </div>
-                                <div class="flex-align gap-8">
-                                    <span class="flex-center text-main-two-600 text-2xl flex-shrink-0">
-                                        <i class="ph ph-envelope-simple"></i>
-                                    </span>
-                                    <a href="mailto:info@watch.com" class="text-md text-gray-900 hover-text-main-60">fashion@gmail.com</a>
-                                </div>
-                                <div class="flex-align gap-8">
-                                    <span class="flex-center text-main-two-600 text-2xl flex-shrink-0">
-                                        <i class="ph ph-phone"></i>
-                                    </span>
-                                    <a href="tel:+21698616085" class="text-md text-gray-900 hover-text-main-60">+216 98 616 085 </a>
-                                </div>
-                            </div>
-                            <a href="vendor-details.html" class="btn bg-neutral-600 hover-bg-neutral-700 text-white py-12 px-24 rounded-8 flex-center gap-8 fw-medium mt-24">
-                                Visit Store
-                                <span class="text-xl d-flex text-main-two-600"> <i class="ph ph-storefront"></i></span>
-                            </a>
-                        </div> 
                     </div>
                 </div>
                 
@@ -688,27 +647,7 @@
                             <i class="ph-bold ph-arrow-left"></i>
                         </a>
                     </li>
-                    <li class="page-item active">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">01</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">02</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">03</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">04</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">05</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">06</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">07</a>
-                    </li>
+                    <!-- Page numbers will be inserted here by JavaScript -->
                     <li class="page-item">
                         <a class="page-link h-64 w-64 flex-center text-xxl rounded-8 fw-medium text-neutral-600 border border-gray-100" href="#">
                             <i class="ph-bold ph-arrow-right"></i>

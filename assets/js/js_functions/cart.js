@@ -192,7 +192,21 @@ document.addEventListener("DOMContentLoaded", () => {
     xhr.setRequestHeader('Content-Type', 'application/json');
     
     xhr.onload = function() {
-      if (this.status !== 200) {
+      if (this.status === 200) {
+        try {
+          const response = JSON.parse(this.responseText);
+          // Update global cart count directly
+          if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
+            const clientId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+            if (clientId && token) {
+              window.mallifyCounters.fetchCartCount(clientId, token);
+            }
+          }
+        } catch (e) {
+          console.error('Error parsing cart update response:', e);
+        }
+      } else {
         console.error('Failed to update cart item:', this.status, this.responseText);
       }
     };
@@ -218,7 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
     xhr.setRequestHeader('Content-Type', 'application/json');
     
     xhr.onload = function() {
-      if (this.status !== 200) {
+      if (this.status === 200) {
+        // Update global cart count directly
+        if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
+          const clientId = localStorage.getItem('userId');
+          const token = localStorage.getItem('token');
+          if (clientId && token) {
+            window.mallifyCounters.fetchCartCount(clientId, token);
+          }
+        }
+      } else {
         console.error('Failed to remove cart item:', this.status, this.responseText);
       }
     };

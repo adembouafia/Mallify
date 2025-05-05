@@ -11022,3 +11022,16 @@ input[type=number] {
       transform 0.2s ease;
     pointer-events: none;
   }
+
+
+  /* Add this to your CSS */
+.shipping-info-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* If you're using Bootstrap, you might not need this */
+.me-3 {
+    margin-right: 0.75rem;
+}

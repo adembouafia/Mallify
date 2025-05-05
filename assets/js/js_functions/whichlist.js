@@ -251,6 +251,11 @@ card.innerHTML = `
       if (this.status === 200) {
         console.log('Product added to cart successfully');
         showNotification('Product added to cart successfully', 'success');
+        
+        // Update cart count in real-time
+        if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
+          window.mallifyCounters.fetchCartCount(clientId, token);
+        }
       } else {
         console.error('Failed to add product to cart:', this.status, this.responseText);
         showNotification('Failed to add product to cart', 'error');
@@ -280,12 +285,47 @@ card.innerHTML = `
       return;
     }
     
+    const loadingOverlay = document.createElement("div");
+    loadingOverlay.className = "loading-overlay";
+    loadingOverlay.innerHTML = '<div class="spinner"></div>';
+    loadingOverlay.style.position = 'fixed';
+    loadingOverlay.style.top = '0';
+    loadingOverlay.style.left = '0';
+    loadingOverlay.style.width = '100%';
+    loadingOverlay.style.height = '100%';
+    loadingOverlay.style.backgroundColor = 'rgba(0,0,0,0.3)';
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.justifyContent = 'center';
+    loadingOverlay.style.alignItems = 'center';
+    loadingOverlay.style.zIndex = '9999';
+    
+    const spinner = document.createElement('div');
+    spinner.style.border = '4px solidrgb(255, 255, 255)';
+    spinner.style.borderTop = '4px solidrgb(45, 149, 218)';
+    spinner.style.borderRadius = '50%';
+    spinner.style.width = '40px';
+    spinner.style.height = '40px';
+    spinner.style.animation = 'spin 1s linear infinite';
+    loadingOverlay.appendChild(spinner);
+    
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(loadingOverlay);
+    
     const xhr = new XMLHttpRequest();
     xhr.open('DELETE', '/favoris/remove', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     
     xhr.onload = function() {
+      document.body.removeChild(loadingOverlay);
       console.log("Remove API response:", this.status, this.responseText);
       
       if (this.status === 200) {
@@ -295,6 +335,11 @@ card.innerHTML = `
         // Re-render the wishlist
         renderWishlist();
         showNotification('Product removed from wishlist', 'success');
+        
+        // Update wishlist count in real-time
+        if (window.mallifyCounters && typeof window.mallifyCounters.fetchWishlistCount === 'function') {
+          window.mallifyCounters.fetchWishlistCount(clientId, token);
+        }
       } else {
         console.error('Failed to remove product from wishlist:', this.status, this.responseText);
         showNotification('Failed to remove product', 'error');
@@ -302,6 +347,7 @@ card.innerHTML = `
     };
     
     xhr.onerror = function() {
+      document.body.removeChild(loadingOverlay);
       console.error('Request error');
       showNotification('Network error occurred', 'error');
     };

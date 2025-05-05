@@ -1286,3 +1286,303 @@ document.addEventListener('DOMContentLoaded', function() {
   initDropdowns();
 });
 
+// ========================= Cart & Wishlist Counter Functionality Start ===================
+// Function to update cart and wishlist counters across all pages
+function updateCounters() {
+  // Get the client ID directly from localStorage
+  const clientId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
+  
+  if (clientId && token) {
+    // User is logged in, fetch actual counts from database
+    fetchWishlistCount(clientId, token);
+    fetchCartCount(clientId, token);
+  } else {
+    // User is not logged in, use localStorage counts
+    const wishlistCount = localStorage.getItem('wishlistCount') || 0;
+    const cartCount = localStorage.getItem('cartCount') || 0;
+    
+    updateWishlistCounters(wishlistCount);
+    updateCartCounters(cartCount);
+  }
+}
+
+// Function to fetch wishlist count from database
+function fetchWishlistCount(clientId, token) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://localhost:3000/favoris/${clientId}`, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  
+  xhr.onload = function() {
+    if (this.status === 200) {
+      try {
+        const response = JSON.parse(this.responseText);
+        if (response.favorites && Array.isArray(response.favorites)) {
+          const count = response.favorites.length;
+          localStorage.setItem('wishlistCount', count);
+          updateWishlistCounters(count);
+        } else {
+          localStorage.setItem('wishlistCount', '0');
+          updateWishlistCounters(0);
+        }
+      } catch (e) {
+        console.error('Error parsing wishlist count:', e);
+        updateWishlistCounters(0);
+      }
+    } else if (this.status === 404) {
+      // No wishlist found, set count to 0
+      localStorage.setItem('wishlistCount', '0');
+      updateWishlistCounters(0);
+    } else {
+      console.error('Failed to fetch wishlist count:', this.status, this.responseText);
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error('Network error when fetching wishlist count');
+  };
+  
+  xhr.send();
+}
+
+// Function to fetch cart count from database
+function fetchCartCount(clientId, token) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://localhost:3000/cart/${clientId}`, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  
+  xhr.onload = function() {
+    if (this.status === 200) {
+      try {
+        const response = JSON.parse(this.responseText);
+        if (response.cart && response.cart.items) {
+          // Calculate total quantity across all items
+          const count = response.cart.items.reduce((total, item) => total + item.quantity, 0);
+          localStorage.setItem('cartCount', count);
+          updateCartCounters(count);
+        } else {
+          localStorage.setItem('cartCount', '0');
+          updateCartCounters(0);
+        }
+      } catch (e) {
+        console.error('Error parsing cart count:', e);
+        updateCartCounters(0);
+      }
+    } else {
+      console.error('Failed to fetch cart count:', this.status, this.responseText);
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error('Network error when fetching cart count');
+  };
+  
+  xhr.send();
+}
+
+// Function to update all wishlist counters in the page
+function updateWishlistCounters(count) {
+  const wishlistCounters = document.querySelectorAll('.ph-heart + span');
+  wishlistCounters.forEach(counter => {
+    counter.textContent = count;
+  });
+}
+
+// Function to update all cart counters in the page
+function updateCartCounters(count) {
+  const cartCounters = document.querySelectorAll('.ph-shopping-cart-simple + span');
+  cartCounters.forEach(counter => {
+    counter.textContent = count;
+  });
+}
+
+// Update counters when page loads
+$(document).ready(function() {
+  // Initialize counters
+  updateCounters();
+  
+  // Handle the wishlist button clicks
+  $(document).on('click', '.wishlist-btn', function() {
+    // Toggle heart icon (purely visual feedback)
+    if($(this).children('i').hasClass('ph ph-heart')) {
+      $(this).children('i').removeClass('ph ph-heart');
+      $(this).children('i').addClass('ph-fill ph-heart text-main-two-600');
+      // Increment the wishlist counter immediately for instant feedback
+      const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+      updateWishlistCounters(currentCount + 1);
+    } else {
+      $(this).children('i').removeClass('ph-fill ph-heart text-main-two-600');
+      $(this).children('i').addClass('ph ph-heart');
+      // Decrement the wishlist counter immediately for instant feedback
+      const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+      updateWishlistCounters(Math.max(0, currentCount - 1));
+    }
+  });
+  
+  // Add to cart button functionality - provide instant visual feedback
+  $(document).on('click', '.add-to-cart, .product-card__cart', function(e) {
+    // Don't prevent default if it's an actual link that should navigate
+    if (!$(this).attr('href')) {
+      e.preventDefault();
+      
+      // Increment the cart counter immediately for instant feedback
+      const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+      updateCartCounters(currentCount + 1);
+    }
+  });
+});
+
+// ========================= Cart & Wishlist Counter Functionality Start ===================
+// Function to update cart and wishlist counters across all pages
+function updateCounters() {
+  // Get the client ID directly from localStorage
+  const clientId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
+  
+  if (clientId && token) {
+    // User is logged in, fetch actual counts from database
+    fetchWishlistCount(clientId, token);
+    fetchCartCount(clientId, token);
+  } else {
+    // User is not logged in, use localStorage counts
+    const wishlistCount = localStorage.getItem('wishlistCount') || 0;
+    const cartCount = localStorage.getItem('cartCount') || 0;
+    
+    updateWishlistCounters(wishlistCount);
+    updateCartCounters(cartCount);
+  }
+}
+
+// Function to fetch wishlist count from database
+function fetchWishlistCount(clientId, token) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://localhost:3000/favoris/${clientId}`, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  
+  xhr.onload = function() {
+    if (this.status === 200) {
+      try {
+        const response = JSON.parse(this.responseText);
+        if (response.favorites && Array.isArray(response.favorites)) {
+          const count = response.favorites.length;
+          localStorage.setItem('wishlistCount', count);
+          updateWishlistCounters(count);
+        } else {
+          localStorage.setItem('wishlistCount', '0');
+          updateWishlistCounters(0);
+        }
+      } catch (e) {
+        console.error('Error parsing wishlist count:', e);
+        updateWishlistCounters(0);
+      }
+    } else if (this.status === 404) {
+      // No wishlist found, set count to 0
+      localStorage.setItem('wishlistCount', '0');
+      updateWishlistCounters(0);
+    } else {
+      console.error('Failed to fetch wishlist count:', this.status, this.responseText);
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error('Network error when fetching wishlist count');
+  };
+  
+  xhr.send();
+}
+
+// Function to fetch cart count from database
+function fetchCartCount(clientId, token) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://localhost:3000/cart/${clientId}`, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  
+  xhr.onload = function() {
+    if (this.status === 200) {
+      try {
+        const response = JSON.parse(this.responseText);
+        if (response.cart && response.cart.items) {
+          // Calculate total quantity across all items
+          const count = response.cart.items.reduce((total, item) => total + item.quantity, 0);
+          localStorage.setItem('cartCount', count);
+          updateCartCounters(count);
+        } else {
+          localStorage.setItem('cartCount', '0');
+          updateCartCounters(0);
+        }
+      } catch (e) {
+        console.error('Error parsing cart count:', e);
+        updateCartCounters(0);
+      }
+    } else {
+      console.error('Failed to fetch cart count:', this.status, this.responseText);
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error('Network error when fetching cart count');
+  };
+  
+  xhr.send();
+}
+
+// Helper functions to increment/decrement counters directly for immediate visual feedback
+function incrementWishlistCount() {
+  const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+  const newCount = currentCount + 1;
+  localStorage.setItem('wishlistCount', newCount);
+  updateWishlistCounters(newCount);
+  return newCount;
+}
+
+function decrementWishlistCount() {
+  const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+  const newCount = Math.max(0, currentCount - 1); // Ensure it doesn't go below 0
+  localStorage.setItem('wishlistCount', newCount);
+  updateWishlistCounters(newCount);
+  return newCount;
+}
+
+function incrementCartCount(amount = 1) {
+  const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+  const newCount = currentCount + amount;
+  localStorage.setItem('cartCount', newCount);
+  updateCartCounters(newCount);
+  return newCount;
+}
+
+function decrementCartCount(amount = 1) {
+  const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+  const newCount = Math.max(0, currentCount - amount); // Ensure it doesn't go below 0
+  localStorage.setItem('cartCount', newCount);
+  updateCartCounters(newCount);
+  return newCount;
+}
+
+function setWishlistCount(count) {
+  localStorage.setItem('wishlistCount', count);
+  updateWishlistCounters(count);
+}
+
+function setCartCount(count) {
+  localStorage.setItem('cartCount', count);
+  updateCartCounters(count);
+}
+
+// Expose these functions globally so they can be called from other scripts
+window.mallifyCounters = {
+  updateCounters,
+  incrementWishlistCount,
+  decrementWishlistCount,
+  incrementCartCount,
+  decrementCartCount,
+  setWishlistCount,
+  setCartCount,
+  fetchWishlistCount,
+  fetchCartCount
+};
+

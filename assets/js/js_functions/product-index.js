@@ -237,6 +237,19 @@ function addToWishlist(clientId, productId, token, button, icon, originalIconCla
         if (xhr.status === 200) {
             // Update button appearance
             updateButtonAppearance(button, true)
+            
+            // Immediately increment the wishlist counter
+            if (window.mallifyCounters && typeof window.mallifyCounters.incrementWishlistCount === 'function') {
+                window.mallifyCounters.incrementWishlistCount();
+            } else {
+                // Fallback if function is not available
+                const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+                localStorage.setItem('wishlistCount', currentCount + 1);
+                const wishlistCounters = document.querySelectorAll('.ph-heart + span');
+                wishlistCounters.forEach(counter => {
+                    counter.textContent = currentCount + 1;
+                });
+            }
         } else if (xhr.status === 400) {
             // Product already in favorites
             try {
@@ -271,6 +284,20 @@ function removeFromWishlist(clientId, productId, token, button, icon, originalIc
 
         if (xhr.status === 200) {
             updateButtonAppearance(button, false)
+            
+            // Immediately decrement the wishlist counter
+            if (window.mallifyCounters && typeof window.mallifyCounters.decrementWishlistCount === 'function') {
+                window.mallifyCounters.decrementWishlistCount();
+            } else {
+                // Fallback if function is not available
+                const currentCount = parseInt(localStorage.getItem('wishlistCount') || '0');
+                const newCount = Math.max(0, currentCount - 1);
+                localStorage.setItem('wishlistCount', newCount);
+                const wishlistCounters = document.querySelectorAll('.ph-heart + span');
+                wishlistCounters.forEach(counter => {
+                    counter.textContent = newCount;
+                });
+            }
         } else {
             alert("Error removing product from favorites. Status: " + xhr.status)
         }
@@ -280,34 +307,6 @@ function removeFromWishlist(clientId, productId, token, button, icon, originalIc
     const data = JSON.stringify({ clientId, productId })
     xhr.send(data)
 }
-
-function updateButtonAppearance(button, isInWishlist) {
-    const icon = button.querySelector("i")
-
-    if (isInWishlist) {
-    button.classList.add("active")
-    if (icon) {
-        icon.className = "fs-4 ph-fill ph-heart text-main-two-600" 
-    }
-    } else {
-    button.classList.remove("active")
-    if (icon) {
-        icon.className = "ph ph-heart fs-4 text-body" 
-    }
-    }
-}
-
-
-const style = document.createElement("style")
-style.textContent = `
-    
-    .wishlist-btn.active i {
-        color: blue !important;
-    }
-`
-document.head.appendChild(style)
-
-
 
 function addToCart(productId, buttonElement) {
     const token = localStorage.getItem("token");
@@ -334,6 +333,11 @@ function addToCart(productId, buttonElement) {
 
             if (xhr.status === 200) {
                 showToast("Success", "Product added to cart!", "success");
+                
+                // Immediately update cart count in real-time
+                if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
+                    window.mallifyCounters.fetchCartCount(clientId, token);
+                }
             } else {
                 try {
                     const response = JSON.parse(xhr.responseText);
@@ -552,3 +556,40 @@ function fetchAndPopulateTopSelling() {
 // function fetchAndPopulateTrendingProducts(){
 
 // }
+
+function updateButtonAppearance(button, isInWishlist) {
+    const icon = button.querySelector("i");
+    
+    if (isInWishlist) {
+        button.classList.add("active");
+        if (icon) {
+            icon.className = "ph-fill ph-heart";
+        }
+    } else {
+        button.classList.remove("active");
+        if (icon) {
+            icon.className = "ph ph-heart fs-4";
+        }
+    }
+}
+
+const style = document.createElement("style");
+style.textContent = `
+    .wishlist-btn {
+        transition: all 0.3s ease;
+    }
+    
+    /* Hover state - only change the heart color */
+    .wishlist-btn:hover i {
+        color: #3b82f6 !important;
+        transition: all 0.3s ease;
+    }
+    
+    /* Active state - make heart even bigger and blue */
+    .wishlist-btn.active i {
+        color: #3b82f6 !important;
+        transform: scale(1.5);
+        transition: all 0.3s ease;
+    }
+`;
+document.head.appendChild(style);
