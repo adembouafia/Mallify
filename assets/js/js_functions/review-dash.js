@@ -141,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function displayVendorReviews(reviews) {
       if (!reviews || reviews.length === 0) {
         vendorReviewsContainer.innerHTML = '<div class="alert alert-info">No reviews yet for this product</div>'
-        console.log("No reviews found for this product")
         return
       }
 
