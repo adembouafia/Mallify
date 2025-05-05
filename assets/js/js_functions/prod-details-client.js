@@ -477,7 +477,7 @@ function getDefaultPercentage(rating) {
         return 0
     }
 }
-// Assure-toi d’inclure cette fonction dans ton script prod-details-client.js
+// Assure-toi d'inclure cette fonction dans ton script prod-details-client.js
 async function handleReviewSubmit(event) {
     event.preventDefault();
   
@@ -498,8 +498,7 @@ async function handleReviewSubmit(event) {
     const reviewData = {
       rating: parseInt(ratingInput.value, 10),
       title: titleInput.value.trim(),
-      comment: contentInput.value.trim(),
-      productDetails: JSON.stringify(currentProduct) 
+      comment: contentInput.value.trim()
     };
   
     console.log("Sending reviewData:", reviewData);
@@ -511,6 +510,7 @@ async function handleReviewSubmit(event) {
     submitBtn.disabled = true;
   
     try {
+      // Fixed URL to match backend endpoint exactly
       const res = await fetch(`http://localhost:3000/product/${productId}/review`, {
         method: "POST",
         headers: {
@@ -539,12 +539,12 @@ async function handleReviewSubmit(event) {
   
     } catch (err) {
       console.error("Submission error:", err);
-      showAlert("danger", err.message);
+      showAlert("danger", err.message || "Failed to submit review. Please try again.");
     } finally {
       submitBtn.innerHTML = originalText;
       submitBtn.disabled = false;
     }
-  }
+}
   
 
 
@@ -767,9 +767,9 @@ function setupRatingStars() {
         // Update star colors
         stars.forEach((s, i) => {
             if (i <= index) {
-            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            s.classList.replace("text-gray-300", "text-warning-600")
             } else {
-            s.className = s.className.replace("text-warning-600", "text-gray-300")
+            s.classList.replace("text-warning-600", "text-gray-300")
             }
         })
         })
@@ -778,7 +778,7 @@ function setupRatingStars() {
         star.addEventListener("mouseenter", () => {
         stars.forEach((s, i) => {
             if (i <= index) {
-            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            s.classList.replace("text-gray-300", "text-warning-600")
             }
         })
         })
@@ -787,9 +787,9 @@ function setupRatingStars() {
         const rating = Number.parseInt(ratingInput.value) || 0
         stars.forEach((s, i) => {
             if (i < rating) {
-            s.className = s.className.replace("text-gray-300", "text-warning-600")
+            s.classList.replace("text-gray-300", "text-warning-600")
             } else {
-            s.className = s.className.replace("text-warning-600", "text-gray-300")
+            s.classList.replace("text-warning-600", "text-gray-300")
             }
         })
         })
@@ -852,7 +852,6 @@ function getUserId() {
 
     return localStorage.getItem("userId") || sessionStorage.getItem("userId")
 }
-
 
 // Add this function to check for pending cart items after login
 function checkPendingCartItems() {
@@ -981,9 +980,39 @@ document.addEventListener("DOMContentLoaded", () => {
     setupAddToCartButton()
     setupBuyNowButton()
     setupRatingStars()
+    
+    // Initialize the review form properly
     const reviewForm = document.getElementById("review-form")
     if (reviewForm) {
-    reviewForm.addEventListener("submit", handleReviewSubmit)
+        console.log("Review form found, adding event listener for submission")
+        reviewForm.addEventListener("submit", handleReviewSubmit)
+        
+        // Make sure the rating stars are clickable
+        const ratingStars = document.querySelectorAll(".rating-stars .text-15")
+        const ratingInput = document.getElementById("rating-input")
+        
+        if (ratingStars.length > 0 && ratingInput) {
+            ratingStars.forEach((star, index) => {
+                star.style.cursor = "pointer"
+                star.addEventListener("click", () => {
+                    console.log("Star clicked with rating:", index + 1)
+                    ratingInput.value = index + 1
+                    
+                    // Update star appearance
+                    ratingStars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.classList.remove("text-gray-300")
+                            s.classList.add("text-warning-600")
+                        } else {
+                            s.classList.remove("text-warning-600")
+                            s.classList.add("text-gray-300")
+                        }
+                    })
+                })
+            })
+        }
+    } else {
+        console.log("Review form not found in the DOM")
     }
 })
 
