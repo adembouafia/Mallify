@@ -15623,7 +15623,6 @@ html.maximized-card {
 .dashboard-tabs {
   background-color: #fff;
   padding: 0.75rem 0;
-  margin-bottom: 1.5rem;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
@@ -15657,14 +15656,32 @@ html.maximized-card {
 .nav-tabs .badge {
   margin-left: 0.5rem;
 }
-
-/* Dashboard Content */
-.dashboard-content {
-  padding: 1.5rem 0;
+.nav-tabs {
+  display: flex;
+  width: 100%;
+  align-items: center;
 }
 
+/* This ensures the dropdown menu opens aligned to the right edge of the button */
+.dropdown-menu-end {
+  right: 0;
+  left: auto;
+}
+
+/* Optional: Add some spacing between tabs and the dropdown */
+.tab-actions {
+  margin-left: 1rem;
+}
+
+/* If you're not using Bootstrap 5, you'll need this class */
+.ms-auto {
+  margin-left: auto !important;
+}
+/* Dashboard Content */
+
+
 .tab-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .tab-title {

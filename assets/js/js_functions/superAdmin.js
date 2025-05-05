@@ -464,85 +464,117 @@ function getAdmins() {
   adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
 
   const token = localStorage.getItem("token");
+  console.log("Token exists:", !!token); // Debug: Check if token exists
+  
   if (!token) {
     adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Authentication token not found. Please log in again.</td></tr>';
     return;
   }
 
+  // Use the correct API URL without the /api prefix
+  const apiUrl = "http://localhost:3000/admin/getAll";
+  
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/admin/getAll", true);
+  xhr.open("GET", apiUrl, true);
   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  
+  console.log("Sending request to:", apiUrl); // Debug: URL
+  console.log("With Authorization header:", `Bearer ${token.substring(0, 15)}...`); // Debug: Show part of token for security
+  
   xhr.onload = function () {
+    console.log("Response status:", xhr.status); // Debug: Response status
+    
     if (xhr.status === 200) {
-      const response = JSON.parse(xhr.responseText);
-      const admins = response.admins || response;
+      try {
+        const response = JSON.parse(xhr.responseText);
+        console.log("Response received:", response); // Debug: Response data
+        const admins = response.admins || response;
 
-      adminTableBody.innerHTML = '';
+        adminTableBody.innerHTML = '';
 
-      if (Array.isArray(admins) && admins.length > 0) {
-        admins.forEach(admin => {
-          const row = document.createElement("tr");
-          const adminId = admin._id;
-          const imgId = `admin-img-${adminId}`;
-          const imagePath = admin.adminImage ? (admin.adminImage.startsWith('/') ? admin.adminImage : `/${admin.adminImage}`) : null;
-          const createdAt = new Date(admin.createdAt || Date.now()).toLocaleString();
+        if (Array.isArray(admins) && admins.length > 0) {
+          admins.forEach(admin => {
+            const row = document.createElement("tr");
+            const adminId = admin._id;
+            const imgId = `admin-img-${adminId}`;
+            const imagePath = admin.adminImage ? (admin.adminImage.startsWith('/') ? admin.adminImage : `/${admin.adminImage}`) : null;
+            const createdAt = new Date(admin.createdAt || Date.now()).toLocaleString();
 
-          row.dataset.adminId = adminId;
-          row.innerHTML = `
-            <td><img id="${imgId}" src="../../assets/images/dashboard/superadmin.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-            <td>${admin.firstname || 'Unknown'}</td>
-            <td>${admin.email || 'No email'}</td>
-            <td>${createdAt}</td>
-            <td>
-              <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger btn-delete">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          `;
-          adminTableBody.appendChild(row);
+            row.dataset.adminId = adminId;
+            row.innerHTML = `
+              <td><img id="${imgId}" src="../../assets/images/dashboard/superadmin.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+              <td>${admin.firstname || 'Unknown'}</td>
+              <td>${admin.email || 'No email'}</td>
+              <td>${createdAt}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger btn-delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            `;
+            adminTableBody.appendChild(row);
 
-          // Load admin image if exists
-          if (imagePath) {
-            const imgXhr = new XMLHttpRequest();
-            imgXhr.open("GET", `http://localhost:3000${imagePath}`, true);
-            imgXhr.responseType = "blob";
-            imgXhr.setRequestHeader("Authorization", `Bearer ${token}`);
-            imgXhr.onload = function () {
-              if (imgXhr.status === 200) {
-                const blob = imgXhr.response;
-                const imgElement = document.getElementById(imgId);
-                if (imgElement) {
-                  const reader = new FileReader();
-                  reader.onloadend = function () {
-                    imgElement.src = reader.result;
-                  };
-                  reader.readAsDataURL(blob);
+            // Load admin image if exists
+            if (imagePath) {
+              const imgXhr = new XMLHttpRequest();
+              imgXhr.open("GET", `http://localhost:3000${imagePath}`, true);
+              imgXhr.responseType = "blob";
+              imgXhr.setRequestHeader("Authorization", `Bearer ${token}`);
+              imgXhr.onload = function () {
+                if (imgXhr.status === 200) {
+                  const blob = imgXhr.response;
+                  const imgElement = document.getElementById(imgId);
+                  if (imgElement) {
+                    const reader = new FileReader();
+                    reader.onloadend = function () {
+                      imgElement.src = reader.result;
+                    };
+                    reader.readAsDataURL(blob);
+                  }
+                } else {
+                  console.error(`Failed to load image for admin ${adminId}`);
                 }
-              } else {
-                console.error(`Failed to load image for admin ${adminId}`);
-              }
-            };
-            imgXhr.onerror = () => {
-              console.error(`Error loading image for admin ${adminId}`);
-            };
-            imgXhr.send();
-          }
-        });
-      } else {
-        adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No admins found</td></tr>';
+              };
+              imgXhr.onerror = () => {
+                console.error(`Error loading image for admin ${adminId}`);
+              };
+              imgXhr.send();
+            }
+          });
+        } else {
+          adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No admins found</td></tr>';
+        }
+      } catch (error) {
+        console.error("Error parsing response:", error);
+        adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error parsing server response</td></tr>';
       }
     } else {
-      console.error("Error fetching admins:", xhr.responseText);
-      adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error loading admins</td></tr>';
+      let errorMsg = "Error loading admins";
+      try {
+        console.log("Error response:", xhr.responseText); // Debug: Full error response
+        const errorResponse = JSON.parse(xhr.responseText);
+        errorMsg = errorResponse.message || errorMsg;
+      } catch (e) {
+        // If not JSON, use the raw response text
+        errorMsg = xhr.responseText || errorMsg;
+      }
+      console.error("Error fetching admins:", errorMsg);
+      adminTableBody.innerHTML = `<tr><td colspan="5" class="text-center">${errorMsg}</td></tr>`;
     }
   };
 
-  xhr.onerror = function () {
-    console.error("Network error while fetching admins");
-    adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error</td></tr>';
+  xhr.onerror = function (e) {
+    console.error("Network error while fetching admins:", e); // Debug: Network error details
+    adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error. Please check your connection and try again.</td></tr>';
+    
+    // Show an error toast
+    if (typeof showToast === 'function') {
+      showToast("Connection Error", "Failed to connect to the server. Please check your connection.", "error");
+    }
   };
 
   xhr.send();

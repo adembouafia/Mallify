@@ -45,8 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   }
 }));
 
-// Significantly expanded Content Security Policy to allow all required resources
-// Option 1: Use a very permissive CSP (recommended for development)
+// Helmet configuration
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -67,7 +66,7 @@ app.use(
           "unpkg.com",
           "*.unpkg.com"
         ],
-        scriptSrcAttr: ["'unsafe-inline'"],  // Allow inline event handlers
+        scriptSrcAttr: ["'unsafe-inline'"], 
         scriptSrcElem: [
           "'self'", 
           "'unsafe-inline'", 
@@ -132,19 +131,31 @@ app.use(
   })
 );
 
-// Option 2: Disable CSP completely for development (uncomment if needed)
-/*
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: false
-  })
-);
-*/
-
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, "frontend")));
+
+// Connect to MongoDB
+mongoose
+  .connect(process.env.DB_URL)
+  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .catch((err) => console.error("Erreur de connexion :", err));
+
+// IMPORTANT: Load API routes first, before the HTML routes
+// This ensures API routes take precedence over static page routes
+require("./app/routes/admin.routes")(app);
+require("./app/routes/cart.routes")(app);
+require("./app/routes/client.routes")(app);
+require("./app/routes/category.routes")(app);
+require("./app/routes/delivery.routes")(app);
+require("./app/routes/favoris.routes")(app);
+require("./app/routes/invoice.routes")(app);
+require("./app/routes/moderator.routes")(app);
+require("./app/routes/order.routes")(app);
+require("./app/routes/product.routes")(app);
+require("./app/routes/report.routes")(app);
+require("./app/routes/shop.routes")(app);
+require("./app/routes/subCategory.routes")(app);
+require("./app/routes/vendor.routes")(app);
 
 // Special handling for missing user images - provide fallback
 app.use((req, res, next) => {
@@ -207,7 +218,7 @@ app.get("/dashboard/:page", (req, res) => {
   }
 });
 
-// Admin dashboard routes
+// Admin dashboard routes - MOVED AFTER API ROUTES to prevent route conflicts
 app.get("/admin/:page", (req, res) => {
   const page = req.params.page;
   const filePath = path.join(__dirname, "frontend", "dashboardA_pages", `${page}.html`);
@@ -229,26 +240,6 @@ app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).send('Something broke on the server!');
 });
-
-mongoose
-  .connect(process.env.DB_URL)
-  .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch((err) => console.error("Erreur de connexion :", err));
-
-require("./app/routes/admin.routes")(app);
-require("./app/routes/cart.routes")(app);
-require("./app/routes/client.routes")(app);
-require("./app/routes/category.routes")(app);
-require("./app/routes/delivery.routes")(app);
-require("./app/routes/favoris.routes")(app);
-require("./app/routes/invoice.routes")(app);
-require("./app/routes/moderator.routes")(app);
-require("./app/routes/order.routes")(app);
-require("./app/routes/product.routes")(app);
-require("./app/routes/report.routes")(app);
-require("./app/routes/shop.routes")(app);
-require("./app/routes/subCategory.routes")(app);
-require("./app/routes/vendor.routes")(app);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
