@@ -40,7 +40,6 @@ function getUrlParameter(name) {
 
 // Ban API functions
 function banShop() {
-  // Get product ID from URL, then fetch the product to get its shop ID
   const productId = getUrlParameter("id");
   if (!productId) {
     Swal.fire({
@@ -51,7 +50,6 @@ function banShop() {
     return;
   }
 
-  // Show loading while fetching product details
   Swal.fire({
     title: "Loading...",
     text: "Fetching product details",
@@ -61,7 +59,6 @@ function banShop() {
     },
   });
 
-  // Get product details to find shop ID
   const xhr = new XMLHttpRequest();
   xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true);
 
@@ -74,15 +71,20 @@ function banShop() {
     if (xhr.status === 200) {
       try {
         const response = JSON.parse(xhr.responseText);
-        if (
-          response.status === "success" &&
-          response.data &&
-          response.data.product &&
-          response.data.product.shop
-        ) {
-          const shopId = response.data.product.shop;
+        const product = response.data?.product;
 
-          // Now ban the shop
+        if (response.status === "success" && product?.shop) {
+          const shopId = typeof product.shop === "string" ? product.shop : product.shop._id;
+
+          if (!shopId) {
+            Swal.fire({
+              title: "Error!",
+              text: "Shop ID not found",
+              icon: "error",
+            });
+            return;
+          }
+
           banShopById(shopId);
         } else {
           Swal.fire({
@@ -118,10 +120,14 @@ function banShop() {
   xhr.send();
 }
 
+
 function banShopById(shopId) {
   Swal.fire({
     title: "Confirm Ban",
     text: `Are you sure you want to ban the shop (ID: ${shopId})?`,
+    input: "text",
+    inputLabel: "Ban Reason",
+    inputPlaceholder: "Please provide a reason for banning this product",
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Ban",

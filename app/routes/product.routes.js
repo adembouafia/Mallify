@@ -8,12 +8,7 @@ module.exports = (app) => {
   app.get("/product/get/myProducts", auth, authorize("vendor", "moderator"), product.getMyProducts)
   app.get("/product/get/:id", product.getProduct)
   app.put("/product/update/:id", auth, authorize("vendor", "moderator", "admin", "superAdmin"), product.updateProduct)
-  app.delete(
-    "/product/delete/:id",
-    auth,
-    authorize("vendor", "moderator", "admin", "superAdmin"),
-    product.deleteProduct,
-  )
+  app.delete("/product/delete/:id",auth,authorize("vendor", "moderator", "admin", "superAdmin"),product.deleteProduct)
 
   app.put("/product/ban/:id", auth, authorize("admin", "superAdmin"), product.banProduct)
   app.put("/product/unban/:id", auth, authorize("admin", "superAdmin"), product.unbanProduct)

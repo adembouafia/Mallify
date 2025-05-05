@@ -22,6 +22,9 @@ const shopSchema = new mongoose.Schema({
         enum : ["Pending" , "Approved" , "Rejected", "Banned"],
         default : "Pending"
     },
+    bannedReason: {
+        type: String,
+    },
     rejectionReason: {
         type: String,
         required: false
