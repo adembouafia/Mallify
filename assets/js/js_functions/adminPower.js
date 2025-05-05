@@ -152,9 +152,7 @@ function banShopById(shopId) {
             if (response.message) {
               errorMessage = response.message;
             }
-          } catch (e) {
-
-          }
+          } catch (e) {}
 
           Swal.fire({
             title: "Error!",
@@ -191,6 +189,9 @@ function banProduct() {
   Swal.fire({
     title: "Confirm Ban",
     text: `Are you sure you want to ban this product (ID: ${productId})?`,
+    input: "text",
+    inputLabel: "Ban Reason",
+    inputPlaceholder: "Please provide a reason for banning this product",
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Ban",
@@ -243,7 +244,11 @@ function banProduct() {
         });
       };
 
-      xhr.send();
+      const data = JSON.stringify({
+        banReason: result.value || "Violation of marketplace policies",
+      });
+
+      xhr.send(data);
     }
   });
 }

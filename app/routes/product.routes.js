@@ -17,7 +17,7 @@ module.exports = (app) => {
 
   app.put("/product/ban/:id", auth, authorize("admin", "superAdmin"), product.banProduct)
   app.put("/product/unban/:id", auth, authorize("admin", "superAdmin"), product.unbanProduct)
-  app.get("/product/banned", authorize("admin", "superAdmin"), product.getBannedProducts)
+  app.get("/product/banned", auth , authorize("admin", "superAdmin"), product.getBannedProducts)
 
   app.post("/product/:id/review", auth, product.addReview)
   app.get("/product/:id/reviews", product.getProductReviews)
