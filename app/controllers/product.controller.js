@@ -691,8 +691,14 @@ exports.getBannedProducts = async (req, res) => {
     }
 
     const bannedProducts = await Product.find({ banned: true })
-      .populate("subCategory", "name")
-      .populate("shop", "shopName");
+    .populate({
+      path: "subCategory",
+      populate: {
+        path: "category",
+        select: "categoryName",
+      },
+    })
+    .populate("shop", "shopName");
 
     res.status(200).json({
       status: "success",

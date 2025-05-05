@@ -126,7 +126,8 @@ function renderProductsTable() {
       day: "numeric",
     })
 
-    const categoryName = product.subCategory?.category?.categoryName || "Unknown"
+    const categoryName = product.subCategory?.category?.categoryName;
+
 
     const bannedReason = product.bannedReason || "Counterfeit"
 
@@ -218,9 +219,6 @@ function viewProductDetails(productId) {
           productImage.alt = product.productName
 
           document.querySelector("#productDetailsModal h4").textContent = product.productName;
-          document.querySelector(
-            "#productDetailsModal .badge1.bg-danger.mb-3"
-          ).textContent = product.bannedReason || "Counterfeit";
 
           const tableRows = document.querySelectorAll("#productDetailsModal table tr")
           tableRows[0].querySelector("td:last-child").textContent = product.productId
