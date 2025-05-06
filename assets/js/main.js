@@ -616,59 +616,7 @@
 
   
   // ========================= New arrival Slider Js Start ==============
-  $('.new-arrival__slider').slick({
-    slidesToShow: 6,
-    slidesToScroll: 1,
-    autoplay: false,
-    autoplaySpeed: 2000,
-    speed: 1500,
-    dots: false,
-    pauseOnHover: true,
-    arrows: true,
-    draggable: true,
-    rtl: $('html').attr('dir') === 'rtl' ? true : false,
-    speed: 900,
-    infinite: true,
-    nextArrow: '#new-arrival-next',
-    prevArrow: '#new-arrival-prev',
-    responsive: [
-      {
-        breakpoint: 1599,
-        settings: {
-          slidesToShow: 6,
-          arrows: false,
-        }
-      },
-      {
-        breakpoint: 1399,
-        settings: {
-          slidesToShow: 4,
-          arrows: false,
-        }
-      },
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 3,
-          arrows: false,
-        }
-      },
-      {
-        breakpoint: 575,
-        settings: {
-          slidesToShow: 2,
-          arrows: false,
-        }
-      },
-      {
-        breakpoint: 424,
-        settings: {
-          slidesToShow: 1,
-          arrows: false,
-        }
-      },
-    ]
-  });  
+
   
   // Function to remove text nodes from navigation buttons
   function removeTextFromNavButtons() {
@@ -1625,7 +1573,7 @@ function setCartCount(count) {
   updateCartCounters(count);
 }
 
-// Expose these functions globally so they can be called from other scripts
+
 window.mallifyCounters = {
   updateCounters,
   incrementWishlistCount,
