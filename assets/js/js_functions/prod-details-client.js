@@ -1430,11 +1430,10 @@ function updateProductStarRating(rating) {
     const stars = starContainer.querySelectorAll('span');
     if (!stars || stars.length === 0) return;
     
-    // Truncate to one decimal (e.g., 3.999 → 3.9)
-    const ratingValue = Math.floor(rating * 10) / 10;
-    const roundedForStars = Math.round(ratingValue * 2) / 2;
-    const fullStars = Math.floor(roundedForStars);
-    const hasHalfStar = (roundedForStars % 1) === 0.5;
+    // Round to nearest half for half-star support
+    const ratingValue = Math.round(rating * 2) / 2;
+    const fullStars = Math.floor(ratingValue);
+    const hasHalfStar = (ratingValue % 1) === 0.5;
     
     // Update each star
     stars.forEach((star, index) => {
@@ -1443,9 +1442,15 @@ function updateProductStarRating(rating) {
             star.innerHTML = '<i class="ph-fill ph-star"></i>';
             star.className = 'text-15 fw-medium text-warning-600 d-flex';
         } else if (index === fullStars && hasHalfStar) {
-            // Half star
-            star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
-            star.className = 'text-15 fw-medium text-warning-600 d-flex';
+            // Half star - using available icon or fallback to full star
+            try {
+                star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
+                star.className = 'text-15 fw-medium text-warning-600 d-flex';
+            } catch(e) {
+                // If half-star icon not available, use full star
+                star.innerHTML = '<i class="ph-fill ph-star"></i>';
+                star.className = 'text-15 fw-medium text-warning-600 d-flex';
+            }
         } else {
             // Empty star
             star.innerHTML = '<i class="ph ph-star"></i>';
@@ -1464,7 +1469,7 @@ function updateProductStarRating(rating) {
     
     // Update rating count
     const ratingCount = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-gray-500');
-    if (ratingCount && typeof currentProduct !== 'undefined' && currentProduct.reviewCount) {
+    if (ratingCount && currentProduct && currentProduct.reviewCount) {
         ratingCount.textContent = `(${currentProduct.reviewCount})`;
     }
 }
