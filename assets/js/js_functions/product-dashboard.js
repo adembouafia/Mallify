@@ -103,8 +103,7 @@ function loadSubcategories(categoryId, categoryName) {
 function loadProducts() {
   // Get user data from localStorage to determine role
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-  
-  // Prepare URL with query parameters if needed
+
   let url = "http://localhost:3000/product/get/myProducts";
   
   // For admin/moderator, we may need to specify a shopId

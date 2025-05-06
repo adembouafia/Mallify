@@ -176,13 +176,13 @@ function displayOrderDetails(order) {
       const itemTotal = price * quantity
       subtotal += itemTotal
      
-      let displayProductId = "N/A";
+      // Use the same format as in product-dashboard.js
+      // First try to get the productId field that's used in the dashboard
+      let displayProductId = product.productId || "";
       
-      // Try different ways to get the productId
-      if (typeof product === 'object' && product !== null) {
-        if (product.productId) {
-          displayProductId = product.productId;
-        } else if (product._id) {
+      if (!displayProductId && typeof product === 'object' && product !== null) {
+        // If productId field isn't available, use _id as fallback like in product-dashboard.js
+        if (product._id) {
           displayProductId = product._id.toString().substring(0, 8);
         }
       }
@@ -232,9 +232,7 @@ function displayOrderDetails(order) {
                         Order / Order Details / #${order._id ? order._id.substring(0, 8) : "0758267/90"} - ${formattedDate}
                       </p>
                     </div>
-                    <div style="margin-right: 30px;">
-                      <a href="#!" class="btn btn-warning" id="edit-order-btn">Edit Order</a>
-                    </div>
+
                   </div>
 
                   <div class="mt-3">
@@ -333,6 +331,7 @@ function displayOrderDetails(order) {
                       <thead class="bg-light-subtle border-bottom">
                         <tr>
                           <th>Product ID</th>
+                          <th>Product Name</th>
                           <th>Quantity</th>
                           <th>Price/Once</th>
                           <th>Amount</th>
@@ -341,7 +340,8 @@ function displayOrderDetails(order) {
                       <tbody>
                         ${items.map(item => `
                           <tr>
-                            <td>${item.id}</td>
+                            <td>${item.id || 'N/A'}</td>
+                            <td>${item.name || 'N/A'}</td>
                             <td>${item.quantity}</td>
                             <td>$${item.price.toFixed(2)}</td>
                             <td>$${item.total.toFixed(2)}</td>
