@@ -1,5 +1,4 @@
-
-let categories = [];
+  let categories = [];
 const subcategories = {};
 var editor1 = new RichTextEditor("#richTextEditor");
 const token = localStorage.getItem("token");
@@ -426,9 +425,9 @@ function addProductToTable(product) {
     <td>
       <div class="d-flex align-items-center gap-1">
         <span class="badge bg-light text-warning">
-          <i class="bi bi-star-fill me-1"></i> 0.0
+          <i class="bi bi-star-fill me-1"></i> ${product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
         </span>
-        <span class="text-muted small">0 Review</span>
+        <span class="text-muted small">${product.reviewCount || product.reviews?.length || 0} Review${(product.reviewCount > 1 || (product.reviews && product.reviews.length > 1)) ? 's' : ''}</span>
       </div>
     </td>
     <td>
