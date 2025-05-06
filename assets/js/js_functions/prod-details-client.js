@@ -325,11 +325,15 @@ function loadProductReviews(productId) {
 // Function to display reviews
 function displayReviews(reviews) {
     const container = document.querySelector("#pills-reviews .col-lg-6:first-of-type");
-
-    if (!container) return;
-    const oldReviews = container.querySelectorAll(".review-item");
-    oldReviews.forEach((r) => r.remove());
-
+    
+    if (!container) {
+        console.error("Review container not found");
+        return;
+    }
+    
+    // Clear existing reviews
+    container.innerHTML = '<h6 class="mb-24">Reviews</h6>';
+    
     if (!reviews || reviews.length === 0) {
         const noReviews = document.createElement("div");
         noReviews.className = "text-center py-24";
@@ -337,12 +341,22 @@ function displayReviews(reviews) {
         container.appendChild(noReviews);
         return;
     }
-
+    
+    // Create reviews element
+    const reviewsContainer = document.createElement("div");
+    reviewsContainer.className = "reviews-list";
+    
     reviews.forEach((review) => {
         const el = document.createElement("div");
         el.className = "d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44 review-item";
+        
+        // Get profile initial for avatar if no image exists
+        const initial = (review.clientName || "A").charAt(0).toUpperCase();
+        
         el.innerHTML = `
-            <img src="/assets/images/team_members/devoloper1.jpg" alt="user image" class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">
+            <div class="w-52 h-52 bg-main-50 rounded-circle flex-center flex-shrink-0 text-main-600 fw-bold">
+                ${initial}
+            </div>
             <div class="flex-grow-1">
                 <div class="flex-between align-items-start gap-8">
                     <div>
@@ -358,15 +372,24 @@ function displayReviews(reviews) {
                     <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
                         <i class="ph-bold ph-thumbs-up"></i> Like
                     </button>
-                    <a href="#comment-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                        <i class="ph-bold ph-arrow-bend-up-left"></i> Replay
+                    <a href="#review-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
+                        <i class="ph-bold ph-arrow-bend-up-left"></i> Reply
                     </a>
                 </div>
             </div>
         `;
+        
         container.appendChild(el);
     });
+    
+    // Also update the stats container
+    updateReviewStats({
+        averageRating: currentProduct.averageRating || 0,
+        totalReviews: reviews.length,
+        ratingCounts: calculateRatingCounts(reviews)
+    });
 }
+
 function renderStars(rating) {
     let stars = "";
     for (let i = 0; i < 5; i++) {
@@ -384,7 +407,6 @@ function formatDateDiff(dateStr) {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return `${diffDays} ${diffDays === 1 ? "Day" : "Days"} ago`;
 }
-
 
 // Function to update a review element with data
 function updateReviewElement(element, review) {
@@ -1254,3 +1276,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.head.appendChild(sweetAlertScript)
     }
 })
+
+// Function to calculate rating counts from reviews array
+function calculateRatingCounts(reviews) {
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    
+    if (!reviews || !Array.isArray(reviews)) return counts;
+    
+    reviews.forEach(review => {
+        const rating = parseInt(review.rating);
+        if (rating >= 1 && rating <= 5) {
+            counts[rating]++;
+        }
+    });
+    
+    return counts;
+}
