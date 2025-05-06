@@ -76,6 +76,9 @@ function displayProductDetails(product) {
     priceElement.textContent = `${product.productPrice || 0} DT`
     }
 
+    // Update star rating - New code
+    updateProductStarRating(product.averageRating || 4.7);
+
     // Update regular price if available
     const regularPriceElement = document.querySelector(".flex-align.gap-4 h6")
     if (regularPriceElement && product.regularPrice) {
@@ -576,6 +579,9 @@ function updateReviewStats(stats) {
     const avgRatingElement = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 h2");
     if (avgRatingElement) {
         avgRatingElement.textContent = stats.averageRating.toFixed(1) || "0.0";
+        
+        // Also update the main product rating at the top of the page
+        updateProductStarRating(stats.averageRating);
     }
 
     // Get all progress bars and count elements
@@ -1407,4 +1413,58 @@ function calculateAverageRating(reviews) {
     
     const total = reviews.reduce((sum, review) => sum + (parseInt(review.rating) || 0), 0);
     return (total / reviews.length) || 0;
+}
+
+// New function to update product star rating
+function updateProductStarRating(rating) {
+    // Find the star container 
+    const starContainer = document.querySelector('.flex-align.flex-wrap.gap-12 .flex-align.gap-8');
+    if (!starContainer) return;
+    
+    // Add ID if not present already
+    if (!starContainer.id) {
+        starContainer.id = 'product-star-rating';
+    }
+    
+    // Get all stars in the container
+    const stars = starContainer.querySelectorAll('span');
+    if (!stars || stars.length === 0) return;
+    
+    // Truncate to one decimal (e.g., 3.999 → 3.9)
+    const ratingValue = Math.floor(rating * 10) / 10;
+    const roundedForStars = Math.round(ratingValue * 2) / 2;
+    const fullStars = Math.floor(roundedForStars);
+    const hasHalfStar = (roundedForStars % 1) === 0.5;
+    
+    // Update each star
+    stars.forEach((star, index) => {
+        if (index < fullStars) {
+            // Full star
+            star.innerHTML = '<i class="ph-fill ph-star"></i>';
+            star.className = 'text-15 fw-medium text-warning-600 d-flex';
+        } else if (index === fullStars && hasHalfStar) {
+            // Half star
+            star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
+            star.className = 'text-15 fw-medium text-warning-600 d-flex';
+        } else {
+            // Empty star
+            star.innerHTML = '<i class="ph ph-star"></i>';
+            star.className = 'text-15 fw-medium text-gray-300 d-flex';
+        }
+    });
+    
+    // Update the rating text
+    const ratingText = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-neutral-600');
+    if (ratingText) {
+        ratingText.textContent = ratingValue.toFixed(1) + ' Star Rating';
+        if (!ratingText.id) {
+            ratingText.id = 'product-rating-text';
+        }
+    }
+    
+    // Update rating count
+    const ratingCount = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-gray-500');
+    if (ratingCount && typeof currentProduct !== 'undefined' && currentProduct.reviewCount) {
+        ratingCount.textContent = `(${currentProduct.reviewCount})`;
+    }
 }
