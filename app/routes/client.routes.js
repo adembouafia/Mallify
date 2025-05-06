@@ -7,6 +7,7 @@ module.exports = (app) => {
     app.post('/client/login', client.login);
     app.put('/client/update/:id',auth , client.update);
     app.post('/client/profile-picture/:id', auth, client.uploadProfilePicture);
+    app.get('/client/:id/profile-picture', auth, client.getProfilePicture);
     app.post('/client/forgotPassword', client.forgotPassword);
     app.post('/client/reset-password', client.resetPassword);
     app.post('/client/change-password/:id', auth, client.changePassword);

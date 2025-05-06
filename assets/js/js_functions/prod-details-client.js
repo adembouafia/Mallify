@@ -294,32 +294,114 @@ function setupImageSlider(product) {
 function loadProductReviews(productId) {
     const xhr = new XMLHttpRequest()
     xhr.open("GET", `http://localhost:3000/product/${productId}/reviews`, true)
+    
+    // Add auth token if available
+    const token = getUserToken();
+    if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    }
 
     xhr.onload = () => {
-    if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-        const response = JSON.parse(xhr.responseText)
+        if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+                const response = JSON.parse(xhr.responseText);
 
-        if (response.status === "success" && response.data && response.data.reviews) {
-            displayReviews(response.data.reviews)
-            updateReviewStats(response.data.stats)
+                if (response.status === "success" && response.data && response.data.reviews) {
+                    // Enrich review data with client profile information if needed
+                    if (response.data.reviews.length > 0) {
+                        fetchClientProfiles(response.data.reviews).then(enrichedReviews => {
+                            displayReviews(enrichedReviews);
+                            
+                            // Calculate stats from the reviews
+                            const stats = {
+                                averageRating: response.data.averageRating || calculateAverageRating(enrichedReviews),
+                                totalReviews: enrichedReviews.length,
+                                ratingCounts: calculateRatingCounts(enrichedReviews)
+                            };
+                            updateReviewStats(stats);
+                        });
+                    } else {
+                        displayReviews([]);
+                        updateReviewStats({
+                            averageRating: 0,
+                            totalReviews: 0,
+                            ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+                        });
+                    }
+                } else {
+                    console.log("No reviews found or error loading reviews");
+                    displayReviews([]);
+                }
+            } catch (e) {
+                console.error("Error parsing reviews data:", e);
+                displayReviews([]);
+            }
         } else {
-            console.log("No reviews found or error loading reviews")
-            // Don't show an alert for this, just log it
+            console.error("Failed to load reviews");
+            displayReviews([]);
         }
-        } catch (e) {
-        console.error("Error parsing reviews data:", e)
-        }
-    } else {
-        console.error("Failed to load reviews")
-    }
     }
 
     xhr.onerror = () => {
-    console.error("Network error occurred while loading reviews")
+        console.error("Network error occurred while loading reviews");
+        displayReviews([]);
     }
 
     xhr.send()
+}
+
+// Function to fetch client profile information for reviews
+async function fetchClientProfiles(reviews) {
+    // If no reviews, return empty array
+    if (!reviews || reviews.length === 0) return [];
+    
+    // Create a copy of the reviews to avoid modifying the original
+    const enrichedReviews = [...reviews];
+    
+    // Get the client ID from localStorage if available
+    const currentClientId = getUserId();
+    
+    // Check if we have a token to make authenticated requests
+    const token = getUserToken();
+    
+    console.log("Fetching client profiles for reviews:", enrichedReviews);
+    
+    try {
+        // For each review that has a clientId, try to fetch the client profile
+        for (let i = 0; i < enrichedReviews.length; i++) {
+            const review = enrichedReviews[i];
+            
+            // Otherwise we need to fetch the client profile
+            if (review.clientId) {
+                try {
+                    console.log("Fetching profile picture for client:", review.clientId);
+                    const response = await fetch(`http://localhost:3000/client/${review.clientId}`, {
+                        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+                    });
+                    
+                    if (response.ok) {
+                        const clientData = await response.json();
+                        console.log("Client data received:", clientData);
+                        
+                        if (clientData && clientData.profilePicture) {
+                            // Store the full URL to the profile picture
+                            review.clientProfilePicture = `/uploads/${clientData.profilePicture}`;
+                            console.log("Profile picture set:", review.clientProfilePicture);
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Could not fetch profile for client", review.clientId, err);
+                }
+            }
+        }
+        
+        console.log("Enriched reviews with profile pictures:", enrichedReviews);
+        return enrichedReviews;
+        
+    } catch (error) {
+        console.error("Error enriching reviews with profile data:", error);
+        return enrichedReviews;
+    }
 }
 
 // Function to display reviews
@@ -339,24 +421,40 @@ function displayReviews(reviews) {
         noReviews.className = "text-center py-24";
         noReviews.textContent = "No reviews yet. Be the first to review this product!";
         container.appendChild(noReviews);
+        
+        // Even with no reviews, update the stats to show zeros
+        updateReviewStats({
+            averageRating: 0,
+            totalReviews: 0,
+            ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+        });
+        
         return;
     }
     
     // Create reviews element
-    const reviewsContainer = document.createElement("div");
-    reviewsContainer.className = "reviews-list";
-    
     reviews.forEach((review) => {
         const el = document.createElement("div");
         el.className = "d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44 review-item";
         
-        // Get profile initial for avatar if no image exists
-        const initial = (review.clientName || "A").charAt(0).toUpperCase();
+        // Profile picture handling: Check if user has a profile picture
+        let profileImgHtml = '';
+        
+        if (review.clientProfilePicture) {
+            // If user has a profile picture, use it with the correct path
+            // Note: We're not prepending /uploads/ as that's already included in the path
+            profileImgHtml = `<img src="${review.clientProfilePicture}" alt="${review.clientName}" 
+                              class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">`;
+        } else {
+            // Otherwise use the initial in a colored circle
+            const initial = (review.clientName || "A").charAt(0).toUpperCase();
+            profileImgHtml = `<div class="w-52 h-52 bg-main-50 rounded-circle flex-center flex-shrink-0 text-main-600 fw-bold">
+                              ${initial}
+                            </div>`;
+        }
         
         el.innerHTML = `
-            <div class="w-52 h-52 bg-main-50 rounded-circle flex-center flex-shrink-0 text-main-600 fw-bold">
-                ${initial}
-            </div>
+            ${profileImgHtml}
             <div class="flex-grow-1">
                 <div class="flex-between align-items-start gap-8">
                     <div>
@@ -368,26 +466,21 @@ function displayReviews(reviews) {
                 <h6 class="mb-14 text-md mt-24">${review.title || "Review"}</h6>
                 <p class="text-gray-700">${review.comment || "No comment provided"}</p>
 
-                <div class="flex-align gap-20 mt-44">
-                    <button class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                        <i class="ph-bold ph-thumbs-up"></i> Like
-                    </button>
-                    <a href="#review-form" class="flex-align gap-12 text-gray-700 hover-text-main-600">
-                        <i class="ph-bold ph-arrow-bend-up-left"></i> Reply
-                    </a>
-                </div>
             </div>
         `;
         
         container.appendChild(el);
     });
     
-    // Also update the stats container
-    updateReviewStats({
-        averageRating: currentProduct.averageRating || 0,
+    // Calculate and update the statistics
+    const stats = {
+        averageRating: currentProduct.averageRating || calculateAverageRating(reviews),
         totalReviews: reviews.length,
         ratingCounts: calculateRatingCounts(reviews)
-    });
+    };
+    
+    // Update the statistics in the UI
+    updateReviewStats(stats);
 }
 
 function renderStars(rating) {
@@ -403,9 +496,31 @@ function renderStars(rating) {
 function formatDateDiff(dateStr) {
     const reviewDate = new Date(dateStr);
     const now = new Date();
+    
+    // Check if the date is valid
+    if (isNaN(reviewDate.getTime())) {
+        return "Recently";
+    }
+    
     const diffTime = Math.abs(now - reviewDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return `${diffDays} ${diffDays === 1 ? "Day" : "Days"} ago`;
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+    
+    // Format based on time difference
+    if (diffMinutes < 60) {
+        return diffMinutes <= 1 ? "Just now" : `${diffMinutes} minutes ago`;
+    } else if (diffHours < 24) {
+        return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`;
+    } else if (diffDays < 30) {
+        return diffDays === 1 ? "1 day ago" : `${diffDays} days ago`;
+    } else if (diffMonths < 12) {
+        return diffMonths === 1 ? "1 month ago" : `${diffMonths} months ago`;
+    } else {
+        return diffYears === 1 ? "1 year ago" : `${diffYears} years ago`;
+    }
 }
 
 // Function to update a review element with data
@@ -455,50 +570,53 @@ function updateReviewElement(element, review) {
 
 // Function to update review statistics
 function updateReviewStats(stats) {
-    if (!stats) return
+    if (!stats) return;
 
     // Update average rating
-    const avgRatingElement = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 h2")
+    const avgRatingElement = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 h2");
     if (avgRatingElement) {
-    avgRatingElement.textContent = stats.averageRating.toFixed(1) || "0.0"
+        avgRatingElement.textContent = stats.averageRating.toFixed(1) || "0.0";
     }
 
-    // Update rating bars
-    for (let i = 5; i >= 1; i--) {
-    const barElement = document.querySelector(`.progress-bar[style*="wiDth: ${getDefaultPercentage(i)}%"]`)
-    const countElement = barElement
-        ?.closest(".flex-align.gap-8")
-        ?.querySelector(".text-gray-900.flex-shrink-0:last-child")
-
-    if (barElement && stats.ratingCounts) {
-        const count = stats.ratingCounts[i] || 0
-        const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0
-        barElement.style.width = `${percentage}%`
-
-        if (countElement) {
-        countElement.textContent = count.toString()
+    // Get all progress bars and count elements
+    const ratingContainers = document.querySelectorAll('.flex-align.gap-8.mb-20, .flex-align.gap-8.mb-0');
+    
+    if (!ratingContainers || ratingContainers.length === 0) {
+        console.error("Rating bars not found in the DOM");
+        return;
+    }
+    
+    console.log(`Found ${ratingContainers.length} rating bars`);
+    
+    // Set up stars based on average rating
+    const starsContainer = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 .flex-align.gap-8");
+    if (starsContainer) {
+        starsContainer.innerHTML = renderStars(Math.round(stats.averageRating));
+    }
+    
+    // Update rating bars (5 to 1 stars)
+    for (let i = 0; i < ratingContainers.length; i++) {
+        const container = ratingContainers[i];
+        const rating = 5 - i; // 5, 4, 3, 2, 1
+        const progressBar = container.querySelector('.progress-bar');
+        const countElement = container.querySelector('.text-gray-900.flex-shrink-0:last-child');
+        
+        if (progressBar && countElement) {
+            const count = stats.ratingCounts[rating] || 0;
+            const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
+            
+            // Log for debugging
+            console.log(`Rating ${rating}: ${count} reviews, ${percentage.toFixed(1)}%`);
+            
+            // Update the progress bar width
+            progressBar.style.width = `${percentage}%`;
+            
+            // Update the count text
+            countElement.textContent = count.toString();
         }
     }
-    }
 }
 
-// Helper function to get default percentage for rating bars
-function getDefaultPercentage(rating) {
-    switch (rating) {
-    case 5:
-        return 70
-    case 4:
-        return 50
-    case 3:
-        return 35
-    case 2:
-        return 20
-    case 1:
-        return 5
-    default:
-        return 0
-    }
-}
 // Assure-toi d'inclure cette fonction dans ton script prod-details-client.js
 async function handleReviewSubmit(event) {
     event.preventDefault();
@@ -659,19 +777,9 @@ function setupAddToCartButton() {
         const userId = getUserId()
 
         if (!userId) {
-        // Store current product page URL before redirecting
-        localStorage.setItem("redirectAfterLogin", window.location.href)
-
-        // Show sweet alert
-        showSweetAlert("warning", "Sign In Required", "Please sign in to add items to your cart")
-
-        // Redirect to account page after a short delay
-        setTimeout(() => {
-            window.location.href = "/account.html"
-        }, 1500)
+        showAuthModal()
         } else {
-        // User is logged in, add to cart in database
-        addToCart(productId, quantity, false, userId)
+            addToCart(productId, quantity, false, userId)
         }
     })
     }
@@ -1291,4 +1399,12 @@ function calculateRatingCounts(reviews) {
     });
     
     return counts;
+}
+
+// Function to calculate average rating from reviews array
+function calculateAverageRating(reviews) {
+    if (!reviews || reviews.length === 0) return 0;
+    
+    const total = reviews.reduce((sum, review) => sum + (parseInt(review.rating) || 0), 0);
+    return (total / reviews.length) || 0;
 }

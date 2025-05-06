@@ -318,3 +318,37 @@ exports.changePassword = async (req, res) => {
     res.status(500).send({ message: err.message || "Error changing password" });
   }
 };
+
+exports.getProfilePicture = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    // Find the client
+    const client = await Client.findById(clientId).select(
+      "profilePicture firstname lastname"
+    );
+
+    if (!client) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Client not found",
+      });
+    }
+
+    // Return the profile picture information
+    res.status(200).json({
+      status: "success",
+      data: {
+        profilePicture: client.profilePicture,
+        firstname: client.firstname,
+        lastname: client.lastname,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching profile picture:", err);
+    res.status(500).json({
+      status: "fail",
+      message: "Error fetching profile picture",
+    });
+  }
+};
