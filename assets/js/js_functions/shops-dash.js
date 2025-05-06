@@ -341,6 +341,15 @@ function renderApprovedShops() {
         <button class="btn btn-sm btn-icon btn-outline-primary me-1 edit-shop" data-shop-id="${shop.id}" data-bs-toggle="tooltip" title="${shop.status === "Banned" ? "Unban Shop" : "Edit"}">
           <i class="bi bi-pencil"></i>
         </button>
+        ${
+          shop.status !== "Banned"
+            ? `
+        <button class="btn btn-sm btn-icon btn-outline-warning me-1 reject-approved-shop" data-shop-id="${shop.id}" data-bs-toggle="tooltip" title="Reject Shop">
+          <i class="bi bi-x-circle"></i>
+        </button>
+        `
+            : ""
+        }
         <button class="btn btn-sm btn-icon btn-outline-danger delete-shop" data-shop-id="${shop.id}" data-bs-toggle="tooltip" title="Delete">
           <i class="bi bi-trash"></i>
         </button>
@@ -607,7 +616,7 @@ function addShopCardEventListeners() {
   })
 }
 
-// Add event listeners to shop table rows
+// Remplacer la fonction addShopTableEventListeners par celle-ci
 function addShopTableEventListeners() {
   document.querySelectorAll("#approved .view-shop").forEach((button) => {
     button.addEventListener("click", function () {
@@ -625,18 +634,29 @@ function addShopTableEventListeners() {
 
       if (shop && shop.status === "Banned") {
         // Si la boutique est bannie, ouvrir un modal pour débannir
-        Swal.fire({
-          title: "Unban Shop",
-          text: `Are you sure you want to unban ${shop.name}?`,
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Yes, unban it!",
-          cancelButtonText: "Cancel",
-        }).then((result) => {
-          if (result.isConfirmed) {
+        const confirmModal = document.getElementById("confirmUnbanModal") || createConfirmUnbanModal()
+
+        // Mettre à jour le contenu du modal
+        const shopNameElement = confirmModal.querySelector(".shop-name")
+        if (shopNameElement) {
+          shopNameElement.textContent = shop.name
+        }
+
+        // Configurer le bouton de confirmation
+        const confirmButton = confirmModal.querySelector(".confirm-unban")
+        if (confirmButton) {
+          confirmButton.onclick = () => {
+            // Fermer le modal
+            const bsModal = bootstrap.Modal.getInstance(confirmModal)
+            bsModal.hide()
+            // Débannir la boutique
             unbanShop(shopId)
           }
-        })
+        }
+
+        // Afficher le modal
+        const bsModal = new bootstrap.Modal(confirmModal)
+        bsModal.show()
       } else {
         // Sinon, afficher les détails de la boutique pour édition
         getShopDetails(shopId)
@@ -650,6 +670,133 @@ function addShopTableEventListeners() {
       deleteShop(shopId)
     })
   })
+
+  document.querySelectorAll("#approved .reject-approved-shop").forEach((button) => {
+    button.addEventListener("click", function () {
+      const shopId = this.dataset.shopId
+
+      // Trouver la boutique dans les données
+      const shop = shops.approved.find((s) => s.id === shopId)
+
+      if (shop) {
+        // Ouvrir un modal pour demander la raison du rejet
+        const confirmModal = document.getElementById("confirmRejectModal") || createConfirmRejectModal()
+
+        // Mettre à jour le contenu du modal
+        const shopNameElement = confirmModal.querySelector(".shop-name")
+        if (shopNameElement) {
+          shopNameElement.textContent = shop.name
+        }
+
+        // Configurer le bouton de confirmation
+        const confirmButton = confirmModal.querySelector(".confirm-reject")
+        const reasonInput = confirmModal.querySelector("#rejectReason")
+
+        if (confirmButton) {
+          confirmButton.onclick = () => {
+            const reason = reasonInput.value.trim()
+            if (!reason) {
+              // Afficher un message d'erreur si aucune raison n'est fournie
+              const errorMessage = confirmModal.querySelector(".error-message")
+              if (errorMessage) {
+                errorMessage.style.display = "block"
+              }
+              return
+            }
+
+            // Cacher le message d'erreur s'il était affiché
+            const errorMessage = confirmModal.querySelector(".error-message")
+            if (errorMessage) {
+              errorMessage.style.display = "none"
+            }
+
+            // Fermer le modal
+            const bsModal = bootstrap.Modal.getInstance(confirmModal)
+            bsModal.hide()
+
+            // Rejeter la boutique
+            rejectShop(shopId, reason)
+          }
+        }
+
+        // Réinitialiser le champ de saisie
+        if (reasonInput) {
+          reasonInput.value = ""
+        }
+
+        // Afficher le modal
+        const bsModal = new bootstrap.Modal(confirmModal)
+        bsModal.show()
+      }
+    })
+  })
+}
+
+// Ajouter cette fonction pour créer le modal de confirmation de débannissement
+function createConfirmUnbanModal() {
+  const modal = document.createElement("div")
+  modal.className = "modal fade"
+  modal.id = "confirmUnbanModal"
+  modal.tabIndex = "-1"
+  modal.setAttribute("aria-labelledby", "confirmUnbanModalLabel")
+  modal.setAttribute("aria-hidden", "true")
+
+  modal.innerHTML = `
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmUnbanModalLabel">Confirm Unban</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to unban <strong class="shop-name"></strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success confirm-unban">Yes, unban it!</button>
+        </div>
+      </div>
+    </div>
+  `
+
+  document.body.appendChild(modal)
+  return modal
+}
+
+// Ajouter cette fonction pour créer le modal de confirmation de rejet
+function createConfirmRejectModal() {
+  const modal = document.createElement("div")
+  modal.className = "modal fade"
+  modal.id = "confirmRejectModal"
+  modal.tabIndex = "-1"
+  modal.setAttribute("aria-labelledby", "confirmRejectModalLabel")
+  modal.setAttribute("aria-hidden", "true")
+
+  modal.innerHTML = `
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmRejectModalLabel">Reject Shop</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to reject <strong class="shop-name"></strong>?</p>
+          <div class="mb-3">
+            <label for="rejectReason" class="form-label">Rejection Reason (required)</label>
+            <textarea class="form-control" id="rejectReason" rows="3" placeholder="Please provide a reason for rejection"></textarea>
+            <div class="error-message text-danger mt-2" style="display: none;">Please provide a reason for rejection.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-warning confirm-reject">Reject Shop</button>
+        </div>
+      </div>
+    </div>
+  `
+
+  document.body.appendChild(modal)
+  return modal
 }
 
 // Update dashboard with fetched data

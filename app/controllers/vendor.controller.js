@@ -112,6 +112,14 @@ exports.login = async (req, res) => {
             });
         }
 
+        if (shop.status === "Banned") {
+            return res.status(403).json({ 
+                message: "Votre boutique a été bannie.",
+                reason: shop.bannedReason,
+                status: "Banned"
+            });
+        }
+
         // Si le shop est approuvé, continuer avec la connexion normale
         const token = jwt.sign({
             id: vendor._id,

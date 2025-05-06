@@ -349,6 +349,16 @@ function initializeLoginForm() {
               )
               return
             }
+
+
+            if (response.status === "Banned") {
+              showToast(
+                "Boutique Bannie", 
+                `Votre boutique a été Bannie. Raison: ${response.reason || response.bannedReason || "Non spécifiée"}`, 
+                "error"
+              )
+              return;
+            }
             
             // Si ce n'est pas lié au statut du shop, essayer le prochain endpoint
             tryLogin(index + 1)
