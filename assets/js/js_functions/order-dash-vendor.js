@@ -4,6 +4,7 @@ let itemsPerPage = 10
 let totalOrders = 0
 let orders = []
 let searchQuery = ""
+let currentOrder = null
 
 // DOM elements
 const ordersTableBody = document.querySelector("table tbody")
@@ -16,7 +17,15 @@ const paginationLinks = document.querySelector(".pagination")
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
   // Load orders on page load
-  loadOrders()
+  const currentUrl = window.location.href
+  
+  if (currentUrl.includes("detailsOrders.html")) {
+    // We're on the order details page
+    loadOrderDetails()
+  } else {
+    // We're on the main orders page
+    loadOrders()
+  }
 
   // Set up event listeners
   setupEventListeners()
@@ -50,6 +59,508 @@ function setupEventListeners() {
       currentPage = 1
       loadOrders()
     })
+  }
+}
+
+// Function to load order details from URL parameters
+function loadOrderDetails() {
+  // Get order ID from URL parameters
+  const urlParams = new URLSearchParams(window.location.search)
+  const orderId = urlParams.get("id")
+  
+  if (!orderId) {
+    displayError("No order ID provided in the URL")
+    return
+  }
+  
+  // Create loading indicator in the page content area
+  const contentArea = document.querySelector(".content-wrapper")
+  if (contentArea) {
+    contentArea.innerHTML = '<div class="d-flex justify-content-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+  }
+  
+  // Get the auth token from localStorage
+  const token = localStorage.getItem("token")
+  if (!token) {
+    window.location.href = "../login.html"
+    return
+  }
+  
+  // Create XHR request to get order details
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `/order/${orderId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+  
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText)
+        currentOrder = response.order
+        displayOrderDetails(currentOrder)
+      } catch (error) {
+        console.error("Error parsing order details:", error)
+        displayError("Failed to parse order details")
+      }
+    } else {
+      console.error("Error fetching order details:", xhr.status)
+      displayError("Failed to load order details. Status: " + xhr.status)
+    }
+  }
+  
+  xhr.onerror = function() {
+    console.error("Network error when fetching order details")
+    displayError("Network error. Please check your connection and try again.")
+  }
+  
+  // Send the request
+  xhr.send()
+}
+
+// Function to display order details in the UI
+function displayOrderDetails(order) {
+  const contentArea = document.querySelector(".content-wrapper")
+  if (!contentArea) return
+  
+  // Format order date
+  let orderDate = new Date()
+  let formattedDate = "N/A"
+  try {
+    orderDate = new Date(order.createdAt || order.dateCommande)
+    if (!isNaN(orderDate.getTime())) {
+      formattedDate = orderDate.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    }
+  } catch (e) {
+    console.error("Error formatting date:", e)
+  }
+  
+  // Calculate shipping date (3 days after order date)
+  const shippingDate = new Date(orderDate)
+  shippingDate.setDate(shippingDate.getDate() + 3)
+  const formattedShippingDate = shippingDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  })
+  
+  // Format customer details from the database
+  const firstName = order.idClient?.firstname || ""
+  const lastName = order.idClient?.lastname || ""
+  const customerName = firstName && lastName ? `${firstName} ${lastName}`.trim() : "Unknown Customer"
+  const customerEmail = order.idClient?.email || ""
+  const customerPhone = order.idClient?.phoneNumber || ""
+  
+  // Calculate order details
+  let subtotal = 0
+  let items = []
+  
+  console.log("Order object:", order);
+  
+  // Check if cartData is available and use it to display items
+  if (order.cartData && order.cartData.items && order.cartData.items.length > 0) {
+    console.log("Cart items found:", order.cartData.items);
+    
+    order.cartData.items.forEach(item => {
+      // In the order model, productId is a complete product object
+      const product = item.productId;
+      console.log("Product data:", product);
+      
+      const price = Number.parseFloat(product.productPrice) || 0
+      const quantity = Number.parseInt(item.quantity) || 0
+      const itemTotal = price * quantity
+      subtotal += itemTotal
+     
+      let displayProductId = "N/A";
+      
+      // Try different ways to get the productId
+      if (typeof product === 'object' && product !== null) {
+        if (product.productId) {
+          displayProductId = product.productId;
+        } else if (product._id) {
+          displayProductId = product._id.toString().substring(0, 8);
+        }
+      }
+      
+      items.push({
+        id: displayProductId,
+        name: product.productName || "Product Name",
+        price: price,
+        quantity: quantity,
+        total: itemTotal
+      })
+    })
+  } else {
+    // Fallback sample data if no items are found
+    items = [
+      { id: "2541", quantity: 1, price: 80, total: 80 },
+      { id: "2541", quantity: 4, price: 80, total: 320 },
+      { id: "2541", quantity: 2, price: 80, total: 160 },
+      { id: "2541", quantity: 5, price: 10, total: 50 },
+      { id: "2541", quantity: 1, price: 80, total: 80 }
+    ]
+    subtotal = 690.00
+  }
+  
+  // Calculate total amount (no discount or tax)
+  const deliveryCharge = 0.00
+  const totalAmount = (parseFloat(subtotal) + parseFloat(deliveryCharge)).toFixed(2)
+  
+  // Create the order details HTML
+  const orderDetailsHTML = `
+    <div class="container-xxl p-4">
+      <div class="row">
+        <div class="col-xl-9 col-lg-8">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                      <h4 class="fw-medium text-dark d-flex align-items-center gap-2 p-2">
+                        #${order._id ? order._id.substring(0, 8) : "0758267/90"}
+                        <span class="border border-warning text-warning fs-7 mx-2 px-2 py-1 rounded">
+                          ${order.orderStatus ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) : "In Progress"}
+                        </span>
+                      </h4>
+                      <p class="mb-0">
+                        Order / Order Details / #${order._id ? order._id.substring(0, 8) : "0758267/90"} - ${formattedDate}
+                      </p>
+                    </div>
+                    <div style="margin-right: 30px;">
+                      <a href="#!" class="btn btn-warning" id="edit-order-btn">Edit Order</a>
+                    </div>
+                  </div>
+
+                  <div class="mt-3">
+                    <h4 class="fw-medium text-dark">Progress</h4>
+                  </div>
+                  <div class="row row-cols-xxl-5 row-cols-md-2 row-cols-1">
+                    <!-- Order Confirming -->
+                    <div class="col">
+                      <div class="progress mt-2" style="height: 10px">
+                        <div
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-success"
+                          role="progressbar"
+                          style="width: 100%"
+                          aria-valuenow="100"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                      <p class="mb-0 mt-2">Order Confirming</p>
+                    </div>
+                    
+                    <!-- Processing -->
+                    <div class="col">
+                      <div class="progress mt-2" style="height: 10px">
+                        <div
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                          role="progressbar"
+                          style="width: 60%"
+                          aria-valuenow="60"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 mt-2">
+                        <p class="mb-0">Processing</p>
+                        <div class="spinner-border spinner-border-sm text-warning" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Shipping -->
+                    <div class="col">
+                      <div class="progress mt-2" style="height: 10px">
+                        <div
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                          role="progressbar"
+                          style="width: 0%"
+                          aria-valuenow="0"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                      <p class="mb-0 mt-2">Shipping</p>
+                    </div>
+                    
+                    <!-- Delivered -->
+                    <div class="col">
+                      <div class="progress mt-2" style="height: 10px">
+                        <div
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                          role="progressbar"
+                          style="width: 0%"
+                          aria-valuenow="0"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                      <p class="mb-0 mt-2">Delivered</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="card-footer d-flex align-items-center justify-content-around">
+                  <p class="border rounded mb-0 px-2 py-1 bg-body">
+                    <i class="bi bi-box-arrow-in-right fs-4 align-middle"></i>
+                    Estimated shipping date :
+                    <span class="text-dark fw-medium">${formattedShippingDate}</span>
+                  </p>
+                  <div>
+                    <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Make As Ready To Ship</a>
+                  </div>
+                </div>
+              </div
+              
+              <br>
+              
+              <!-- Products Table -->
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Product</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table align-middle mb-0 table-hover table-centered text-center">
+                      <thead class="bg-light-subtle border-bottom">
+                        <tr>
+                          <th>Product ID</th>
+                          <th>Quantity</th>
+                          <th>Price/Once</th>
+                          <th>Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${items.map(item => `
+                          <tr>
+                            <td>${item.id}</td>
+                            <td>${item.quantity}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td>$${item.total.toFixed(2)}</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div
+        
+        <!-- Order Summary Column -->
+        <div class="col-xl-3 col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">Order Summary</h4>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <tbody>
+                    <tr>
+                      <td class="px-0">
+                        <p class="d-flex mb-0 align-items-center gap-1">
+                          <iconify-icon icon="solar:clipboard-text-broken"></iconify-icon>
+                          Sub Total :
+                        </p>
+                      </td>
+                      <td class="text-end text-dark fw-medium px-0">
+                        $${subtotal.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-0">
+                        <p class="d-flex mb-0 align-items-center gap-1">
+                          <iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon>
+                          Delivery Charge :
+                        </p>
+                      </td>
+                      <td class="text-end text-dark fw-medium px-0">
+                        $${deliveryCharge.toFixed(2)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between bg-light-subtle">
+              <div>
+                <p class="fw-medium text-dark mb-0">Total Amount</p>
+              </div>
+              <div>
+                <p class="fw-medium text-dark mb-0">$${totalAmount}</p>
+              </div>
+            </div>
+          </div>
+          
+          <br>
+          
+          <!-- Customer Details Card -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">Customer Details</h4>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2">
+                <img
+                  src="${order.idClient?.profilePicture ? '/uploads/' + order.idClient.profilePicture : '../../assets/images/team_members/devoloper2.jpg'}"
+                  alt=""
+                  class="rounded object-fit-cover" width="43" height="45"
+                />
+                <div>
+                  <p class="mb-1">${customerName}</p>
+                  <a href="mailto:${customerEmail}" class="link-primary fw-medium">${customerEmail}</a>
+                </div>
+              </div>
+              
+              <div class="d-flex justify-content-between mt-3">
+                <h5 class="card-title">Contact Number</h5>
+                <div>
+                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
+                </div>
+              </div>
+              <p class="mb-1">${customerPhone || "No phone number provided"}</p>
+
+              <div class="d-flex justify-content-between mt-3">
+                <h5 class="card-title">Shipping Address</h5>
+                <div>
+                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
+                </div>
+              </div>
+
+              <div>
+                <p class="mb-1">${customerName}</p>
+                <p class="mb-1">1344 Hershell Hollow Road ,</p>
+                <p class="mb-1">Tukwila, WA 98168 ,</p>
+                <p class="mb-1">United States</p>
+                <p class="">${customerPhone || "No phone number provided"}</p>
+              </div>
+
+              <div class="d-flex justify-content-between mt-3">
+                <h5 class="card-title">Billing Address</h5>
+                <div>
+                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
+                </div>
+              </div>
+
+              <p class="mb-1">Same as shipping address</p>
+            </div>
+          </div>
+          <br>
+        </div>
+      </div>
+    </div>
+  `
+  
+  // Display the order details in the content area
+  contentArea.innerHTML = orderDetailsHTML
+  
+  // Add event listeners
+  setupOrderActionButtons(order._id)
+}
+
+// Function to setup event listeners for order action buttons
+function setupOrderActionButtons(orderId) {
+  // Edit Order button
+  const editBtn = document.getElementById("edit-order-btn")
+  if (editBtn) {
+    editBtn.addEventListener("click", function() {
+      alert("Edit order functionality will be implemented here")
+    })
+  }
+  
+  // Make as Ready to Ship button
+  const readyToShipBtn = document.getElementById("make-ready-ship-btn")
+  if (readyToShipBtn) {
+    readyToShipBtn.addEventListener("click", function() {
+      updateOrderStatus(orderId, "ready_for_shipping")
+    })
+  }
+}
+
+// Function to update order status via XHR
+function updateOrderStatus(orderId, status) {
+  // Get the auth token from localStorage
+  const token = localStorage.getItem("token")
+  if (!token) {
+    window.location.href = "../login.html"
+    return
+  }
+  
+  // Create XHR request to update order status
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `/order/status/${orderId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+  
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        // Refresh the order details to show updated status
+        loadOrderDetails()
+        
+        // Show success message
+        Swal.fire({
+          title: "Success!",
+          text: `Order successfully marked as ${status.replace("_", " ")}`,
+          icon: "success",
+          confirmButtonText: "OK"
+        })
+      } catch (error) {
+        console.error("Error parsing update response:", error)
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to update order status",
+          icon: "error",
+          confirmButtonText: "OK"
+        })
+      }
+    } else {
+      console.error("Error updating order status:", xhr.status)
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to update order status. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK"
+      })
+    }
+  }
+  
+  xhr.onerror = function() {
+    console.error("Network error when updating order status")
+    Swal.fire({
+      title: "Network Error",
+      text: "Please check your connection and try again.",
+      icon: "error",
+      confirmButtonText: "OK"
+    })
+  }
+  
+  // Send the request with status data
+  xhr.send(JSON.stringify({ status: status }))
+}
+
+// Display error message
+function displayError(message) {
+  const contentArea = document.querySelector(".content-wrapper")
+  if (contentArea) {
+    contentArea.innerHTML = `
+      <div class="alert alert-danger m-4">
+        <h4><i class="bi bi-exclamation-triangle"></i> Error</h4>
+        <p>${message}</p>
+        <a href="orders.html" class="btn btn-primary mt-2">Back to Orders</a>
+      </div>
+    `
   }
 }
 

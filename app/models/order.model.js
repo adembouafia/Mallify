@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 // Define a schema for the cart data to be embedded in orders
 const OrderCartItemSchema = new mongoose.Schema({
   productId: {
-    type: Object, // Store the complete product data
+    type: Object, 
     required: true,
   },
   quantity: {
@@ -42,7 +42,7 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "shop",
   },
-  // Add complete cart data to the order
+
   cartData: {
     type: OrderCartDataSchema,
     default: null,
