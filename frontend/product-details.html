@@ -124,7 +124,107 @@
         margin-top: 15px;
         text-align: center;
       }
-      
+
+      /* New styles for Slick slider arrows within .arrow-style-two context, inspired by the image */
+      .arrow-style-two .slick-prev,
+      .arrow-style-two .slick-next {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          width: 40px; /* Clickable area width */
+          height: 100%; /* Full height of the slider for vertical centering of the arrow */
+          top: 0; /* Align to the top of the slider container */
+          transform: none; /* Reset any default vertical transform on the button itself */
+          z-index: 10;
+          padding: 0;
+          cursor: pointer;
+      }
+
+      .arrow-style-two .slick-prev {
+          left: 5px; /* Position from the left edge */
+      }
+
+      .arrow-style-two .slick-next {
+          right: 5px; /* Position from the right edge */
+      }
+
+      .arrow-style-two .slick-prev:hover,
+      .arrow-style-two .slick-next:hover,
+      .arrow-style-two .slick-prev:focus,
+      .arrow-style-two .slick-next:focus {
+          background: transparent !important;
+          box-shadow: none !important;
+          outline: none !important;
+      }
+
+      .arrow-style-two .slick-prev::before,
+      .arrow-style-two .slick-next::before {
+          display: block; /* Needed for position absolute to work correctly with centering */
+          color: white !important;
+          font-size: 32px; /* Chevron size */
+          font-weight: bold;
+          opacity: 1 !important;
+          background: transparent !important;
+          font-family: sans-serif; /* For < and > characters */
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          line-height: 1;
+      }
+
+      .arrow-style-two .slick-prev::before {
+          content: '<' !important;
+      }
+
+      .arrow-style-two .slick-next::before {
+          content: '>' !important;
+      }
+
+      .arrow-style-two .slick-prev:hover::before,
+      .arrow-style-two .slick-next:hover::before {
+          color: #dddddd !important; /* Slightly dimmer white on hover */
+      }
+
+      /* Styles for custom navigation buttons (#new-arrival-prev, #new-arrival-next) to match */
+      #new-arrival-prev,
+      #new-arrival-next {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          width: auto !important;
+          height: auto !important;
+          padding: 8px !important; 
+          font-size: 0 !important;
+          line-height: 1;
+          border-radius: 0 !important; /* Remove rounded corners */
+          /* Ensure any specific sizing classes like .size-32 are not interfering or adjust padding accordingly */
+      }
+
+      #new-arrival-prev:hover,
+      #new-arrival-next:hover,
+      #new-arrival-prev:focus,
+      #new-arrival-next:focus {
+          background: transparent !important;
+          box-shadow: none !important;
+          outline: none !important;
+      }
+
+      #new-arrival-prev i,
+      #new-arrival-next i {
+          color: white !important;
+          font-size: 32px !important;
+
+          font-size: 32px !important; /* Match chevron size */
+          margin: 0;
+          vertical-align: middle; /* Better alignment */
+          /* The ph-caret-left/right icons should work as chevrons */
+      }
+
+      #new-arrival-prev:hover i,
+      #new-arrival-next:hover i {
+          color: #dddddd !important; /* Slightly dimmer white on hover */
+      }
     </style>
   </head>
   <body>
@@ -1238,7 +1338,7 @@
                 <button
                   type="button"
                   id="new-arrival-prev"
-                  class="slick-prev slick-arrow flex-center rounded-circle border border-gray-100 hover-border-main-600 text-xl hover-bg-main-600 hover-text-white transition-1"
+                  class="slick-prev slick-arrow flex-center rounded-circle border border-gray-100 hover-border-main-600  hover-bg-main-600  transition-1"
                 >
                   <i class="ph ph-caret-left"></i>
                 </button>
@@ -1387,6 +1487,474 @@
                       class="text-gray-400 text-md fw-semibold text-decoration-line-through"
                     >
                       100 Dt</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
+                    >
+                  </div>
+                  <div class="flex-align gap-6">
+                    <span class="text-xs fw-bold text-gray-600">4.8</span>
+                    <span class="text-15 fw-bold text-warning-600 d-flex"
+                      ><i class="ph-fill ph-star"></i
+                    ></span>
+                    <span class="text-xs fw-bold text-gray-600">(17k)</span>
+                  </div>
+                  <a
+                    href="cart.html"
+                    class="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+                  >
+                    Add To Cart <i class="ph ph-shopping-cart"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+            >
+              <a
+                href="product-details.html"
+                class="product-card__thumb flex-center"
+              >
+                <img src="../assets/images/products/iphone.png" alt="product" />
+              </a>
+              <div class="product-card__content p-sm-2 w-100">
+                <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                  <a href="product-details.html" class="link text-line-2"
+                    >I-Phone 13 Pro Max</a
+                  >
+                </h6>
+                <div class="flex-align gap-4">
+                  <span class="text-main-600 text-md d-flex"
+                    ><i class="ph-fill ph-storefront"></i
+                  ></span>
+                  <span class="text-gray-500 text-xs">Borgie phone </span>
+                </div>
+
+                <div class="product-card__content mt-12">
+                  <div class="product-card__price mb-8">
+                    <span class="text-heading text-md fw-semibold"
+                      >1 850 DT
+                      <span class="text-gray-500 fw-normal">/Qty</span>
+                    </span>
+                    <span
+                      class="text-gray-400 text-md fw-semibold text-decoration-line-through"
+                    >
+                      1 950 DT</span
                     >
                   </div>
                   <div class="flex-align gap-6">

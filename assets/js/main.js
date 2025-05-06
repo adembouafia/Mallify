@@ -669,6 +669,58 @@
       },
     ]
   });  
+  
+  // Function to remove text nodes from navigation buttons
+  function removeTextFromNavButtons() {
+    // Target the specific navigation buttons
+    $('#new-arrival-prev, #new-arrival-next').contents().each(function() {
+      // Check if this is a text node (nodeType 3)
+      if (this.nodeType === 3) {
+        $(this).remove(); // Remove text nodes
+      }
+    });
+    
+    // Also target any text that might be in slick-prev/next
+    $('.slick-prev, .slick-next').contents().each(function() {
+      if (this.nodeType === 3) {
+        $(this).remove();
+      }
+    });
+    
+    // Change icon color - modify this color value to your preference
+    const arrowColor = "#000000"; // Change this to your desired color (blue in this example)
+    
+    // Apply the color styles to the icons
+    $('#new-arrival-prev i, #new-arrival-next i').css('color', arrowColor);
+    $('.slick-prev:before, .slick-next:before').css('color', arrowColor);
+    
+    // Additional styling for better visibility
+    $("<style>")
+      .prop("type", "text/css")
+      .html(`
+        #new-arrival-prev i,
+        #new-arrival-next i,
+        .arrow-style-two .slick-prev::before,
+        .arrow-style-two .slick-next::before {
+          color: ${arrowColor} !important;
+        }
+      `)
+      .appendTo("head");
+  }
+  
+  // Run after slider initialization
+  $('.new-arrival__slider').on('init', function() {
+    setTimeout(removeTextFromNavButtons, 100);
+  });
+  
+  // Re-apply whenever the slider changes
+  $('.new-arrival__slider').on('afterChange', function() {
+    removeTextFromNavButtons();
+  });
+  
+  // Run on page load as well
+  setTimeout(removeTextFromNavButtons, 500);
+  
   // ========================= New arrival Slider Js End ===================
 
   

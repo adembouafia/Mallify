@@ -187,7 +187,7 @@ function setupImageSlider(product) {
     sliderFor.innerHTML = '';
     sliderNav.innerHTML = '';
 
-    // Ajouter l’image principale
+    // Ajouter l'image principale
     if (product.mainImage) {
         const mainImageUrl = `/uploads/${product.mainImage}`;
 
@@ -246,6 +246,73 @@ function setupImageSlider(product) {
         sliderNav.appendChild(placeholderThumb);
     }
 
+    // Add custom styles for slider arrows
+    const customSliderStyles = document.createElement('style');
+    customSliderStyles.textContent = `
+        .slick-prev, .slick-next {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 40px !important;
+            height: 100% !important;
+            top: 0 !important;
+            transform: none !important;
+            z-index: 10;
+            padding: 0;
+            cursor: pointer;
+            position: absolute;
+        }
+        
+        .slick-prev {
+            left: 5px !important;
+        }
+        
+        .slick-next {
+            right: 5px !important;
+        }
+        
+        .slick-prev:before,
+        .slick-next:before {
+            display: block !important;
+            color: white !important;
+            font-size: 32px !important;
+            font-weight: bold !important;
+            opacity: 1 !important;
+            background: transparent !important;
+            font-family: sans-serif !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5) !important;
+            line-height: 1 !important;
+        }
+        
+        .slick-prev:before {
+            content: '‹' !important;
+        }
+        
+        .slick-next:before {
+            content: '›' !important;
+        }
+        
+        /* Also apply styling to You Might Also Like buttons */
+        #new-arrival-prev,
+        #new-arrival-next {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        #new-arrival-prev i,
+        #new-arrival-next i {
+            color: white !important;
+            font-size: 32px !important;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5) !important;
+        }
+    `;
+    document.head.appendChild(customSliderStyles);
+
     // Initialiser slick
     try {
         if (typeof jQuery !== 'undefined') {
@@ -258,7 +325,7 @@ function setupImageSlider(product) {
             $for.slick({
                 slidesToShow: 1,
                 slidesToScroll: 1,
-                arrows: false,
+                arrows: true,
                 fade: true,
                 asNavFor: '.product-details__images-slider'
             });
@@ -268,6 +335,7 @@ function setupImageSlider(product) {
                 slidesToScroll: 1,
                 asNavFor: '.product-details__thumb-slider',
                 dots: false,
+                arrows: true,
                 centerMode: true,
                 focusOnSelect: true,
                 responsive: [
@@ -285,6 +353,40 @@ function setupImageSlider(product) {
                     }
                 ]
             });
+
+            // Initialize new arrival slider
+            const newArrivalSlider = jQuery('.new-arrival__slider');
+            if (newArrivalSlider.length) {
+                // Apply custom navigation buttons
+                newArrivalSlider.slick({
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    arrows: true,
+                    prevArrow: $('#new-arrival-prev'),
+                    nextArrow: $('#new-arrival-next'),
+                    dots: false,
+                    responsive: [
+                        {
+                            breakpoint: 1200,
+                            settings: {
+                                slidesToShow: 3,
+                            }
+                        },
+                        {
+                            breakpoint: 992,
+                            settings: {
+                                slidesToShow: 2,
+                            }
+                        },
+                        {
+                            breakpoint: 768,
+                            settings: {
+                                slidesToShow: 1,
+                            }
+                        }
+                    ]
+                });
+            }
         }
     } catch (e) {
         console.error("Error initializing slick slider:", e);
