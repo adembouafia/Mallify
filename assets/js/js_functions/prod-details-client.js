@@ -455,58 +455,84 @@ function loadProductReviews(productId) {
     xhr.send()
 }
 
-// Function to fetch client profile information for reviews
-async function fetchClientProfiles(reviews) {
-    // If no reviews, return empty array
-    if (!reviews || reviews.length === 0) return [];
-    
-    // Create a copy of the reviews to avoid modifying the original
-    const enrichedReviews = [...reviews];
-    
-    // Get the client ID from localStorage if available
-    const currentClientId = getUserId();
-    
-    // Check if we have a token to make authenticated requests
-    const token = getUserToken();
-    
-    console.log("Fetching client profiles for reviews:", enrichedReviews);
-    
-    try {
+// Function to fetch client profile information for reviews - CONVERTED FROM FETCH TO XHR
+function fetchClientProfiles(reviews) {
+    return new Promise((resolve, reject) => {
+        // If no reviews, return empty array
+        if (!reviews || reviews.length === 0) return resolve([]);
+        
+        // Create a copy of the reviews to avoid modifying the original
+        const enrichedReviews = [...reviews];
+            
+        // Check if we have a token to make authenticated requests
+        const token = getUserToken();
+        
+        console.log("Fetching client profiles for reviews:", enrichedReviews);
+        
+        // Counter to track completed requests
+        let completedRequests = 0;
+        const reviewsWithClientId = enrichedReviews.filter(r => r.clientId);
+        
+        // If no reviews with clientId, resolve immediately
+        if (reviewsWithClientId.length === 0) {
+            return resolve(enrichedReviews);
+        }
+        
         // For each review that has a clientId, try to fetch the client profile
         for (let i = 0; i < enrichedReviews.length; i++) {
             const review = enrichedReviews[i];
             
-            // Otherwise we need to fetch the client profile
+            // If review has a clientId, fetch the client profile
             if (review.clientId) {
-                try {
-                    console.log("Fetching profile picture for client:", review.clientId);
-                    const response = await fetch(`http://localhost:3000/client/${review.clientId}`, {
-                        headers: token ? { "Authorization": `Bearer ${token}` } : {}
-                    });
+                console.log("Fetching profile picture for client:", review.clientId);
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `http://localhost:3000/client/${review.clientId}`, true);
+                
+                if (token) {
+                    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+                }
+                
+                xhr.onload = function() {
+                    completedRequests++;
                     
-                    if (response.ok) {
-                        const clientData = await response.json();
-                        console.log("Client data received:", clientData);
-                        
-                        if (clientData && clientData.profilePicture) {
-                            // Store the full URL to the profile picture
-                            review.clientProfilePicture = `/uploads/${clientData.profilePicture}`;
-                            console.log("Profile picture set:", review.clientProfilePicture);
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const clientData = JSON.parse(xhr.responseText);
+                            console.log("Client data received:", clientData);
+                            
+                            if (clientData && clientData.profilePicture) {
+                                // Store the full URL to the profile picture
+                                review.clientProfilePicture = `/uploads/${clientData.profilePicture}`;
+                                console.log("Profile picture set:", review.clientProfilePicture);
+                            }
+                        } catch (err) {
+                            console.warn("Could not parse client data for", review.clientId, err);
                         }
                     }
-                } catch (err) {
-                    console.warn("Could not fetch profile for client", review.clientId, err);
-                }
+                    
+                    // Check if all requests are completed
+                    if (completedRequests === reviewsWithClientId.length) {
+                        console.log("Enriched reviews with profile pictures:", enrichedReviews);
+                        resolve(enrichedReviews);
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    completedRequests++;
+                    console.warn("Could not fetch profile for client", review.clientId);
+                    
+                    // Check if all requests are completed
+                    if (completedRequests === reviewsWithClientId.length) {
+                        console.log("Enriched reviews with profile pictures:", enrichedReviews);
+                        resolve(enrichedReviews);
+                    }
+                };
+                
+                xhr.send();
             }
         }
-        
-        console.log("Enriched reviews with profile pictures:", enrichedReviews);
-        return enrichedReviews;
-        
-    } catch (error) {
-        console.error("Error enriching reviews with profile data:", error);
-        return enrichedReviews;
-    }
+    });
 }
 
 // Function to display reviews
@@ -549,13 +575,13 @@ function displayReviews(reviews) {
             // If user has a profile picture, use it with the correct path
             // Note: We're not prepending /uploads/ as that's already included in the path
             profileImgHtml = `<img src="${review.clientProfilePicture}" alt="${review.clientName}" 
-                              class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">`;
+                            class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">`;
         } else {
             // Otherwise use the initial in a colored circle
             const initial = (review.clientName || "A").charAt(0).toUpperCase();
             profileImgHtml = `<div class="w-52 h-52 bg-main-50 rounded-circle flex-center flex-shrink-0 text-main-600 fw-bold">
-                              ${initial}
-                            </div>`;
+                            ${initial}
+                        </div>`;
         }
         
         el.innerHTML = `
@@ -725,8 +751,8 @@ function updateReviewStats(stats) {
     }
 }
 
-// Assure-toi d'inclure cette fonction dans ton script prod-details-client.js
-async function handleReviewSubmit(event) {
+// CONVERTED FROM FETCH TO XHR
+function handleReviewSubmit(event) {
     event.preventDefault();
   
     const productId = getUrlParameter("id");
@@ -757,44 +783,50 @@ async function handleReviewSubmit(event) {
     submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...`;
     submitBtn.disabled = true;
   
-    try {
-      // Fixed URL to match backend endpoint exactly
-      const res = await fetch(`http://localhost:3000/product/${productId}/review`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(reviewData)
-      });
-  
-      const data = await res.json();
-      console.log("Server responded:", data);
-  
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to submit review");
-      }
-  
-      // succès
-      showAlert("success", "Review submitted successfully!");
-      event.target.reset();
-      ratingInput.value = "";
-      // réinitialise les étoiles si nécessaire
-      document.querySelectorAll(".rating-stars .text-15").forEach(star => {
-        star.classList.replace("text-warning-600", "text-gray-300");
-      });
-      loadProductReviews(productId);
-  
-    } catch (err) {
-      console.error("Submission error:", err);
-      showAlert("danger", err.message || "Failed to submit review. Please try again.");
-    } finally {
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-    }
+    // Create XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `http://localhost:3000/product/${productId}/review`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    
+    xhr.onload = function() {
+        try {
+            const data = JSON.parse(xhr.responseText);
+            console.log("Server responded:", data);
+            
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Success
+                showAlert("success", "Review submitted successfully!");
+                event.target.reset();
+                ratingInput.value = "";
+                // Reset stars
+                document.querySelectorAll(".rating-stars .text-15").forEach(star => {
+                    star.classList.replace("text-warning-600", "text-gray-300");
+                });
+                loadProductReviews(productId);
+            } else {
+                // Error with response
+                showAlert("danger", data.message || "Failed to submit review");
+            }
+        } catch (err) {
+            console.error("Error parsing response:", err);
+            showAlert("danger", "Failed to process server response");
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    };
+    
+    xhr.onerror = function() {
+        console.error("Network error occurred");
+        showAlert("danger", "Network error occurred. Please try again.");
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    // Send the request
+    xhr.send(JSON.stringify(reviewData));
 }
-  
-
 
 // Function to handle quantity changes
 function setupQuantityButtons() {
