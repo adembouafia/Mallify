@@ -1441,38 +1441,43 @@ function calculateAverageRating(reviews) {
 
 // New function to update product star rating
 function updateProductStarRating(rating) {
+    // Find the star container 
     const starContainer = document.querySelector('.flex-align.flex-wrap.gap-12 .flex-align.gap-8');
     if (!starContainer) return;
     
+    // Add ID if not present already
     if (!starContainer.id) {
         starContainer.id = 'product-star-rating';
     }
     
+    // Get all stars in the container
     const stars = starContainer.querySelectorAll('span');
     if (!stars || stars.length === 0) return;
     
-    const ratingValue = Math.round(rating * 2) / 2;
-    const fullStars = Math.floor(ratingValue);
-    const hasHalfStar = (ratingValue % 1) === 0.5;
+    // Truncate to one decimal (e.g., 3.999 → 3.9)
+    const ratingValue = Math.floor(rating * 10) / 10;
+    const roundedForStars = Math.round(ratingValue * 2) / 2;
+    const fullStars = Math.floor(roundedForStars);
+    const hasHalfStar = (roundedForStars % 1) === 0.5;
     
+    // Update each star
     stars.forEach((star, index) => {
         if (index < fullStars) {
+            // Full star
             star.innerHTML = '<i class="ph-fill ph-star"></i>';
             star.className = 'text-15 fw-medium text-warning-600 d-flex';
         } else if (index === fullStars && hasHalfStar) {
-            try {
-                star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
-                star.className = 'text-15 fw-medium text-warning-600 d-flex';
-            } catch(e) {
-                star.innerHTML = '<i class="ph-fill ph-star"></i>';
-                star.className = 'text-15 fw-medium text-warning-600 d-flex';
-            }
+            // Half star
+            star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
+            star.className = 'text-15 fw-medium text-warning-600 d-flex';
         } else {
+            // Empty star
             star.innerHTML = '<i class="ph ph-star"></i>';
             star.className = 'text-15 fw-medium text-gray-300 d-flex';
         }
     });
     
+    // Update the rating text
     const ratingText = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-neutral-600');
     if (ratingText) {
         ratingText.textContent = ratingValue.toFixed(1) + ' Star Rating';
@@ -1481,8 +1486,10 @@ function updateProductStarRating(rating) {
         }
     }
     
+    // Update rating count
     const ratingCount = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-gray-500');
-    if (ratingCount && currentProduct && currentProduct.reviewCount) {
+    if (ratingCount && typeof currentProduct !== 'undefined' && currentProduct.reviewCount) {
         ratingCount.textContent = `(${currentProduct.reviewCount})`;
     }
 }
+
