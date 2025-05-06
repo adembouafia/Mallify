@@ -9,7 +9,6 @@ function getUserToken() {
     return localStorage.getItem("token") || sessionStorage.getItem("token");
 }
 
-// Function to load product details
 function loadProductDetails() {
     const productId = getUrlParameter("id")
 
@@ -32,10 +31,8 @@ function loadProductDetails() {
             setupImageSlider(currentProduct)
             loadProductReviews(productId)
 
-            // Initialize price display and shipping fee
             initializePriceDisplay()
 
-            // Setup quantity buttons ONLY after loading product
             setupQuantityButtons()
         } else {
             showAlert("danger", "Failed to load product data")
@@ -58,34 +55,28 @@ function loadProductDetails() {
 
 // Function to display product details
 function displayProductDetails(product) {
-    // Update product name
     const productNameElement = document.querySelector(".product-details__content h5")
     if (productNameElement) {
     productNameElement.textContent = product.productName || "Product Name Not Available"
     }
 
-    // Update product ID/SKU
     const skuElement = document.querySelector(".flex-align.flex-wrap.gap-12 + span + span")
     if (skuElement) {
     skuElement.innerHTML = `<span class="text-gray-400">SKU:</span>${product.productId || "N/A"}`
     }
 
-    // Update price
     const priceElement = document.querySelector(".flex-align.gap-8 h6")
     if (priceElement) {
     priceElement.textContent = `${product.productPrice || 0} DT`
     }
 
-    // Update star rating - New code
     updateProductStarRating(product.averageRating || 4.7);
 
-    // Update regular price if available
     const regularPriceElement = document.querySelector(".flex-align.gap-4 h6")
     if (regularPriceElement && product.regularPrice) {
     regularPriceElement.textContent = `${product.regularPrice} DT`
     }
 
-    // Update discount percentage if available
     const discountElement = document.querySelector(".flex-align.gap-8.text-main-two-600")
     if (discountElement && product.regularPrice && product.productPrice) {
     const discount = Math.round(((product.regularPrice - product.productPrice) / product.regularPrice) * 100)
@@ -96,7 +87,6 @@ function displayProductDetails(product) {
     }
     }
 
-    // Update description
     const descriptionElement = document.querySelector(".product-details__content p.text-gray-700")
     if (descriptionElement) {
     descriptionElement.textContent = product.description || "No description available"
@@ -111,13 +101,11 @@ function displayProductDetails(product) {
     }
     
 
-    // Update stock information
     const stockElement = document.querySelector('label[for="stock"]')
     if (stockElement) {
     stockElement.textContent = `Total Stock: ${product.stock || 0}`
     }
 
-    // Update availability
     const availabilityElement = document.querySelector(
     ".product-dContent__box .mb-40:nth-of-type(2) ul li:nth-of-type(4) .text-gray-500",
     )
@@ -126,16 +114,12 @@ function displayProductDetails(product) {
     }
 
 
-    // Update shop name - Fixed to use the correct element selector
     const shopNameElement = document.getElementById("shop-name-detail");
     if (shopNameElement) {
-        // Check if shop is populated as an object with shopName
         if (product.shop && typeof product.shop === "object" && product.shop.shopName) {
             shopNameElement.textContent = product.shop.shopName;
         }
-        // Check if shop is just an ID (string or ObjectId)
         else if (product.shop) {
-            // Fetch shop details using the shop ID
             fetchShopDetails(product.shop, shopNameElement);
         } else {
             shopNameElement.textContent = "Shop";
@@ -183,11 +167,9 @@ function setupImageSlider(product) {
 
     if (!sliderFor || !sliderNav) return;
 
-    // Vider les anciens sliders
     sliderFor.innerHTML = '';
     sliderNav.innerHTML = '';
 
-    // Ajouter l'image principale
     if (product.mainImage) {
         const mainImageUrl = `/uploads/${product.mainImage}`;
 
@@ -206,7 +188,6 @@ function setupImageSlider(product) {
         sliderNav.appendChild(mainThumb);
     }
 
-    // Ajouter les autres images
     if (product.otherImages && product.otherImages.length > 0) {
         product.otherImages.forEach(image => {
             const imageUrl = `/uploads/${image}`;
@@ -227,7 +208,6 @@ function setupImageSlider(product) {
         });
     }
 
-    // Fallback si aucune image
     if (sliderFor.children.length === 0) {
         const placeholder = "/images/placeholder-product.png";
 
@@ -246,7 +226,6 @@ function setupImageSlider(product) {
         sliderNav.appendChild(placeholderThumb);
     }
 
-    // Add custom styles for slider arrows
     const customSliderStyles = document.createElement('style');
     customSliderStyles.textContent = `
         .slick-prev, .slick-next {
@@ -313,7 +292,6 @@ function setupImageSlider(product) {
     `;
     document.head.appendChild(customSliderStyles);
 
-    // Initialiser slick
     try {
         if (typeof jQuery !== 'undefined') {
             const $for = jQuery('.product-details__thumb-slider');
@@ -354,10 +332,8 @@ function setupImageSlider(product) {
                 ]
             });
 
-            // Initialize new arrival slider
             const newArrivalSlider = jQuery('.new-arrival__slider');
             if (newArrivalSlider.length) {
-                // Apply custom navigation buttons
                 newArrivalSlider.slick({
                     slidesToShow: 4,
                     slidesToScroll: 1,
@@ -400,7 +376,6 @@ function loadProductReviews(productId) {
     const xhr = new XMLHttpRequest()
     xhr.open("GET", `http://localhost:3000/product/${productId}/reviews`, true)
     
-    // Add auth token if available
     const token = getUserToken();
     if (token) {
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -412,12 +387,10 @@ function loadProductReviews(productId) {
                 const response = JSON.parse(xhr.responseText);
 
                 if (response.status === "success" && response.data && response.data.reviews) {
-                    // Enrich review data with client profile information if needed
                     if (response.data.reviews.length > 0) {
                         fetchClientProfiles(response.data.reviews).then(enrichedReviews => {
                             displayReviews(enrichedReviews);
                             
-                            // Calculate stats from the reviews
                             const stats = {
                                 averageRating: response.data.averageRating || calculateAverageRating(enrichedReviews),
                                 totalReviews: enrichedReviews.length,
@@ -455,58 +428,73 @@ function loadProductReviews(productId) {
     xhr.send()
 }
 
-// Function to fetch client profile information for reviews
-async function fetchClientProfiles(reviews) {
-    // If no reviews, return empty array
-    if (!reviews || reviews.length === 0) return [];
-    
-    // Create a copy of the reviews to avoid modifying the original
-    const enrichedReviews = [...reviews];
-    
-    // Get the client ID from localStorage if available
-    const currentClientId = getUserId();
-    
-    // Check if we have a token to make authenticated requests
-    const token = getUserToken();
-    
-    console.log("Fetching client profiles for reviews:", enrichedReviews);
-    
-    try {
-        // For each review that has a clientId, try to fetch the client profile
+// Function to fetch client profile information for reviews - CONVERTED FROM FETCH TO XHR
+function fetchClientProfiles(reviews) {
+    return new Promise((resolve, reject) => {
+        if (!reviews || reviews.length === 0) return resolve([]);
+        
+        const enrichedReviews = [...reviews];
+        const token = getUserToken();
+        
+        console.log("Fetching client profiles for reviews:", enrichedReviews);
+        
+        let completedRequests = 0;
+        const reviewsWithClientId = enrichedReviews.filter(r => r.clientId);
+        
+        if (reviewsWithClientId.length === 0) {
+            return resolve(enrichedReviews);
+        }
+        
         for (let i = 0; i < enrichedReviews.length; i++) {
             const review = enrichedReviews[i];
             
-            // Otherwise we need to fetch the client profile
             if (review.clientId) {
-                try {
-                    console.log("Fetching profile picture for client:", review.clientId);
-                    const response = await fetch(`http://localhost:3000/client/${review.clientId}`, {
-                        headers: token ? { "Authorization": `Bearer ${token}` } : {}
-                    });
+                console.log("Fetching profile picture for client:", review.clientId);
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `http://localhost:3000/client/${review.clientId}`, true);
+                
+                if (token) {
+                    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+                }
+                
+                xhr.onload = function() {
+                    completedRequests++;
                     
-                    if (response.ok) {
-                        const clientData = await response.json();
-                        console.log("Client data received:", clientData);
-                        
-                        if (clientData && clientData.profilePicture) {
-                            // Store the full URL to the profile picture
-                            review.clientProfilePicture = `/uploads/${clientData.profilePicture}`;
-                            console.log("Profile picture set:", review.clientProfilePicture);
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const clientData = JSON.parse(xhr.responseText);
+                            console.log("Client data received:", clientData);
+                            
+                            if (clientData && clientData.profilePicture) {
+                                review.clientProfilePicture = `/uploads/${clientData.profilePicture}`;
+                                console.log("Profile picture set:", review.clientProfilePicture);
+                            }
+                        } catch (err) {
+                            console.warn("Could not parse client data for", review.clientId, err);
                         }
                     }
-                } catch (err) {
-                    console.warn("Could not fetch profile for client", review.clientId, err);
-                }
+                    
+                    if (completedRequests === reviewsWithClientId.length) {
+                        console.log("Enriched reviews with profile pictures:", enrichedReviews);
+                        resolve(enrichedReviews);
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    completedRequests++;
+                    console.warn("Could not fetch profile for client", review.clientId);
+                    
+                    if (completedRequests === reviewsWithClientId.length) {
+                        console.log("Enriched reviews with profile pictures:", enrichedReviews);
+                        resolve(enrichedReviews);
+                    }
+                };
+                
+                xhr.send();
             }
         }
-        
-        console.log("Enriched reviews with profile pictures:", enrichedReviews);
-        return enrichedReviews;
-        
-    } catch (error) {
-        console.error("Error enriching reviews with profile data:", error);
-        return enrichedReviews;
-    }
+    });
 }
 
 // Function to display reviews
@@ -518,7 +506,6 @@ function displayReviews(reviews) {
         return;
     }
     
-    // Clear existing reviews
     container.innerHTML = '<h6 class="mb-24">Reviews</h6>';
     
     if (!reviews || reviews.length === 0) {
@@ -527,7 +514,6 @@ function displayReviews(reviews) {
         noReviews.textContent = "No reviews yet. Be the first to review this product!";
         container.appendChild(noReviews);
         
-        // Even with no reviews, update the stats to show zeros
         updateReviewStats({
             averageRating: 0,
             totalReviews: 0,
@@ -537,25 +523,20 @@ function displayReviews(reviews) {
         return;
     }
     
-    // Create reviews element
     reviews.forEach((review) => {
         const el = document.createElement("div");
         el.className = "d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44 review-item";
         
-        // Profile picture handling: Check if user has a profile picture
         let profileImgHtml = '';
         
         if (review.clientProfilePicture) {
-            // If user has a profile picture, use it with the correct path
-            // Note: We're not prepending /uploads/ as that's already included in the path
             profileImgHtml = `<img src="${review.clientProfilePicture}" alt="${review.clientName}" 
-                              class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">`;
+                            class="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0">`;
         } else {
-            // Otherwise use the initial in a colored circle
             const initial = (review.clientName || "A").charAt(0).toUpperCase();
             profileImgHtml = `<div class="w-52 h-52 bg-main-50 rounded-circle flex-center flex-shrink-0 text-main-600 fw-bold">
-                              ${initial}
-                            </div>`;
+                            ${initial}
+                        </div>`;
         }
         
         el.innerHTML = `
@@ -577,14 +558,12 @@ function displayReviews(reviews) {
         container.appendChild(el);
     });
     
-    // Calculate and update the statistics
     const stats = {
         averageRating: currentProduct.averageRating || calculateAverageRating(reviews),
         totalReviews: reviews.length,
         ratingCounts: calculateRatingCounts(reviews)
     };
     
-    // Update the statistics in the UI
     updateReviewStats(stats);
 }
 
@@ -602,7 +581,6 @@ function formatDateDiff(dateStr) {
     const reviewDate = new Date(dateStr);
     const now = new Date();
     
-    // Check if the date is valid
     if (isNaN(reviewDate.getTime())) {
         return "Recently";
     }
@@ -614,7 +592,6 @@ function formatDateDiff(dateStr) {
     const diffMonths = Math.floor(diffDays / 30);
     const diffYears = Math.floor(diffDays / 365);
     
-    // Format based on time difference
     if (diffMinutes < 60) {
         return diffMinutes <= 1 ? "Just now" : `${diffMinutes} minutes ago`;
     } else if (diffHours < 24) {
@@ -632,13 +609,11 @@ function formatDateDiff(dateStr) {
 function updateReviewElement(element, review) {
     if (!element || !review) return
 
-    // Update reviewer name
     const nameElement = element.querySelector("h6.text-md")
     if (nameElement) {
     nameElement.textContent = review.userName || "Anonymous"
     }
 
-    // Update rating stars
     const starsContainer = element.querySelector(".flex-align.gap-8")
     if (starsContainer) {
     starsContainer.innerHTML = ""
@@ -650,7 +625,6 @@ function updateReviewElement(element, review) {
     }
     }
 
-    // Update date
     const dateElement = element.querySelector(".text-gray-800.text-xs")
     if (dateElement) {
     const reviewDate = new Date(review.createdAt)
@@ -660,13 +634,11 @@ function updateReviewElement(element, review) {
     dateElement.textContent = `${diffDays} ${diffDays === 1 ? "Day" : "Days"} ago`
     }
 
-    // Update title
     const titleElement = element.querySelector("h6.text-md.mt-24")
     if (titleElement) {
     titleElement.textContent = review.title || "Review"
     }
 
-    // Update content
     const contentElement = element.querySelector("p.text-gray-700")
     if (contentElement) {
     contentElement.textContent = review.content || "No comment provided"
@@ -677,16 +649,12 @@ function updateReviewElement(element, review) {
 function updateReviewStats(stats) {
     if (!stats) return;
 
-    // Update average rating
     const avgRatingElement = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 h2");
     if (avgRatingElement) {
         avgRatingElement.textContent = stats.averageRating.toFixed(1) || "0.0";
-        
-        // Also update the main product rating at the top of the page
         updateProductStarRating(stats.averageRating);
     }
 
-    // Get all progress bars and count elements
     const ratingContainers = document.querySelectorAll('.flex-align.gap-8.mb-20, .flex-align.gap-8.mb-0');
     
     if (!ratingContainers || ratingContainers.length === 0) {
@@ -696,16 +664,14 @@ function updateReviewStats(stats) {
     
     console.log(`Found ${ratingContainers.length} rating bars`);
     
-    // Set up stars based on average rating
     const starsContainer = document.querySelector(".border.border-gray-100.rounded-8.px-40.py-52 .flex-align.gap-8");
     if (starsContainer) {
         starsContainer.innerHTML = renderStars(Math.round(stats.averageRating));
     }
     
-    // Update rating bars (5 to 1 stars)
     for (let i = 0; i < ratingContainers.length; i++) {
         const container = ratingContainers[i];
-        const rating = 5 - i; // 5, 4, 3, 2, 1
+        const rating = 5 - i; 
         const progressBar = container.querySelector('.progress-bar');
         const countElement = container.querySelector('.text-gray-900.flex-shrink-0:last-child');
         
@@ -713,20 +679,17 @@ function updateReviewStats(stats) {
             const count = stats.ratingCounts[rating] || 0;
             const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
             
-            // Log for debugging
             console.log(`Rating ${rating}: ${count} reviews, ${percentage.toFixed(1)}%`);
             
-            // Update the progress bar width
             progressBar.style.width = `${percentage}%`;
             
-            // Update the count text
             countElement.textContent = count.toString();
         }
     }
 }
 
-// Assure-toi d'inclure cette fonction dans ton script prod-details-client.js
-async function handleReviewSubmit(event) {
+
+function handleReviewSubmit(event) {
     event.preventDefault();
   
     const productId = getUrlParameter("id");
@@ -735,14 +698,12 @@ async function handleReviewSubmit(event) {
     const contentInput = document.getElementById("review-comment");
     const token = getUserToken();
   
-    // Validation basique
     if (!productId) return showAlert("danger", "Product ID is missing");
     if (!ratingInput.value) return showAlert("danger", "Please select a rating");
     if (!titleInput.value) return showAlert("danger", "Please enter a review title");
     if (!contentInput.value) return showAlert("danger", "Please enter review content");
     if (!token) return showAlert("danger", "You must be logged in to submit a review");
   
-    // Préparation des données
     const reviewData = {
       rating: parseInt(ratingInput.value, 10),
       title: titleInput.value.trim(),
@@ -751,50 +712,50 @@ async function handleReviewSubmit(event) {
   
     console.log("Sending reviewData:", reviewData);
   
-    // UI feedback
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...`;
     submitBtn.disabled = true;
   
-    try {
-      // Fixed URL to match backend endpoint exactly
-      const res = await fetch(`http://localhost:3000/product/${productId}/review`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(reviewData)
-      });
-  
-      const data = await res.json();
-      console.log("Server responded:", data);
-  
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to submit review");
-      }
-  
-      // succès
-      showAlert("success", "Review submitted successfully!");
-      event.target.reset();
-      ratingInput.value = "";
-      // réinitialise les étoiles si nécessaire
-      document.querySelectorAll(".rating-stars .text-15").forEach(star => {
-        star.classList.replace("text-warning-600", "text-gray-300");
-      });
-      loadProductReviews(productId);
-  
-    } catch (err) {
-      console.error("Submission error:", err);
-      showAlert("danger", err.message || "Failed to submit review. Please try again.");
-    } finally {
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-    }
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `http://localhost:3000/product/${productId}/review`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    
+    xhr.onload = function() {
+        try {
+            const data = JSON.parse(xhr.responseText);
+            console.log("Server responded:", data);
+            
+            if (xhr.status >= 200 && xhr.status < 300) {
+                showAlert("success", "Review submitted successfully!");
+                event.target.reset();
+                ratingInput.value = "";
+                document.querySelectorAll(".rating-stars .text-15").forEach(star => {
+                    star.classList.replace("text-warning-600", "text-gray-300");
+                });
+                loadProductReviews(productId);
+            } else {
+                showAlert("danger", data.message || "Failed to submit review");
+            }
+        } catch (err) {
+            console.error("Error parsing response:", err);
+            showAlert("danger", "Failed to process server response");
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    };
+    
+    xhr.onerror = function() {
+        console.error("Network error occurred");
+        showAlert("danger", "Network error occurred. Please try again.");
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    xhr.send(JSON.stringify(reviewData));
 }
-  
-
 
 // Function to handle quantity changes
 function setupQuantityButtons() {
@@ -866,7 +827,6 @@ function setupAddToCartButton() {
     const addToCartBtn = document.querySelector(".btn.btn-main")
 
     if (addToCartBtn) {
-    // Remove any existing event listeners
     const newAddToCartBtn = addToCartBtn.cloneNode(true)
     addToCartBtn.parentNode.replaceChild(newAddToCartBtn, addToCartBtn)
 
@@ -881,7 +841,6 @@ function setupAddToCartButton() {
         return
         }
 
-        // Check if user is logged in
         const userId = getUserId()
 
         if (!userId) {
@@ -895,7 +854,6 @@ function setupAddToCartButton() {
 
 // Replace the addToCart function with this corrected version
 function addToCart(productId, quantity, redirectToCheckout = false, userId) {
-    // If no userId, use localStorage for temporary storage
     if (!userId) {
     const cart = JSON.parse(localStorage.getItem("cart")) || []
     const existingProductIndex = cart.findIndex((item) => item.productId === productId)
@@ -920,12 +878,10 @@ function addToCart(productId, quantity, redirectToCheckout = false, userId) {
     return
     }
 
-    // User is logged in, add to cart in database
     const xhr = new XMLHttpRequest()
     xhr.open("POST", "http://localhost:3000/cart/add", true)
     xhr.setRequestHeader("Content-Type", "application/json")
 
-    // Show loading indicator
     const loadingIndicator = document.createElement("div")
     loadingIndicator.className = "loading-indicator"
     loadingIndicator.innerHTML =
@@ -933,7 +889,6 @@ function addToCart(productId, quantity, redirectToCheckout = false, userId) {
     document.body.appendChild(loadingIndicator)
 
     xhr.onload = () => {
-    // Remove loading indicator
     if (document.body.contains(loadingIndicator)) {
         document.body.removeChild(loadingIndicator)
     }
@@ -942,14 +897,12 @@ function addToCart(productId, quantity, redirectToCheckout = false, userId) {
         try {
         const response = JSON.parse(xhr.responseText)
 
-        // Update cart count in UI
         const cartCountElement = document.querySelector(".cart-count")
         if (cartCountElement && response.cart && response.cart.items) {
             const totalItems = response.cart.items.reduce((total, item) => total + item.quantity, 0)
             cartCountElement.textContent = totalItems
         }
         
-        // Immediately update cart count in real-time using the global counter function
         const token = localStorage.getItem("token")
         if (window.mallifyCounters && typeof window.mallifyCounters.fetchCartCount === 'function') {
             window.mallifyCounters.fetchCartCount(userId, token);
@@ -975,7 +928,6 @@ function addToCart(productId, quantity, redirectToCheckout = false, userId) {
     }
 
     xhr.onerror = () => {
-    // Remove loading indicator
     if (document.body.contains(loadingIndicator)) {
         document.body.removeChild(loadingIndicator)
     }
@@ -999,10 +951,8 @@ function setupRatingStars() {
     if (stars.length > 0 && ratingInput) {
     stars.forEach((star, index) => {
         star.addEventListener("click", () => {
-        // Set rating value
         ratingInput.value = index + 1
 
-        // Update star colors
         stars.forEach((s, i) => {
             if (i <= index) {
             s.classList.replace("text-gray-300", "text-warning-600")
@@ -1012,7 +962,6 @@ function setupRatingStars() {
         })
         })
 
-        // Add hover effect
         star.addEventListener("mouseenter", () => {
         stars.forEach((s, i) => {
             if (i <= index) {
@@ -1048,7 +997,6 @@ function showAlert(type, message) {
     const container = document.querySelector(".container")
     container.insertBefore(alertDiv, container.firstChild)
 
-    // Declare bootstrap here to avoid undefined variable error
     let bsAlert
     try {
     bsAlert = new bootstrap.Alert(alertDiv)
@@ -1061,7 +1009,6 @@ function showAlert(type, message) {
         if (bsAlert && bsAlert.close) {
         bsAlert.close()
         } else {
-        // Fallback to removing the element if bsAlert is not available or close method is missing
         alertDiv.parentNode.removeChild(alertDiv)
         }
     }
@@ -1072,26 +1019,22 @@ function showAlert(type, message) {
 function initializePriceDisplay() {
     if (!currentProduct) return
 
-    // Set initial price display
     const priceElement = document.getElementById("side-price-prod")
     if (priceElement) {
     priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${currentProduct.productPrice.toFixed(2)} DT</h6>`
     }
 
-    // Set shipping fee to always be 15 DT
     const shippingElement = document.getElementById("shipping-fee")
     if (shippingElement) {
     shippingElement.textContent = "15 DT"
     }
 }
 
-// Add these helper functions if they don't exist
 function getUserId() {
 
     return localStorage.getItem("userId") || sessionStorage.getItem("userId")
 }
 
-// Add this function to check for pending cart items after login
 function checkPendingCartItems() {
     const pendingItem = localStorage.getItem("pendingCartItem")
 
@@ -1100,19 +1043,14 @@ function checkPendingCartItems() {
         const item = JSON.parse(pendingItem)
         const currentTime = new Date().getTime()
 
-        // Only process if the pending item is less than 30 minutes old
         if (currentTime - item.timestamp < 30 * 60 * 1000) {
         const userId = getUserId()
 
         if (userId) {
-            // User is now logged in, add the pending item to cart
             addToCart(item.productId, item.quantity, false, userId)
-
-            // Clear the pending item
             localStorage.removeItem("pendingCartItem")
         }
         } else {
-        // Item is too old, remove it
         localStorage.removeItem("pendingCartItem")
         }
     } catch (e) {
@@ -1219,13 +1157,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setupBuyNowButton()
     setupRatingStars()
     
-    // Initialize the review form properly
     const reviewForm = document.getElementById("review-form")
     if (reviewForm) {
         console.log("Review form found, adding event listener for submission")
         reviewForm.addEventListener("submit", handleReviewSubmit)
         
-        // Make sure the rating stars are clickable
         const ratingStars = document.querySelectorAll(".rating-stars .text-15")
         const ratingInput = document.getElementById("rating-input")
         
@@ -1236,7 +1172,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Star clicked with rating:", index + 1)
                     ratingInput.value = index + 1
                     
-                    // Update star appearance
                     ratingStars.forEach((s, i) => {
                         if (i <= index) {
                             s.classList.remove("text-gray-300")
@@ -1254,14 +1189,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })
 
-// Log a message to confirm the script is loaded
 console.log("Product details client script loaded")
 
 function setupBuyNowButton() {
     const buyNowBtn = document.querySelector(".btn.btn-secondary")
 
     if (buyNowBtn) {
-    // Remove any existing event listeners
     const newBuyNowBtn = buyNowBtn.cloneNode(true)
     buyNowBtn.parentNode.replaceChild(newBuyNowBtn, buyNowBtn)
 
@@ -1276,7 +1209,6 @@ function setupBuyNowButton() {
         return
         }
 
-        // Check if user is logged in
         const userId = getUserId()
 
         if (!userId) {
@@ -1288,7 +1220,6 @@ function setupBuyNowButton() {
     }
 }
 
-// Declare jQuery and bootstrap as global variables if they are not already
 if (typeof jQuery === "undefined") {
     var jQuery = window.jQuery
 }
@@ -1304,12 +1235,10 @@ function updateCartCount(cart) {
     }
 }
 
-// Add this function to check for redirect after login
 function checkRedirectAfterLogin() {
     const redirectUrl = localStorage.getItem("redirectAfterLogin")
     if (redirectUrl) {
     localStorage.removeItem("redirectAfterLogin")
-    // If we're already on the product page, just reload it
     if (redirectUrl === window.location.href) {
         window.location.reload()
     } else {
@@ -1321,14 +1250,12 @@ function checkRedirectAfterLogin() {
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded - initializing product details page")
 
-    // Load SweetAlert2 if it's not already loaded
     if (typeof Swal === "undefined") {
     const sweetAlertScript = document.createElement("script")
     sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
     document.head.appendChild(sweetAlertScript)
     }
 
-    // Check if jQuery is loaded
     if (typeof jQuery === "undefined") {
     console.error("jQuery is not loaded. Ensure it is included in your HTML.")
     return
@@ -1348,12 +1275,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })
 
-// Replace the showSweetAlert function with this enhanced version
+
 function showSweetAlert(icon, title, text) {
-    // Check if SweetAlert2 is available
     if (typeof Swal !== "undefined") {
     Swal.fire({
-        icon: icon, // 'success', 'error', 'warning', 'info', 'question'
+        icon: icon,
         title: title,
         text: text,
         timer: 3000,
@@ -1376,12 +1302,10 @@ function showSweetAlert(icon, title, text) {
             },
         })
         } else {
-        // Fallback to regular alert if SweetAlert is not available
         showAlert(icon === "error" ? "danger" : icon, text)
         }
 }
 
-// Replace the sweetAlertStyle with this enhanced styling
 const sweetAlertStyle = document.createElement("style")
 sweetAlertStyle.textContent = `
 .modern-toast {
@@ -1483,9 +1407,7 @@ sweetAlertStyle.textContent = `
 }
 `
 
-// Add this to the DOMContentLoaded event to load animate.css if needed
 document.addEventListener("DOMContentLoaded", () => {
-    // Load SweetAlert2 if it's not already loaded
     if (typeof Swal === "undefined") {
     const sweetAlertScript = document.createElement("script")
     sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
@@ -1519,48 +1441,38 @@ function calculateAverageRating(reviews) {
 
 // New function to update product star rating
 function updateProductStarRating(rating) {
-    // Find the star container 
     const starContainer = document.querySelector('.flex-align.flex-wrap.gap-12 .flex-align.gap-8');
     if (!starContainer) return;
     
-    // Add ID if not present already
     if (!starContainer.id) {
         starContainer.id = 'product-star-rating';
     }
     
-    // Get all stars in the container
     const stars = starContainer.querySelectorAll('span');
     if (!stars || stars.length === 0) return;
     
-    // Round to nearest half for half-star support
     const ratingValue = Math.round(rating * 2) / 2;
     const fullStars = Math.floor(ratingValue);
     const hasHalfStar = (ratingValue % 1) === 0.5;
     
-    // Update each star
     stars.forEach((star, index) => {
         if (index < fullStars) {
-            // Full star
             star.innerHTML = '<i class="ph-fill ph-star"></i>';
             star.className = 'text-15 fw-medium text-warning-600 d-flex';
         } else if (index === fullStars && hasHalfStar) {
-            // Half star - using available icon or fallback to full star
             try {
                 star.innerHTML = '<i class="ph-fill ph-star-half"></i>';
                 star.className = 'text-15 fw-medium text-warning-600 d-flex';
             } catch(e) {
-                // If half-star icon not available, use full star
                 star.innerHTML = '<i class="ph-fill ph-star"></i>';
                 star.className = 'text-15 fw-medium text-warning-600 d-flex';
             }
         } else {
-            // Empty star
             star.innerHTML = '<i class="ph ph-star"></i>';
             star.className = 'text-15 fw-medium text-gray-300 d-flex';
         }
     });
     
-    // Update the rating text
     const ratingText = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-neutral-600');
     if (ratingText) {
         ratingText.textContent = ratingValue.toFixed(1) + ' Star Rating';
@@ -1569,7 +1481,6 @@ function updateProductStarRating(rating) {
         }
     }
     
-    // Update rating count
     const ratingCount = document.querySelector('.flex-align.flex-wrap.gap-12 .text-sm.fw-medium.text-gray-500');
     if (ratingCount && currentProduct && currentProduct.reviewCount) {
         ratingCount.textContent = `(${currentProduct.reviewCount})`;
