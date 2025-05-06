@@ -448,7 +448,7 @@ function createProductCard(item) {
         <div class="price">${formattedPrice}</div>
       </div>
       <div class="card-actions">
-        <a href="product-details.html?id=${productId}" class="buy-btn"><i class="ph ph-shopping-cart"></i> Acheter</a>
+        <a href="product-details.html?id=${productId}" class="buy-btn"><i class="ph ph-eye"></i> View Details</a>
         <button class="delete-btn" data-product-id="${productId}"><i class="ph ph-trash"></i></button>
       </div>
     `;
