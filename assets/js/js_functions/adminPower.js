@@ -1,19 +1,10 @@
-// Configuration
 const config = {
-  magnification: 70,
   baseItemSize: 50,
-  distance: 200,
   panelHeight: 68,
-  dockHeight: 256,
-  spring: {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  },
+  dockHeight: 256
 }
 
-// Admin dock items with ban functionality
-const dockItems = [
+const adminDockItems = [
   {
     icon: "https://cdn-icons-png.flaticon.com/512/7358/7358499.png",
     label: "Ban Shop",
@@ -28,17 +19,98 @@ const dockItems = [
   },
 ]
 
-// DOM elements
+const vendorDockItems = [
+  {
+    icon: "https://cdn-icons-png.flaticon.com/512/1159/1159633.png",
+    label: "Edit Product",
+    className: "edit-product-icon",
+    action: "editProduct",
+  },
+  {
+    icon: "https://cdn-icons-png.flaticon.com/512/1214/1214428.png",
+    label: "Delete Product",
+    className: "delete-product-icon",
+    action: "deleteProduct",
+  },
+]
+
 const dockPanel = document.querySelector(".dock-panel")
 const dockOuter = document.querySelector(".dock-outer")
 
-// Helper function to get URL parameters
 function getUrlParameter(name) {
   const urlParams = new URLSearchParams(window.location.search)
   return urlParams.get(name)
 }
 
-// Ban API functions
+function getUserRole() {
+  return localStorage.getItem("userRole")
+}
+
+function getUserData() {
+  const userData = localStorage.getItem("userData")
+  if (!userData) return null
+
+  try {
+    return JSON.parse(userData)
+  } catch (e) {
+    console.error("Error parsing user data:", e)
+    return null
+  }
+}
+
+function extractShopId(userData) {
+  console.log("Extracting shop ID from user data:", userData)
+  
+  if (!userData) return null
+  
+  if (userData.shopId) {
+    console.log("Found shopId directly in userData:", userData.shopId)
+    return userData.shopId
+  }
+  
+  if (userData.shop) {
+    if (typeof userData.shop === 'string') {
+      console.log("Found shop as string in userData:", userData.shop)
+      return userData.shop
+    }
+    
+    if (userData.shop._id) {
+      console.log("Found shop._id in userData:", userData.shop._id)
+      return userData.shop._id
+    }
+  }
+  
+  if (userData.vendor && userData.vendor.shop) {
+    if (typeof userData.vendor.shop === 'string') {
+      console.log("Found vendor.shop as string:", userData.vendor.shop)
+      return userData.vendor.shop
+    }
+    
+    if (userData.vendor.shop._id) {
+      console.log("Found vendor.shop._id:", userData.vendor.shop._id)
+      return userData.vendor.shop._id
+    }
+  }
+  
+  if (userData.shopDetails) {
+    if (typeof userData.shopDetails === 'string') {
+      console.log("Found shopDetails as string:", userData.shopDetails)
+      return userData.shopDetails
+    }
+    
+    if (userData.shopDetails._id) {
+      console.log("Found shopDetails._id:", userData.shopDetails._id)
+      return userData.shopDetails._id
+    }
+  }
+  
+  console.warn("Could not find shop ID in user data")
+  return null
+}
+
+// ==================== ADMIN FUNCTIONS ====================
+
+// Ban shop 
 function banShop() {
   const productId = getUrlParameter("id")
   if (!productId) {
@@ -123,7 +195,7 @@ function banShop() {
 function banShopById(shopId) {
   Swal.fire({
     title: "Confirm Ban",
-    text: `Are you sure you want to ban the shop (ID: ${shopId})?`,
+    text: `Are you sure you want to ban this shop ?`,
     input: "text",
     inputLabel: "Ban Reason",
     inputPlaceholder: "Please provide a reason for banning this shop",
@@ -175,7 +247,6 @@ function banShopById(shopId) {
         })
       }
 
-      // Envoyer la raison du bannissement
       const data = JSON.stringify({
         bannedReason: result.value || "Violation of marketplace policies",
       })
@@ -185,6 +256,7 @@ function banShopById(shopId) {
   })
 }
 
+//ban product
 function banProduct() {
   const productId = getUrlParameter("id")
   if (!productId) {
@@ -198,7 +270,7 @@ function banProduct() {
 
   Swal.fire({
     title: "Confirm Ban",
-    text: `Are you sure you want to ban this product (ID: ${productId})?`,
+    text: `Are you sure you want to ban this product ?`,
     input: "text",
     inputLabel: "Ban Reason",
     inputPlaceholder: "Please provide a reason for banning this product",
@@ -235,7 +307,7 @@ function banProduct() {
               errorMessage = response.message
             }
           } catch (e) {
-            // Use default error message
+            errorMessage = "Error parsing response"
           }
 
           Swal.fire({
@@ -263,9 +335,240 @@ function banProduct() {
   })
 }
 
-// Create dock items
+// ==================== VENDOR/MODERATOR FUNCTIONS ====================
+
+function checkProductAccess(callback) {
+  const productId = getUrlParameter("id")
+  if (!productId) {
+    console.error("Product ID not found in URL")
+    callback(false)
+    return
+  }
+
+  const userRole = getUserRole()
+  const userData = getUserData()
+  
+  console.log("Checking product access with role:", userRole)
+  console.log("User data:", userData)
+  
+  if (!userRole || !userData) {
+    console.error("User data or role not found")
+    callback(false)
+    return
+  }
+
+  if (userRole !== "vendor" && userRole !== "moderator") {
+    console.error("User is not a vendor or moderator")
+    callback(false)
+    return
+  }
+
+  const token = localStorage.getItem("token")
+  if (!token) {
+    console.error("Authentication token not found")
+    callback(false)
+    return
+  }
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const response = JSON.parse(xhr.responseText)
+        const product = response.data?.product
+
+        if (!product) {
+          console.error("Product not found in response")
+          callback(false)
+          return
+        }
+
+        console.log("Product data:", product)
+
+        if (userRole === "vendor") {
+          const vendorShopId = extractShopId(userData)
+
+          if (!vendorShopId) {
+            console.error("Vendor shop ID not found")
+            callback(false)
+            return
+          }
+
+          const productShopId = typeof product.shop === "string" ? product.shop : product.shop._id
+
+          console.log("Vendor shop ID:", vendorShopId)
+          console.log("Product shop ID:", productShopId)
+
+          if (vendorShopId !== productShopId) {
+            console.error("Product does not belong to vendor's shop")
+            callback(false)
+            return
+          }
+        }
+        window.currentProduct = product
+        callback(true)
+      } catch (error) {
+        console.error("Error parsing product data:", error)
+        callback(false)
+      }
+    } else {
+      console.error("Failed to fetch product details")
+      callback(false)
+    }
+  }
+
+  xhr.onerror = () => {
+    console.error("Network error occurred while fetching product")
+    callback(false)
+  }
+
+  xhr.send()
+}
+
+// Edit product 
+function editProduct() {
+  const productId = getUrlParameter("id");
+  if (!productId) {
+    Swal.fire({
+      title: "Error!",
+      text: "Product ID not found in URL",
+      icon: "error",
+    });
+    return;
+  }
+
+  const dashboardUrl = `http://localhost:3000/dashbordBout_pages/detailsProduct.html?id=${productId}`;
+  
+  console.log("Preparing to redirect to dashboard product details:", dashboardUrl);
+  
+  Swal.fire({
+    title: "Edit Product",
+    text: "You will be redirected to the product edit page in the dashboard. Continue?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Yes, edit product",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#3085d6",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Redirecting...",
+        text: "You are being redirected to the product edit page",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+        timer: 1000, 
+      }).then(() => {
+        window.location.href = dashboardUrl;
+      });
+    }
+  });
+}
+
+// Delete product function
+function deleteProduct() {
+  const productId = getUrlParameter("id")
+  if (!productId) {
+    Swal.fire({
+      title: "Error!",
+      text: "Product ID not found in URL",
+      icon: "error",
+    })
+    return
+  }
+
+  Swal.fire({
+    title: "Confirm Deletion",
+    text: "Are you sure you want to delete this product? This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    confirmButtonColor: "#d33",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        Swal.fire({
+          title: "Error!",
+          text: "Authentication token not found",
+          icon: "error",
+        })
+        return
+      }
+
+      const xhr = new XMLHttpRequest()
+      xhr.open("DELETE", `http://localhost:3000/product/delete/${productId}`, true)
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+      xhr.setRequestHeader("Content-Type", "application/json")
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          Swal.fire({
+            title: "Success!",
+            text: "Product deleted successfully",
+            icon: "success",
+          }).then(() => {
+            window.location.href = "/index.html"
+          })
+        } else {
+          let errorMessage = "Failed to delete product"
+          try {
+            const errorResponse = JSON.parse(xhr.responseText)
+            errorMessage = errorResponse.message || errorMessage
+          } catch (e) {
+            errorMessage = "Error parsing response"
+          }
+
+          Swal.fire({
+            title: "Error!",
+            text: errorMessage,
+            icon: "error",
+          })
+        }
+      }
+
+      xhr.onerror = () => {
+        Swal.fire({
+          title: "Error!",
+          text: "Network error occurred",
+          icon: "error",
+        })
+      }
+
+      xhr.send()
+    }
+  })
+}
+
+// ==================== COMMON FUNCTIONS ====================
+
+// Create dock items based on user role
 function createDockItems() {
-  dockItems.forEach((item, index) => {
+  if (dockPanel) {
+    dockPanel.innerHTML = ""
+  }
+
+  const userRole = getUserRole()
+  console.log("Creating dock items for role:", userRole)
+  
+  let itemsToShow = []
+  
+  if (userRole === "admin" || userRole === "superAdmin") {
+    itemsToShow = adminDockItems
+  } else if (userRole === "vendor" || userRole === "moderator") {
+    itemsToShow = vendorDockItems
+  }
+
+  // Create dock items
+  itemsToShow.forEach((item) => {
     const dockItem = document.createElement("div")
     dockItem.className = `dock-item ${item.className || ""}`
     dockItem.tabIndex = 0
@@ -289,99 +592,118 @@ function createDockItems() {
 
     dockPanel.appendChild(dockItem)
 
-    // Add click event
     dockItem.addEventListener("click", () => {
       console.log(`Clicked on ${item.label}`)
       if (item.action === "banShop") {
         banShop()
       } else if (item.action === "banProduct") {
         banProduct()
+      } else if (item.action === "editProduct") {
+        editProduct()
+      } else if (item.action === "deleteProduct") {
+        deleteProduct()
       }
     })
   })
 }
 
-// Calculate size based on distance from mouse
-function calculateSize(mouseX, itemRect) {
-  const itemCenterX = itemRect.left + itemRect.width / 2
-  const distance = Math.abs(mouseX - itemCenterX)
-
-  // Calculate scale factor based on distance
-  if (distance > config.distance) {
-    return config.baseItemSize
-  }
-
-  const distanceRatio = 1 - distance / config.distance
-  const sizeDiff = config.magnification - config.baseItemSize
-  const additionalSize = sizeDiff * distanceRatio
-
-  return config.baseItemSize + additionalSize
-}
-
-// Handle mouse movement for magnification effect
-function handleMouseMove(e) {
-  const mouseX = e.clientX
-  const dockItems = document.querySelectorAll(".dock-item")
-
-  dockItems.forEach((item) => {
-    const rect = item.getBoundingClientRect()
-    const size = calculateSize(mouseX, rect)
-
-    // Apply size with smooth transition
-    item.style.width = `${size}px`
-    item.style.height = `${size}px`
-  })
-
-  // Expand dock height when hovered
-  dockOuter.style.height = `${config.dockHeight}px`
-}
-
-// Reset dock when mouse leaves
-function handleMouseLeave() {
-  const dockItems = document.querySelectorAll(".dock-item")
-
-  dockItems.forEach((item) => {
-    item.style.width = `${config.baseItemSize}px`
-    item.style.height = `${config.baseItemSize}px`
-  })
-
-  // Reset dock height
-  dockOuter.style.height = `${config.panelHeight}px`
-}
-
-// Check if the current page is product-details and user is a super admin
-function shouldShowDock() {
-  // Check if this is the product-details page
+// Check if the dock should be shown based on user role and page
+function shouldShowDock(callback) {
   const path = window.location.pathname
   const isProductDetailsPage = path.includes("product-details")
 
-  // Check if user is superAdmin
-  const userData = JSON.parse(localStorage.getItem("userData") || "{}")
-  const isSuperAdmin = userData.role === "superAdmin" || userData.role === "admin"
+  if (!isProductDetailsPage) {
+    console.log("Not on product details page, hiding dock")
+    callback(false)
+    return
+  }
 
-  return isProductDetailsPage && isSuperAdmin
+  const userRole = getUserRole()
+  if (!userRole) {
+    console.log("No user role found, hiding dock")
+    callback(false)
+    return
+  }
+
+  console.log("Checking if dock should be shown for role:", userRole)
+
+  if (userRole === "admin" || userRole === "superAdmin") {
+    console.log("User is admin/superAdmin, showing dock")
+    callback(true)
+    return
+  }
+
+  if (userRole === "vendor" || userRole === "moderator") {
+    console.log("User is vendor/moderator, checking product access")
+    checkProductAccess((hasAccess) => {
+      console.log("Product access check result:", hasAccess)
+      callback(hasAccess)
+    })
+    return
+  }
+
+  console.log("User has other role, hiding dock")
+  callback(false)
 }
 
 // Initialize the dock
 function initDock() {
-  // Only initialize if we should show the dock
-  if (shouldShowDock()) {
-    if (!dockPanel || !dockOuter) {
-      console.error("Dock elements not found in the DOM")
+  console.log("Initializing dock")
+  shouldShowDock((shouldShow) => {
+    if (shouldShow) {
+      if (!dockPanel || !dockOuter) {
+        console.error("Dock elements not found in the DOM")
+        return
+      }
+
+      console.log("Creating dock items")
+      createDockItems()
+
+      dockOuter.style.display = "block"
+    } else {
+      if (dockOuter) {
+        console.log("Hiding dock")
+        dockOuter.style.display = "none"
+      }
+    }
+  })
+}
+
+// Load SweetAlert2 from an approved CDN
+function loadSweetAlert() {
+  return new Promise((resolve, reject) => {
+    if (typeof Swal !== "undefined") {
+      console.log("SweetAlert2 already loaded")
+      resolve()
       return
     }
 
-    createDockItems()
-
-    // Make dock visible
-    dockOuter.style.display = "block"
-  } else {
-    // Hide dock completely if user is not superAdmin or not on product details page
-    if (dockOuter) {
-      dockOuter.style.display = "none"
+    console.log("Loading SweetAlert2 from approved CDN")
+    const sweetAlertScript = document.createElement("script")
+    sweetAlertScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+    sweetAlertScript.onload = () => {
+      console.log("SweetAlert2 loaded successfully")
+      resolve()
     }
-  }
+    sweetAlertScript.onerror = (e) => {
+      console.error("Failed to load SweetAlert2:", e)
+      reject(e)
+    }
+    document.head.appendChild(sweetAlertScript)
+  })
 }
 
 // Initialize when DOM is loaded
-document.addEventListener("DOMContentLoaded", initDock)
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("UserPower script loaded, checking role:", getUserRole())
+  
+  loadSweetAlert()
+    .then(() => {
+      console.log("SweetAlert2 loaded, initializing dock")
+      initDock()
+    })
+    .catch((error) => {
+      console.error("Error loading SweetAlert2:", error)
+      initDock()
+    })
+})
