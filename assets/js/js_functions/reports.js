@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Reports.js loaded successfully");
-  
+  console.log("Reports.js loaded successfully")
+
   const form = document.getElementById("reportForm")
 
   if (form) {
-    form.addEventListener("submit", function(event) {
+    form.addEventListener("submit", (event) => {
       event.preventDefault()
 
       const name = document.getElementById("name").value
@@ -33,24 +33,24 @@ document.addEventListener("DOMContentLoaded", () => {
       sendReportToServer(data, token)
     })
   }
-  
-  const reportLink = document.getElementById("reportLink");
-  console.log("Report link element:", reportLink);
-  
+
+  const reportLink = document.getElementById("reportLink")
+  console.log("Report link element:", reportLink)
+
   if (reportLink) {
-    reportLink.addEventListener("click", function(e) {
-      e.preventDefault();
-      console.log("Report link clicked");
-      
-      let modal = document.getElementById("productReportModal");
+    reportLink.addEventListener("click", (e) => {
+      e.preventDefault()
+      console.log("Report link clicked")
+
+      let modal = document.getElementById("productReportModal")
       if (!modal) {
-        console.log("Creating product report modal");
-        createProductReportModal();
-        modal = document.getElementById("productReportModal");
+        console.log("Creating product report modal")
+        createProductReportModal()
+        modal = document.getElementById("productReportModal")
       }
-      
-      openProductReportModal();
-    });
+
+      openProductReportModal()
+    })
   }
 
   // Extracts user ID from JWT token
@@ -77,59 +77,59 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = "Sending..."
     }
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:3000/report", true);
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    
-    xhr.onload = function() {
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "http://localhost:3000/report", true)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Content-Type", "application/json")
+
+    xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
-          const data = JSON.parse(xhr.responseText);
-          form.reset();
-          alert("Your report has been submitted successfully!");
+          const data = JSON.parse(xhr.responseText)
+          form.reset()
+          alert("Your report has been submitted successfully!")
         } catch (e) {
-          form.reset();
-          alert("Your report has been submitted successfully!");
+          form.reset()
+          alert("Your report has been submitted successfully!")
         }
       } else {
         try {
-          const errorData = JSON.parse(xhr.responseText);
-          alert(`Error submitting report: ${errorData.message || "Unknown error occurred"}`);
+          const errorData = JSON.parse(xhr.responseText)
+          alert(`Error submitting report: ${errorData.message || "Unknown error occurred"}`)
         } catch (e) {
-          alert(`Server error: ${xhr.status}`);
+          alert(`Server error: ${xhr.status}`)
         }
       }
-      
+
       if (submitBtn) {
         submitBtn.disabled = false
         submitBtn.textContent = originalText
       }
-    };
-    
-    xhr.onerror = function() {
-      console.error("Request failed");
-      alert("Network error occurred when trying to send report");
-      
+    }
+
+    xhr.onerror = () => {
+      console.error("Request failed")
+      alert("Network error occurred when trying to send report")
+
       if (submitBtn) {
         submitBtn.disabled = false
         submitBtn.textContent = originalText
       }
-    };
-    
-    xhr.send(JSON.stringify(data));
+    }
+
+    xhr.send(JSON.stringify(data))
   }
-  
+
   // Creates the product report modal HTML
   function createProductReportModal() {
-    console.log("Creating product report modal");
-    
-    const existingModal = document.getElementById('productReportModal');
+    console.log("Creating product report modal")
+
+    const existingModal = document.getElementById("productReportModal")
     if (existingModal) {
-      existingModal.remove();
-      console.log("Removed existing modal");
+      existingModal.remove()
+      console.log("Removed existing modal")
     }
-    
+
     const modalHTML = `
       <div id="productReportModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
         <div class="modal-content" style="background-color:#fff; border-radius:16px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
@@ -163,221 +163,221 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       </div>
-    `;
+    `
 
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    console.log("Modal HTML appended to body");
+    document.body.insertAdjacentHTML("beforeend", modalHTML)
+    console.log("Modal HTML appended to body")
 
-    document.getElementById('closeReportModal').addEventListener('click', function() {
-      console.log("Close button clicked");
-      closeProductReportModal();
-    });
-    
-    document.getElementById('productReportForm').addEventListener('submit', function(event) {
-      console.log("Report form submitted");
-      submitProductReport(event);
-    });
+    document.getElementById("closeReportModal").addEventListener("click", () => {
+      console.log("Close button clicked")
+      closeProductReportModal()
+    })
 
-    document.getElementById('productReportModal').addEventListener('click', function(event) {
+    document.getElementById("productReportForm").addEventListener("submit", (event) => {
+      console.log("Report form submitted")
+      submitProductReport(event)
+    })
+
+    document.getElementById("productReportModal").addEventListener("click", function (event) {
       if (event.target === this) {
-        console.log("Clicked outside modal");
-        closeProductReportModal();
+        console.log("Clicked outside modal")
+        closeProductReportModal()
       }
-    });
-    
-    console.log("Modal event listeners set up");
+    })
+
+    console.log("Modal event listeners set up")
   }
 
   // Opens the product report modal
   function openProductReportModal() {
-    console.log("Opening product report modal");
-    const modal = document.getElementById('productReportModal');
+    console.log("Opening product report modal")
+    const modal = document.getElementById("productReportModal")
     if (modal) {
-      modal.style.display = 'flex';
-      console.log("Modal displayed");
+      modal.style.display = "flex"
+      console.log("Modal displayed")
     } else {
-      console.error("Modal element not found");
+      console.error("Modal element not found")
     }
   }
 
   // Closes the product report modal
   function closeProductReportModal() {
-    console.log("Closing product report modal");
-    const modal = document.getElementById('productReportModal');
+    console.log("Closing product report modal")
+    const modal = document.getElementById("productReportModal")
     if (modal) {
-      modal.style.display = 'none';
-      console.log("Modal hidden");
-      const form = document.getElementById('productReportForm');
+      modal.style.display = "none"
+      console.log("Modal hidden")
+      const form = document.getElementById("productReportForm")
       if (form) {
-        form.reset();
+        form.reset()
       }
     }
   }
 
   // Submits product report to server
   function submitProductReport(event) {
-    event.preventDefault();
-    console.log("Processing product report submission");
-    
-    const token = localStorage.getItem("token");
+    event.preventDefault()
+    console.log("Processing product report submission")
+
+    const token = localStorage.getItem("token")
     if (!token) {
-      console.log("User not logged in");
-      if (typeof Swal !== 'undefined') {
+      console.log("User not logged in")
+      if (typeof Swal !== "undefined") {
         Swal.fire({
-          icon: 'error',
-          title: 'Authentication Required',
-          text: 'Please log in to report this product.',
-          confirmButtonColor: '#4a6cf7'
-        });
+          icon: "error",
+          title: "Authentication Required",
+          text: "Please log in to report this product.",
+          confirmButtonColor: "#4a6cf7",
+        })
       } else {
-        alert("Please log in to report this product.");
+        alert("Please log in to report this product.")
       }
-      closeProductReportModal();
-      return;
+      closeProductReportModal()
+      return
     }
-    
-    const reason = document.getElementById('reportReason').value;
-    const title = document.getElementById('reportTitle').value;
-    const message = document.getElementById('reportDescription').value;
-    
-    console.log("Form data:", { reason, title, message });
-    
-    const productId = getProductIdFromUrl();
+
+    const reason = document.getElementById("reportReason").value
+    const title = document.getElementById("reportTitle").value
+    const message = document.getElementById("reportDescription").value
+
+    console.log("Form data:", { reason, title, message })
+
+    const productId = getProductIdFromUrl()
     if (!productId) {
-      console.error("Could not determine product ID");
-      if (typeof Swal !== 'undefined') {
+      console.error("Could not determine product ID")
+      if (typeof Swal !== "undefined") {
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Product ID could not be determined.',
-          confirmButtonColor: '#4a6cf7'
-        });
+          icon: "error",
+          title: "Error",
+          text: "Product ID could not be determined.",
+          confirmButtonColor: "#4a6cf7",
+        })
       } else {
-        alert("Product ID could not be determined.");
+        alert("Product ID could not be determined.")
       }
-      return;
+      return
     }
-    
-    console.log("Product ID:", productId);
-    
+
+    console.log("Product ID:", productId)
+
     const reportData = {
       clientId: getUserIdFromToken(token),
-      targetType: 'Product',
+      targetType: "Product",
       targetId: productId,
       title: `${reason.toUpperCase()}: ${title}`,
-      message: message
-    };
-    
-    console.log("Report data:", reportData);
-    
-    const submitBtn = document.querySelector('#productReportForm button[type="submit"]');
+      message: message,
+    }
+
+    console.log("Report data:", reportData)
+
+    const submitBtn = document.querySelector('#productReportForm button[type="submit"]')
     if (submitBtn) {
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
-      
-      console.log("Sending report to server");
-      
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://localhost:3000/report", true);
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      
-      xhr.onload = function() {
-        console.log("Server response:", xhr.status);
-        
+      const originalText = submitBtn.textContent
+      submitBtn.disabled = true
+      submitBtn.textContent = "Submitting..."
+
+      console.log("Sending report to server")
+
+      const xhr = new XMLHttpRequest()
+      xhr.open("POST", "http://localhost:3000/report", true)
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+      xhr.setRequestHeader("Content-Type", "application/json")
+
+      xhr.onload = () => {
+        console.log("Server response:", xhr.status)
+
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
-            const data = JSON.parse(xhr.responseText);
-            console.log("Report submitted successfully:", data);
-            closeProductReportModal();
-            
-            if (typeof Swal !== 'undefined') {
+            const data = JSON.parse(xhr.responseText)
+            console.log("Report submitted successfully:", data)
+            closeProductReportModal()
+
+            if (typeof Swal !== "undefined") {
               Swal.fire({
-                icon: 'success',
-                title: 'Report Submitted',
-                text: 'Thank you for your report. We will review it as soon as possible.',
-                confirmButtonColor: '#4a6cf7'
-              });
+                icon: "success",
+                title: "Report Submitted",
+                text: "Thank you for your report. We will review it as soon as possible.",
+                confirmButtonColor: "#4a6cf7",
+              })
             } else {
-              alert("Thank you for your report. We will review it as soon as possible.");
+              alert("Thank you for your report. We will review it as soon as possible.")
             }
           } catch (e) {
-            closeProductReportModal();
-            
-            if (typeof Swal !== 'undefined') {
+            closeProductReportModal()
+
+            if (typeof Swal !== "undefined") {
               Swal.fire({
-                icon: 'success',
-                title: 'Report Submitted',
-                text: 'Thank you for your report. We will review it as soon as possible.',
-                confirmButtonColor: '#4a6cf7'
-              });
+                icon: "success",
+                title: "Report Submitted",
+                text: "Thank you for your report. We will review it as soon as possible.",
+                confirmButtonColor: "#4a6cf7",
+              })
             } else {
-              alert("Thank you for your report. We will review it as soon as possible.");
+              alert("Thank you for your report. We will review it as soon as possible.")
             }
           }
         } else {
           try {
-            const errorData = JSON.parse(xhr.responseText);
-            console.error('Error submitting product report:', errorData);
-            
-            if (typeof Swal !== 'undefined') {
+            const errorData = JSON.parse(xhr.responseText)
+            console.error("Error submitting product report:", errorData)
+
+            if (typeof Swal !== "undefined") {
               Swal.fire({
-                icon: 'error',
-                title: 'Submission Error',
+                icon: "error",
+                title: "Submission Error",
                 text: `There was an error submitting your report: ${errorData.message || xhr.status}`,
-                confirmButtonColor: '#4a6cf7'
-              });
+                confirmButtonColor: "#4a6cf7",
+              })
             } else {
-              alert(`There was an error submitting your report: ${errorData.message || xhr.status}`);
+              alert(`There was an error submitting your report: ${errorData.message || xhr.status}`)
             }
           } catch (e) {
-            console.error('Error parsing error response:', e);
-            
-            if (typeof Swal !== 'undefined') {
+            console.error("Error parsing error response:", e)
+
+            if (typeof Swal !== "undefined") {
               Swal.fire({
-                icon: 'error',
-                title: 'Submission Error',
+                icon: "error",
+                title: "Submission Error",
                 text: `Server error: ${xhr.status}`,
-                confirmButtonColor: '#4a6cf7'
-              });
+                confirmButtonColor: "#4a6cf7",
+              })
             } else {
-              alert(`Server error: ${xhr.status}`);
+              alert(`Server error: ${xhr.status}`)
             }
           }
         }
-        
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      };
-      
-      xhr.onerror = function() {
-        console.error('Network error while submitting product report');
-        
-        if (typeof Swal !== 'undefined') {
+
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+
+      xhr.onerror = () => {
+        console.error("Network error while submitting product report")
+
+        if (typeof Swal !== "undefined") {
           Swal.fire({
-            icon: 'error',
-            title: 'Connection Error',
-            text: 'Network error occurred while trying to submit your report.',
-            confirmButtonColor: '#4a6cf7'
-          });
+            icon: "error",
+            title: "Connection Error",
+            text: "Network error occurred while trying to submit your report.",
+            confirmButtonColor: "#4a6cf7",
+          })
         } else {
-          alert('Network error occurred while trying to submit your report.');
+          alert("Network error occurred while trying to submit your report.")
         }
-        
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      };
-      
-      xhr.send(JSON.stringify(reportData));
+
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+
+      xhr.send(JSON.stringify(reportData))
     }
   }
-  
+
   // Gets product ID from URL parameters
   function getProductIdFromUrl() {
-    console.log("Getting product ID from URL:", window.location.search);
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id');
+    console.log("Getting product ID from URL:", window.location.search)
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get("id")
   }
 })
 
@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-// Gets authentication token 
+// Gets authentication token
 function getAuthToken() {
   const token = localStorage.getItem("token")
 
@@ -446,57 +446,57 @@ function loadReports() {
   if (tableBody) {
     tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading reports...</td></tr>'
   }
-  
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/reports", true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  
-  xhr.onload = function() {
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", "http://localhost:3000/reports", true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
-        const data = JSON.parse(xhr.responseText);
-        reportsData = data;
-        console.log("Loaded all reports:", reportsData);
-        filteredReports = [...reportsData];
-        updateStats();
-        applyFilters();
-        renderTable();
-        renderPagination();
+        const data = JSON.parse(xhr.responseText)
+        reportsData = data
+        console.log("Loaded all reports:", reportsData)
+        filteredReports = [...reportsData]
+        updateStats()
+        applyFilters()
+        renderTable()
+        renderPagination()
       } catch (e) {
-        console.error("Error parsing response:", e);
+        console.error("Error parsing response:", e)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`
         }
       }
     } else {
       try {
-        const errorData = JSON.parse(xhr.responseText);
-        console.error("Error loading reports:", errorData);
+        const errorData = JSON.parse(xhr.responseText)
+        console.error("Error loading reports:", errorData)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`
         }
       } catch (e) {
-        console.error("Error parsing error response:", e);
+        console.error("Error parsing error response:", e)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`;
-          
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`
+
           if (xhr.status === 401) {
-            tableBody.innerHTML += `<tr><td colspan="6" class="text-center">Please <a href="login.html">log in</a> again.</td></tr>`;
+            tableBody.innerHTML += `<tr><td colspan="6" class="text-center">Please <a href="login.html">log in</a> again.</td></tr>`
           }
         }
       }
     }
-  };
-  
-  xhr.onerror = function() {
-    console.error("Network error occurred");
+  }
+
+  xhr.onerror = () => {
+    console.error("Network error occurred")
     if (tableBody) {
-      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`
     }
-  };
-  
-  xhr.send();
+  }
+
+  xhr.send()
 }
 
 // Loads reports filtered by target type
@@ -508,51 +508,51 @@ function loadReportsByTargetType(targetType) {
     tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading reports...</td></tr>'
   }
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", `http://localhost:3000/reports/targetType/${targetType}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  
-  xhr.onload = function() {
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/reports/targetType/${targetType}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
-        const data = JSON.parse(xhr.responseText);
-        filteredReports = data;
-        console.log(`Loaded reports for target type ${targetType}:`, filteredReports);
-        updateStats();
-        applyFilters();
-        renderTable();
-        renderPagination();
+        const data = JSON.parse(xhr.responseText)
+        filteredReports = data
+        console.log(`Loaded reports for target type ${targetType}:`, filteredReports)
+        updateStats()
+        applyFilters()
+        renderTable()
+        renderPagination()
       } catch (e) {
-        console.error("Error parsing response:", e);
+        console.error("Error parsing response:", e)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`
         }
       }
     } else {
       try {
-        const errorData = JSON.parse(xhr.responseText);
-        console.error(`Error loading reports for target type ${targetType}:`, errorData);
+        const errorData = JSON.parse(xhr.responseText)
+        console.error(`Error loading reports for target type ${targetType}:`, errorData)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`
         }
       } catch (e) {
-        console.error("Error parsing error response:", e);
+        console.error("Error parsing error response:", e)
         if (tableBody) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`
         }
       }
     }
-  };
-  
-  xhr.onerror = function() {
-    console.error("Network error occurred");
+  }
+
+  xhr.onerror = () => {
+    console.error("Network error occurred")
     if (tableBody) {
-      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`
     }
-  };
-  
-  xhr.send();
+  }
+
+  xhr.send()
 }
 
 // Safely gets a property value with fallback
@@ -577,26 +577,26 @@ function safeGet(obj, path, fallback = "N/A") {
 // Formats date to YYYY-MM-DD
 function formatDate(dateStr) {
   if (!dateStr) {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
+    const today = new Date()
+    return today.toISOString().split("T")[0]
   }
 
   try {
-    if (typeof dateStr === 'string' && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      return dateStr;
+    if (typeof dateStr === "string" && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateStr
     }
 
     const date = new Date(dateStr)
 
     if (isNaN(date.getTime())) {
-      const today = new Date();
-      return today.toISOString().split("T")[0];
+      const today = new Date()
+      return today.toISOString().split("T")[0]
     }
 
     return date.toISOString().split("T")[0]
   } catch (e) {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
+    const today = new Date()
+    return today.toISOString().split("T")[0]
   }
 }
 
@@ -707,7 +707,6 @@ function renderTable() {
     const displayId = safeGet(r, "displayId") || `Report #${id.toString().slice(-5)}`
     const title = safeGet(r, "title") || "N/A"
     const category = safeGet(r, "targetType") || "N/A"
-    
 
     const formattedDate = safeGet(r, "formattedDate") || formatDate(safeGet(r, "createdAt"))
     const status = safeGet(r, "status") || "Pending"
@@ -716,13 +715,13 @@ function renderTable() {
     const row = document.createElement("tr")
     row.classList.add("table-row")
     row.dataset.id = id
-    
-    if (category.toLowerCase() === 'product') {
+
+    if (category.toLowerCase() === "product") {
       let productRef = "N/A"
       if (r.targetId && r.targetId.productId) {
         productRef = r.targetId.productId
       }
-      
+
       row.innerHTML = `
         <td>${displayId}</td>
         <td>${title}</td>
@@ -737,7 +736,6 @@ function renderTable() {
         </td>
       `
     } else {
-
       row.innerHTML = `
         <td>${displayId}</td>
         <td>${title}</td>
@@ -752,7 +750,7 @@ function renderTable() {
         </td>
       `
     }
-    
+
     tableBody.appendChild(row)
   })
 
@@ -976,7 +974,7 @@ function openReportDetails(id) {
   }
 
   if (document.getElementById("reportId")) {
-    document.getElementById("reportId").value = id
+    document.getElementById("reportId").value = displayId
   }
 
   if (document.getElementById("reportTitle")) {
@@ -998,15 +996,15 @@ function openReportDetails(id) {
   if (document.getElementById("reportDate")) {
     document.getElementById("reportDate").value = formattedDate
   }
-  
+
   const productRefElement = document.getElementById("productReferenceId")
   if (productRefElement) {
-    if (category.toLowerCase() === 'product') {
+    if (category.toLowerCase() === "product") {
       productRefElement.value = productId
-      productRefElement.parentElement.style.display = 'block'
+      productRefElement.parentElement.style.display = "block"
     } else {
       productRefElement.value = "N/A"
-      productRefElement.parentElement.style.display = 'none'
+      productRefElement.parentElement.style.display = "none"
     }
   }
 
@@ -1031,22 +1029,22 @@ function resolveReport(id) {
   console.log(`Attempting to resolve report with ID: ${id}`)
   console.log(`API URL: http://localhost:3000/report/${id}`)
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("PUT", `http://localhost:3000/report/${id}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  
-  xhr.onload = function() {
-    console.log(`Resolve response status: ${xhr.status}`);
-    
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/report/${id}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    console.log(`Resolve response status: ${xhr.status}`)
+
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
-        const data = JSON.parse(xhr.responseText);
-        
+        const data = JSON.parse(xhr.responseText)
+
         const idx = reportsData.findIndex((r) => {
           const reportId = safeGet(r, "_id") || safeGet(r, "id")
           return reportId === id
-        });
+        })
 
         if (idx > -1) {
           reportsData[idx].status = "resolved"
@@ -1064,46 +1062,50 @@ function resolveReport(id) {
           respondModalInstance.hide()
         }
       } catch (e) {
-        console.warn("Could not parse response, but request was successful:", e);
-        showToast("Success", "Report has been resolved", "success");
-        loadReports();
-        
+        console.warn("Could not parse response, but request was successful:", e)
+        showToast("Success", "Report has been resolved", "success")
+        loadReports()
+
         if (respondModalInstance) {
           respondModalInstance.hide()
         }
       }
     } else {
       try {
-        const errorData = JSON.parse(xhr.responseText);
-        console.error("Error resolving report:", errorData);
-        showToast("Error", errorData.message || `Failed to resolve report. Status: ${xhr.status}`, "error");
+        const errorData = JSON.parse(xhr.responseText)
+        console.error("Error resolving report:", errorData)
+        showToast("Error", errorData.message || `Failed to resolve report. Status: ${xhr.status}`, "error")
       } catch (e) {
-        console.error("Error parsing error response:", e);
+        console.error("Error parsing error response:", e)
         if (xhr.status === 404) {
-          showToast("Error", `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`, "error");
+          showToast(
+            "Error",
+            `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`,
+            "error",
+          )
         } else {
-          showToast("Error", `Failed to resolve report. Status: ${xhr.status}`, "error");
+          showToast("Error", `Failed to resolve report. Status: ${xhr.status}`, "error")
         }
       }
     }
-    
+
     if (resolveBtn) {
       resolveBtn.disabled = false
       resolveBtn.textContent = originalText
     }
-  };
-  
-  xhr.onerror = function() {
-    console.error("Network error occurred while resolving report");
-    showToast("Error", "Network error. Please check your connection.", "error");
-    
+  }
+
+  xhr.onerror = () => {
+    console.error("Network error occurred while resolving report")
+    showToast("Error", "Network error. Please check your connection.", "error")
+
     if (resolveBtn) {
       resolveBtn.disabled = false
       resolveBtn.textContent = originalText
     }
-  };
-  
-  xhr.send(JSON.stringify({ status: "resolved" }));
+  }
+
+  xhr.send(JSON.stringify({ status: "resolved" }))
 }
 
 // Deletes a report
@@ -1122,14 +1124,14 @@ function deleteReport(id) {
   console.log(`Attempting to delete report with ID: ${id}`)
   console.log(`API URL: http://localhost:3000/report/${id}`)
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("DELETE", `http://localhost:3000/report/${id}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  
-  xhr.onload = function() {
-    console.log(`Delete response status: ${xhr.status}`);
-    
+  const xhr = new XMLHttpRequest()
+  xhr.open("DELETE", `http://localhost:3000/report/${id}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    console.log(`Delete response status: ${xhr.status}`)
+
     if (xhr.status >= 200 && xhr.status < 300) {
       const idx = reportsData.findIndex((r) => {
         const reportId = safeGet(r, "_id") || safeGet(r, "id")
@@ -1157,36 +1159,40 @@ function deleteReport(id) {
       }
     } else {
       try {
-        const errorData = JSON.parse(xhr.responseText);
-        console.error("Error deleting report:", errorData);
-        showToast("Error", errorData.message || `Failed to delete report. Status: ${xhr.status}`, "error");
+        const errorData = JSON.parse(xhr.responseText)
+        console.error("Error deleting report:", errorData)
+        showToast("Error", errorData.message || `Failed to delete report. Status: ${xhr.status}`, "error")
       } catch (e) {
-        console.error("Error parsing error response:", e);
+        console.error("Error parsing error response:", e)
         if (xhr.status === 404) {
-          showToast("Error", `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`, "error");
+          showToast(
+            "Error",
+            `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`,
+            "error",
+          )
         } else {
-          showToast("Error", `Failed to delete report. Status: ${xhr.status}`, "error");
+          showToast("Error", `Failed to delete report. Status: ${xhr.status}`, "error")
         }
       }
     }
-    
+
     if (deleteBtn) {
       deleteBtn.disabled = false
       deleteBtn.textContent = originalText
     }
-  };
-  
-  xhr.onerror = function() {
-    console.error("Network error occurred while deleting report");
-    showToast("Error", "Network error. Please check your connection.", "error");
-    
+  }
+
+  xhr.onerror = () => {
+    console.error("Network error occurred while deleting report")
+    showToast("Error", "Network error. Please check your connection.", "error")
+
     if (deleteBtn) {
       deleteBtn.disabled = false
       deleteBtn.textContent = originalText
     }
-  };
-  
-  xhr.send();
+  }
+
+  xhr.send()
 }
 
 // Displays toast notifications
