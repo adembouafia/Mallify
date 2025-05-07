@@ -55,7 +55,8 @@ exports.getReportById = async (req, res) => {
     try {
         const report = await Report.findById(req.params.id)
             .populate('clientId', 'username email')
-            .populate('shop', 'shopName');
+            .populate('shop', 'shopName')
+            .populate('targetId', 'productId productName'); // Add this to get product details
             
         if (!report) {
             return res.status(404).json({ message: 'Rapport non trouvé' });
@@ -74,11 +75,28 @@ exports.getReportById = async (req, res) => {
                     message: 'Product reports are only visible to their respective shop owners' 
                 });
             }
-            return res.status(200).json(report);
+            
+            // Format report data
+            const reportObj = report.toObject();
+            if (reportObj.createdAt) {
+                const date = new Date(reportObj.createdAt);
+                reportObj.formattedDate = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            }
+            reportObj.displayId = `Report #${reportObj._id.toString().slice(-5)}`;
+            
+            return res.status(200).json(reportObj);
         } else if (userRole === 'vendor') {
             // Vendors can only see product reports for their shop
             if (report.targetType === 'Product' && report.shop && report.shop.toString() === shopId.toString()) {
-                return res.status(200).json(report);
+                // Format report data
+                const reportObj = report.toObject();
+                if (reportObj.createdAt) {
+                    const date = new Date(reportObj.createdAt);
+                    reportObj.formattedDate = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                }
+                reportObj.displayId = `Report #${reportObj._id.toString().slice(-5)}`;
+                
+                return res.status(200).json(reportObj);
             } else {
                 return res.status(403).json({ message: 'Vous n\'êtes pas autorisé à accéder à ce rapport' });
             }
@@ -145,9 +163,22 @@ exports.getReportsByTargetType = async (req, res) => {
                     shop: shopId
                 })
                 .populate('clientId', 'username email')
-                .populate('shop', 'shopName');
+                .populate('shop', 'shopName')
+                .populate({
+                    path: 'targetId',
+                    select: 'productId productName', // Include the specific productId field
+                    model: 'Product'
+                });
                 
                 console.log(`Found ${reports.length} product reports for shop ${shopId}`);
+                
+                // Debug: Log the first report to check if targetId is populated
+                if (reports.length > 0) {
+                    console.log("Sample report targetId:", reports[0].targetId);
+                    if (reports[0].targetId && reports[0].targetId.productId) {
+                        console.log("Product ID from model:", reports[0].targetId.productId);
+                    }
+                }
             } else {
                 return res.status(403).json({
                     message: 'Vous n\'êtes autorisé à voir que les rapports de produits de votre boutique',
@@ -160,7 +191,19 @@ exports.getReportsByTargetType = async (req, res) => {
             });
         }
         
-        res.status(200).json(reports);
+        // Format the date to show only the date part and add display ID
+        const formattedReports = reports.map(report => {
+            const reportObj = report.toObject();
+            if (reportObj.createdAt) {
+                const date = new Date(reportObj.createdAt);
+                reportObj.formattedDate = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            }
+            // Add a display ID format
+            reportObj.displayId = `Report #${reportObj._id.toString().slice(-5)}`;
+            return reportObj;
+        });
+        
+        res.status(200).json(formattedReports);
     } catch (err) {
         console.error("Error in getReportsByTargetType:", err);
         res.status(500).json({
@@ -212,9 +255,22 @@ exports.getAllReports = async (req, res) => {
                 shop: shopId 
             })
             .populate('clientId', 'username email')
-            .populate('shop', 'shopName');
+            .populate('shop', 'shopName')
+            .populate({
+                path: 'targetId',
+                select: 'productId productName', // Include the specific productId field
+                model: 'Product'
+            });
             
             console.log(`Found ${reports.length} product reports for shop ${shopId}`);
+            
+            // Debug: Log the first report to check if targetId is populated
+            if (reports.length > 0) {
+                console.log("Sample report targetId:", reports[0].targetId);
+                if (reports[0].targetId && reports[0].targetId.productId) {
+                    console.log("Product ID from model:", reports[0].targetId.productId);
+                }
+            }
         } else {
             // Other users can't see reports
             return res.status(403).json({
@@ -222,7 +278,20 @@ exports.getAllReports = async (req, res) => {
             });
         }
 
-        res.status(200).json(reports);
+        // Format the date to show only the date part
+        const reportsWithFormattedDate = reports.map(report => {
+            const reportObj = report.toObject();
+            if (reportObj.createdAt) {
+                const date = new Date(reportObj.createdAt);
+                reportObj.formattedDate = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            }
+            // Add a display ID format
+            reportObj.displayId = `Report #${reportObj._id.toString().slice(-5)}`;
+            
+            return reportObj;
+        });
+
+        res.status(200).json(reportsWithFormattedDate);
     } catch (err) {
         console.error("Error in getAllReports:", err);
         res.status(500).json({

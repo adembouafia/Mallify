@@ -1,38 +1,25 @@
-/**
- * Report Management System
- * This file contains both the report submission form and report management dashboard functionality
- */
-
-// ==============================================
-// REPORT SUBMISSION FORM
-// ==============================================
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Reports.js loaded successfully");
   
-  // Get the report form
   const form = document.getElementById("reportForm")
 
   if (form) {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault() // Prevent default form submission
+    form.addEventListener("submit", function(event) {
+      event.preventDefault()
 
-      // Get form data
       const name = document.getElementById("name").value
       const email = document.getElementById("email").value
       const phone = document.getElementById("phone").value
       const subject = document.getElementById("subject").value
       const message = document.getElementById("message").value
 
-      // Get token from localStorage
       const token = localStorage.getItem("token")
 
-      // Check if user is logged in
       if (!token) {
         alert("You need to be logged in to submit a report. Please log in and try again.")
         return
       }
 
-      // Prepare the data object to send to the server
       const data = {
         clientId: getUserIdFromToken(token),
         targetType: "Platform",
@@ -47,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
   
-  // Product report functionality
   const reportLink = document.getElementById("reportLink");
   console.log("Report link element:", reportLink);
   
@@ -56,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       console.log("Report link clicked");
       
-      // Check if modal exists
       let modal = document.getElementById("productReportModal");
       if (!modal) {
         console.log("Creating product report modal");
@@ -64,20 +49,17 @@ document.addEventListener("DOMContentLoaded", () => {
         modal = document.getElementById("productReportModal");
       }
       
-      // Open the modal
       openProductReportModal();
     });
   }
 
-  // Function to extract user ID from JWT token
+  // Extracts user ID from JWT token
   function getUserIdFromToken(token) {
     try {
-      // For JWT tokens, you can decode the payload
       const base64Url = token.split(".")[1]
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/")
       const payload = JSON.parse(window.atob(base64))
 
-      // Return the user ID from the token payload
       return payload.userId || payload._id || payload.id
     } catch (error) {
       console.error("Error decoding token:", error)
@@ -85,9 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to send report to the server
+  // Sends report data to the server
   function sendReportToServer(data, token) {
-    // Show loading indicator
     const submitBtn = document.querySelector('#reportForm button[type="submit"]')
     let originalText = ""
     if (submitBtn) {
@@ -96,60 +77,53 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = "Sending..."
     }
 
-    fetch("http://localhost:3000/report", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            try {
-              // Try to parse as JSON
-              const errorData = JSON.parse(text)
-              throw new Error(errorData.message || "Unknown error occurred")
-            } catch (e) {
-              // If not JSON, return text error
-              throw new Error("Server error: " + response.status)
-            }
-          })
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/report", true);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    
+    xhr.onload = function() {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          form.reset();
+          alert("Your report has been submitted successfully!");
+        } catch (e) {
+          form.reset();
+          alert("Your report has been submitted successfully!");
         }
-        return response.text().then((text) => {
-          try {
-            return JSON.parse(text)
-          } catch (e) {
-            return { success: true }
-          }
-        })
-      })
-      .then((data) => {
-        // Clear the form
-        form.reset()
-
-        // Show success message
-        alert("Your report has been submitted successfully!")
-      })
-      .catch((error) => {
-        console.error("Error submitting report:", error)
-        alert(`Error submitting report: ${error.message}`)
-      })
-      .finally(() => {
-        // Reset button state
-        if (submitBtn) {
-          submitBtn.disabled = false
-          submitBtn.textContent = originalText
+      } else {
+        try {
+          const errorData = JSON.parse(xhr.responseText);
+          alert(`Error submitting report: ${errorData.message || "Unknown error occurred"}`);
+        } catch (e) {
+          alert(`Server error: ${xhr.status}`);
         }
-      })
+      }
+      
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    };
+    
+    xhr.onerror = function() {
+      console.error("Request failed");
+      alert("Network error occurred when trying to send report");
+      
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = originalText
+      }
+    };
+    
+    xhr.send(JSON.stringify(data));
   }
   
-  // Create product report modal HTML
+  // Creates the product report modal HTML
   function createProductReportModal() {
     console.log("Creating product report modal");
     
-    // First remove any existing modal with the same ID
     const existingModal = document.getElementById('productReportModal');
     if (existingModal) {
       existingModal.remove();
@@ -191,11 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Append modal to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     console.log("Modal HTML appended to body");
 
-    // Set up event listeners for the modal
     document.getElementById('closeReportModal').addEventListener('click', function() {
       console.log("Close button clicked");
       closeProductReportModal();
@@ -206,7 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
       submitProductReport(event);
     });
 
-    // Close modal when clicking outside
     document.getElementById('productReportModal').addEventListener('click', function(event) {
       if (event.target === this) {
         console.log("Clicked outside modal");
@@ -217,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Modal event listeners set up");
   }
 
-  // Function to open product report modal
+  // Opens the product report modal
   function openProductReportModal() {
     console.log("Opening product report modal");
     const modal = document.getElementById('productReportModal');
@@ -229,14 +200,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to close product report modal
+  // Closes the product report modal
   function closeProductReportModal() {
     console.log("Closing product report modal");
     const modal = document.getElementById('productReportModal');
     if (modal) {
       modal.style.display = 'none';
       console.log("Modal hidden");
-      // Reset form
       const form = document.getElementById('productReportForm');
       if (form) {
         form.reset();
@@ -244,12 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Submit product report
+  // Submits product report to server
   function submitProductReport(event) {
     event.preventDefault();
     console.log("Processing product report submission");
     
-    // Get token and check if user is logged in
     const token = localStorage.getItem("token");
     if (!token) {
       console.log("User not logged in");
@@ -267,14 +236,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     
-    // Get form data
     const reason = document.getElementById('reportReason').value;
     const title = document.getElementById('reportTitle').value;
     const message = document.getElementById('reportDescription').value;
     
     console.log("Form data:", { reason, title, message });
     
-    // Get product ID from URL
     const productId = getProductIdFromUrl();
     if (!productId) {
       console.error("Could not determine product ID");
@@ -293,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     console.log("Product ID:", productId);
     
-    // Prepare data
     const reportData = {
       clientId: getUserIdFromToken(token),
       targetType: 'Product',
@@ -304,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     console.log("Report data:", reportData);
     
-    // Show loading state
     const submitBtn = document.querySelector('#productReportForm button[type="submit"]');
     if (submitBtn) {
       const originalText = submitBtn.textContent;
@@ -312,57 +277,103 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = 'Submitting...';
       
       console.log("Sending report to server");
-      // Send report to server
-      fetch("http://localhost:3000/report", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reportData),
-      })
-      .then(response => {
-        console.log("Server response:", response);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Report submitted successfully:", data);
-        closeProductReportModal();
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
-            icon: 'success',
-            title: 'Report Submitted',
-            text: 'Thank you for your report. We will review it as soon as possible.',
-            confirmButtonColor: '#4a6cf7'
-          });
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://localhost:3000/report", true);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      
+      xhr.onload = function() {
+        console.log("Server response:", xhr.status);
+        
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            console.log("Report submitted successfully:", data);
+            closeProductReportModal();
+            
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Report Submitted',
+                text: 'Thank you for your report. We will review it as soon as possible.',
+                confirmButtonColor: '#4a6cf7'
+              });
+            } else {
+              alert("Thank you for your report. We will review it as soon as possible.");
+            }
+          } catch (e) {
+            closeProductReportModal();
+            
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Report Submitted',
+                text: 'Thank you for your report. We will review it as soon as possible.',
+                confirmButtonColor: '#4a6cf7'
+              });
+            } else {
+              alert("Thank you for your report. We will review it as soon as possible.");
+            }
+          }
         } else {
-          alert("Thank you for your report. We will review it as soon as possible.");
+          try {
+            const errorData = JSON.parse(xhr.responseText);
+            console.error('Error submitting product report:', errorData);
+            
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Submission Error',
+                text: `There was an error submitting your report: ${errorData.message || xhr.status}`,
+                confirmButtonColor: '#4a6cf7'
+              });
+            } else {
+              alert(`There was an error submitting your report: ${errorData.message || xhr.status}`);
+            }
+          } catch (e) {
+            console.error('Error parsing error response:', e);
+            
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Submission Error',
+                text: `Server error: ${xhr.status}`,
+                confirmButtonColor: '#4a6cf7'
+              });
+            } else {
+              alert(`Server error: ${xhr.status}`);
+            }
+          }
         }
-      })
-      .catch(error => {
-        console.error('Error submitting product report:', error);
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      };
+      
+      xhr.onerror = function() {
+        console.error('Network error while submitting product report');
+        
         if (typeof Swal !== 'undefined') {
           Swal.fire({
             icon: 'error',
-            title: 'Submission Error',
-            text: `There was an error submitting your report: ${error.message}`,
+            title: 'Connection Error',
+            text: 'Network error occurred while trying to submit your report.',
             confirmButtonColor: '#4a6cf7'
           });
         } else {
-          alert(`There was an error submitting your report: ${error.message}`);
+          alert('Network error occurred while trying to submit your report.');
         }
-      })
-      .finally(() => {
+        
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
-      });
+      };
+      
+      xhr.send(JSON.stringify(reportData));
     }
   }
   
-  // Function to get product ID from URL
+  // Gets product ID from URL parameters
   function getProductIdFromUrl() {
     console.log("Getting product ID from URL:", window.location.search);
     const urlParams = new URLSearchParams(window.location.search);
@@ -370,11 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-// ==============================================
-// REPORT MANAGEMENT DASHBOARD
-// ==============================================
-
-// Global variables
+// DECLARATION DES VARIABLES GLOBALES
 let reportsData = []
 let filteredReports = []
 let currentPage = 1
@@ -385,7 +392,6 @@ let currentDateFilter = "all"
 let searchTerm = ""
 let currentReportId = null
 
-// DOM elements
 const tableBody = document.getElementById("reportsTableBody")
 const pagination = document.getElementById("pagination")
 const pageInfo = document.getElementById("pageInfo")
@@ -404,25 +410,21 @@ const deleteModalEl = document.getElementById("deleteConfirmModal")
 
 let reportModalInstance, respondModalInstance, deleteModalInstance
 
-// Initialize modals if using Bootstrap
 document.addEventListener("DOMContentLoaded", () => {
-  // Access bootstrap from window object
   if (typeof window.bootstrap !== "undefined") {
     reportModalInstance = new window.bootstrap.Modal(reportModalEl)
     respondModalInstance = new window.bootstrap.Modal(respondModalEl)
     deleteModalInstance = new window.bootstrap.Modal(deleteModalEl)
   }
 
-  // Initialize event listeners
   setupEventListeners()
 
-  // Load reports from the server
   if (document.getElementById("reportsTableBody")) {
     loadReports()
   }
 })
 
-// Function to get the authentication token
+// Gets authentication token 
 function getAuthToken() {
   const token = localStorage.getItem("token")
 
@@ -436,142 +438,126 @@ function getAuthToken() {
   return token
 }
 
-// Function to load reports from the server
+// Loads all reports from server
 function loadReports() {
-  // Get the authentication token
   const token = getAuthToken()
-  if (!token) return // Exit if no token is found
+  if (!token) return
 
-  // Show loading indicator
   if (tableBody) {
     tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading reports...</td></tr>'
   }
-
-  fetch("http://localhost:3000/reports", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.text().then((text) => {
-          try {
-            // Try to parse as JSON
-            const errorData = JSON.parse(text)
-            throw new Error(errorData.message || "Failed to load reports")
-          } catch (e) {
-            // If not JSON, return text error
-            throw new Error("Server error: " + response.status)
+  
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/reports", true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        reportsData = data;
+        console.log("Loaded all reports:", reportsData);
+        filteredReports = [...reportsData];
+        updateStats();
+        applyFilters();
+        renderTable();
+        renderPagination();
+      } catch (e) {
+        console.error("Error parsing response:", e);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`;
+        }
+      }
+    } else {
+      try {
+        const errorData = JSON.parse(xhr.responseText);
+        console.error("Error loading reports:", errorData);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`;
+        }
+      } catch (e) {
+        console.error("Error parsing error response:", e);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`;
+          
+          if (xhr.status === 401) {
+            tableBody.innerHTML += `<tr><td colspan="6" class="text-center">Please <a href="login.html">log in</a> again.</td></tr>`;
           }
-        })
-      }
-      return response.text().then((text) => {
-        try {
-          return JSON.parse(text)
-        } catch (e) {
-          throw new Error("Invalid response format")
-        }
-      })
-    })
-    .then((data) => {
-      // Store the reports data globally
-      reportsData = data
-      console.log("Loaded all reports:", reportsData)
-
-      // Initialize filtered reports with all reports
-      filteredReports = [...reportsData]
-
-      // Update stats
-      updateStats()
-
-      // Apply initial filters
-      applyFilters()
-
-      // Render the table and pagination
-      renderTable()
-      renderPagination()
-    })
-    .catch((error) => {
-      console.error("Error loading reports:", error)
-      if (tableBody) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${error.message}</td></tr>`
-
-        // If unauthorized, suggest logging in again
-        if (error.message.includes("401") || error.message.includes("unauthorized")) {
-          tableBody.innerHTML += `<tr><td colspan="6" class="text-center">Please <a href="login.html">log in</a> again.</td></tr>`
         }
       }
-    })
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error("Network error occurred");
+    if (tableBody) {
+      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`;
+    }
+  };
+  
+  xhr.send();
 }
 
-// Function to load reports by target type
+// Loads reports filtered by target type
 function loadReportsByTargetType(targetType) {
-  // Get the authentication token
   const token = getAuthToken()
-  if (!token) return // Exit if no token is found
+  if (!token) return
 
-  // Show loading indicator
   if (tableBody) {
     tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading reports...</td></tr>'
   }
 
-  fetch(`http://localhost:3000/reports/targetType/${targetType}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.text().then((text) => {
-          try {
-            // Try to parse as JSON
-            const errorData = JSON.parse(text)
-            throw new Error(errorData.message || "Failed to load reports")
-          } catch (e) {
-            // If not JSON, return text error
-            throw new Error("Server error: " + response.status)
-          }
-        })
-      }
-      return response.text().then((text) => {
-        try {
-          return JSON.parse(text)
-        } catch (e) {
-          throw new Error("Invalid response format")
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `http://localhost:3000/reports/targetType/${targetType}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        filteredReports = data;
+        console.log(`Loaded reports for target type ${targetType}:`, filteredReports);
+        updateStats();
+        applyFilters();
+        renderTable();
+        renderPagination();
+      } catch (e) {
+        console.error("Error parsing response:", e);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: Invalid response format</td></tr>`;
         }
-      })
-    })
-    .then((data) => {
-      // Store the filtered reports
-      filteredReports = data
-      console.log(`Loaded reports for target type ${targetType}:`, filteredReports)
-
-      // Update stats
-      updateStats()
-
-      // Apply filters
-      applyFilters()
-
-      // Render the table and pagination
-      renderTable()
-      renderPagination()
-    })
-    .catch((error) => {
-      console.error("Error loading reports:", error)
-      if (tableBody) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${error.message}</td></tr>`
       }
-    })
+    } else {
+      try {
+        const errorData = JSON.parse(xhr.responseText);
+        console.error(`Error loading reports for target type ${targetType}:`, errorData);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${errorData.message || "Failed to load reports"}</td></tr>`;
+        }
+      } catch (e) {
+        console.error("Error parsing error response:", e);
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Server error: ${xhr.status}</td></tr>`;
+        }
+      }
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error("Network error occurred");
+    if (tableBody) {
+      tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Network error. Please check your connection.</td></tr>`;
+    }
+  };
+  
+  xhr.send();
 }
 
-// Function to safely get a property value with fallback
+// Safely gets a property value with fallback
 function safeGet(obj, path, fallback = "N/A") {
   try {
-    // Handle nested properties with dot notation (e.g., "user.name")
     const props = path.split(".")
     let result = obj
 
@@ -588,26 +574,33 @@ function safeGet(obj, path, fallback = "N/A") {
   }
 }
 
-// FIXED: Format date to only show the date part (YYYY-MM-DD)
+// Formats date to YYYY-MM-DD
 function formatDate(dateStr) {
-  if (!dateStr) return "N/A"
+  if (!dateStr) {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  }
 
   try {
-    const date = new Date(dateStr)
-
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      return "N/A"
+    if (typeof dateStr === 'string' && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateStr;
     }
 
-    // Return only the date part (YYYY-MM-DD)
+    const date = new Date(dateStr)
+
+    if (isNaN(date.getTime())) {
+      const today = new Date();
+      return today.toISOString().split("T")[0];
+    }
+
     return date.toISOString().split("T")[0]
   } catch (e) {
-    return "N/A"
+    const today = new Date();
+    return today.toISOString().split("T")[0];
   }
 }
 
-// Update statistics
+// Updates report statistics
 function updateStats() {
   if (totalReportsEl) totalReportsEl.textContent = reportsData.length
 
@@ -622,17 +615,14 @@ function updateStats() {
   }
 }
 
-// Apply filters to the reports
+// Applies filters to the reports
 function applyFilters() {
-  // Start with all reports
   filteredReports = [...reportsData]
 
-  // 1. Status tab filter
   if (currentTab !== "all") {
     filteredReports = filteredReports.filter((r) => safeGet(r, "status", "").toLowerCase() === currentTab)
   }
 
-  // 2. Date filter
   if (currentDateFilter !== "all") {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -653,7 +643,6 @@ function applyFilters() {
     })
   }
 
-  // 3. Search filter
   if (searchTerm) {
     const term = searchTerm.toLowerCase()
     filteredReports = filteredReports.filter(
@@ -667,11 +656,9 @@ function applyFilters() {
     )
   }
 
-  // 4. Sorting
   filteredReports.sort((a, b) => {
     let va, vb
 
-    // Handle different field names
     if (currentSort.column === "id") {
       va = safeGet(a, "_id") || safeGet(a, "id")
       vb = safeGet(b, "_id") || safeGet(b, "id")
@@ -693,21 +680,20 @@ function applyFilters() {
     return 0
   })
 
-  // 5. Recompute pagination
   const totalPages = Math.ceil(filteredReports.length / rowsPerPage)
   if (currentPage > totalPages) {
     currentPage = totalPages || 1
   }
 }
 
-// Render the reports table
+// Renders the reports table
 function renderTable() {
   if (!tableBody) return
 
   tableBody.innerHTML = ""
 
   if (!filteredReports.length) {
-    tableBody.innerHTML = `<tr><td colspan="6" class="text-center">No reports found</td></tr>`
+    tableBody.innerHTML = `<tr><td colspan="7" class="text-center">No reports found</td></tr>`
     if (pageInfo) pageInfo.textContent = "Showing 0 to 0 of 0 entries"
     return
   }
@@ -717,38 +703,56 @@ function renderTable() {
   const pageItems = filteredReports.slice(start, end)
 
   pageItems.forEach((r) => {
-    // Get values safely with fallbacks
     const id = safeGet(r, "_id") || safeGet(r, "id") || "N/A"
-    const title = safeGet(r, "title") || safeGet(r, "name") || "N/A"
-    const category = safeGet(r, "targetType") || safeGet(r, "category") || "N/A"
-    const dateStr = safeGet(r, "date") || safeGet(r, "createdAt") || safeGet(r, "created_at")
+    const displayId = safeGet(r, "displayId") || `Report #${id.toString().slice(-5)}`
+    const title = safeGet(r, "title") || "N/A"
+    const category = safeGet(r, "targetType") || "N/A"
+    
+
+    const formattedDate = safeGet(r, "formattedDate") || formatDate(safeGet(r, "createdAt"))
     const status = safeGet(r, "status") || "Pending"
-
-    // Format date - FIXED: Only show date part
-    const formattedDate = formatDate(dateStr)
-
-    // Create status badge class based on status
     const badge = status.toLowerCase() === "resolved" ? "badge-success" : "badge-primary"
 
-    // Create row
     const row = document.createElement("tr")
     row.classList.add("table-row")
     row.dataset.id = id
+    
+    if (category.toLowerCase() === 'product') {
+      let productRef = "N/A"
+      if (r.targetId && r.targetId.productId) {
+        productRef = r.targetId.productId
+      }
+      
+      row.innerHTML = `
+        <td>${displayId}</td>
+        <td>${title}</td>
+        <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
+        <td>${productRef}</td>
+        <td>${formattedDate}</td>
+        <td><span class="badge ${badge}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+        <td>
+          <button class="btn btn-sm btn-secondary view-btn" data-id="${id}">
+            <i class="bi bi-eye"></i> View
+          </button>
+        </td>
+      `
+    } else {
 
-    // Create row content
-    row.innerHTML = `
-      <td>${id}</td>
-      <td>${title}</td>
-      <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
-      <td>${formattedDate}</td>
-      <td><span class="badge ${badge}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
-      <td>
-        <button class="btn btn-sm btn-secondary view-btn" data-id="${id}">
-          <i class="bi bi-eye"></i> View
-        </button>
-      </td>
-    `
+      row.innerHTML = `
+        <td>${displayId}</td>
+        <td>${title}</td>
+        <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
 
+        <td>${formattedDate}</td>
+        <td><span class="badge ${badge}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+        <td>
+          <button class="btn btn-sm btn-secondary view-btn" data-id="${id}">
+            <i class="bi bi-eye"></i> View
+          </button>
+        </td>
+      `
+    }
+    
     tableBody.appendChild(row)
   })
 
@@ -757,7 +761,7 @@ function renderTable() {
   }
 }
 
-// Render pagination
+// Renders pagination controls
 function renderPagination() {
   if (!pagination) return
 
@@ -765,7 +769,6 @@ function renderPagination() {
   const totalPages = Math.ceil(filteredReports.length / rowsPerPage)
   if (totalPages <= 1) return
 
-  // Previous
   const prev = document.createElement("button")
   prev.className = "page-button"
   prev.innerHTML = '<i class="bi bi-chevron-left"></i>'
@@ -777,7 +780,6 @@ function renderPagination() {
   }
   pagination.appendChild(prev)
 
-  // Page numbers
   const maxBtns = 5
   let startPage = Math.max(1, currentPage - Math.floor(maxBtns / 2))
   const endPage = Math.min(totalPages, startPage + maxBtns - 1)
@@ -797,7 +799,6 @@ function renderPagination() {
     pagination.appendChild(btn)
   }
 
-  // Next
   const next = document.createElement("button")
   next.className = "page-button"
   next.innerHTML = '<i class="bi bi-chevron-right"></i>'
@@ -810,9 +811,8 @@ function renderPagination() {
   pagination.appendChild(next)
 }
 
-// Set up event listeners
+// Sets up event listeners
 function setupEventListeners() {
-  // View button & row click
   if (tableBody) {
     tableBody.addEventListener("click", (e) => {
       const btn = e.target.closest(".view-btn")
@@ -829,7 +829,6 @@ function setupEventListeners() {
     })
   }
 
-  // Respond button
   const respondReportBtn = document.getElementById("respondReportBtn")
   if (respondReportBtn) {
     respondReportBtn.addEventListener("click", () => {
@@ -850,7 +849,6 @@ function setupEventListeners() {
     })
   }
 
-  // Delete button
   const deleteReportBtn = document.getElementById("deleteReportBtn")
   if (deleteReportBtn) {
     deleteReportBtn.addEventListener("click", () => {
@@ -859,7 +857,6 @@ function setupEventListeners() {
     })
   }
 
-  // Resolve in Respond modal
   const resolveReportBtn = document.getElementById("resolveReportBtn")
   if (resolveReportBtn) {
     resolveReportBtn.addEventListener("click", () => {
@@ -867,7 +864,6 @@ function setupEventListeners() {
     })
   }
 
-  // Confirm Delete
   const confirmDeleteBtn = document.getElementById("confirmDeleteBtn")
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener("click", () => {
@@ -875,7 +871,6 @@ function setupEventListeners() {
     })
   }
 
-  // Search input
   if (searchInput) {
     const debouncedSearch = debounce(() => {
       searchTerm = searchInput.value.trim()
@@ -888,7 +883,6 @@ function setupEventListeners() {
     searchInput.addEventListener("input", debouncedSearch)
   }
 
-  // Date filter
   if (dateFilterBtn && dateFilterMenu) {
     dateFilterBtn.addEventListener("click", () => {
       dateFilterMenu.classList.toggle("show")
@@ -907,7 +901,6 @@ function setupEventListeners() {
       }
     })
 
-    // Close filter menu when clicking outside
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".filter-dropdown")) {
         dateFilterMenu.classList.remove("show")
@@ -915,20 +908,16 @@ function setupEventListeners() {
     })
   }
 
-  // Status tabs
   if (tabs) {
     tabs.forEach((tab) => {
       tab.addEventListener("click", function (e) {
         e.preventDefault()
-        // Highlight active tab
         tabs.forEach((t) => t.classList.remove("active"))
         this.classList.add("active")
 
-        // Set the filter value
-        currentTab = this.dataset.tab // "all", "pending", or "resolved"
+        currentTab = this.dataset.tab
         currentPage = 1
 
-        // Re-run filtering & re-render
         applyFilters()
         renderTable()
         renderPagination()
@@ -936,13 +925,11 @@ function setupEventListeners() {
     })
   }
 
-  // Sortable headers
   if (sortableHeaders) {
     sortableHeaders.forEach((th) => {
       th.addEventListener("click", function () {
         const column = this.dataset.sort
 
-        // Toggle direction if clicking on the same column
         if (column === currentSort.column) {
           currentSort.direction = currentSort.direction === "asc" ? "desc" : "asc"
         } else {
@@ -950,13 +937,11 @@ function setupEventListeners() {
           currentSort.direction = column === "date" ? "desc" : "asc"
         }
 
-        // Update sort indicators
         sortableHeaders.forEach((header) => {
           header.classList.remove("asc", "desc")
         })
         this.classList.add(currentSort.direction)
 
-        // Re-apply filters and render
         applyFilters()
         renderTable()
       })
@@ -964,7 +949,7 @@ function setupEventListeners() {
   }
 }
 
-// Populate & open the Details modal
+// Populates and opens the report details modal
 function openReportDetails(id) {
   const rpt = reportsData.find((r) => {
     const reportId = safeGet(r, "_id") || safeGet(r, "id")
@@ -978,19 +963,16 @@ function openReportDetails(id) {
 
   currentReportId = id
 
-  // Get values safely
+  const displayId = safeGet(rpt, "displayId") || `Report #${id.toString().slice(-5)}`
   const title = safeGet(rpt, "title") || safeGet(rpt, "name") || "N/A"
   const category = safeGet(rpt, "targetType") || safeGet(rpt, "category") || "N/A"
   const description = safeGet(rpt, "message") || safeGet(rpt, "content") || "N/A"
   const status = safeGet(rpt, "status") || "Pending"
-  const dateStr = safeGet(rpt, "date") || safeGet(rpt, "createdAt") || safeGet(rpt, "created_at")
+  const formattedDate = safeGet(rpt, "formattedDate") || formatDate(safeGet(rpt, "createdAt") || safeGet(rpt, "date"))
+  const productId = safeGet(rpt, "targetId.productId") || "N/A"
 
-  // Format date - FIXED: Only show date part
-  const formattedDate = formatDate(dateStr)
-
-  // Update modal fields
   if (document.getElementById("reportModalLabel")) {
-    document.getElementById("reportModalLabel").textContent = `Report Details – ${id}`
+    document.getElementById("reportModalLabel").textContent = `${displayId}`
   }
 
   if (document.getElementById("reportId")) {
@@ -1016,20 +998,28 @@ function openReportDetails(id) {
   if (document.getElementById("reportDate")) {
     document.getElementById("reportDate").value = formattedDate
   }
+  
+  const productRefElement = document.getElementById("productReferenceId")
+  if (productRefElement) {
+    if (category.toLowerCase() === 'product') {
+      productRefElement.value = productId
+      productRefElement.parentElement.style.display = 'block'
+    } else {
+      productRefElement.value = "N/A"
+      productRefElement.parentElement.style.display = 'none'
+    }
+  }
 
-  // Show the modal
   if (reportModalInstance) {
     reportModalInstance.show()
   }
 }
 
-// FIXED: Resolve a report - Update status in database with improved error handling
+// Resolves a report
 function resolveReport(id) {
-  // Get the authentication token
   const token = getAuthToken()
-  if (!token) return // Exit if no token is found
+  if (!token) return
 
-  // Show loading indicator
   const resolveBtn = document.getElementById("resolveReportBtn")
   let originalText = ""
   if (resolveBtn) {
@@ -1038,80 +1028,86 @@ function resolveReport(id) {
     resolveBtn.textContent = "Resolving..."
   }
 
-  // Log the request details for debugging
   console.log(`Attempting to resolve report with ID: ${id}`)
   console.log(`API URL: http://localhost:3000/report/${id}`)
 
-  // Send request to update status in database
-  fetch(`http://localhost:3000/report/${id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ status: "resolved" }),
-  })
-    .then((response) => {
-      console.log(`Resolve response status: ${response.status}`)
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/report/${id}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  
+  xhr.onload = function() {
+    console.log(`Resolve response status: ${xhr.status}`);
+    
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        
+        const idx = reportsData.findIndex((r) => {
+          const reportId = safeGet(r, "_id") || safeGet(r, "id")
+          return reportId === id
+        });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(`Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`)
+        if (idx > -1) {
+          reportsData[idx].status = "resolved"
+          updateStats()
+          applyFilters()
+          renderTable()
+          renderPagination()
+          showToast("Success", "Report has been resolved", "success")
         } else {
-          throw new Error(`Failed to resolve report. Status: ${response.status}`)
+          console.warn(`Report with ID ${id} was not found in local data`)
+          loadReports()
+        }
+
+        if (respondModalInstance) {
+          respondModalInstance.hide()
+        }
+      } catch (e) {
+        console.warn("Could not parse response, but request was successful:", e);
+        showToast("Success", "Report has been resolved", "success");
+        loadReports();
+        
+        if (respondModalInstance) {
+          respondModalInstance.hide()
         }
       }
-
-      return response.text().then((text) => {
-        try {
-          return JSON.parse(text)
-        } catch (e) {
-          return { success: true }
+    } else {
+      try {
+        const errorData = JSON.parse(xhr.responseText);
+        console.error("Error resolving report:", errorData);
+        showToast("Error", errorData.message || `Failed to resolve report. Status: ${xhr.status}`, "error");
+      } catch (e) {
+        console.error("Error parsing error response:", e);
+        if (xhr.status === 404) {
+          showToast("Error", `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`, "error");
+        } else {
+          showToast("Error", `Failed to resolve report. Status: ${xhr.status}`, "error");
         }
-      })
-    })
-    .then((data) => {
-      // Update local data
-      const idx = reportsData.findIndex((r) => {
-        const reportId = safeGet(r, "_id") || safeGet(r, "id")
-        return reportId === id
-      })
-
-      if (idx > -1) {
-        reportsData[idx].status = "resolved"
-        updateStats()
-        applyFilters()
-        renderTable()
-        renderPagination()
-        showToast("Success", "Report has been resolved", "success")
-      } else {
-        console.warn(`Report with ID ${id} was not found in local data`)
-        // Reload reports to ensure UI is in sync
-        loadReports()
       }
-
-      // Close modal
-      if (respondModalInstance) {
-        respondModalInstance.hide()
-      }
-    })
-    .catch((error) => {
-      console.error("Error resolving report:", error)
-      showToast("Error", error.message, "error")
-    })
-    .finally(() => {
-      // Reset button state
-      if (resolveBtn) {
-        resolveBtn.disabled = false
-        resolveBtn.textContent = originalText
-      }
-    })
+    }
+    
+    if (resolveBtn) {
+      resolveBtn.disabled = false
+      resolveBtn.textContent = originalText
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error("Network error occurred while resolving report");
+    showToast("Error", "Network error. Please check your connection.", "error");
+    
+    if (resolveBtn) {
+      resolveBtn.disabled = false
+      resolveBtn.textContent = originalText
+    }
+  };
+  
+  xhr.send(JSON.stringify({ status: "resolved" }));
 }
 
-// Replace the deleteReport function with this simplified version now that we know the correct endpoint
-
+// Deletes a report
 function deleteReport(id) {
-
   const token = getAuthToken()
   if (!token) return
 
@@ -1125,27 +1121,16 @@ function deleteReport(id) {
 
   console.log(`Attempting to delete report with ID: ${id}`)
   console.log(`API URL: http://localhost:3000/report/${id}`)
-  fetch(`http://localhost:3000/report/${id}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      console.log(`Delete response status: ${response.status}`)
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(
-            `Report with ID ${id} not found. The report may have been already deleted or the ID is incorrect.`,
-          )
-        } else {
-          throw new Error(`Failed to delete report. Status: ${response.status}`)
-        }
-      }
-
-      // Success - remove from local data
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `http://localhost:3000/report/${id}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  
+  xhr.onload = function() {
+    console.log(`Delete response status: ${xhr.status}`);
+    
+    if (xhr.status >= 200 && xhr.status < 300) {
       const idx = reportsData.findIndex((r) => {
         const reportId = safeGet(r, "_id") || safeGet(r, "id")
         return reportId === id
@@ -1161,39 +1146,56 @@ function deleteReport(id) {
       } else {
         console.warn(`Report with ID ${id} was not found in local data`)
         showToast("Success", "Report deleted successfully. Refreshing data...", "success")
-        // Reload reports to ensure UI is in sync
         loadReports()
       }
 
-      // Close modals
       if (deleteModalInstance) {
         deleteModalInstance.hide()
       }
       if (reportModalInstance) {
         reportModalInstance.hide()
       }
-    })
-    .catch((error) => {
-      console.error("Error deleting report:", error)
-      showToast("Error", error.message, "error")
-    })
-    .finally(() => {
-      // Reset button state
-      if (deleteBtn) {
-        deleteBtn.disabled = false
-        deleteBtn.textContent = originalText
+    } else {
+      try {
+        const errorData = JSON.parse(xhr.responseText);
+        console.error("Error deleting report:", errorData);
+        showToast("Error", errorData.message || `Failed to delete report. Status: ${xhr.status}`, "error");
+      } catch (e) {
+        console.error("Error parsing error response:", e);
+        if (xhr.status === 404) {
+          showToast("Error", `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`, "error");
+        } else {
+          showToast("Error", `Failed to delete report. Status: ${xhr.status}`, "error");
+        }
       }
-    })
+    }
+    
+    if (deleteBtn) {
+      deleteBtn.disabled = false
+      deleteBtn.textContent = originalText
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.error("Network error occurred while deleting report");
+    showToast("Error", "Network error. Please check your connection.", "error");
+    
+    if (deleteBtn) {
+      deleteBtn.disabled = false
+      deleteBtn.textContent = originalText
+    }
+  };
+  
+  xhr.send();
 }
 
-// Toast notification utility
+// Displays toast notifications
 function showToast(title, message, type) {
-  // Check if SweetAlert2 is available
   if (typeof window.Swal !== "undefined") {
     window.Swal.fire({
       title: `<span style="font-weight:bold;">${title}</span>`,
       html: `<p style="margin:0;">${message}</p>`,
-      icon: type, // 'success', 'error', 'warning', 'info', or 'question'
+      icon: type,
       toast: true,
       position: "top-end",
       showConfirmButton: false,
@@ -1213,12 +1215,11 @@ function showToast(title, message, type) {
       },
     })
   } else {
-    // Fallback to console if SweetAlert2 is not available
     console.log(`${type.toUpperCase()}: ${title} - ${message}`)
   }
 }
 
-// Debounce utility
+// Debounces a function
 function debounce(fn, wait) {
   let timer
   return function (...args) {
