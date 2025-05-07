@@ -13,4 +13,11 @@ module.exports = (app) => {
     app.post('/client/change-password/:id', auth, client.changePassword);
     app.get('/client/get', auth, authorize('admin', 'superAdmin','vendor','moderator'), client.getAll);
     app.get('/client/:id', auth, client.getById);
-};
+    
+    // New shipping address routes
+    app.post('/client/:id/shipping-address', auth, client.addShippingAddress);
+    app.get('/client/:id/shipping-address', auth, client.getShippingAddresses);
+    app.put('/client/:id/shipping-address/:addressId', auth, client.updateShippingAddress);
+    app.delete('/client/:id/shipping-address/:addressId', auth, client.deleteShippingAddress);
+    app.put('/client/:id/shipping-address/:addressId/default', auth, client.setDefaultShippingAddress);
+}; 

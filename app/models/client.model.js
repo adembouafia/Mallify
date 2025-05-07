@@ -50,7 +50,61 @@ const ClientSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       required: false
-    }
+    },
+    // New shipping information fields
+    shippingInfo: {
+      address: {
+        type: String,
+        required: false
+      },
+      city: {
+        type: String,
+        required: false
+      },
+      governorate: {
+        type: String,
+        required: false
+      },
+      postCode: {
+        type: String,
+        required: false
+      },
+      phone: {
+        type: String,
+        required: false
+      }
+    },
+    // Multiple saved addresses
+    savedAddresses: [{
+      name: {
+        type: String,
+        default: "Home"
+      },
+      address: {
+        type: String,
+        required: true
+      },
+      city: {
+        type: String,
+        required: true
+      },
+      governorate: {
+        type: String,
+        required: true
+      },
+      postCode: {
+        type: String,
+        required: true
+      },
+      phone: {
+        type: String,
+        required: true
+      },
+      isDefault: {
+        type: Boolean,
+        default: false
+      }
+    }]
   },
   {
     timestamps: true,

@@ -50,11 +50,11 @@ exports.createOrder = async (req, res) => {
       // Store complete product data, not just the ID
       const productData = {
         _id: product._id,
+        productId: product.productId,
         productName: product.productName,
         productPrice: product.productPrice,
         mainImage: product.mainImage,
         shop: product.shop,
-        // Add any other product fields you need
       }
 
       // Add complete item data to the shop's items

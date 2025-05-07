@@ -1,126 +1,130 @@
 // Global variables
-let currentPage = 1
-let itemsPerPage = 10
-let totalOrders = 0
-let orders = []
-let searchQuery = ""
-let currentOrder = null
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalOrders = 0;
+let orders = [];
+let searchQuery = "";
+let currentOrder = null;
 
 // DOM elements
-const ordersTableBody = document.querySelector("table tbody")
-const searchInput = document.querySelector('input[placeholder="Search..."]')
-const searchButton = document.querySelector(".input-group button")
-const entriesSelect = document.querySelector(".form-select")
-const paginationInfo = document.querySelector(".pagination-info")
-const paginationLinks = document.querySelector(".pagination")
+const ordersTableBody = document.querySelector("table tbody");
+const searchInput = document.querySelector('input[placeholder="Search..."]');
+const searchButton = document.querySelector(".input-group button");
+const entriesSelect = document.querySelector(".form-select");
+const paginationInfo = document.querySelector(".pagination-info");
+const paginationLinks = document.querySelector(".pagination");
 
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
   // Load orders on page load
-  const currentUrl = window.location.href
-  
+  const currentUrl = window.location.href;
+
   if (currentUrl.includes("detailsOrders.html")) {
     // We're on the order details page
-    loadOrderDetails()
+    loadOrderDetails();
   } else {
     // We're on the main orders page
-    loadOrders()
+    loadOrders();
   }
 
   // Set up event listeners
-  setupEventListeners()
-})
+  setupEventListeners();
+});
 
 // Set up event listeners for interactive elements
 function setupEventListeners() {
   // Search functionality
   if (searchButton) {
     searchButton.addEventListener("click", () => {
-      searchQuery = searchInput.value.trim()
-      currentPage = 1
-      loadOrders()
-    })
+      searchQuery = searchInput.value.trim();
+      currentPage = 1;
+      loadOrders();
+    });
   }
 
   if (searchInput) {
     searchInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
-        searchQuery = searchInput.value.trim()
-        currentPage = 1
-        loadOrders()
+        searchQuery = searchInput.value.trim();
+        currentPage = 1;
+        loadOrders();
       }
-    })
+    });
   }
 
   // Change number of entries displayed
   if (entriesSelect) {
     entriesSelect.addEventListener("change", () => {
-      itemsPerPage = Number.parseInt(entriesSelect.value)
-      currentPage = 1
-      loadOrders()
-    })
+      itemsPerPage = Number.parseInt(entriesSelect.value);
+      currentPage = 1;
+      loadOrders();
+    });
   }
 }
 
 // Function to load order details from URL parameters
 function loadOrderDetails() {
   // Get order ID from URL parameters
-  const urlParams = new URLSearchParams(window.location.search)
-  const orderId = urlParams.get("id")
-  
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get("id");
+
   if (!orderId) {
-    displayError("No order ID provided in the URL")
-    return
+    displayError("No order ID provided in the URL");
+    return;
   }
-  
+
   // Create loading indicator in the page content area
-  const contentArea = document.querySelector(".content-wrapper")
+  const contentArea = document.querySelector(".content-wrapper");
   if (contentArea) {
-    contentArea.innerHTML = '<div class="d-flex justify-content-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+    contentArea.innerHTML =
+      '<div class="d-flex justify-content-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
   }
-  
+
   // Get the auth token from localStorage
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "../login.html"
-    return
+    window.location.href = "../login.html";
+    return;
   }
-  
+
   // Create XHR request to get order details
-  const xhr = new XMLHttpRequest()
-  xhr.open("GET", `/order/${orderId}`, true)
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
-  xhr.setRequestHeader("Content-Type", "application/json")
-  
-  xhr.onload = function() {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onload = function () {
     if (xhr.status === 200) {
       try {
-        const response = JSON.parse(xhr.responseText)
-        currentOrder = response.order
-        displayOrderDetails(currentOrder)
+        const response = JSON.parse(xhr.responseText);
+        console.log("Order details response:", response);
+        currentOrder = response.order;
+        displayOrderDetails(currentOrder);
       } catch (error) {
-        console.error("Error parsing order details:", error)
-        displayError("Failed to parse order details")
+        console.error("Error parsing order details:", error);
+        displayError("Failed to parse order details");
       }
     } else {
-      console.error("Error fetching order details:", xhr.status)
-      displayError("Failed to load order details. Status: " + xhr.status)
+      console.error("Error fetching order details:", xhr.status);
+      displayError("Failed to load order details. Status: " + xhr.status);
     }
-  }
-  
-  xhr.onerror = function() {
-    console.error("Network error when fetching order details")
-    displayError("Network error. Please check your connection and try again.")
-  }
-  
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error when fetching order details");
+    displayError("Network error. Please check your connection and try again.");
+  };
+
   // Send the request
-  xhr.send()
+  xhr.send();
 }
 
 // Function to display order details in the UI
 function displayOrderDetails(order) {
   const contentArea = document.querySelector(".content-wrapper")
   if (!contentArea) return
+  
+  console.log("Displaying order details:", order)
   
   // Format order date
   let orderDate = new Date()
@@ -156,6 +160,76 @@ function displayOrderDetails(order) {
   const customerEmail = order.idClient?.email || ""
   const customerPhone = order.idClient?.phoneNumber || ""
   
+  // Get shipping details - first check if there's shipping details in the order
+  let shippingDetails = order.shippingDetails || {}
+  
+  // If no shipping details in order, check if client has shipping info
+  if (Object.keys(shippingDetails).length === 0 && order.idClient) {
+    console.log("Checking client for shipping info:", order.idClient)
+    
+    // Check for shippingInfo in the client model - THIS IS THE KEY CHANGE
+    if (order.idClient.shippingInfo) {
+      console.log("Found shipping info in client:", order.idClient.shippingInfo)
+      
+      const clientShippingInfo = order.idClient.shippingInfo
+      shippingDetails = {
+        firstname: firstName,
+        lastname: lastName,
+        address: clientShippingInfo.address,
+        city: clientShippingInfo.city,
+        governorate: clientShippingInfo.governorate,
+        postCode: clientShippingInfo.postCode,
+        phone: clientShippingInfo.phone || customerPhone
+      }
+    }
+    // Check for shipping addresses in the client model (as fallback)
+    else if (order.idClient.shippingAddresses && order.idClient.shippingAddresses.length > 0) {
+      console.log("Found shipping addresses in client:", order.idClient.shippingAddresses)
+      
+      // Get default shipping address or first one
+      const clientAddresses = order.idClient.shippingAddresses
+      const defaultAddress = clientAddresses.find(addr => addr.isDefault) || clientAddresses[0]
+      
+      shippingDetails = {
+        firstname: firstName,
+        lastname: lastName,
+        address: defaultAddress.address,
+        city: defaultAddress.city,
+        governorate: defaultAddress.governorate,
+        postCode: defaultAddress.postCode,
+        phone: defaultAddress.phone || customerPhone
+      }
+    } 
+    // If no shipping addresses array, check for defaultShippingInfo
+    else if (order.idClient.defaultShippingInfo) {
+      console.log("Found default shipping info in client:", order.idClient.defaultShippingInfo)
+      
+      const defaultInfo = order.idClient.defaultShippingInfo
+      shippingDetails = {
+        firstname: firstName,
+        lastname: lastName,
+        address: defaultInfo.address,
+        city: defaultInfo.city,
+        governorate: defaultInfo.governorate,
+        postCode: defaultInfo.postCode,
+        phone: defaultInfo.phone || customerPhone
+      }
+    }
+  }
+  
+  console.log("Final shipping details:", shippingDetails)
+  
+  // Use shipping details if available, otherwise fall back to client info
+  const shippingName = shippingDetails.firstname && shippingDetails.lastname 
+    ? `${shippingDetails.firstname} ${shippingDetails.lastname}`.trim() 
+    : customerName
+    
+  const shippingPhone = shippingDetails.phone || customerPhone || "No phone number provided"
+  const shippingAddress = shippingDetails.address || "No address provided"
+  const shippingCity = shippingDetails.city || "No city provided"
+  const shippingGovernorate = shippingDetails.governorate || "No governorate provided"
+  const shippingPostCode = shippingDetails.postCode || "No postal code provided"
+  
   // Calculate order details
   let subtotal = 0
   let items = []
@@ -176,15 +250,13 @@ function displayOrderDetails(order) {
       const itemTotal = price * quantity
       subtotal += itemTotal
      
-      // Use the same format as in product-dashboard.js
-      // First try to get the productId field that's used in the dashboard
-      let displayProductId = product.productId || "";
+      // FIXED: Access the productId field correctly based on your data structure
+      let displayProductId = "N/A";
       
-      if (!displayProductId && typeof product === 'object' && product !== null) {
-        // If productId field isn't available, use _id as fallback like in product-dashboard.js
-        if (product._id) {
-          displayProductId = product._id.toString().substring(0, 8);
-        }
+      // This is the key fix - product.productId is the field we want
+      if (product && product.productId) {
+        displayProductId = product.productId;
+        console.log("Using product.productId:", displayProductId);
       }
       
       items.push({
@@ -196,19 +268,16 @@ function displayOrderDetails(order) {
       })
     })
   } else {
+    console.warn("No cart items found in order:", order);
     // Fallback sample data if no items are found
     items = [
-      { id: "2541", quantity: 1, price: 80, total: 80 },
-      { id: "2541", quantity: 4, price: 80, total: 320 },
-      { id: "2541", quantity: 2, price: 80, total: 160 },
-      { id: "2541", quantity: 5, price: 10, total: 50 },
-      { id: "2541", quantity: 1, price: 80, total: 80 }
+      { id: "2541", name: "Product 1", quantity: 1, price: 80, total: 80 }
     ]
-    subtotal = 690.00
+    subtotal = 80.00
   }
   
   // Calculate total amount (no discount or tax)
-  const deliveryCharge = 0.00
+  const deliveryCharge = 15.00
   const totalAmount = (parseFloat(subtotal) + parseFloat(deliveryCharge)).toFixed(2)
   
   // Create the order details HTML
@@ -316,7 +385,7 @@ function displayOrderDetails(order) {
                     <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Make As Ready To Ship</a>
                   </div>
                 </div>
-              </div
+              </div>
               
               <br>
               
@@ -343,8 +412,8 @@ function displayOrderDetails(order) {
                             <td>${item.id || 'N/A'}</td>
                             <td>${item.name || 'N/A'}</td>
                             <td>${item.quantity}</td>
-                            <td>$${item.price.toFixed(2)}</td>
-                            <td>$${item.total.toFixed(2)}</td>
+                            <td>${item.price.toFixed(2)} DT</td>
+                            <td>${item.total.toFixed(2)} DT</td>
                           </tr>
                         `).join('')}
                       </tbody>
@@ -355,7 +424,7 @@ function displayOrderDetails(order) {
               <br>
             </div>
           </div>
-        </div
+        </div>
         
         <!-- Order Summary Column -->
         <div class="col-xl-3 col-lg-4">
@@ -375,7 +444,7 @@ function displayOrderDetails(order) {
                         </p>
                       </td>
                       <td class="text-end text-dark fw-medium px-0">
-                        $${subtotal.toFixed(2)}
+                        ${subtotal.toFixed(2)} DT
                       </td>
                     </tr>
                     <tr>
@@ -386,7 +455,7 @@ function displayOrderDetails(order) {
                         </p>
                       </td>
                       <td class="text-end text-dark fw-medium px-0">
-                        $${deliveryCharge.toFixed(2)}
+                        ${deliveryCharge.toFixed(2)} DT
                       </td>
                     </tr>
                   </tbody>
@@ -398,7 +467,7 @@ function displayOrderDetails(order) {
                 <p class="fw-medium text-dark mb-0">Total Amount</p>
               </div>
               <div>
-                <p class="fw-medium text-dark mb-0">$${totalAmount}</p>
+                <p class="fw-medium text-dark mb-0">${totalAmount} DT</p>
               </div>
             </div>
           </div>
@@ -429,7 +498,7 @@ function displayOrderDetails(order) {
                   <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
                 </div>
               </div>
-              <p class="mb-1">${customerPhone || "No phone number provided"}</p>
+              <p class="mb-1">${customerPhone || shippingPhone || "No phone number provided"}</p>
 
               <div class="d-flex justify-content-between mt-3">
                 <h5 class="card-title">Shipping Address</h5>
@@ -438,22 +507,13 @@ function displayOrderDetails(order) {
                 </div>
               </div>
 
-              <div>
-                <p class="mb-1">${customerName}</p>
-                <p class="mb-1">1344 Hershell Hollow Road ,</p>
-                <p class="mb-1">Tukwila, WA 98168 ,</p>
-                <p class="mb-1">United States</p>
-                <p class="">${customerPhone || "No phone number provided"}</p>
+              <div>                
+                <p class="m-2"><strong>Governorate:</strong> ${shippingGovernorate}</p>
+                <p class="m-2"><strong>City:</strong> ${shippingCity}</p>
+                <p class="m-2"><strong>Address:</strong> ${shippingAddress}</p>
+                <p class="m-2"><strong>Postal Code:</strong> ${shippingPostCode}</p>
               </div>
 
-              <div class="d-flex justify-content-between mt-3">
-                <h5 class="card-title">Billing Address</h5>
-                <div>
-                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
-                </div>
-              </div>
-
-              <p class="mb-1">Same as shipping address</p>
             </div>
           </div>
           <br>
@@ -471,88 +531,80 @@ function displayOrderDetails(order) {
 
 // Function to setup event listeners for order action buttons
 function setupOrderActionButtons(orderId) {
-  // Edit Order button
-  const editBtn = document.getElementById("edit-order-btn")
-  if (editBtn) {
-    editBtn.addEventListener("click", function() {
-      alert("Edit order functionality will be implemented here")
-    })
-  }
-  
   // Make as Ready to Ship button
-  const readyToShipBtn = document.getElementById("make-ready-ship-btn")
+  const readyToShipBtn = document.getElementById("make-ready-ship-btn");
   if (readyToShipBtn) {
-    readyToShipBtn.addEventListener("click", function() {
-      updateOrderStatus(orderId, "ready_for_shipping")
-    })
+    readyToShipBtn.addEventListener("click", function () {
+      updateOrderStatus(orderId, "ready_for_shipping");
+    });
   }
 }
 
 // Function to update order status via XHR
 function updateOrderStatus(orderId, status) {
   // Get the auth token from localStorage
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "../login.html"
-    return
+    window.location.href = "../login.html";
+    return;
   }
-  
+
   // Create XHR request to update order status
-  const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `/order/status/${orderId}`, true)
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
-  xhr.setRequestHeader("Content-Type", "application/json")
-  
-  xhr.onload = function() {
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/order/status/${orderId}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onload = function () {
     if (xhr.status === 200) {
       try {
         // Refresh the order details to show updated status
-        loadOrderDetails()
-        
+        loadOrderDetails();
+
         // Show success message
         Swal.fire({
           title: "Success!",
           text: `Order successfully marked as ${status.replace("_", " ")}`,
           icon: "success",
-          confirmButtonText: "OK"
-        })
+          confirmButtonText: "OK",
+        });
       } catch (error) {
-        console.error("Error parsing update response:", error)
+        console.error("Error parsing update response:", error);
         Swal.fire({
           title: "Error!",
           text: "Failed to update order status",
           icon: "error",
-          confirmButtonText: "OK"
-        })
+          confirmButtonText: "OK",
+        });
       }
     } else {
-      console.error("Error updating order status:", xhr.status)
+      console.error("Error updating order status:", xhr.status);
       Swal.fire({
         title: "Error!",
         text: "Failed to update order status. Please try again.",
         icon: "error",
-        confirmButtonText: "OK"
-      })
+        confirmButtonText: "OK",
+      });
     }
-  }
-  
-  xhr.onerror = function() {
-    console.error("Network error when updating order status")
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error when updating order status");
     Swal.fire({
       title: "Network Error",
       text: "Please check your connection and try again.",
       icon: "error",
-      confirmButtonText: "OK"
-    })
-  }
-  
+      confirmButtonText: "OK",
+    });
+  };
+
   // Send the request with status data
-  xhr.send(JSON.stringify({ status: status }))
+  xhr.send(JSON.stringify({ status: status }));
 }
 
 // Display error message
 function displayError(message) {
-  const contentArea = document.querySelector(".content-wrapper")
+  const contentArea = document.querySelector(".content-wrapper");
   if (contentArea) {
     contentArea.innerHTML = `
       <div class="alert alert-danger m-4">
@@ -560,142 +612,175 @@ function displayError(message) {
         <p>${message}</p>
         <a href="orders.html" class="btn btn-primary mt-2">Back to Orders</a>
       </div>
-    `
+    `;
   }
 }
 
-async function loadOrders() {
-  try {
-    if (ordersTableBody) {
-      ordersTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Loading orders...</td></tr>'
-    }
-
-    // Get the authentication token from localStorage
-    const token = localStorage.getItem("token")
-    if (!token) {
-      window.location.href = "../login.html"
-      return
-    }
-
-    // Fetch orders from the API
-    const response = await fetch("/order", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch orders")
-    }
-
-    const data = await response.json()
-    orders = data.orders
-
-    // Update order counts
-    updateOrderCounts()
-
-    // Filter orders if search query exists
-    if (searchQuery) {
-      orders = filterOrders(orders, searchQuery)
-    }
-
-    // Update total orders count
-    totalOrders = orders.length
-
-    // Calculate pagination
-    const totalPages = Math.ceil(totalOrders / itemsPerPage)
-    const startIndex = (currentPage - 1) * itemsPerPage
-    const endIndex = Math.min(startIndex + itemsPerPage, totalOrders)
-
-    // Display orders for current page
-    displayOrders(orders.slice(startIndex, endIndex))
-
-    // Update pagination info
-    updatePaginationInfo(startIndex, endIndex, totalOrders)
-
-    // Update pagination links
-    updatePaginationLinks(currentPage, totalPages)
-  } catch (error) {
-    console.error("Error loading orders:", error)
-    if (ordersTableBody) {
-      ordersTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error loading orders: ${error.message}</td></tr>`
-    }
+// Function to load orders using XHR instead of fetch
+function loadOrders() {
+  // Show loading indicator
+  if (ordersTableBody) {
+    ordersTableBody.innerHTML =
+      '<tr><td colspan="8" class="text-center">Loading orders...</td></tr>';
   }
+
+  // Get the authentication token from localStorage
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  // Create XHR request to get orders
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/order", true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        orders = data.orders;
+
+        // Update order counts
+        updateOrderCounts();
+
+        // Filter orders if search query exists
+        if (searchQuery) {
+          orders = filterOrders(orders, searchQuery);
+        }
+
+        // Update total orders count
+        totalOrders = orders.length;
+
+        // Calculate pagination
+        const totalPages = Math.ceil(totalOrders / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalOrders);
+
+        // Display orders for current page
+        displayOrders(orders.slice(startIndex, endIndex));
+
+        // Update pagination info
+        updatePaginationInfo(startIndex, endIndex, totalOrders);
+
+        // Update pagination links
+        updatePaginationLinks(currentPage, totalPages);
+      } catch (error) {
+        console.error("Error parsing orders data:", error);
+        if (ordersTableBody) {
+          ordersTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error parsing orders data: ${error.message}</td></tr>`;
+        }
+      }
+    } else {
+      console.error("Error fetching orders:", xhr.status);
+      if (ordersTableBody) {
+        ordersTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error loading orders. Status: ${xhr.status}</td></tr>`;
+      }
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error when fetching orders");
+    if (ordersTableBody) {
+      ordersTableBody.innerHTML =
+        '<tr><td colspan="8" class="text-center text-danger">Network error. Please check your connection and try again.</td></tr>';
+    }
+  };
+
+  // Send the request
+  xhr.send();
 }
 
 function filterOrders(orders, query) {
-  query = query.toLowerCase()
+  query = query.toLowerCase();
   return orders.filter((order) => {
     // Search in order ID
-    if (order._id && order._id.toLowerCase().includes(query)) return true
+    if (order._id && order._id.toLowerCase().includes(query)) return true;
 
     // Search in customer name
-    if (order.idClient && order.idClient.name && order.idClient.name.toLowerCase().includes(query)) return true
+    if (
+      order.idClient &&
+      order.idClient.firstname &&
+      order.idClient.firstname.toLowerCase().includes(query)
+    )
+      return true;
+    if (
+      order.idClient &&
+      order.idClient.lastname &&
+      order.idClient.lastname.toLowerCase().includes(query)
+    )
+      return true;
 
     // Add more fields to search as needed
 
-    return false
-  })
+    return false;
+  });
 }
 
 function displayOrders(ordersToDisplay) {
-  if (!ordersTableBody) return
+  if (!ordersTableBody) return;
 
   if (ordersToDisplay.length === 0) {
-    ordersTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No orders found</td></tr>'
-    return
+    ordersTableBody.innerHTML =
+      '<tr><td colspan="8" class="text-center">No orders found</td></tr>';
+    return;
   }
 
-  ordersTableBody.innerHTML = ""
+  ordersTableBody.innerHTML = "";
 
   ordersToDisplay.forEach((order) => {
-    let total = order.orderTotal || 0
-    let itemCount = 0
+    let total = order.orderTotal || 0;
+    let itemCount = 0;
 
     // Use the new cartData field instead of idPanier
     if (order.cartData && order.cartData.items) {
-      itemCount = order.cartData.items.length
+      itemCount = order.cartData.items.length;
 
       // If orderTotal is not set, calculate it from cartData
       if (!order.orderTotal) {
-        total = 0
+        total = 0;
         order.cartData.items.forEach((item) => {
-          const price = Number.parseFloat(item.productId.productPrice) || 0
-          const quantity = Number.parseInt(item.quantity) || 0
-          total += price * quantity
-        })
+          const price = Number.parseFloat(item.productId.productPrice) || 0;
+          const quantity = Number.parseInt(item.quantity) || 0;
+          total += price * quantity;
+        });
       }
     }
 
     // Use a try-catch block for date formatting to handle invalid dates
-    let formattedDate = "Invalid Date"
+    let formattedDate = "Invalid Date";
     try {
-      const orderDate = new Date(order.dateCommande)
+      const orderDate = new Date(order.dateCommande);
       if (!isNaN(orderDate.getTime())) {
         formattedDate = orderDate.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "numeric",
-        })
+        });
       }
     } catch (e) {
-      console.error("Error formatting date:", e)
+      console.error("Error formatting date:", e);
     }
 
     // Format customer name with proper checks
-    const firstName = order.idClient && order.idClient.firstname ? order.idClient.firstname : ""
-    const lastName = order.idClient && order.idClient.lastname ? order.idClient.lastname : ""
-    const customerName = firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown"
+    const firstName =
+      order.idClient && order.idClient.firstname
+        ? order.idClient.firstname
+        : "";
+    const lastName =
+      order.idClient && order.idClient.lastname ? order.idClient.lastname : "";
+    const customerName =
+      firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown";
 
     // Create table row
-    const row = document.createElement("tr")
+    const row = document.createElement("tr");
     row.innerHTML = `
             <td>#${order._id ? order._id.substring(0, 8) : "N/A"}</td>
             <td>${formattedDate}</td>
             <td>${customerName}</td>
-            <td>$${total.toFixed(2)}</td>
+            <td>${total.toFixed(2)} DT</td>
             <td>${itemCount}</td>
             <td>#D-${Math.floor(Math.random() * 10000000)}</td>
             <td>Pending</td>
@@ -707,58 +792,58 @@ function displayOrders(ordersToDisplay) {
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
-        `
+        `;
 
-    ordersTableBody.appendChild(row)
-  })
+    ordersTableBody.appendChild(row);
+  });
 
   // Add event listeners to delete buttons
   document.querySelectorAll(".delete-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id")
-      confirmDeleteOrder(orderId)
-    })
-  })
+      const orderId = e.currentTarget.getAttribute("data-id");
+      confirmDeleteOrder(orderId);
+    });
+  });
 }
 
 // Update order counts in the info boxes
 function updateOrderCounts() {
-  if (!orders) return
+  if (!orders) return;
 
   // Safely update the order count displays
-  updateCountDisplay(".info-box:nth-child(1) .info-box-number", orders.length)
-  updateCountDisplay(".info-box:nth-child(2) .info-box-number", "0") // Shipped orders
-  updateCountDisplay(".info-box:nth-child(3) .info-box-number", "0") // Cancelled orders
-  updateCountDisplay(".info-box:nth-child(4) .info-box-number", "0") // Refunded orders
+  updateCountDisplay(".info-box:nth-child(1) .info-box-number", orders.length);
+  updateCountDisplay(".info-box:nth-child(2) .info-box-number", "0"); // Shipped orders
+  updateCountDisplay(".info-box:nth-child(3) .info-box-number", "0"); // Cancelled orders
+  updateCountDisplay(".info-box:nth-child(4) .info-box-number", "0"); // Refunded orders
 }
 
 // Helper function to safely update count displays
 function updateCountDisplay(selector, value) {
-  const element = document.querySelector(selector)
+  const element = document.querySelector(selector);
   if (element) {
-    element.textContent = value
+    element.textContent = value;
   }
 }
 
 // Update pagination information text
 function updatePaginationInfo(start, end, total) {
   if (paginationInfo) {
-    paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${total} entries`
+    paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${total} entries`;
   }
 }
 
 // Update pagination links
 function updatePaginationLinks(currentPage, totalPages) {
-  if (!paginationLinks) return
+  if (!paginationLinks) return;
 
-  let html = ""
+  let html = "";
 
   // Previous button
   html += `
         <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
             <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
         </li>
-    `
+    `;
 
   // Page numbers
   for (let i = 1; i <= totalPages; i++) {
@@ -766,7 +851,7 @@ function updatePaginationLinks(currentPage, totalPages) {
             <li class="page-item ${i === currentPage ? "active" : ""}">
                 <a class="page-link" href="#" data-page="${i}">${i}</a>
             </li>
-        `
+        `;
   }
 
   // Next button
@@ -774,21 +859,21 @@ function updatePaginationLinks(currentPage, totalPages) {
         <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
             <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
         </li>
-    `
+    `;
 
-  paginationLinks.innerHTML = html
+  paginationLinks.innerHTML = html;
 
   // Add event listeners to pagination links
   document.querySelectorAll(".page-link").forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault()
-      const page = Number.parseInt(e.currentTarget.getAttribute("data-page"))
+      e.preventDefault();
+      const page = Number.parseInt(e.currentTarget.getAttribute("data-page"));
       if (page && page !== currentPage && page > 0 && page <= totalPages) {
-        currentPage = page
-        loadOrders()
+        currentPage = page;
+        loadOrders();
       }
-    })
-  })
+    });
+  });
 }
 
 //delete functions
@@ -796,37 +881,43 @@ function updatePaginationLinks(currentPage, totalPages) {
 // Confirm and delete an order
 function confirmDeleteOrder(orderId) {
   if (confirm("Are you sure you want to delete this order?")) {
-    deleteOrder(orderId)
+    deleteOrder(orderId);
   }
 }
 
-// Delete an order via API
-async function deleteOrder(orderId) {
-  try {
-    const token = localStorage.getItem("token")
-    if (!token) {
-      window.location.href = "../login.html"
-      return
-    }
-
-    const response = await fetch(`/order/delete/${orderId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to delete order")
-    }
-
-    loadOrders()
-    alert("Order deleted successfully")
-  } catch (error) {
-    console.error("Error deleting order:", error)
-    alert(`Error deleting order: ${error.message}`)
+// Delete an order via XHR instead of fetch
+function deleteOrder(orderId) {
+  // Get the authentication token from localStorage
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login.html";
+    return;
   }
+
+  // Create XHR request to delete order
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `http://localhost:3000/order/delete/${orderId}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      // Reload orders after successful deletion
+      loadOrders();
+      alert("Order deleted successfully");
+    } else {
+      console.error("Error deleting order:", xhr.status);
+      alert(`Error deleting order. Status: ${xhr.status}`);
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error when deleting order");
+    alert("Network error. Please check your connection and try again.");
+  };
+
+  // Send the request
+  xhr.send();
 }
 
 //end delete functions

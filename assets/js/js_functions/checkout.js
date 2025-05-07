@@ -1,23 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Checkout page loaded")
 
-  // Debug localStorage to see what we have available
+  // Debug localStorage to see what we have available (keeping this for debugging)
   debugLocalStorage()
 
-  // First, try to load data from localStorage for immediate display
-  populateFormFromLocalStorage()
-
-  // Load cart products directly without authentication check
-  loadCartProductsDirectly()
+  // Load user data and cart products directly from the server
+  loadUserDataAndCart()
 
   // Debug form field selectors
   debugFormFields()
-
-  // Try to manually set form values as a last resort
-  setTimeout(manuallySetFormValues, 500)
 })
 
-// Function to debug localStorage
+// Function to debug localStorage (keeping for debugging purposes)
 function debugLocalStorage() {
   console.log("Debugging localStorage contents:")
   for (let i = 0; i < localStorage.length; i++) {
@@ -35,99 +29,6 @@ function debugLocalStorage() {
 
     console.log(`${key}:`, value)
   }
-}
-
-// Function to manually set form values as a last resort
-function manuallySetFormValues() {
-  console.log("Attempting to manually set form values")
-
-  // Try to get data from complete userData object first (most reliable)
-  const userDataStr = localStorage.getItem("userData")
-  if (userDataStr) {
-    try {
-      const userData = JSON.parse(userDataStr)
-      console.log("Using complete userData from localStorage:", userData)
-
-      // Set values directly by ID
-      setFieldValue("firstname", userData.firstname)
-      setFieldValue("lastname", userData.lastname)
-      setFieldValue("email", userData.email)
-      setFieldValue("governorate", userData.governorate)
-      setFieldValue("city", userData.city)
-      setFieldValue("address", userData.address)
-      setFieldValue("phone", userData.phone)
-      setFieldValue("postCode", userData.postCode)
-
-      return // Exit if we successfully populated from userData
-    } catch (error) {
-      console.error("Error parsing userData from localStorage:", error)
-    }
-  }
-
-  // Try to get data from checkoutClientData
-  const clientDataStr = localStorage.getItem("checkoutClientData")
-  if (clientDataStr) {
-    try {
-      const clientData = JSON.parse(clientDataStr)
-
-      // Check if we have data in camelCase format (firstName) or lowercase (firstname)
-      const firstName = clientData.firstName || clientData.firstname || ""
-      const lastName = clientData.lastName || clientData.lastname || ""
-      const email = clientData.email || ""
-
-      console.log("Manual population with:", { firstName, lastName, email })
-
-      // Set values directly by ID
-      setFieldValue("firstname", firstName)
-      setFieldValue("lastname", lastName)
-      setFieldValue("email", email)
-
-      // Try other fields too
-      setFieldValue("governorate", clientData.governorate)
-      setFieldValue("city", clientData.city)
-      setFieldValue("address", clientData.address)
-      setFieldValue("phone", clientData.phone)
-      setFieldValue("postCode", clientData.postCode)
-
-      return // Exit if we successfully populated from checkoutClientData
-    } catch (error) {
-      console.error("Error in manual form population:", error)
-    }
-  }
-
-  // If we get here, try to get data from individual localStorage items
-  console.log("Trying individual localStorage items")
-
-  // Try to get values from user_* prefixed items
-  setFieldValue("firstname", localStorage.getItem("user_firstname"))
-  setFieldValue("lastname", localStorage.getItem("user_lastname"))
-  setFieldValue("email", localStorage.getItem("user_email"))
-  setFieldValue("governorate", localStorage.getItem("user_governorate"))
-  setFieldValue("city", localStorage.getItem("user_city"))
-  setFieldValue("address", localStorage.getItem("user_address"))
-  setFieldValue("phone", localStorage.getItem("user_phone"))
-  setFieldValue("postCode", localStorage.getItem("user_postCode"))
-
-  // Try to get values from user* prefixed items
-  setFieldValue("firstname", localStorage.getItem("userFirstName"))
-  setFieldValue("lastname", localStorage.getItem("userLastName"))
-  setFieldValue("email", localStorage.getItem("userEmail"))
-
-  // Try to get email from loginEmail
-  setFieldValue("email", localStorage.getItem("loginEmail"))
-}
-
-// Helper function to set field value if not already set
-function setFieldValue(fieldId, value) {
-  if (!value) return false
-
-  const field = document.getElementById(fieldId)
-  if (field && !field.value) {
-    field.value = value
-    console.log(`Set ${fieldId} to "${value}"`)
-    return true
-  }
-  return false
 }
 
 // Function to debug form fields
@@ -157,8 +58,8 @@ function debugFormFields() {
   })
 }
 
-// Function to load cart products directly without authentication check
-function loadCartProductsDirectly() {
+// Main function to load user data and cart
+function loadUserDataAndCart() {
   // Get client ID and token from localStorage
   const clientId = localStorage.getItem("userId")
   const token = localStorage.getItem("token")
@@ -172,21 +73,19 @@ function loadCartProductsDirectly() {
     return
   }
 
-  // Try to load user data from localStorage
-  const userType = localStorage.getItem("userType")
-  if (userType === "client") {
-    // Try to get user details directly from API
-    loadUserDetails(clientId, token)
-  }
+  // Load client data and shipping addresses
+  loadClientData(clientId, token)
 
-  // Load cart products directly
+  // Load cart products
   loadCartProducts(clientId, token)
+
+  // Setup place order button
   setupPlaceOrderButton(clientId, token)
 }
 
-// Function to load user details
-function loadUserDetails(clientId, token) {
-  console.log("Attempting to load user details for client ID:", clientId)
+// Function to load client data including shipping addresses
+function loadClientData(clientId, token) {
+  console.log("Loading client data for ID:", clientId)
 
   // Check token format and fix if needed
   let authToken = token
@@ -194,204 +93,166 @@ function loadUserDetails(clientId, token) {
     authToken = "Bearer " + token
   }
 
+  // First, get the client's basic information
   const xhr = new XMLHttpRequest()
   xhr.open("GET", `http://localhost:3000/client/${clientId}`, true)
   xhr.setRequestHeader("Authorization", authToken)
   xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
-    console.log("User details response status:", xhr.status)
+    console.log("Client data response status:", xhr.status)
 
     if (xhr.status === 200) {
       try {
-        const userData = JSON.parse(xhr.responseText)
-        console.log("User data loaded from server:", userData)
+        const clientData = JSON.parse(xhr.responseText)
+        console.log("Client data loaded from server:", clientData)
 
-        // Store the complete user data
-        localStorage.setItem("userData", JSON.stringify(userData))
+        // Populate form with client data
+        populateClientForm(clientData)
 
-        // Process and store user data
-        processUserData(userData)
+        // Now get the client's shipping addresses
+        loadShippingAddresses(clientId, authToken)
       } catch (error) {
-        console.error("Error parsing user data:", error)
+        console.error("Error parsing client data:", error)
       }
     } else {
-      console.error("Failed to load user details. Status:", xhr.status)
+      console.error("Failed to load client data. Status:", xhr.status)
       console.error("Response:", xhr.responseText)
-
-      // If we get a 403, try to use any data we have in localStorage
-      if (xhr.status === 403) {
-        console.log("Using localStorage data due to 403 error")
-
-        // Try to use the complete userData object if available
-        const userDataStr = localStorage.getItem("userData")
-        if (userDataStr) {
-          try {
-            const userData = JSON.parse(userDataStr)
-            processUserData(userData)
-            return
-          } catch (error) {
-            console.error("Error parsing userData from localStorage:", error)
-          }
-        }
-
-        // Fall back to email if available
-        const email = localStorage.getItem("loginEmail") || localStorage.getItem("userEmail")
-        if (email) {
-          // Create a minimal user data object
-          const minimalUserData = {
-            email: email,
-            firstname: localStorage.getItem("userFirstName") || "",
-            lastname: localStorage.getItem("userLastName") || "",
-          }
-          processUserData(minimalUserData)
-        }
-      }
+      showAuthError("Erreur lors du chargement des données client.")
     }
   }
 
   xhr.onerror = () => {
-    console.error("User details request failed")
+    console.error("Client data request failed")
   }
 
   xhr.send()
 }
 
-// Function to process user data
-function processUserData(userData) {
-  // Check if we need to access a nested property
-  let clientData = userData
-  if (userData.client) clientData = userData.client
-  else if (userData.data) clientData = userData.data
+// Function to load shipping addresses
+function loadShippingAddresses(clientId, token) {
+  console.log("Loading shipping addresses for client ID:", clientId)
 
-  console.log("Processing client data:", clientData)
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/client/${clientId}/shipping-address`, true)
+  xhr.setRequestHeader("Authorization", token)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
-  // Create a standardized object to store in localStorage
-  const clientInfo = {
-    // Store both camelCase and lowercase versions for maximum compatibility
-    firstname: clientData.firstname || clientData.firstName || clientData.first_name || "",
-    firstName: clientData.firstname || clientData.firstName || clientData.first_name || "",
-    lastname: clientData.lastname || clientData.lastName || clientData.last_name || "",
-    lastName: clientData.lastname || clientData.lastName || clientData.last_name || "",
-    email: clientData.email || clientData.emailAddress || clientData.email_address || "",
-    governorate: clientData.governorate || clientData.Governorate || "",
-    city: clientData.city || clientData.City || "",
-    address: clientData.address || clientData.Address || clientData.streetAddress || "",
-    phone: clientData.phone || clientData.Phone || clientData.phoneNumber || clientData.telephone || "",
-    postCode: clientData.postCode || clientData.PostCode || clientData.postalCode || clientData.zipCode || "",
-  }
+  xhr.onload = () => {
+    console.log("Shipping addresses response status:", xhr.status)
 
-  console.log("Standardized client info:", clientInfo)
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Shipping addresses loaded:", response)
 
-  // Store individual fields in localStorage for easier access
-  if (clientInfo.firstname) localStorage.setItem("userFirstName", clientInfo.firstname)
-  if (clientInfo.lastname) localStorage.setItem("userLastName", clientInfo.lastname)
-  if (clientInfo.email) localStorage.setItem("userEmail", clientInfo.email)
-
-  // Store each field with user_ prefix
-  for (const [key, value] of Object.entries(clientInfo)) {
-    if (value) {
-      localStorage.setItem(`user_${key}`, value)
-    }
-  }
-
-  // Store in localStorage
-  localStorage.setItem("checkoutClientData", JSON.stringify(clientInfo))
-  console.log("Client data saved to localStorage")
-
-  // Populate form fields - try multiple selector approaches
-  populateFormFields(clientInfo)
-}
-
-// Function to populate form fields using multiple approaches
-function populateFormFields(clientInfo) {
-  console.log("Attempting to populate form fields with:", clientInfo)
-
-  // Try ID selectors first (most reliable)
-  // Try both camelCase and lowercase versions
-  const firstNamePopulated = populateField("#firstname", clientInfo.firstname || clientInfo.firstName)
-  const lastNamePopulated = populateField("#lastname", clientInfo.lastname || clientInfo.lastName)
-  const emailPopulated = populateField("#email", clientInfo.email)
-
-  // Continue with other fields
-  populateField("#governorate", clientInfo.governorate)
-  populateField("#city", clientInfo.city)
-  populateField("#address", clientInfo.address)
-  populateField("#phone", clientInfo.phone)
-  populateField("#postCode", clientInfo.postCode)
-
-  // If any field failed to populate, try by placeholder
-  if (!firstNamePopulated || !lastNamePopulated || !emailPopulated) {
-    console.log("Some fields failed to populate by ID, trying by placeholder")
-
-    // Try placeholder selectors as fallback
-    if (!firstNamePopulated) {
-      populateField('input[placeholder="First Name"]', clientInfo.firstname || clientInfo.firstName)
-    }
-
-    if (!lastNamePopulated) {
-      populateField('input[placeholder="Last Name"]', clientInfo.lastname || clientInfo.lastName)
-    }
-
-    if (!emailPopulated) {
-      populateField('input[placeholder="Email Address"]', clientInfo.email)
-    }
-  }
-}
-
-// Function to show authentication error
-function showAuthError(message) {
-  // Check if SweetAlert2 is available
-  if (typeof Swal !== "undefined") {
-    Swal.fire({
-      icon: "error",
-      title: "Erreur d'authentification",
-      text: message,
-      confirmButtonColor: "#3b82f6",
-      confirmButtonText: "Se connecter",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "account.html"
+        // If there are saved addresses, populate the form with the default one
+        if (response.addresses && response.addresses.length > 0) {
+          const defaultAddress = response.addresses.find(addr => addr.isDefault) || response.addresses[0]
+          populateShippingForm(defaultAddress)
+          
+          // If we have multiple addresses, create a dropdown to select them
+          if (response.addresses.length > 1) {
+            createAddressSelector(response.addresses)
+          }
+        } else if (response.defaultShippingInfo) {
+          // If no saved addresses but there's default shipping info
+          populateShippingForm(response.defaultShippingInfo)
+        }
+      } catch (error) {
+        console.error("Error parsing shipping addresses:", error)
       }
-    })
-  } else {
-    alert(message)
-    window.location.href = "account.html"
+    } else if (xhr.status === 404) {
+      // This is fine - the client might not have any saved addresses yet
+      console.log("No shipping addresses found for this client")
+    } else {
+      console.error("Failed to load shipping addresses. Status:", xhr.status)
+    }
+  }
+
+  xhr.onerror = () => {
+    console.error("Shipping addresses request failed")
+  }
+
+  xhr.send()
+}
+
+// Function to populate client form with basic info
+function populateClientForm(clientData) {
+  console.log("Populating client form with:", clientData)
+
+  // Populate name and email fields
+  populateField("#firstname", clientData.firstname)
+  populateField("#lastname", clientData.lastname)
+  populateField("#email", clientData.email)
+  
+  // Populate phone if available
+  if (clientData.phoneNumber) {
+    populateField("#phone", clientData.phoneNumber)
   }
 }
 
-// Function to populate form from localStorage
-function populateFormFromLocalStorage() {
-  // Try to get client data from localStorage
-  const clientDataStr = localStorage.getItem("checkoutClientData")
-  if (clientDataStr) {
-    try {
-      const clientData = JSON.parse(clientDataStr)
-      console.log("Populating form from localStorage:", clientData)
+// Function to populate shipping form fields
+function populateShippingForm(shippingData) {
+  console.log("Populating shipping form with:", shippingData)
 
-      // Use the enhanced population function
-      populateFormFields(clientData)
-    } catch (error) {
-      console.error("Error parsing client data from localStorage:", error)
-    }
-  }
+  // Populate shipping fields
+  if (shippingData.address) populateField("#address", shippingData.address)
+  if (shippingData.city) populateField("#city", shippingData.city)
+  if (shippingData.governorate) populateField("#governorate", shippingData.governorate)
+  if (shippingData.postCode) populateField("#postCode", shippingData.postCode)
+  if (shippingData.phone) populateField("#phone", shippingData.phone)
+}
 
-  // Try to load cart data from localStorage
-  const cartDataStr = localStorage.getItem("checkoutCartData")
-  if (cartDataStr) {
-    try {
-      const cartData = JSON.parse(cartDataStr)
-      console.log("Rendering cart from localStorage:", cartData)
-      renderCheckoutSidebar(
-        cartData.items || [],
-        cartData.subtotal || 0,
-        cartData.shippingFee || 15,
-        cartData.total || 15,
-      )
-    } catch (error) {
-      console.error("Error parsing cart data from localStorage:", error)
-    }
+// Function to create address selector dropdown
+function createAddressSelector(addresses) {
+  console.log("Creating address selector with", addresses.length, "addresses")
+  
+  // Check if we already have a form container to add this to
+  const formContainer = document.querySelector(".checkout-form") || document.querySelector("form")
+  if (!formContainer) {
+    console.error("Could not find form container for address selector")
+    return
   }
+  
+  // Create a container for the address selector
+  const selectorContainer = document.createElement("div")
+  selectorContainer.className = "mb-24"
+  
+  // Create a label
+  const label = document.createElement("label")
+  label.className = "text-gray-900 font-heading-two text-md fw-medium mb-12 block"
+  label.textContent = "Adresses enregistrées"
+  
+  // Create the select element
+  const select = document.createElement("select")
+  select.id = "savedAddressSelector"
+  select.className = "form-control w-full h-56 rounded-8 border border-gray-200 px-16 text-gray-900 text-md"
+  
+  // Add options for each address
+  addresses.forEach((address, index) => {
+    const option = document.createElement("option")
+    option.value = index
+    option.textContent = address.name || `Adresse ${index + 1}`
+    if (address.isDefault) {
+      option.selected = true
+    }
+    select.appendChild(option)
+  })
+  
+  // Add event listener to update form when selection changes
+  select.addEventListener("change", () => {
+    const selectedIndex = select.value
+    populateShippingForm(addresses[selectedIndex])
+  })
+  
+  // Assemble and insert into the DOM
+  selectorContainer.appendChild(label)
+  selectorContainer.appendChild(select)
+  
+  // Insert at the beginning of the form
+  const firstFormElement = formContainer.firstChild
+  formContainer.insertBefore(selectorContainer, firstFormElement)
 }
 
 // Helper function to safely populate a field if the value exists
@@ -443,28 +304,19 @@ function loadCartProducts(clientId, token) {
           const shippingFee = 15 // 15 DT shipping fee
           const total = subtotal + shippingFee
 
-          // Store cart data in localStorage
+          // Store cart data in localStorage (just for the cart ID and totals)
           const cartData = {
             id: response.cart._id,
-            items: response.cart.items,
             subtotal: subtotal,
             shippingFee: shippingFee,
             total: total,
           }
           localStorage.setItem("checkoutCartData", JSON.stringify(cartData))
-          console.log("Cart data saved to localStorage")
 
           // Render the cart
           renderCheckoutSidebar(response.cart.items, subtotal, shippingFee, total)
         } else {
           // Empty cart
-          const emptyCartData = {
-            items: [],
-            subtotal: 0,
-            shippingFee: 15,
-            total: 15,
-          }
-          localStorage.setItem("checkoutCartData", JSON.stringify(emptyCartData))
           renderCheckoutSidebar([], 0, 15, 15)
         }
       } catch (error) {
@@ -551,11 +403,6 @@ function renderCheckoutSidebar(cartItems, subtotal, shippingFee, total) {
     `
 
   sidebarContainer.appendChild(paymentSection)
-
-  // Store the total price for later use
-  localStorage.setItem("checkoutTotal", total.toFixed(2))
-  localStorage.setItem("checkoutSubtotal", subtotal.toFixed(2))
-  localStorage.setItem("checkoutShippingFee", shippingFee.toFixed(2))
 }
 
 // Function to set up the place order button
@@ -570,38 +417,14 @@ function setupPlaceOrderButton(clientId, token) {
   placeOrderButton.addEventListener("click", (e) => {
     e.preventDefault()
 
-    // Save form data to localStorage before placing order
-    saveFormDataToLocalStorage()
-
-    placeOrder(clientId, token)
+    // Save shipping info to client profile before placing order
+    saveShippingInfo(clientId, token, () => {
+      placeOrder(clientId, token)
+    })
   })
 
-  // Set up form field change listeners to save data as user types
+  // Set up form field change listeners
   setupFormChangeListeners()
-}
-
-// Function to save form data to localStorage
-function saveFormDataToLocalStorage() {
-  try {
-    const clientInfo = {
-      // Store both camelCase and lowercase versions for maximum compatibility
-      firstname: document.querySelector("#firstname")?.value || "",
-      firstName: document.querySelector("#firstname")?.value || "",
-      lastname: document.querySelector("#lastname")?.value || "",
-      lastName: document.querySelector("#lastname")?.value || "",
-      email: document.querySelector("#email")?.value || "",
-      governorate: document.querySelector("#governorate")?.value || "",
-      city: document.querySelector("#city")?.value || "",
-      address: document.querySelector("#address")?.value || "",
-      phone: document.querySelector("#phone")?.value || "",
-      postCode: document.querySelector("#postCode")?.value || "",
-    }
-
-    localStorage.setItem("checkoutClientData", JSON.stringify(clientInfo))
-    console.log("Form data saved to localStorage")
-  } catch (error) {
-    console.error("Error saving form data to localStorage:", error)
-  }
 }
 
 // Function to set up form change listeners
@@ -621,10 +444,171 @@ function setupFormChangeListeners() {
   formFields.forEach((selector) => {
     const field = document.querySelector(selector)
     if (field) {
-      field.addEventListener("change", saveFormDataToLocalStorage)
-      field.addEventListener("blur", saveFormDataToLocalStorage)
+      field.addEventListener("change", () => {
+        console.log(`Field ${selector} changed to: ${field.value}`)
+      })
     }
   })
+}
+
+// Function to save shipping info to client profile
+function saveShippingInfo(clientId, token, callback) {
+  console.log("Saving shipping info for client ID:", clientId)
+
+  // Get shipping details from form
+  const shippingInfo = {
+    address: document.querySelector("#address")?.value || "",
+    city: document.querySelector("#city")?.value || "",
+    governorate: document.querySelector("#governorate")?.value || "",
+    postCode: document.querySelector("#postCode")?.value || "",
+    phone: document.querySelector("#phone")?.value || ""
+  }
+
+  // Validate required fields
+  const requiredFields = ["address", "city", "governorate", "postCode", "phone"]
+  const missingFields = requiredFields.filter(field => !shippingInfo[field])
+  
+  if (missingFields.length > 0) {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: "error",
+        title: "Informations manquantes",
+        text: `Veuillez remplir tous les champs obligatoires: ${missingFields.join(", ")}`,
+        confirmButtonColor: "#3b82f6",
+      })
+    } else {
+      alert(`Veuillez remplir tous les champs obligatoires: ${missingFields.join(", ")}`)
+    }
+    return
+  }
+
+  // Check token format and fix if needed
+  let authToken = token
+  if (token && !token.startsWith("Bearer ")) {
+    authToken = "Bearer " + token
+  }
+
+  // First, check if the client already has shipping addresses
+  const checkXhr = new XMLHttpRequest()
+  checkXhr.open("GET", `http://localhost:3000/client/${clientId}/shipping-address`, true)
+  checkXhr.setRequestHeader("Authorization", authToken)
+  checkXhr.setRequestHeader("Content-Type", "application/json")
+
+  checkXhr.onload = () => {
+    if (checkXhr.status === 200) {
+      try {
+        const response = JSON.parse(checkXhr.responseText)
+        
+        if (response.addresses && response.addresses.length > 0) {
+          // Client has existing addresses, update the default one or add a new one
+          const defaultAddress = response.addresses.find(addr => addr.isDefault)
+          
+          if (defaultAddress) {
+            // Update the default address
+            updateAddress(clientId, defaultAddress._id, shippingInfo, authToken, callback)
+          } else {
+            // Add a new address as default
+            addNewAddress(clientId, shippingInfo, authToken, callback)
+          }
+        } else {
+          // No addresses yet, add a new one
+          addNewAddress(clientId, shippingInfo, authToken, callback)
+        }
+      } catch (error) {
+        console.error("Error checking shipping addresses:", error)
+        // Proceed with order anyway
+        if (callback) callback()
+      }
+    } else {
+      // No addresses yet or error, add a new one
+      addNewAddress(clientId, shippingInfo, authToken, callback)
+    }
+  }
+
+  checkXhr.onerror = () => {
+    console.error("Error checking shipping addresses")
+    // Proceed with order anyway
+    if (callback) callback()
+  }
+
+  checkXhr.send()
+}
+
+// Function to add a new address
+function addNewAddress(clientId, shippingInfo, token, callback) {
+  console.log("Adding new shipping address")
+
+  const addressData = {
+    name: "Adresse de livraison",
+    address: shippingInfo.address,
+    city: shippingInfo.city,
+    governorate: shippingInfo.governorate,
+    postCode: shippingInfo.postCode,
+    phone: shippingInfo.phone,
+    isDefault: true
+  }
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("POST", `http://localhost:3000/client/${clientId}/shipping-address`, true)
+  xhr.setRequestHeader("Authorization", token)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status === 201) {
+      console.log("Shipping address added successfully")
+    } else {
+      console.error("Failed to add shipping address. Status:", xhr.status)
+    }
+    
+    // Proceed with order regardless
+    if (callback) callback()
+  }
+
+  xhr.onerror = () => {
+    console.error("Error adding shipping address")
+    // Proceed with order anyway
+    if (callback) callback()
+  }
+
+  xhr.send(JSON.stringify(addressData))
+}
+
+// Function to update an existing address
+function updateAddress(clientId, addressId, shippingInfo, token, callback) {
+  console.log("Updating shipping address:", addressId)
+
+  const addressData = {
+    address: shippingInfo.address,
+    city: shippingInfo.city,
+    governorate: shippingInfo.governorate,
+    postCode: shippingInfo.postCode,
+    phone: shippingInfo.phone,
+    isDefault: true
+  }
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/client/${clientId}/shipping-address/${addressId}`, true)
+  xhr.setRequestHeader("Authorization", token)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      console.log("Shipping address updated successfully")
+    } else {
+      console.error("Failed to update shipping address. Status:", xhr.status)
+    }
+    
+    // Proceed with order regardless
+    if (callback) callback()
+  }
+
+  xhr.onerror = () => {
+    console.error("Error updating shipping address")
+    // Proceed with order anyway
+    if (callback) callback()
+  }
+
+  xhr.send(JSON.stringify(addressData))
 }
 
 // Function to handle placing the order
@@ -652,6 +636,36 @@ function placeOrder(clientId, token) {
     return
   }
 
+  // Get shipping details from form
+  const shippingDetails = {
+    firstname: document.querySelector("#firstname")?.value || "",
+    lastname: document.querySelector("#lastname")?.value || "",
+    email: document.querySelector("#email")?.value || "",
+    governorate: document.querySelector("#governorate")?.value || "",
+    city: document.querySelector("#city")?.value || "",
+    address: document.querySelector("#address")?.value || "",
+    phone: document.querySelector("#phone")?.value || "",
+    postCode: document.querySelector("#postCode")?.value || ""
+  }
+
+  // Validate required fields
+  const requiredFields = ["firstname", "lastname", "email", "address", "city", "governorate", "postCode", "phone"]
+  const missingFields = requiredFields.filter(field => !shippingDetails[field])
+  
+  if (missingFields.length > 0) {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: "error",
+        title: "Informations manquantes",
+        text: `Veuillez remplir tous les champs obligatoires: ${missingFields.join(", ")}`,
+        confirmButtonColor: "#3b82f6",
+      })
+    } else {
+      alert(`Veuillez remplir tous les champs obligatoires: ${missingFields.join(", ")}`)
+    }
+    return
+  }
+
   // Show loading state
   if (typeof Swal !== "undefined") {
     Swal.fire({
@@ -666,9 +680,10 @@ function placeOrder(clientId, token) {
     console.log("Traitement de la commande: Veuillez patienter...")
   }
 
-  // Prepare data for order creation based on your controller requirements
+  // Prepare data for order creation
   const orderData = {
     idPanier: cartId,
+    shippingDetails: shippingDetails
   }
 
   console.log("Sending order data:", orderData)
@@ -781,4 +796,25 @@ function placeOrder(clientId, token) {
   }
 
   xhr.send(JSON.stringify(orderData))
+}
+
+// Function to show authentication error
+function showAuthError(message) {
+  // Check if SweetAlert2 is available
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      icon: "error",
+      title: "Erreur d'authentification",
+      text: message,
+      confirmButtonColor: "#3b82f6",
+      confirmButtonText: "Se connecter",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "account.html"
+      }
+    })
+  } else {
+    alert(message)
+    window.location.href = "account.html"
+  }
 }
