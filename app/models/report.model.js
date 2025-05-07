@@ -14,7 +14,7 @@ const reportSchema = new mongoose.Schema({
     targetId: {
         type: mongoose.Schema.Types.ObjectId,
         required: function () {
-        return this.targetType !== 'Platform'; // targetId requis sauf pour 'Platform'
+            return this.targetType !== 'Platform'; // targetId requis sauf pour 'Platform'
         }
     },
     title: {
@@ -32,7 +32,16 @@ const reportSchema = new mongoose.Schema({
     },
     shop: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "shop"
+        ref: "shop",
+        required: function () {
+            return this.targetType === 'Product'; // shop is required only for Product reports
+        }
+    },
+    forAdmin: {
+        type: Boolean,
+        default: function() {
+            return this.targetType === 'Platform'; // Platform reports are for admin only
+        }
     }
 },
 {

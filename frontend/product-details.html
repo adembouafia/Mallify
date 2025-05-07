@@ -1061,53 +1061,10 @@
                     id="reportLink"
                     class="d-flex text-main-600 text-28"
                   >
-                    <i class="ph-fill ph-chats-teardrop"></i>
+                    <i class="ph ph-megaphone-simple m-1 "></i>
+                    <span class="text-sm " >  Report this product </span>
                   </a>
-                  <span class="h-26 border border-gray-100"></span>
-
-                  <div class="dropdown on-hover-item">
-                    <button class="d-flex text-main-600 text-28" type="button">
-                      <i class="ph-fill ph-share-network"></i>
-                    </button>
-                    <div
-                      class="on-hover-dropdown common-dropdown border-0 inset-inline-start-auto inset-inline-end-0"
-                    >
-                      <ul class="flex-align gap-16">
-                        <li>
-                          <a
-                            href="https://www.facebook.com"
-                            class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph-fill ph-facebook-logo"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.facebook.com"
-                            class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph-fill ph-messenger-logo"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.instagram.com"
-                            class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph-fill ph-instagram-logo"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.whatsapp.com"
-                            class="w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white"
-                          >
-                            <i class="ph-fill ph-whatsapp-logo"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -1641,7 +1598,30 @@
     <script src="../assets/js/js_functions/vendorPower.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/js_functions/prod-details-client.js"></script>
+    <script src="../assets/js/js_functions/reports.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <script>
+      // Debug script for product report functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('Product details page loaded');
+        const reportLink = document.getElementById('reportLink');
+        if (reportLink) {
+          console.log('Report link found:', reportLink);
+          reportLink.addEventListener('click', function(e) {
+            console.log('Report link clicked');
+          });
+        } else {
+          console.error('Report link not found!');
+        }
+
+        // Check if product report modal exists or was created
+        setTimeout(() => {
+          const reportModal = document.getElementById('productReportModal');
+          console.log('Product report modal exists:', !!reportModal);
+        }, 1000);
+      });
+    </script>
   </body>
 </html>

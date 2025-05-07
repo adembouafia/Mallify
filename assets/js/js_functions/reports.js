@@ -7,6 +7,8 @@
 // REPORT SUBMISSION FORM
 // ==============================================
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Reports.js loaded successfully");
+  
   // Get the report form
   const form = document.getElementById("reportForm")
 
@@ -31,12 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Prepare the data object to send to the server
-      // FIXED: Store name, email, and phone as separate fields instead of in the message
       const data = {
         clientId: getUserIdFromToken(token),
         targetType: "Platform",
         title: subject,
-        message: message, // Only the message content
+        message: message,
         senderName: name,
         senderEmail: email,
         senderPhone: phone,
@@ -44,6 +45,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sendReportToServer(data, token)
     })
+  }
+  
+  // Product report functionality
+  const reportLink = document.getElementById("reportLink");
+  console.log("Report link element:", reportLink);
+  
+  if (reportLink) {
+    reportLink.addEventListener("click", function(e) {
+      e.preventDefault();
+      console.log("Report link clicked");
+      
+      // Check if modal exists
+      let modal = document.getElementById("productReportModal");
+      if (!modal) {
+        console.log("Creating product report modal");
+        createProductReportModal();
+        modal = document.getElementById("productReportModal");
+      }
+      
+      // Open the modal
+      openProductReportModal();
+    });
   }
 
   // Function to extract user ID from JWT token
@@ -121,6 +144,230 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
   }
+  
+  // Create product report modal HTML
+  function createProductReportModal() {
+    console.log("Creating product report modal");
+    
+    // First remove any existing modal with the same ID
+    const existingModal = document.getElementById('productReportModal');
+    if (existingModal) {
+      existingModal.remove();
+      console.log("Removed existing modal");
+    }
+    
+    const modalHTML = `
+      <div id="productReportModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div class="modal-content" style="background-color:#fff; border-radius:16px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
+          <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #e0e0e0;">
+            <h5 style="margin:0; font-weight:600;">Report Product</h5>
+            <button type="button" class="close-button" id="closeReportModal" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666;">&times;</button>
+          </div>
+          <div class="modal-body" style="padding:24px;">
+            <form id="productReportForm">
+              <div style="margin-bottom:16px;">
+                <label for="reportReason" style="display:block; margin-bottom:8px; font-weight:500;">Reason for Report</label>
+                <select id="reportReason" required style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px;">
+                  <option value="">Select a reason</option>
+                  <option value="counterfeit">Counterfeit Product</option>
+                  <option value="misleading">Misleading Description</option>
+                  <option value="inappropriate">Inappropriate Content</option>
+                  <option value="offensive">Offensive Content</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div style="margin-bottom:16px;">
+                <label for="reportTitle" style="display:block; margin-bottom:8px; font-weight:500;">Report Title</label>
+                <input type="text" id="reportTitle" placeholder="Brief summary of the issue" required style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px;">
+              </div>
+              <div style="margin-bottom:16px;">
+                <label for="reportDescription" style="display:block; margin-bottom:8px; font-weight:500;">Description</label>
+                <textarea id="reportDescription" rows="4" placeholder="Please provide details about the issue" required style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; resize:vertical;"></textarea>
+              </div>
+              <button type="submit" style="background-color:#4a6cf7; color:white; border:none; padding:10px 24px; border-radius:8px; cursor:pointer; transition:background-color 0.3s;">Submit Report</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Append modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    console.log("Modal HTML appended to body");
+
+    // Set up event listeners for the modal
+    document.getElementById('closeReportModal').addEventListener('click', function() {
+      console.log("Close button clicked");
+      closeProductReportModal();
+    });
+    
+    document.getElementById('productReportForm').addEventListener('submit', function(event) {
+      console.log("Report form submitted");
+      submitProductReport(event);
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('productReportModal').addEventListener('click', function(event) {
+      if (event.target === this) {
+        console.log("Clicked outside modal");
+        closeProductReportModal();
+      }
+    });
+    
+    console.log("Modal event listeners set up");
+  }
+
+  // Function to open product report modal
+  function openProductReportModal() {
+    console.log("Opening product report modal");
+    const modal = document.getElementById('productReportModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      console.log("Modal displayed");
+    } else {
+      console.error("Modal element not found");
+    }
+  }
+
+  // Function to close product report modal
+  function closeProductReportModal() {
+    console.log("Closing product report modal");
+    const modal = document.getElementById('productReportModal');
+    if (modal) {
+      modal.style.display = 'none';
+      console.log("Modal hidden");
+      // Reset form
+      const form = document.getElementById('productReportForm');
+      if (form) {
+        form.reset();
+      }
+    }
+  }
+
+  // Submit product report
+  function submitProductReport(event) {
+    event.preventDefault();
+    console.log("Processing product report submission");
+    
+    // Get token and check if user is logged in
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("User not logged in");
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Authentication Required',
+          text: 'Please log in to report this product.',
+          confirmButtonColor: '#4a6cf7'
+        });
+      } else {
+        alert("Please log in to report this product.");
+      }
+      closeProductReportModal();
+      return;
+    }
+    
+    // Get form data
+    const reason = document.getElementById('reportReason').value;
+    const title = document.getElementById('reportTitle').value;
+    const message = document.getElementById('reportDescription').value;
+    
+    console.log("Form data:", { reason, title, message });
+    
+    // Get product ID from URL
+    const productId = getProductIdFromUrl();
+    if (!productId) {
+      console.error("Could not determine product ID");
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Product ID could not be determined.',
+          confirmButtonColor: '#4a6cf7'
+        });
+      } else {
+        alert("Product ID could not be determined.");
+      }
+      return;
+    }
+    
+    console.log("Product ID:", productId);
+    
+    // Prepare data
+    const reportData = {
+      clientId: getUserIdFromToken(token),
+      targetType: 'Product',
+      targetId: productId,
+      title: `${reason.toUpperCase()}: ${title}`,
+      message: message
+    };
+    
+    console.log("Report data:", reportData);
+    
+    // Show loading state
+    const submitBtn = document.querySelector('#productReportForm button[type="submit"]');
+    if (submitBtn) {
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      console.log("Sending report to server");
+      // Send report to server
+      fetch("http://localhost:3000/report", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reportData),
+      })
+      .then(response => {
+        console.log("Server response:", response);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Report submitted successfully:", data);
+        closeProductReportModal();
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Report Submitted',
+            text: 'Thank you for your report. We will review it as soon as possible.',
+            confirmButtonColor: '#4a6cf7'
+          });
+        } else {
+          alert("Thank you for your report. We will review it as soon as possible.");
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting product report:', error);
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Submission Error',
+            text: `There was an error submitting your report: ${error.message}`,
+            confirmButtonColor: '#4a6cf7'
+          });
+        } else {
+          alert(`There was an error submitting your report: ${error.message}`);
+        }
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      });
+    }
+  }
+  
+  // Function to get product ID from URL
+  function getProductIdFromUrl() {
+    console.log("Getting product ID from URL:", window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+  }
 })
 
 // ==============================================
@@ -170,7 +417,9 @@ document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners()
 
   // Load reports from the server
-  loadReports()
+  if (document.getElementById("reportsTableBody")) {
+    loadReports()
+  }
 })
 
 // Function to get the authentication token
@@ -862,11 +1111,10 @@ function resolveReport(id) {
 // Replace the deleteReport function with this simplified version now that we know the correct endpoint
 
 function deleteReport(id) {
-  // Get the authentication token
-  const token = getAuthToken()
-  if (!token) return // Exit if no token is found
 
-  // Show loading indicator
+  const token = getAuthToken()
+  if (!token) return
+
   const deleteBtn = document.getElementById("confirmDeleteBtn")
   let originalText = ""
   if (deleteBtn) {
@@ -875,11 +1123,8 @@ function deleteReport(id) {
     deleteBtn.textContent = "Deleting..."
   }
 
-  // Log the request details for debugging
   console.log(`Attempting to delete report with ID: ${id}`)
   console.log(`API URL: http://localhost:3000/report/${id}`)
-
-  // Send request to delete from database
   fetch(`http://localhost:3000/report/${id}`, {
     method: "DELETE",
     headers: {
