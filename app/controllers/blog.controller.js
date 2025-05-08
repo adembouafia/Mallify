@@ -6,10 +6,6 @@ const fs = require("fs");
 // Storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Créer le dossier uploads s'il n'existe pas
-    if (!fs.existsSync("uploads/")) {
-      fs.mkdirSync("uploads/", { recursive: true });
-    }
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
@@ -28,7 +24,10 @@ const upload = multer({
 // Create blog
 exports.createBlog = async (req, res) => {
   upload(req, res, async (err) => {
-    if (err) return res.status(400).json({ message: "Upload error", error: err.message });
+    if (err)
+      return res
+        .status(400)
+        .json({ message: "Upload error", error: err.message });
 
     try {
       const { title, description, content, category, tags, status } = req.body;
@@ -46,8 +45,11 @@ exports.createBlog = async (req, res) => {
       // Traiter les tags s'ils sont fournis
       let tagArray = [];
       if (tags) {
-        if (typeof tags === 'string') {
-          tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        if (typeof tags === "string") {
+          tagArray = tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag);
         } else if (Array.isArray(tags)) {
           tagArray = tags;
         }
@@ -62,11 +64,13 @@ exports.createBlog = async (req, res) => {
         category: category || "Non catégorisé",
         tags: tagArray,
         status: status || "published",
-        author: req.user ? req.user._id : null
+        author: req.user ? req.user._id : null,
       });
 
       await newBlog.save();
-      res.status(201).json({ message: "Blog created successfully", blog: newBlog });
+      res
+        .status(201)
+        .json({ message: "Blog created successfully", blog: newBlog });
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -78,15 +82,15 @@ exports.getBlogById = async (req, res) => {
   try {
     // Utiliser populate si vous avez une référence à l'auteur
     const blog = await Blog.findById(req.params.id)
-      .populate('author', 'name email') // Ajustez selon votre modèle d'utilisateur
+      .populate("author", "name email") // Ajustez selon votre modèle d'utilisateur
       .exec();
-      
+
     if (!blog) return res.status(404).json({ message: "Blog not found" });
-    
+
     // Incrémenter le compteur de vues
     blog.views = (blog.views || 0) + 1;
     await blog.save();
-    
+
     res.status(200).json(blog);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -97,44 +101,61 @@ exports.getBlogById = async (req, res) => {
 exports.getAllBlogs = async (req, res) => {
   try {
     // Ajouter des options de filtrage et de pagination
-    const { category, tag, status, page = 1, limit = 10, sort = '-createdAt' } = req.query;
-    
+    const {
+      category,
+      tag,
+      status,
+      page = 1,
+      limit = 10,
+      sort = "-createdAt",
+    } = req.query;
+
     const query = {};
-    
+
     // Filtrer par catégorie si spécifié
     if (category) {
       query.category = category;
     }
-    
+
     // Filtrer par tag si spécifié
     if (tag) {
       query.tags = { $in: [tag] };
     }
-    
-    // Filtrer par statut si spécifié (et si l'utilisateur est admin)
-    if (status && req.user && (req.user.role === 'admin' || req.user.role === 'superAdmin')) {
+
+    // Filtrer par statut si spécifié
+    if (status) {
       query.status = status;
     } else {
-      // Pour les utilisateurs non-admin, ne montrer que les blogs publiés
-      query.status = 'published';
+      // Si aucun statut n'est spécifié :
+      // - Les admins/superAdmins voient tous les statuts par défaut
+      // - Les autres utilisateurs ne voient que les blogs publiés
+      if (
+        !(
+          req.user &&
+          (req.user.role === "admin" || req.user.role === "superAdmin")
+        )
+      ) {
+        query.status = "published";
+      }
+      // Si c'est un admin et aucun statut n'est spécifié, query.status reste non défini pour tout récupérer
     }
-    
+
     // Calculer le nombre total de blogs correspondant à la requête
     const total = await Blog.countDocuments(query);
-    
+
     // Récupérer les blogs avec pagination et tri
     const blogs = await Blog.find(query)
-      .populate('author', 'name email') // Ajustez selon votre modèle d'utilisateur
+      .populate("author", "name email") // Ajustez selon votre modèle d'utilisateur
       .sort(sort)
       .skip((page - 1) * limit)
-      .limit(parseInt(limit))
+      .limit(Number.parseInt(limit))
       .exec();
-    
+
     res.status(200).json({
       blogs,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      total
+      total,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -144,7 +165,10 @@ exports.getAllBlogs = async (req, res) => {
 // Update blog
 exports.updateBlog = async (req, res) => {
   upload(req, res, async (err) => {
-    if (err) return res.status(400).json({ message: "Upload error", error: err.message });
+    if (err)
+      return res
+        .status(400)
+        .json({ message: "Upload error", error: err.message });
 
     try {
       const { title, description, content, category, tags, status } = req.body;
@@ -152,18 +176,22 @@ exports.updateBlog = async (req, res) => {
 
       // Récupérer le blog existant pour vérifier les permissions
       const existingBlog = await Blog.findById(blogId);
-      
+
       if (!existingBlog) {
         return res.status(404).json({ message: "Blog not found" });
       }
-      
+
       // Vérifier les permissions (si l'authentification est implémentée)
       if (req.user && req.user._id && existingBlog.author) {
-        const isAuthor = req.user._id.toString() === existingBlog.author.toString();
-        const isAdmin = req.user.role === 'admin' || req.user.role === 'superAdmin';
-        
+        const isAuthor =
+          req.user._id.toString() === existingBlog.author.toString();
+        const isAdmin =
+          req.user.role === "admin" || req.user.role === "superAdmin";
+
         if (!isAuthor && !isAdmin) {
-          return res.status(403).json({ message: "Not authorized to update this blog" });
+          return res
+            .status(403)
+            .json({ message: "Not authorized to update this blog" });
         }
       }
 
@@ -174,8 +202,11 @@ exports.updateBlog = async (req, res) => {
       let tagArray = existingBlog.tags || [];
       if (tags) {
         // Si tags est une chaîne, la diviser en tableau
-        if (typeof tags === 'string') {
-          tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        if (typeof tags === "string") {
+          tagArray = tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag);
         } else if (Array.isArray(tags)) {
           tagArray = tags;
         }
@@ -187,13 +218,16 @@ exports.updateBlog = async (req, res) => {
         content: content || existingBlog.content,
         category: category || existingBlog.category,
         tags: tagArray,
-        status: status || existingBlog.status
+        status: status || existingBlog.status,
       };
 
       // Mettre à jour l'image principale si fournie
       if (mainImageBlogFile) {
         // Supprimer l'ancienne image si elle existe
-        if (existingBlog.mainImageBlog && fs.existsSync(existingBlog.mainImageBlog)) {
+        if (
+          existingBlog.mainImageBlog &&
+          fs.existsSync(existingBlog.mainImageBlog)
+        ) {
           fs.unlinkSync(existingBlog.mainImageBlog);
         }
         updateData.mainImageBlog = mainImageBlogFile.path;
@@ -202,19 +236,28 @@ exports.updateBlog = async (req, res) => {
       // Mettre à jour les images supplémentaires si fournies
       if (otherImagesBlogFiles.length > 0) {
         // Supprimer les anciennes images si elles existent
-        if (existingBlog.otherImagesBlog && existingBlog.otherImagesBlog.length > 0) {
-          existingBlog.otherImagesBlog.forEach(img => {
+        if (
+          existingBlog.otherImagesBlog &&
+          existingBlog.otherImagesBlog.length > 0
+        ) {
+          existingBlog.otherImagesBlog.forEach((img) => {
             if (fs.existsSync(img)) {
               fs.unlinkSync(img);
             }
           });
         }
-        updateData.otherImagesBlog = otherImagesBlogFiles.map(file => file.path);
+        updateData.otherImagesBlog = otherImagesBlogFiles.map(
+          (file) => file.path
+        );
       }
 
-      const updatedBlog = await Blog.findByIdAndUpdate(blogId, updateData, { new: true });
+      const updatedBlog = await Blog.findByIdAndUpdate(blogId, updateData, {
+        new: true,
+      });
 
-      res.status(200).json({ message: "Blog updated successfully", blog: updatedBlog });
+      res
+        .status(200)
+        .json({ message: "Blog updated successfully", blog: updatedBlog });
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -225,21 +268,25 @@ exports.updateBlog = async (req, res) => {
 exports.deleteBlog = async (req, res) => {
   try {
     const blogId = req.params.id;
-    
+
     // Récupérer le blog existant pour vérifier les permissions
     const existingBlog = await Blog.findById(blogId);
-    
+
     if (!existingBlog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-    
+
     // Vérifier les permissions (si l'authentification est implémentée)
     if (req.user && req.user._id && existingBlog.author) {
-      const isAuthor = req.user._id.toString() === existingBlog.author.toString();
-      const isAdmin = req.user.role === 'admin' || req.user.role === 'superAdmin';
-      
+      const isAuthor =
+        req.user._id.toString() === existingBlog.author.toString();
+      const isAdmin =
+        req.user.role === "admin" || req.user.role === "superAdmin";
+
       if (!isAuthor && !isAdmin) {
-        return res.status(403).json({ message: "Not authorized to delete this blog" });
+        return res
+          .status(403)
+          .json({ message: "Not authorized to delete this blog" });
       }
     }
 
@@ -247,19 +294,28 @@ exports.deleteBlog = async (req, res) => {
 
     // Supprimer les images du blog
     try {
-      if (deletedBlog.mainImageBlog && fs.existsSync(deletedBlog.mainImageBlog)) {
+      if (
+        deletedBlog.mainImageBlog &&
+        fs.existsSync(deletedBlog.mainImageBlog)
+      ) {
         fs.unlinkSync(deletedBlog.mainImageBlog);
       }
-      
-      if (deletedBlog.otherImagesBlog && deletedBlog.otherImagesBlog.length > 0) {
-        deletedBlog.otherImagesBlog.forEach(img => {
+
+      if (
+        deletedBlog.otherImagesBlog &&
+        deletedBlog.otherImagesBlog.length > 0
+      ) {
+        deletedBlog.otherImagesBlog.forEach((img) => {
           if (fs.existsSync(img)) {
             fs.unlinkSync(img);
           }
         });
       }
     } catch (fileError) {
-      console.warn("Erreur lors de la suppression des fichiers:", fileError.message);
+      console.warn(
+        "Erreur lors de la suppression des fichiers:",
+        fileError.message
+      );
     }
 
     res.status(200).json({ message: "Blog deleted successfully" });
@@ -273,36 +329,40 @@ exports.addComment = async (req, res) => {
   try {
     const { name, email, comment } = req.body;
     const blogId = req.params.id;
-    
+
     // Valider les données
     if (!name || !email || !comment) {
-      return res.status(400).json({ message: "Name, email and comment are required" });
+      return res
+        .status(400)
+        .json({ message: "Name, email and comment are required" });
     }
-    
+
     const blog = await Blog.findById(blogId);
-    
+
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-    
+
     // Créer le nouveau commentaire
     const newComment = {
       user: req.user ? req.user._id : null,
       name,
       email,
       comment,
-      date: new Date()
+      date: new Date(),
     };
-    
+
     // Ajouter le commentaire au blog
     if (!blog.comments) {
       blog.comments = [];
     }
-    
+
     blog.comments.push(newComment);
     await blog.save();
-    
-    res.status(201).json({ message: "Comment added successfully", comment: newComment });
+
+    res
+      .status(201)
+      .json({ message: "Comment added successfully", comment: newComment });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -312,37 +372,44 @@ exports.addComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { blogId, commentId } = req.params;
-    
+
     const blog = await Blog.findById(blogId);
-    
+
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-    
+
     // Vérifier si le commentaire existe
-    const commentIndex = blog.comments.findIndex(c => c._id.toString() === commentId);
-    
+    const commentIndex = blog.comments.findIndex(
+      (c) => c._id.toString() === commentId
+    );
+
     if (commentIndex === -1) {
       return res.status(404).json({ message: "Comment not found" });
     }
-    
+
     // Vérifier les permissions (si l'authentification est implémentée)
     const comment = blog.comments[commentIndex];
-    
+
     if (req.user && req.user._id) {
-      const isCommentAuthor = comment.user && comment.user.toString() === req.user._id.toString();
-      const isBlogAuthor = blog.author && blog.author.toString() === req.user._id.toString();
-      const isAdmin = req.user.role === 'admin' || req.user.role === 'superAdmin';
-      
+      const isCommentAuthor =
+        comment.user && comment.user.toString() === req.user._id.toString();
+      const isBlogAuthor =
+        blog.author && blog.author.toString() === req.user._id.toString();
+      const isAdmin =
+        req.user.role === "admin" || req.user.role === "superAdmin";
+
       if (!isCommentAuthor && !isBlogAuthor && !isAdmin) {
-        return res.status(403).json({ message: "Not authorized to delete this comment" });
+        return res
+          .status(403)
+          .json({ message: "Not authorized to delete this comment" });
       }
     }
-    
+
     // Supprimer le commentaire
     blog.comments.splice(commentIndex, 1);
     await blog.save();
-    
+
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -354,23 +421,23 @@ exports.getBlogsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     const { page = 1, limit = 10 } = req.query;
-    
-    const query = { category, status: 'published' };
-    
+
+    const query = { category, status: "published" };
+
     const total = await Blog.countDocuments(query);
-    
+
     const blogs = await Blog.find(query)
-      .populate('author', 'name email')
-      .sort('-createdAt')
+      .populate("author", "name email")
+      .sort("-createdAt")
       .skip((page - 1) * limit)
-      .limit(parseInt(limit))
+      .limit(Number.parseInt(limit))
       .exec();
-    
+
     res.status(200).json({
       blogs,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      total
+      total,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -382,23 +449,23 @@ exports.getBlogsByTag = async (req, res) => {
   try {
     const { tag } = req.params;
     const { page = 1, limit = 10 } = req.query;
-    
-    const query = { tags: { $in: [tag] }, status: 'published' };
-    
+
+    const query = { tags: { $in: [tag] }, status: "published" };
+
     const total = await Blog.countDocuments(query);
-    
+
     const blogs = await Blog.find(query)
-      .populate('author', 'name email')
-      .sort('-createdAt')
+      .populate("author", "name email")
+      .sort("-createdAt")
       .skip((page - 1) * limit)
-      .limit(parseInt(limit))
+      .limit(Number.parseInt(limit))
       .exec();
-    
+
     res.status(200).json({
       blogs,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      total
+      total,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -410,39 +477,39 @@ exports.searchBlogs = async (req, res) => {
   try {
     const { q } = req.query;
     const { page = 1, limit = 10 } = req.query;
-    
+
     if (!q) {
       return res.status(400).json({ message: "Search query is required" });
     }
-    
+
     const query = {
       $and: [
-        { status: 'published' },
+        { status: "published" },
         {
           $or: [
-            { title: { $regex: q, $options: 'i' } },
-            { description: { $regex: q, $options: 'i' } },
-            { content: { $regex: q, $options: 'i' } },
-            { tags: { $in: [new RegExp(q, 'i')] } }
-          ]
-        }
-      ]
+            { title: { $regex: q, $options: "i" } },
+            { description: { $regex: q, $options: "i" } },
+            { content: { $regex: q, $options: "i" } },
+            { tags: { $in: [new RegExp(q, "i")] } },
+          ],
+        },
+      ],
     };
-    
+
     const total = await Blog.countDocuments(query);
-    
+
     const blogs = await Blog.find(query)
-      .populate('author', 'name email')
-      .sort('-createdAt')
+      .populate("author", "name email")
+      .sort("-createdAt")
       .skip((page - 1) * limit)
-      .limit(parseInt(limit))
+      .limit(Number.parseInt(limit))
       .exec();
-    
+
     res.status(200).json({
       blogs,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      total
+      total,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -453,13 +520,13 @@ exports.searchBlogs = async (req, res) => {
 exports.getRecentBlogs = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
-    
-    const blogs = await Blog.find({ status: 'published' })
-      .sort('-createdAt')
-      .limit(parseInt(limit))
-      .select('title description mainImageBlog category createdAt')
+
+    const blogs = await Blog.find({ status: "published" })
+      .sort("-createdAt")
+      .limit(Number.parseInt(limit))
+      .select("title description mainImageBlog category createdAt")
       .exec();
-    
+
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -470,13 +537,13 @@ exports.getRecentBlogs = async (req, res) => {
 exports.getPopularBlogs = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
-    
-    const blogs = await Blog.find({ status: 'published' })
-      .sort('-views')
-      .limit(parseInt(limit))
-      .select('title description mainImageBlog category createdAt views')
+
+    const blogs = await Blog.find({ status: "published" })
+      .sort("-views")
+      .limit(Number.parseInt(limit))
+      .select("title description mainImageBlog category createdAt views")
       .exec();
-    
+
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -486,7 +553,7 @@ exports.getPopularBlogs = async (req, res) => {
 // Obtenir toutes les catégories
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Blog.distinct('category', { status: 'published' });
+    const categories = await Blog.distinct("category", { status: "published" });
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -496,8 +563,8 @@ exports.getAllCategories = async (req, res) => {
 // Obtenir tous les tags
 exports.getAllTags = async (req, res) => {
   try {
-    const blogs = await Blog.find({ status: 'published' }).select('tags');
-    
+    const blogs = await Blog.find({ status: "published" }).select("tags");
+
     // Extraire tous les tags et éliminer les doublons
     const allTags = blogs.reduce((tags, blog) => {
       if (blog.tags && blog.tags.length > 0) {
@@ -505,9 +572,9 @@ exports.getAllTags = async (req, res) => {
       }
       return tags;
     }, []);
-    
+
     const uniqueTags = [...new Set(allTags)];
-    
+
     res.status(200).json(uniqueTags);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
