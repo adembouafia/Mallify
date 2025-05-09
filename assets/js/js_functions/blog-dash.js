@@ -1,41 +1,132 @@
-// Variables globales
+// Global variables
 let currentBlogId = null;
 let blogs = [];
 let categories = [];
 let tags = [];
 let currentPage = 1;
 let totalPages = 1;
-const itemsPerPage = 10;
+const itemsPerPage = 6;
 
-// Fonction pour initialiser la page
+// Function to initialize the page
 document.addEventListener("DOMContentLoaded", () => {
-  // Charger les blogs
+  // Update page title and headings
+  updatePageText();
+  
+  // Load blogs
   loadAllBlogs();
 
-  // Charger les catégories et tags
+  // Load categories and tags
   loadCategories();
   loadTags();
 
-  // Initialiser les écouteurs d'événements
+  // Initialize event listeners
   initEventListeners();
 
-  // Initialiser la pagination
+  // Initialize pagination
   initPagination();
 });
 
-// Initialiser les écouteurs d'événements
+// Function to update page text elements
+function updatePageText() {
+  // Update main heading
+  const mainHeading = document.querySelector("h1");
+  if (mainHeading && mainHeading.textContent === "Gestion des Blogs") {
+    mainHeading.textContent = "Blog Management";
+  }
+  
+  // Update add button
+  const addButton = document.querySelector(".btn-primary");
+  if (addButton && addButton.textContent.includes("Ajouter un article")) {
+    addButton.innerHTML = '<i class="bi bi-plus"></i> Add an article';
+  }
+  
+  // Update stats cards
+  const statsLabels = document.querySelectorAll(".stat-card .stat-info p");
+  statsLabels.forEach(label => {
+    if (label.textContent === "Total des articles") {
+      label.textContent = "Total articles";
+    } else if (label.textContent === "Vues totales") {
+      label.textContent = "Total views";
+    } else if (label.textContent === "Commentaires") {
+      label.textContent = "Comments";
+    } else if (label.textContent === "Brouillons") {
+      label.textContent = "Drafts";
+    }
+  });
+  
+  // Update search placeholder
+  const searchInput = document.querySelector("input[type='text']");
+  if (searchInput && searchInput.placeholder === "Rechercher un article...") {
+    searchInput.placeholder = "Search for an article...";
+  }
+  
+  // Update filter dropdowns
+  const categoryDropdown = document.querySelector(".blog-filter select:nth-child(1)");
+  if (categoryDropdown && categoryDropdown.options[0].text === "Toutes les catégories") {
+    categoryDropdown.options[0].text = "All categories";
+  }
+  
+  const statusDropdown = document.querySelector(".blog-filter select:nth-child(2)");
+  if (statusDropdown && statusDropdown.options[0].text === "Tous les statuts") {
+    statusDropdown.options[0].text = "All statuses";
+  }
+  
+  // Update filter button
+  const filterButton = document.querySelector(".blog-filter button");
+  if (filterButton && filterButton.textContent === "Filtrer") {
+    filterButton.textContent = "Filter";
+  }
+  
+  // Update table headers
+  const tableHeaders = document.querySelectorAll("th");
+  tableHeaders.forEach(header => {
+    switch (header.textContent) {
+      case "Titre":
+        header.textContent = "Title";
+        break;
+      case "Catégorie":
+        header.textContent = "Category";
+        break;
+      case "Date":
+        header.textContent = "Date";
+        break;
+      case "Commentaires":
+        header.textContent = "Comments";
+        break;
+      case "Actions":
+        header.textContent = "Actions";
+        break;
+      case "Image":
+        header.textContent = "Image";
+        break;
+    }
+  });
+  
+  // Update pagination buttons
+  const prevButton = document.querySelector(".pagination .page-item:first-child .page-link");
+  if (prevButton && prevButton.textContent.trim() === "Précédent") {
+    prevButton.textContent = "Previous";
+  }
+  
+  const nextButton = document.querySelector(".pagination .page-item:last-child .page-link");
+  if (nextButton && nextButton.textContent.trim() === "Suivant") {
+    nextButton.textContent = "Next";
+  }
+}
+
+// Initialize event listeners
 function initEventListeners() {
-  // Formulaire d'ajout/modification de blog
+  // Blog add/edit form
   const blogForm = document.getElementById("blogForm");
   if (blogForm) {
     blogForm.addEventListener("submit", handleBlogSubmit);
   }
 
-  // Bouton d'ajout de blog
+  // Add blog button
   const addBlogBtn = document.getElementById("addBlogBtn");
   if (addBlogBtn) {
     addBlogBtn.addEventListener("click", () => {
-      // Afficher le formulaire
+      // Show the form
       const formContainer = document.getElementById("blogFormContainer");
       if (formContainer) {
         formContainer.classList.add("active");
@@ -45,7 +136,7 @@ function initEventListeners() {
     });
   }
 
-  // Bouton de fermeture du formulaire
+  // Form close button
   const closeFormBtn = document.getElementById("closeFormBtn");
   if (closeFormBtn) {
     closeFormBtn.addEventListener("click", () => {
@@ -57,7 +148,7 @@ function initEventListeners() {
     });
   }
 
-  // Bouton d'annulation du formulaire
+  // Form cancel button
   const cancelBtn = document.getElementById("cancelBtn");
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
@@ -69,7 +160,7 @@ function initEventListeners() {
     });
   }
 
-  // Prévisualisation de l'image principale
+  // Main image preview
   const mainImageInput = document.getElementById("mainImageBlog");
   if (mainImageInput) {
     mainImageInput.addEventListener("change", function () {
@@ -84,7 +175,7 @@ function initEventListeners() {
     });
   }
 
-  // Prévisualisation des images supplémentaires
+  // Additional images preview
   const otherImagesInput = document.getElementById("otherImagesBlog");
   if (otherImagesInput) {
     otherImagesInput.addEventListener("change", function () {
@@ -115,7 +206,7 @@ function initEventListeners() {
     });
   }
 
-  // Recherche de blogs
+  // Blog search
   const searchInput = document.querySelector(".blog-filter input[type='text']");
   if (searchInput) {
     searchInput.addEventListener("input", function () {
@@ -128,7 +219,7 @@ function initEventListeners() {
     });
   }
 
-  // Filtres de catégorie et statut
+  // Category and status filters
   const categoryFilter = document.querySelector(
     ".blog-filter select:nth-child(1)"
   );
@@ -146,18 +237,18 @@ function initEventListeners() {
     });
   }
 
-  // Ajouter un écouteur d'événement pour le clic sur la carte des brouillons
+  // Add event listener for click on drafts stats card
   const draftStatsCard = document.querySelector(
-    ".blog-stats .stat-card:nth-child(3)"
-  ); // Corrected selector for the 3rd stat card
+    ".blog-stats .stat-card:nth-child(4)"
+  ); // Card for drafts
   if (draftStatsCard) {
     draftStatsCard.style.cursor = "pointer";
-    draftStatsCard.title = "Cliquez pour voir les brouillons";
+    draftStatsCard.title = "Click to view drafts";
 
     draftStatsCard.addEventListener("click", () => {
       filterBlogs(null, "draft");
 
-      // Mettre à jour le filtre de statut dans l'interface
+      // Update the status filter in the UI
       const statusFilter = document.querySelector(
         ".blog-filter select:nth-child(2)"
       );
@@ -173,23 +264,23 @@ function initEventListeners() {
   }
 }
 
-// Initialiser la pagination
+// Initialize pagination
 function initPagination() {
   const paginationContainer = document.querySelector(".pagination");
   if (!paginationContainer) return;
 
-  // Ajouter des écouteurs d'événements aux boutons de pagination
+  // Add event listeners to pagination buttons
   document.querySelectorAll(".page-link").forEach((link) => {
     link.addEventListener("click", function (e) {
       e.preventDefault();
 
       const pageText = this.textContent.trim();
 
-      if (pageText === "Précédent") {
+      if (pageText === "Previous") {
         if (currentPage > 1) {
           loadBlogs(currentPage - 1);
         }
-      } else if (pageText === "Suivant") {
+      } else if (pageText === "Next") {
         if (currentPage < totalPages) {
           loadBlogs(currentPage + 1);
         }
@@ -203,21 +294,21 @@ function initPagination() {
   });
 }
 
-// Mettre à jour l'affichage de la pagination
+// Update pagination display
 function updatePagination() {
   const paginationContainer = document.querySelector(".pagination");
   if (!paginationContainer) return;
 
-  // Vider la pagination actuelle
+  // Clear current pagination
   paginationContainer.innerHTML = "";
 
-  // Bouton "Précédent"
+  // "Previous" button
   const prevItem = document.createElement("li");
   prevItem.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-  prevItem.innerHTML = `<a class="page-link" href="#" tabindex="-1" ${currentPage === 1 ? 'aria-disabled="true"' : ""}>Précédent</a>`;
+  prevItem.innerHTML = `<a class="page-link" href="#" tabindex="-1" ${currentPage === 1 ? 'aria-disabled="true"' : ""}>Previous</a>`;
   paginationContainer.appendChild(prevItem);
 
-  // Calculer les pages à afficher
+  // Calculate pages to display
   let startPage = Math.max(1, currentPage - 2);
   const endPage = Math.min(totalPages, startPage + 4);
 
@@ -225,7 +316,7 @@ function updatePagination() {
     startPage = Math.max(1, endPage - 4);
   }
 
-  // Pages numérotées
+  // Numbered pages
   for (let i = startPage; i <= endPage; i++) {
     const pageItem = document.createElement("li");
     pageItem.className = `page-item ${i === currentPage ? "active" : ""}`;
@@ -233,21 +324,21 @@ function updatePagination() {
     paginationContainer.appendChild(pageItem);
   }
 
-  // Bouton "Suivant"
+  // "Next" button
   const nextItem = document.createElement("li");
   nextItem.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
-  nextItem.innerHTML = `<a class="page-link" href="#" ${currentPage === totalPages ? 'aria-disabled="true"' : ""}>Suivant</a>`;
+  nextItem.innerHTML = `<a class="page-link" href="#" ${currentPage === totalPages ? 'aria-disabled="true"' : ""}>Next</a>`;
   paginationContainer.appendChild(nextItem);
 
-  // Réinitialiser les écouteurs d'événements
+  // Reset event listeners
   initPagination();
 }
 
-// Filtrer les blogs par catégorie et statut
+// Filter blogs by category and status
 function filterBlogs(category, status) {
   console.log(`Filtering blogs - Category: ${category}, Status: ${status}`);
 
-  // Construire la requête de filtrage
+  // Build filter query
   const queryParams = [];
 
   if (category) {
@@ -261,11 +352,11 @@ function filterBlogs(category, status) {
   const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
   console.log(`Query string: ${queryString}`);
 
-  // Charger les blogs filtrés
+  // Load filtered blogs
   const xhr = new XMLHttpRequest();
   xhr.open("GET", `/blog${queryString}`, true);
 
-  // Ajouter le token d'authentification pour permettre l'accès aux brouillons
+  // Add authentication token to allow access to drafts
   const token = localStorage.getItem("token");
   if (token) {
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -292,30 +383,30 @@ function filterBlogs(category, status) {
         updateBlogStats();
         updatePagination();
       } catch (error) {
-        console.error("Erreur lors du parsing de la réponse:", error);
-        showAlert("Erreur lors du filtrage des blogs", "error");
+        console.error("Error parsing response:", error);
+        showAlert("Error filtering blogs", "error");
       }
     } else {
-      console.error("Erreur lors du filtrage des blogs:", xhr.statusText);
-      showAlert("Erreur lors du filtrage des blogs", "error");
+      console.error("Error filtering blogs:", xhr.statusText);
+      showAlert("Error filtering blogs", "error");
     }
   };
 
   xhr.onerror = () => {
-    console.error("Erreur réseau lors du filtrage des blogs");
-    showAlert("Erreur réseau lors du filtrage des blogs", "error");
+    console.error("Network error while filtering blogs");
+    showAlert("Network error while filtering blogs", "error");
   };
 
   xhr.send();
 }
 
-// Charger tous les blogs (y compris les brouillons)
+// Load all blogs (including drafts)
 function loadAllBlogs() {
   console.log("Loading all blogs...");
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/blog", true);
 
-  // Ajouter le token d'authentification
+  // Add authentication token
   const token = localStorage.getItem("token");
   if (token) {
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -342,45 +433,45 @@ function loadAllBlogs() {
         updateBlogStats();
         updatePagination();
 
-        // Mettre à jour les options de statut dans le filtre
+        // Update status options in the filter
         updateStatusFilterOptions();
       } catch (error) {
-        console.error("Erreur lors du parsing de la réponse:", error);
-        showAlert("Erreur lors du chargement des blogs", "error");
+        console.error("Error parsing response:", error);
+        showAlert("Error loading blogs", "error");
       }
     } else {
-      console.error("Erreur lors du chargement des blogs:", xhr.statusText);
-      showAlert("Erreur lors du chargement des blogs", "error");
+      console.error("Error loading blogs:", xhr.statusText);
+      showAlert("Error loading blogs", "error");
     }
   };
 
   xhr.onerror = () => {
-    console.error("Erreur réseau lors du chargement des blogs");
-    showAlert("Erreur réseau lors du chargement des blogs", "error");
+    console.error("Network error while loading blogs");
+    showAlert("Network error while loading blogs", "error");
   };
 
   xhr.send();
 }
 
-// Mettre à jour les options de statut dans le filtre
+// Update status options in the filter
 function updateStatusFilterOptions() {
   const statusFilter = document.querySelector(
     ".blog-filter select:nth-child(2)"
   );
   if (!statusFilter) return;
 
-  // Conserver la valeur actuelle
+  // Keep current value
   const currentValue = statusFilter.value;
 
-  // Vider les options existantes sauf la première (placeholder)
+  // Clear existing options except the first (placeholder)
   while (statusFilter.options.length > 1) {
     statusFilter.remove(1);
   }
 
-  // Ajouter les options de statut
+  // Add status options
   const statuses = [
-    { value: "published", text: "Publié" },
-    { value: "draft", text: "Brouillon" },
+    { value: "published", text: "Published" },
+    { value: "draft", text: "Draft" },
   ];
 
   statuses.forEach((status) => {
@@ -390,7 +481,7 @@ function updateStatusFilterOptions() {
     statusFilter.appendChild(option);
   });
 
-  // Restaurer la valeur sélectionnée si elle existe
+  // Restore selected value if it exists
   if (currentValue) {
     for (let i = 0; i < statusFilter.options.length; i++) {
       if (statusFilter.options[i].value === currentValue) {
@@ -401,11 +492,11 @@ function updateStatusFilterOptions() {
   }
 }
 
-// Charger les blogs avec pagination
+// Load blogs with pagination
 function loadBlogs(page = 1) {
   currentPage = page;
 
-  // Construire la requête avec pagination
+  // Build query with pagination
   const queryParams = [`page=${page}`, `limit=${itemsPerPage}`];
   const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
@@ -431,24 +522,24 @@ function loadBlogs(page = 1) {
         updateBlogStats();
         updatePagination();
       } catch (error) {
-        console.error("Erreur lors du parsing de la réponse:", error);
-        showAlert("Erreur lors du chargement des blogs", "error");
+        console.error("Error parsing response:", error);
+        showAlert("Error loading blogs", "error");
       }
     } else {
-      console.error("Erreur lors du chargement des blogs:", xhr.statusText);
-      showAlert("Erreur lors du chargement des blogs", "error");
+      console.error("Error loading blogs:", xhr.statusText);
+      showAlert("Error loading blogs", "error");
     }
   };
 
   xhr.onerror = () => {
-    console.error("Erreur réseau lors du chargement des blogs");
-    showAlert("Erreur réseau lors du chargement des blogs", "error");
+    console.error("Network error while loading blogs");
+    showAlert("Network error while loading blogs", "error");
   };
 
   xhr.send();
 }
 
-// Charger les catégories
+// Load categories
 function loadCategories() {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/categories", true);
@@ -503,7 +594,7 @@ function loadCategories() {
           // Add an option for creating a new category
           const newOption = document.createElement("option");
           newOption.value = "new";
-          newOption.textContent = "+ Ajouter une nouvelle catégorie";
+          newOption.textContent = "+ Add a new category";
           categoryInput.appendChild(newOption);
 
           // Restore the selected value if it exists in the new options
@@ -521,7 +612,7 @@ function loadCategories() {
             if (this.value === "new") {
               // Prompt the user for a new category
               const newCategory = prompt(
-                "Entrez le nom de la nouvelle catégorie:"
+                "Enter the name of the new category:"
               );
 
               if (newCategory && newCategory.trim() !== "") {
@@ -580,14 +671,14 @@ function loadCategories() {
           }
         }
       } catch (error) {
-        console.error("Erreur lors du parsing des catégories:", error);
+        console.error("Error parsing categories:", error);
 
         // In case of error, still populate with default categories
         populateWithDefaultCategories();
       }
     } else {
       console.error(
-        "Erreur lors du chargement des catégories:",
+        "Error loading categories:",
         xhr.statusText
       );
 
@@ -597,7 +688,7 @@ function loadCategories() {
   };
 
   xhr.onerror = () => {
-    console.error("Erreur réseau lors du chargement des catégories");
+    console.error("Network error while loading categories");
 
     // In case of network error, still populate with default categories
     populateWithDefaultCategories();
@@ -641,7 +732,7 @@ function populateWithDefaultCategories() {
     // Add the "new category" option
     const newOption = document.createElement("option");
     newOption.value = "new";
-    newOption.textContent = "+ Ajouter une nouvelle catégorie";
+    newOption.textContent = "+ Add a new category";
     categoryInput.appendChild(newOption);
   }
 
@@ -661,7 +752,7 @@ function populateWithDefaultCategories() {
   }
 }
 
-// Charger les tags
+// Load tags
 function loadTags() {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/tags", true);
@@ -671,9 +762,9 @@ function loadTags() {
       try {
         tags = JSON.parse(xhr.responseText);
 
-        // Vous pourriez initialiser un plugin de tags ici si nécessaire
+        // You could initialize a tags plugin here if needed
       } catch (error) {
-        console.error("Erreur lors du parsing des tags:", error);
+        console.error("Error parsing tags:", error);
       }
     }
   };
@@ -681,7 +772,7 @@ function loadTags() {
   xhr.send();
 }
 
-// Rechercher des blogs
+// Search blogs
 function searchBlogs(query) {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", `/blog/search?q=${encodeURIComponent(query)}`, true);
@@ -700,19 +791,19 @@ function searchBlogs(query) {
         renderBlogTable(blogs);
         updateBlogStats();
       } catch (error) {
-        console.error("Erreur lors du parsing de la recherche:", error);
-        showAlert("Erreur lors de la recherche", "error");
+        console.error("Error parsing search results:", error);
+        showAlert("Error during search", "error");
       }
     } else {
-      console.error("Erreur lors de la recherche:", xhr.statusText);
-      showAlert("Erreur lors de la recherche", "error");
+      console.error("Error during search:", xhr.statusText);
+      showAlert("Error during search", "error");
     }
   };
 
   xhr.send();
 }
 
-// Afficher les blogs dans le tableau
+// Display blogs in the table
 function renderBlogTable(blogs) {
   const blogTableBody = document.getElementById("blogTableBody");
   if (!blogTableBody) return;
@@ -722,7 +813,7 @@ function renderBlogTable(blogs) {
   if (!blogs || blogs.length === 0) {
     blogTableBody.innerHTML = `
       <tr>
-        <td colspan="7" class="text-center">Aucun blog trouvé</td>
+        <td colspan="7" class="text-center">No blogs found</td>
       </tr>
     `;
     return;
@@ -737,15 +828,15 @@ function renderBlogTable(blogs) {
     row.innerHTML = `
       <td class="align-middle">${index + 1}</td>
       <td class="align-middle">
-        <img src="${blog.mainImageBlog}" alt="${blog.title}" class="preview-image" 
+        <img src="/${blog.mainImageBlog.replace(/\\\\/g, "/")}" alt="${blog.title}" class="preview-image" style="width: 50px; height: 50px;""
           onerror="this.src='../../assets/images/blog/img1.png'; this.onerror=null;">
       </td>
       <td class="align-middle">
         ${blog.title}
-        ${isDraft ? '<span class="badge bg-warning ms-2">Brouillon</span>' : ""}
+        ${isDraft ? '<span class="badge bg-warning ms-2">Draft</span>' : ""}
       </td>
       <td class="align-middle">
-        <span class="badge bg-${getCategoryColor(blog.category)}">${blog.category || "Non catégorisé"}</span>
+        <span class="badge bg-${getCategoryColor(blog.category)}">${blog.category || "Uncategorized"}</span>
       </td>
       <td class="align-middle">${date}</td>
       <td class="align-middle"><span class="badge bg-secondary">${commentsCount}</span></td>
@@ -767,13 +858,13 @@ function renderBlogTable(blogs) {
     blogTableBody.appendChild(row);
   });
 
-  // Ajouter les écouteurs d'événements pour les boutons d'édition et de suppression
+  // Add event listeners for edit and delete buttons
   addTableEventListeners();
 }
 
-// Mettre à jour les statistiques des blogs
+// Update blog statistics
 function updateBlogStats() {
-  // Total des articles publiés (première carte stat)
+  // Total published articles (first stat card)
   const publishedBlogs = blogs.filter((blog) => blog.status === "published");
   const totalPublished = publishedBlogs.length;
   const viewsElement = document.querySelector(
@@ -783,9 +874,9 @@ function updateBlogStats() {
     viewsElement.textContent = totalPublished;
   }
 
-  // Total des vues (deuxième carte stat)
-  // Les vues sont déjà calculées côté serveur et stockées dans la propriété 'views' de chaque blog
-  // Nous faisons simplement la somme ici
+  // Total views (second stat card)
+  // Views are already calculated server-side and stored in the 'views' property of each blog
+  // We just sum them here
   const totalViews = blogs.reduce((total, blog) => {
     return total + (blog.views || 0);
   }, 0);
@@ -797,7 +888,7 @@ function updateBlogStats() {
       totalViews > 1000 ? (totalViews / 1000).toFixed(1) + "K" : totalViews;
   }
 
-  // Total des commentaires (troisième carte stat)
+  // Total comments (third stat card)
   const totalComments = blogs.reduce((total, blog) => {
     return total + (blog.comments ? blog.comments.length : 0);
   }, 0);
@@ -808,7 +899,7 @@ function updateBlogStats() {
     commentsElement.textContent = totalComments;
   }
 
-  // Blogs en brouillon (quatrième carte stat)
+  // Draft blogs (fourth stat card)
   const draftBlogs = blogs.filter((blog) => blog.status === "draft");
   const draftBlogsElement = document.querySelector(
     ".blog-stats .stat-card:nth-child(4) .stat-info h3"
@@ -818,9 +909,9 @@ function updateBlogStats() {
   }
 }
 
-// Ajouter les écouteurs d'événements pour les boutons du tableau
+// Add event listeners for table buttons
 function addTableEventListeners() {
-  // Boutons d'édition
+  // Edit buttons
   document.querySelectorAll(".edit-blog").forEach((button) => {
     button.addEventListener("click", function () {
       const blogId = this.getAttribute("data-id");
@@ -828,7 +919,7 @@ function addTableEventListeners() {
     });
   });
 
-  // Boutons de suppression
+  // Delete buttons
   document.querySelectorAll(".delete-blog").forEach((button) => {
     button.addEventListener("click", function () {
       const blogId = this.getAttribute("data-id");
@@ -837,38 +928,38 @@ function addTableEventListeners() {
   });
 }
 
-// Éditer un blog
+// Edit a blog
 function editBlog(blogId) {
   currentBlogId = blogId;
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `/blog/${blogId}?context=edit`, true); // Ajout de ?context=edit
+  xhr.open("GET", `/blog/${blogId}?context=edit`, true); // Added ?context=edit
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
         const blog = JSON.parse(xhr.responseText);
 
-        // Afficher le formulaire
+        // Show the form
         const formContainer = document.getElementById("blogFormContainer");
         if (formContainer) {
           formContainer.classList.add("active");
           formContainer.style.display = "block";
         }
 
-        // Mettre à jour le titre du formulaire
+        // Update form title
         const formTitle = document.getElementById("formTitle");
         if (formTitle) {
-          formTitle.textContent = "Modifier un article";
+          formTitle.textContent = "Edit Article";
         }
 
-        // Remplir le formulaire avec les données du blog
+        // Fill the form with blog data
         document.getElementById("blogId").value = blog._id;
         document.getElementById("title").value = blog.title || "";
         document.getElementById("description").value = blog.description || "";
         document.getElementById("content").value = blog.content || "";
 
-        // Sélectionner la catégorie
+        // Select the category
         const categorySelect = document.getElementById("category");
         if (categorySelect) {
           for (let i = 0; i < categorySelect.options.length; i++) {
@@ -879,7 +970,7 @@ function editBlog(blogId) {
           }
         }
 
-        // Sélectionner le statut
+        // Select the status
         const statusSelect = document.getElementById("status");
         if (statusSelect) {
           for (let i = 0; i < statusSelect.options.length; i++) {
@@ -890,19 +981,19 @@ function editBlog(blogId) {
           }
         }
 
-        // Remplir les tags
+        // Fill tags
         const tagsInput = document.getElementById("tags");
         if (tagsInput && blog.tags) {
           tagsInput.value = blog.tags.join(", ");
         }
 
-        // Afficher l'image principale
+        // Show main image
         const mainImagePreview = document.getElementById("mainImagePreview");
         if (mainImagePreview && blog.mainImageBlog) {
           mainImagePreview.src = blog.mainImageBlog;
         }
 
-        // Afficher les images supplémentaires
+        // Show additional images
         const otherImagesPreview =
           document.getElementById("otherImagesPreview");
         if (
@@ -926,37 +1017,37 @@ function editBlog(blogId) {
           });
         }
       } catch (error) {
-        console.error("Erreur lors du parsing du blog:", error);
-        showAlert("Erreur lors du chargement du blog", "error");
+        console.error("Error parsing blog:", error);
+        showAlert("Error loading blog", "error");
       }
     } else {
-      console.error("Erreur lors du chargement du blog:", xhr.statusText);
-      showAlert("Erreur lors du chargement du blog", "error");
+      console.error("Error loading blog:", xhr.statusText);
+      showAlert("Error loading blog", "error");
     }
   };
 
   xhr.send();
 }
 
-// Supprimer un blog
+// Delete a blog
 function deleteBlog(blogId) {
-  // Demander confirmation
+  // Ask for confirmation
   if (typeof Swal !== "undefined") {
     Swal.fire({
-      title: "Êtes-vous sûr ?",
-      text: "Cette action ne peut pas être annulée !",
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Oui, supprimer !",
-      cancelButtonText: "Annuler",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         const xhr = new XMLHttpRequest();
         xhr.open("DELETE", `/blog/delete/${blogId}`, true);
 
-        // Ajouter le token d'authentification
+        // Add authentication token
         const token = localStorage.getItem("token");
         if (token) {
           xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -964,27 +1055,27 @@ function deleteBlog(blogId) {
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            // Supprimer le blog de la liste
+            // Remove the blog from the list
             blogs = blogs.filter((blog) => blog._id !== blogId);
 
-            // Mettre à jour l'affichage
+            // Update the display
             renderBlogTable(blogs);
             updateBlogStats();
 
-            // Afficher un message de succès
-            showAlert("Blog supprimé avec succès", "success");
+            // Show success message
+            showAlert("Blog deleted successfully", "success");
           } else {
             console.error(
-              "Erreur lors de la suppression du blog:",
+              "Error deleting blog:",
               xhr.statusText
             );
-            showAlert("Erreur lors de la suppression du blog", "error");
+            showAlert("Error deleting blog", "error");
           }
         };
 
         xhr.onerror = () => {
-          console.error("Erreur réseau lors de la suppression du blog");
-          showAlert("Erreur réseau lors de la suppression du blog", "error");
+          console.error("Network error while deleting blog");
+          showAlert("Network error while deleting blog", "error");
         };
 
         xhr.send();
@@ -996,7 +1087,7 @@ function deleteBlog(blogId) {
   }
 }
 
-// Gérer la soumission du formulaire de blog
+// Handle blog form submission
 function handleBlogSubmit(event) {
   event.preventDefault();
 
@@ -1072,33 +1163,33 @@ function handleBlogSubmit(event) {
 
         // Show success message
         showAlert(
-          isUpdate ? "Blog mis à jour avec succès" : "Blog créé avec succès",
+          isUpdate ? "Blog updated successfully" : "Blog created successfully",
           "success"
         );
       } catch (error) {
-        console.error("Erreur lors du parsing de la réponse:", error);
-        showAlert("Erreur lors de la soumission du formulaire", "error");
+        console.error("Error parsing response:", error);
+        showAlert("Error submitting form", "error");
       }
     } else {
       // Log the full error response
       console.error(
-        "Erreur lors de la soumission du formulaire:",
+        "Error submitting form:",
         xhr.statusText
       );
       console.error("Response text:", xhr.responseText);
-      showAlert("Erreur lors de la soumission du formulaire", "error");
+      showAlert("Error submitting form", "error");
     }
   };
 
   xhr.onerror = () => {
-    console.error("Erreur réseau lors de la soumission du formulaire");
-    showAlert("Erreur réseau lors de la soumission du formulaire", "error");
+    console.error("Network error while submitting form");
+    showAlert("Network error while submitting form", "error");
   };
 
   xhr.send(formData);
 }
 
-// Réinitialiser le formulaire de blog
+// Reset blog form
 function resetBlogForm() {
   currentBlogId = null;
 
@@ -1106,19 +1197,19 @@ function resetBlogForm() {
   if (form) {
     form.reset();
 
-    // Réinitialiser l'ID du blog
+    // Reset blog ID
     const blogIdInput = document.getElementById("blogId");
     if (blogIdInput) {
       blogIdInput.value = "";
     }
 
-    // Réinitialiser le titre du formulaire
+    // Reset form title
     const formTitle = document.getElementById("formTitle");
     if (formTitle) {
-      formTitle.textContent = "Ajouter un nouvel article";
+      formTitle.textContent = "Add a new article";
     }
 
-    // Réinitialiser les aperçus d'images
+    // Reset image previews
     const mainImagePreview = document.getElementById("mainImagePreview");
     if (mainImagePreview) {
       mainImagePreview.src = "../../assets/images/placeholder.jpg";
@@ -1131,12 +1222,12 @@ function resetBlogForm() {
   }
 }
 
-// Afficher une alerte
+// Show an alert
 function showAlert(message, type) {
   // Check if Swal is defined
   if (typeof Swal !== "undefined") {
     Swal.fire({
-      title: type === "success" ? "Succès !" : "Erreur !",
+      title: type === "success" ? "Success!" : "Error!",
       text: message,
       icon: type,
       confirmButtonText: "OK",
@@ -1149,20 +1240,14 @@ function showAlert(message, type) {
   }
 }
 
-// Obtenir la couleur de la catégorie
+// Get category color
 function getCategoryColor(category) {
   const categoryColors = {
-    Technologie: "primary",
     Technology: "primary",
-    Mode: "success",
     Fashion: "success",
     Lifestyle: "info",
-    "Style de vie": "info",
-    Alimentation: "warning",
     Food: "warning",
-    Voyage: "danger",
     Travel: "danger",
-    Santé: "secondary",
     Health: "secondary",
   };
 
