@@ -145,6 +145,7 @@ function createProductCard(product) {
 document.addEventListener("DOMContentLoaded", () => {
   fetchAndPopulateDeals();
   fetchAndPopulateTopSelling();
+  fetchAndPopulateFeaturedProduct(); // Ajoutez cette ligne
 
   fetchCategories()
     .then((categories) => {
@@ -274,7 +275,7 @@ function checkWishlistStatus() {
   const clientId = localStorage.getItem("userId");
 
   if (!token || !clientId) {
-    return; 
+    return;
   }
 
   const xhr = new XMLHttpRequest();
@@ -667,6 +668,157 @@ function fetchAndPopulateTopSelling() {
   xhr.send();
 }
 
+// Ajouter ces deux nouvelles fonctions après la fonction fetchAndPopulateTopSelling
+
+function createCardFeaturedProduct(produit) {
+  const imageUrl = produit.mainImage
+    ? `http://localhost:3000/uploads/${produit.mainImage}`
+    : "../assets/images/products/frier.png";
+  const rating = produit.averageRating || 0;
+  const reviews = produit.reviewCount || 0;
+  const price = produit.productPrice || "N/A";
+  const name = produit.productName || "N/A";
+  const id = produit._id;
+  const shopName = produit.shop?.shopName || "Unknown Shop";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "col-md-6";
+  wrapper.setAttribute("data-aos", "fade-up");
+  wrapper.setAttribute("data-aos-duration", "800");
+
+  wrapper.innerHTML = `
+    <div class="product-card d-flex gap-16 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
+      <a href="product-details.html?id=${id}" class="product-card__thumb flex-center h-unset rounded-8 position-relative w-unset flex-shrink-0 p-16" tabindex="0">
+        <img src="${imageUrl}" alt="${name}" class="w-auto max-w-120" onerror="this.src='../assets/images/products/oversize.png'">
+      </a>
+      <div class="bg-white p-2 rounded-pill z-1 position-absolute inset-inline-end-0 inset-block-start-0 me-16 mt-16 shadow-sm">
+        <button type="button" class="wishlist-btn w-40 h-40 text-md d-flex justify-content-center align-items-center rounded-circle hover-bg-main-two-600 hover-text-white" 
+                id="wishlist-btn-${id}" 
+                data-product-id="${id}">
+          <i class="ph ph-heart fs-4"></i>
+        </button>
+      </div>
+      <div class="product-card__content my-12 flex-grow-1">
+        <h6 class="title text-sm fw-semibold mb-6">
+          <a href="product-details.html?id=${id}" class="link text-line-2" tabindex="0">${name}</a>
+        </h6>
+        <div class="flex-align gap-6 mb-6">
+          <span class="text-xs fw-medium text-gray-500">${rating.toFixed(1)}</span>
+          <span class="text-xs fw-medium text-warning-600 d-flex"><i class="ph-fill ph-star"></i></span>
+          <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
+        </div>
+        <div class="flex-align gap-4">
+          <span class="text-main-two-600 text-xs d-flex"><i class="ph-fill ph-storefront"></i></span>
+          <span class="text-gray-500 text-xs">By ${shopName}</span>
+        </div>
+        <div class="product-card__price my-8">
+          <span class="text-heading text-sm fw-semibold">${price} DT <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
+        </div>
+        <button class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-6 px-12 rounded-8 flex-center gap-6 fw-medium text-xs" data-product-id="${id}">
+          Add To Cart <i class="ph ph-shopping-cart"></i>
+        </button>
+      </div>
+    </div>
+  `;
+
+  return wrapper;
+}
+
+function fetchAndPopulateFeaturedProduct() {
+  const apiUrl = "http://localhost:3000/product/get";
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          console.log("API Response for Featured Products:", response);
+
+          const products = response.data.products;
+
+          const featuredContainer = document.querySelector(
+            ".featured-product-slider"
+          );
+
+          if (!featuredContainer) {
+            console.error("Featured products container not found");
+            return;
+          }
+
+          if (!products || !Array.isArray(products) || products.length === 0) {
+            featuredContainer.innerHTML =
+              "<p>No Featured Products Available</p>";
+            return;
+          }
+
+          console.log("Featured Products count:", products.length);
+
+          // Unslick if already initialized
+          if ($(featuredContainer).hasClass("slick-initialized")) {
+            $(featuredContainer).slick("unslick");
+          }
+
+          featuredContainer.innerHTML = "";
+
+          // Get more products to enable sliding between sets
+          const featuredProducts = products.slice(0, 8); // Get 8 products to have 2 slides of 4 products
+
+          // Group products in sets of 4 (2×2 grid per slide)
+          for (let i = 0; i < featuredProducts.length; i += 4) {
+            const slideDiv = document.createElement("div");
+            slideDiv.className = "featured-slide";
+
+            // Create a row container for this slide
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "row w-100 gx-3 gy-3";
+
+            // Add up to 4 products to this slide
+            for (let j = 0; j < 4 && i + j < featuredProducts.length; j++) {
+              const productCard = createCardFeaturedProduct(
+                featuredProducts[i + j]
+              );
+              rowDiv.appendChild(productCard);
+            }
+
+            slideDiv.appendChild(rowDiv);
+            featuredContainer.appendChild(slideDiv);
+          }
+
+          if (typeof AOS !== "undefined") {
+            AOS.init();
+          }
+
+          // Initialize slick to slide between sets of 4 products
+          $(featuredContainer).slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            prevArrow: $("#featured-products-prev"),
+            nextArrow: $("#featured-products-next"),
+          });
+
+          // Update wishlist button states
+          checkWishlistStatus();
+        } catch (error) {
+          console.error("Error parsing JSON for featured products:", error);
+          console.log(xhr.responseText);
+        }
+      } else {
+        console.error("Error fetching featured products:", xhr.status);
+      }
+    }
+  };
+
+  xhr.onerror = () => {
+    console.error("Network error with API for featured products:", apiUrl);
+  };
+
+  xhr.open("GET", apiUrl, true);
+  xhr.send();
+}
+
 function fetchCategories() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -1039,6 +1191,61 @@ style.textContent = `
         color: #3b82f6 !important;
         transform: scale(1.5);
         transition: all 0.3s ease;
+    }
+
+    /* Featured products grid styling */
+    .featured-product-slider {
+        display: block;
+        width: 100%;
+    }
+
+    .featured-product-slider .featured-slide {
+        padding: 0 8px;
+    }
+
+    .featured-product-slider .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -10px;
+        margin-left: -10px;
+    }
+
+    .featured-product-slider .col-md-6 {
+        padding: 10px;
+        width: 50%;
+        max-width: 50%;
+        flex: 0 0 50%;
+    }
+
+    /* Ensure horizontal card layout in grid */
+    .featured-product-slider .product-card {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        height: 100%;
+        margin-bottom: 0 !important;
+    }
+
+    /* Make product cards have consistent sizes */
+    .featured-product-slider .product-card__thumb img {
+        width: auto;
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: contain;
+    }
+
+    /* Make content fit better in small cards */
+    .featured-product-slider .product-card__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-right: 5px;
+    }
+
+    /* Make sure the slick slider shows a full featured slide */
+    .featured-product-slider .slick-slide {
+        float: none;
+        height: auto !important;
     }
 `;
 
