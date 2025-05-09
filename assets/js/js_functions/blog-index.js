@@ -117,7 +117,7 @@ function displayBlogs(blogs) {
       html += `
       <div class="blog-item-wrapper mb-48"> <!-- Added margin -->
           <div class="blog-item"> 
-              <a href="blog_details.html?id=${blog._id}" class="w-100 h-100 rounded-16 overflow-hidden">
+              <a href="blog_details.html?id=${blog._id}" class="rounded-16 overflow-hidden">
                   <img src="/${blog.mainImageBlog.replace(/\\\\\\\\/g, "/")}"
                       alt="${blog.title}" class="cover-img" 
                       onerror="this.src='../../assets/images/blog/img1.png'; this.onerror=null;">
@@ -125,21 +125,21 @@ function displayBlogs(blogs) {
               <div class="blog-item__content mt-24">
                   <span class="bg-main-50 text-main-600 py-4 px-24 rounded-8 mb-16">${blog.category}</span>`;
   
-      // Handle tags with or without spaces
-      if (blog.tags && blog.tags.length > 0) {
-        html += '<div class="mb-16">';
-        for (var j = 0; j < blog.tags.length; j++) {
-          var tag = blog.tags[j];
-          var words = tag.trim().split(/\s+/);
-          for (var k = 0; k < words.length; k++) {
-            var word = words[k];
-            if (word) {
-              html += `<span class="bg-primary-50 text-primary-600 py-2 px-12 rounded-4 me-8 mb-8 d-inline-block">#${word}</span>`;
-            }
-          }
-        }
-        html += "</div>";
-      }
+              // Handle tags with or without spaces
+              if (blog.tags && blog.tags.length > 0) {
+                html += '<div class="mb-16">';
+                for (var j = 0; j < blog.tags.length; j++) {
+                  var tag = blog.tags[j];
+                  var words = tag.trim().split(/\s+/);
+                  for (var k = 0; k < words.length; k++) {
+                    var word = words[k];
+                    if (word) {
+                      html += `<span class="bg-primary-50 text-primary-600 py-2 px-12 rounded-4 me-8 mb-8 d-inline-block">#${word}</span>`;
+                    }
+                  }
+                }
+                html += "</div>";
+              }
   
       html += `     
                   <h6 class="text-2xl mb-24">
