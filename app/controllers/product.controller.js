@@ -689,3 +689,60 @@ exports.getBannedProducts = async (req, res) => {
     })
   }
 }
+
+// Ajouter cette nouvelle fonction au fichier product.controller.js
+
+// Get products by category
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const categoryName = req.params.categoryName;
+    
+    // Si la catégorie est "all", retourner tous les produits
+    if (categoryName.toLowerCase() === "all") {
+      return this.getAllProducts(req, res);
+    }
+    
+    // Trouver les produits dont la sous-catégorie appartient à la catégorie spécifiée
+    const products = await Product.find()
+      .populate({
+        path: "subCategory",
+        populate: {
+          path: "category",
+          select: "categoryName"
+        }
+      })
+      .populate("shop", "shopName status");
+    
+    // Filtrer les produits par catégorie
+    const filteredProducts = products.filter(product => {
+      // Vérifier si le produit a une sous-catégorie et si cette sous-catégorie a une catégorie
+      if (product.subCategory && 
+          product.subCategory.category && 
+          product.subCategory.category.categoryName) {
+        return product.subCategory.category.categoryName === categoryName;
+      }
+      return false;
+    });
+    
+    // Filtrer les produits bannis pour les utilisateurs normaux
+    let finalProducts = filteredProducts;
+    if (!(req.user && (req.user.role === "vendor" || req.user.role === "admin" || req.user.role === "superAdmin"))) {
+      finalProducts = filteredProducts.filter(product => {
+        if (product.banned) return false;
+        if (product.shop && product.shop.status === "Banned") return false;
+        return true;
+      });
+    }
+    
+    res.status(200).json({
+      status: "success",
+      results: finalProducts.length,
+      products: finalProducts
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message
+    });
+  }
+};

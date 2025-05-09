@@ -35,8 +35,8 @@
 
       .slider-for__item img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: 400px;
+        object-fit: contain;
         border-radius: 16px;
       }
 
@@ -102,15 +102,31 @@
         background-color: #fff;
       }
 
+      /* Style for single image (when no slider is needed) */
+      .single-blog-image {
+        position: relative;
+        height: 450px;
+        overflow: hidden;
+        border-radius: 16px;
+        margin-bottom: 30px;
+      }
+
+      .single-blog-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+      }
+
       /* Ajustements responsives */
       @media (max-width: 992px) {
-        .slider-for__item {
+        .slider-for__item, .single-blog-image {
           height: 400px;
         }
       }
 
       @media (max-width: 768px) {
-        .slider-for__item {
+        .slider-for__item, .single-blog-image {
           height: 350px;
         }
         
@@ -120,7 +136,7 @@
       }
 
       @media (max-width: 576px) {
-        .slider-for__item {
+        .slider-for__item, .single-blog-image {
           height: 250px;
         }
         
@@ -791,50 +807,12 @@
                   <!-- Slider principal -->
                   <div class="slider-for">
                     <div class="slider-for__item">
-                      <img
-                        src="../assets/images/blog/img1.png"
-                        alt="Image principale du blog"
-                        class="w-100 h-100 rounded-16 object-fit-cover"
-                      />
-                    </div>
-                    <div class="slider-for__item">
-                      <img
-                        src="../assets/images/blog/img2.png"
-                        alt="Image blog 2"
-                        class="w-100 h-100 rounded-16 object-fit-cover"
-                      />
-                    </div>
-                    <div class="slider-for__item">
-                      <img
-                        src="../assets/images/blog/img3.png"
-                        alt="Image blog 3"
-                        class="w-100 h-100 rounded-16 object-fit-cover"
-                      />
                     </div>
                   </div>
 
                   <!-- Navigation (miniatures) -->
                   <div class="slider-nav mt-16">
                     <div class="slider-nav__item">
-                      <img
-                        src="../assets/images/blog/mini1.png"
-                        alt="Miniature 1"
-                        class="w-100 h-100 rounded-8 object-fit-cover cursor-pointer"
-                      />
-                    </div>
-                    <div class="slider-nav__item">
-                      <img
-                        src="../assets/images/blog/mini2.png"
-                        alt="Miniature 2"
-                        class="w-100 h-100 rounded-8 object-fit-cover cursor-pointer"
-                      />
-                    </div>
-                    <div class="slider-nav__item">
-                      <img
-                        src="../assets/images/blog/mini3.png"
-                        alt="Miniature 3"
-                        class="w-100 h-100 rounded-8 object-fit-cover cursor-pointer"
-                      />
                     </div>
                   </div>
                 </div>
@@ -899,40 +877,6 @@
                       </span>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-48">
-              <div class="rounded-16 bg-main-50 p-24">
-                <span
-                  class="w-48 h-48 bg-main-600 text-white flex-center rounded-circle mb-24 text-2xl"
-                  ><i class="ph ph-quotes"></i
-                ></span>
-                <p class="text-gray-700 mb-24">
-                  A great commerce experience cannot be distilled to a single
-                  number. It's not a Lighthouse score, or a set of Core Web
-                  Vitals figures, although both are important inputs. A great
-                  commerce experience is a trilemma that carefully balances
-                  competing needs of delivering great customer experience,
-                  dynamic storefront capabilities, and long-term business.
-                </p>
-                <div class="flex-align gap-8">
-                  <span class="text-15 fw-medium text-neutral-600 d-flex"
-                    ><i class="ph-fill ph-star"></i
-                  ></span>
-                  <span class="text-15 fw-medium text-neutral-600 d-flex"
-                    ><i class="ph-fill ph-star"></i
-                  ></span>
-                  <span class="text-15 fw-medium text-neutral-600 d-flex"
-                    ><i class="ph-fill ph-star"></i
-                  ></span>
-                  <span class="text-15 fw-medium text-neutral-600 d-flex"
-                    ><i class="ph-fill ph-star"></i
-                  ></span>
-                  <span class="text-15 fw-medium text-neutral-600 d-flex"
-                    ><i class="ph-fill ph-star"></i
-                  ></span>
                 </div>
               </div>
             </div>
@@ -1459,57 +1403,8 @@
     <!-- Script d'initialisation du slider -->
     <script>
       $(document).ready(function() {
-        // Initialisation du slider principal (slider-for)
-        $('.slider-for').slick({
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          arrows: false, // Suppression des boutons next et previous
-          fade: true,
-          autoplay: false,
-          infinite: true,
-          asNavFor: '.slider-nav',
-          dots: true, // Ajout des points de navigation
-          responsive: [
-            {
-              breakpoint: 768,
-              settings: {
-                dots: true
-              }
-            }
-          ]
-        });
-        
-        // Initialisation du slider de navigation (slider-nav)
-        $('.slider-nav').slick({
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          asNavFor: '.slider-for',
-          dots: false,
-          centerMode: false,
-          focusOnSelect: true,
-          arrows: false, // Suppression des boutons next et previous
-          infinite: true,
-          responsive: [
-            {
-              breakpoint: 992,
-              settings: {
-                slidesToShow: 3
-              }
-            },
-            {
-              breakpoint: 768,
-              settings: {
-                slidesToShow: 3
-              }
-            },
-            {
-              breakpoint: 576,
-              settings: {
-                slidesToShow: 2
-              }
-            }
-          ]
-        });
+        // The slider initialization will be handled by the blog-details.js script
+        // based on whether the blog has multiple images or not
       });
     </script>
     <script src="../assets/js/js_functions/blog-details.js"></script>
