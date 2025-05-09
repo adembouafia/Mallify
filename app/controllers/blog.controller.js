@@ -87,9 +87,11 @@ exports.getBlogById = async (req, res) => {
 
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-    // Incrémenter le compteur de vues
-    blog.views = (blog.views || 0) + 1;
-    await blog.save();
+    // Incrémenter le compteur de vues seulement si ce n'est pas pour édition
+    if (req.query.context !== 'edit') {
+      blog.views = (blog.views || 0) + 1;
+      await blog.save();
+    }
 
     res.status(200).json(blog);
   } catch (error) {

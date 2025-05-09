@@ -773,33 +773,45 @@ function renderBlogTable(blogs) {
 
 // Mettre à jour les statistiques des blogs
 function updateBlogStats() {
-  // Total des vues (première carte stat)
-  const totalViews = blogs.reduce((total, blog) => {
-    return total + (blog.views || 0);
-  }, 0);
+  // Total des articles publiés (première carte stat)
+  const publishedBlogs = blogs.filter((blog) => blog.status === "published");
+  const totalPublished = publishedBlogs.length;
   const viewsElement = document.querySelector(
     ".blog-stats .stat-card:nth-child(1) .stat-info h3"
   );
   if (viewsElement) {
-    viewsElement.textContent =
+    viewsElement.textContent = totalPublished;
+  }
+
+  // Total des vues (deuxième carte stat)
+  // Les vues sont déjà calculées côté serveur et stockées dans la propriété 'views' de chaque blog
+  // Nous faisons simplement la somme ici
+  const totalViews = blogs.reduce((total, blog) => {
+    return total + (blog.views || 0);
+  }, 0);
+  const viewsStatsElement = document.querySelector(
+    ".blog-stats .stat-card:nth-child(2) .stat-info h3"
+  );
+  if (viewsStatsElement) {
+    viewsStatsElement.textContent =
       totalViews > 1000 ? (totalViews / 1000).toFixed(1) + "K" : totalViews;
   }
 
-  // Total des commentaires (deuxième carte stat)
+  // Total des commentaires (troisième carte stat)
   const totalComments = blogs.reduce((total, blog) => {
     return total + (blog.comments ? blog.comments.length : 0);
   }, 0);
   const commentsElement = document.querySelector(
-    ".blog-stats .stat-card:nth-child(2) .stat-info h3"
+    ".blog-stats .stat-card:nth-child(3) .stat-info h3"
   );
   if (commentsElement) {
     commentsElement.textContent = totalComments;
   }
 
-  // Blogs en brouillon (troisième carte stat)
+  // Blogs en brouillon (quatrième carte stat)
   const draftBlogs = blogs.filter((blog) => blog.status === "draft");
   const draftBlogsElement = document.querySelector(
-    ".blog-stats .stat-card:nth-child(3) .stat-info h3"
+    ".blog-stats .stat-card:nth-child(4) .stat-info h3"
   );
   if (draftBlogsElement) {
     draftBlogsElement.textContent = draftBlogs.length;
@@ -830,7 +842,7 @@ function editBlog(blogId) {
   currentBlogId = blogId;
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `/blog/${blogId}`, true);
+  xhr.open("GET", `/blog/${blogId}?context=edit`, true); // Ajout de ?context=edit
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
