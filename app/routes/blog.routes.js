@@ -5,7 +5,7 @@ module.exports = (app) => {
     const blog = require("../controllers/blog.controller")
 
     app.post("/blog/create", auth, authorize("admin", "superAdmin"), blog.createBlog)
-    app.get("/blog", auth, blog.getAllBlogs)
+    app.get("/blog", blog.getAllBlogs)
 
     app.get("/blog/category/:category", blog.getBlogsByCategory)
     app.get("/blog/tag/:tag", blog.getBlogsByTag)
