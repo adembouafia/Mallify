@@ -5,6 +5,6 @@ module.exports = (app) => {
     const category = require("../controllers/category.controller");
     app.post('/category/create',auth,authorize('admin', 'superAdmin' ,'vendor' , 'moderator'),category.createCategory);
     app.delete('/category/delete/:id',auth,authorize('superAdmin'),category.deleteCategory);
-    app.get('/category',auth,authorize('client', 'vendor', 'moderator', 'admin', 'superAdmin'),category.getAllCategories);
+    app.get('/category',category.getAllCategories);
     app.get('/categorieswithsubcategories',category.getCategoriesWithSubCategories);
 };
