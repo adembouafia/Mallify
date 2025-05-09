@@ -31,7 +31,7 @@ exports.createReport = async (req, res) => {
             title,
             message,
             shop: shopId,
-            forAdmin: targetType === 'Platform' // Only Platform reports go to admin by default
+            forAdmin: targetType === 'Platform' 
         });
 
         const savedReport = await newReport.save();
