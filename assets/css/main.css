@@ -11042,7 +11042,7 @@ input[type=number] {
 
 /*------------------report product .css ----------------------*/
 
-      .text-main-600 {
+    .text-main-600 {
         color: #4a6cf7;
       }
 
@@ -11239,9 +11239,7 @@ input[type=number] {
           margin: 0;
           vertical-align: middle; /* Better alignment */
           /* The ph-caret-left/right icons should work as chevrons */
-      }
-
-      #new-arrival-prev:hover i,
+      }      #new-arrival-prev:hover i,
       #new-arrival-next:hover i {
           color: #dddddd !important; /* Slightly dimmer white on hover */
       }
