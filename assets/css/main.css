@@ -11042,18 +11042,6 @@ input[type=number] {
 
 /*------------------report product .css ----------------------*/
 
-    .text-main-600 {
-        color: #4a6cf7;
-      }
-
-      .text-28 {
-        font-size: 28px;
-      }
-
-      .d-flex {
-        display: flex;
-        align-items: center;
-      }
 
       /* Modal styles */
       .modal {

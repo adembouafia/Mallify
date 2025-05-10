@@ -1,0 +1,103 @@
+
+.price-filter-container {
+  padding: 0;
+  border-top: 1px solid #e9ecef;
+  margin-top: 15px;
+  padding-top: 20px;
+}
+.noUi-target.noUi-horizontal {
+  display: none;
+}
+.price-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.price-input {
+  width: 100%;
+}
+
+.price-input input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.price-input input::placeholder {
+  color: #777;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.price-input input:focus {
+  outline: none;
+  border-color: #0062bd;
+}
+.price-dash {
+  display: none;
+}
+
+.price-filter-button {
+  margin-top: 10px;
+  width: 120px;
+  padding: 14px 10px;
+  background-color: #3f67ff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background-color 0.2s;
+}
+
+.price-filter-button:hover {
+  background-color: #3355dd;
+}
+
+.rating-filter-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: #f8f9fa;
+}
+
+.rating-filter-item:hover {
+  background-color: #eef3f8;
+}
+
+.rating-filter-item.active {
+  background-color: #eef3f8;
+  position: relative;
+}
+
+.rating-filter-item input[type="radio"] {
+  margin-right: 12px;
+  accent-color: #3f67ff;
+  width: 18px;
+  height: 18px;
+}
+
+.rating-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  flex-grow: 1;
+}
+
+.rating-count {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 400;
+}

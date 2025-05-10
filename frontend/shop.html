@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../assets/css/select2.min.css" />
     <link rel="stylesheet" href="../assets/css/animate.css" />
-    <link rel="stylesheet" href="../assets/css/aos.css" />
+    <link rel="stylesheet" href="../assets/css/aos.css" />  
     <link rel="stylesheet" href="../assets/css/main.css" />
-    <link rel="stylesheet" href="../assets/css/aboutUs.css" />
+    <link rel="stylesheet" href="../assets/css/shop-style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
   </head>
   <body>
     <div class="preloader">
@@ -712,268 +713,87 @@
                     >
                   </li>
                 </ul>
-              </div>
-              <div
+              </div>              <div
                 class="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32"
               >
                 <h6 class="text-xl border-bottom border-gray-100 pb-24 mb-24">
                   Filter by Price
                 </h6>
-                <div class="custom--range">
-                  <div id="slider-range"></div>
-                  <div class="flex-between flex-wrap-reverse gap-8 mt-24">
-                    <button type="button" class="btn btn-main h-40 flex-align">
-                      Filter
-                    </button>
-                    <div class="custom--range__content flex-align gap-4">
-                      <span class="text-gray-500 text-md flex-shrink-0"
-                        >Price:</span
-                      >
-                      <input
-                        type="text"
-                        class="custom--range__prices text-neutral-600 text-start text-md fw-medium"
-                        id="amount"
-                        readonly
-                      />
+                <div class="price-filter-container">
+                  <div id="price-range" class="noUi-target noUi-horizontal"></div>                 
+                   <div class="price-inputs">
+                    <div class="price-input">
+                      <input type="number" id="min-price" placeholder="Min Price">
+                    </div>
+                    <div class="price-dash">-</div>
+                    <div class="price-input">
+                      <input type="number" id="max-price" placeholder="Max Price">
                     </div>
                   </div>
+                  <button type="button" id="price-filter-btn" class="price-filter-button">
+                    Apply Filter
+                  </button>
                 </div>
-              </div>
-              <div
+              </div>              <div
                 class="shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32"
               >
                 <h6 class="text-xl border-bottom border-gray-100 pb-24 mb-24">
                   Filter by Rating
                 </h6>
-                <div class="flex-align gap-8 position-relative mb-20">
-                  <label
-                    class="position-absolute w-100 h-100 cursor-pointer"
-                    for="rating5"
-                  >
-                  </label>
-                  <div class="common-check common-radio mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="rating5"
-                    />
-                  </div>
-                  <div
-                    class="progress w-100 bg-gray-100 rounded-pill h-8"
-                    role="progressbar"
-                    aria-label="Basic example"
-                    aria-valuenow="70"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    <div
-                      class="progress-bar bg-main-600 rounded-pill"
-                      style="width: 70%"
-                    ></div>
-                  </div>
-                  <div class="flex-align gap-4">
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                  </div>
-                  <span class="text-gray-900 flex-shrink-0">124</span>
+                <div class="rating-filter-item active" data-rating="0">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="ratingAll"
+                    checked
+                  />
+                  <span class="rating-label">All Ratings</span>
                 </div>
-                <div class="flex-align gap-8 position-relative mb-20">
-                  <label
-                    class="position-absolute w-100 h-100 cursor-pointer"
-                    for="rating4"
-                  >
-                  </label>
-                  <div class="common-check common-radio mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="rating4"
-                    />
-                  </div>
-                  <div
-                    class="progress w-100 bg-gray-100 rounded-pill h-8"
-                    role="progressbar"
-                    aria-label="Basic example"
-                    aria-valuenow="50"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    <div
-                      class="progress-bar bg-main-600 rounded-pill"
-                      style="width: 50%"
-                    ></div>
-                  </div>
-                  <div class="flex-align gap-4">
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                  </div>
-                  <span class="text-gray-900 flex-shrink-0">52</span>
+                <div class="rating-filter-item" data-rating="5">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="rating5"
+                  />
+                  <span class="rating-label">5 Stars</span>
                 </div>
-                <div class="flex-align gap-8 position-relative mb-20">
-                  <label
-                    class="position-absolute w-100 h-100 cursor-pointer"
-                    for="rating3"
-                  >
-                  </label>
-                  <div class="common-check common-radio mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="rating3"
-                    />
-                  </div>
-                  <div
-                    class="progress w-100 bg-gray-100 rounded-pill h-8"
-                    role="progressbar"
-                    aria-label="Basic example"
-                    aria-valuenow="35"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    <div
-                      class="progress-bar bg-main-600 rounded-pill"
-                      style="width: 35%"
-                    ></div>
-                  </div>
-                  <div class="flex-align gap-4">
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                  </div>
-                  <span class="text-gray-900 flex-shrink-0">12</span>
+                <div class="rating-filter-item" data-rating="4">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="rating4"
+                  />
+                  <span class="rating-label">4 Stars & Up</span>
                 </div>
-                <div class="flex-align gap-8 position-relative mb-20">
-                  <label
-                    class="position-absolute w-100 h-100 cursor-pointer"
-                    for="rating2"
-                  >
-                  </label>
-                  <div class="common-check common-radio mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="rating2"
-                    />
-                  </div>
-                  <div
-                    class="progress w-100 bg-gray-100 rounded-pill h-8"
-                    role="progressbar"
-                    aria-label="Basic example"
-                    aria-valuenow="20"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    <div
-                      class="progress-bar bg-main-600 rounded-pill"
-                      style="width: 20%"
-                    ></div>
-                  </div>
-                  <div class="flex-align gap-4">
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                  </div>
-                  <span class="text-gray-900 flex-shrink-0">5</span>
+                <div class="rating-filter-item" data-rating="3">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="rating3"
+                  />
+                  <span class="rating-label">3 Stars & Up</span>
                 </div>
-                <div class="flex-align gap-8 position-relative mb-0">
-                  <label
-                    class="position-absolute w-100 h-100 cursor-pointer"
-                    for="rating1"
-                  >
-                  </label>
-                  <div class="common-check common-radio mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="rating1"
-                    />
-                  </div>
-                  <div
-                    class="progress w-100 bg-gray-100 rounded-pill h-8"
-                    role="progressbar"
-                    aria-label="Basic example"
-                    aria-valuenow="5"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    <div
-                      class="progress-bar bg-main-600 rounded-pill"
-                      style="width: 5%"
-                    ></div>
-                  </div>
-                  <div class="flex-align gap-4">
-                    <span class="text-xs fw-medium text-warning-600 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                    <span class="text-xs fw-medium text-gray-400 d-flex"
-                      ><i class="ph-fill ph-star"></i
-                    ></span>
-                  </div>
-                  <span class="text-gray-900 flex-shrink-0">2</span>
+                <div class="rating-filter-item" data-rating="2">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="rating2"
+                  />
+                  <span class="rating-label">2 Stars & Up</span>
+                </div>
+                <div class="rating-filter-item" data-rating="1">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="ratingRadio"
+                    id="rating1"
+                  />
+                  <span class="rating-label">1 Star & Up</span>
                 </div>
               </div>
             </div>
@@ -1009,11 +829,7 @@
                   <select
                     class="form-control common-input px-14 py-14 text-inherit rounded-6 w-auto"
                     id="sorting"
-                  >
-                    <option value="1" selected>Popular</option>
-                    <option value="1">Latest</option>
-                    <option value="1">Trending</option>
-                    <option value="1">Matches</option>
+                  ><option value="1" selected disabled>Default Sorting</option>
                   </select>
                 </div>
                 <button
@@ -2227,7 +2043,7 @@
     <script src="../assets/js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
     <script src="../assets/js/js_functions/preloader.js"></script>
-    <script src="../assets/js/js_functions/login_and_register.js"></script>
+    <script src="../assets/js/js_functions/login_and_register.js"></script>    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     <script src="../assets/js/js_functions/shop.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/js_functions/categorisWithSubCategories.js"></script>
