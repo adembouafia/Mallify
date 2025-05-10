@@ -145,7 +145,8 @@ function createProductCard(product) {
 document.addEventListener("DOMContentLoaded", () => {
   fetchAndPopulateDeals();
   fetchAndPopulateTopSelling();
-  fetchAndPopulateFeaturedProduct(); // Ajoutez cette ligne
+  fetchAndPopulateFeaturedProduct();
+  fetchAndPopulateRecommendedProduct();
 
   fetchCategories()
     .then((categories) => {
@@ -668,8 +669,6 @@ function fetchAndPopulateTopSelling() {
   xhr.send();
 }
 
-// Ajouter ces deux nouvelles fonctions après la fonction fetchAndPopulateTopSelling
-
 function createCardFeaturedProduct(produit) {
   const imageUrl = produit.mainImage
     ? `http://localhost:3000/uploads/${produit.mainImage}`
@@ -819,6 +818,207 @@ function fetchAndPopulateFeaturedProduct() {
   xhr.send();
 }
 
+function createCardRecommendedProduct(produit) {
+  const imageUrl = produit.mainImage
+    ? `http://localhost:3000/uploads/${produit.mainImage}`
+    : "../assets/images/products/tennis_ball.png";
+  const rating = produit.averageRating || 0;
+  const reviews = produit.reviewCount || 0;
+  const price = produit.productPrice || "N/A";
+  const originalPrice = Math.round(price * 1.3); // Calculer un prix original 30% plus élevé
+  const name = produit.productName || "N/A";
+  const id = produit._id;
+  const shopName = produit.shop?.shopName || "Mallify";
+
+  const discountPercentage = Math.round(
+    ((originalPrice - price) / originalPrice) * 100
+  );
+
+  const isBestSeller = reviews > 1;
+
+  const wrapper = document.createElement("div");
+  wrapper.setAttribute("data-aos", "fade-up");
+  wrapper.setAttribute(
+    "data-aos-duration",
+    Math.floor(Math.random() * 800) + 400
+  ); 
+  wrapper.innerHTML = `
+    <div class="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2" data-product-id="${id}">
+      <a href="product-details.html?id=${id}" class="product-card__thumb flex-center rounded-8 position-relative">
+        <img src="${imageUrl}" alt="${name}" class="w-100" style="height: 180px; object-fit: contain;" onerror="this.src='../assets/images/products/tennis_ball.png'">
+        ${isBestSeller ? '<span class="product-card__badge bg-tertiary-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">Best Seller</span>' : ""}
+      </a>
+      <div class="bg-white p-2 rounded-pill z-1 position-absolute inset-inline-end-0 inset-block-start-0 me-16 mt-16 shadow-sm">
+        <button type="button" class="wishlist-btn w-40 h-40 text-md d-flex justify-content-center align-items-center rounded-circle hover-bg-main-two-600 hover-text-white" 
+                id="wishlist-btn-${id}" 
+                data-product-id="${id}">
+          <i class="ph ph-heart fs-4"></i>
+        </button>
+      </div>
+      <div class="product-card__content mt-16">
+        <h6 class="title text-lg fw-semibold my-16">
+          <a href="product-details.html?id=${id}" class="link text-line-2" tabindex="0">${name}</a>
+        </h6>
+        <div class="flex-align gap-6">
+          <div class="flex-align gap-2">
+            ${generateStarRating(rating)}
+          </div>
+          <span class="text-xs fw-medium text-gray-500">${rating.toFixed(1)}</span>
+          <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
+        </div>
+        <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">Fulfilled by ${shopName}</span>
+        <div class="product-card__price mt-16 mb-30">
+          ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
+          <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
+        </div>
+        <button 
+          class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+          data-product-id="${id}">
+          Add To Cart <i class="ph ph-shopping-cart"></i> 
+        </button>
+      </div>
+    </div>
+  `;
+  return wrapper;
+}
+
+function fetchAndPopulateRecommendedProduct() {
+  const apiUrl = "http://localhost:3000/product/get";
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          console.log("API Response for Recommended Products:", response);
+
+          const products = response.data.products;
+
+          const recommendedContainer = document.querySelector(
+            ".recommended-slider"
+          );
+
+          if (!recommendedContainer) {
+            console.error("Recommended products container not found");
+            return;
+          }
+
+          if (!products || !Array.isArray(products) || products.length === 0) {
+            recommendedContainer.innerHTML =
+              "<p>No Recommended Products Available</p>";
+            return;
+          }
+
+          console.log("Recommended Products count:", products.length);
+
+          // Vérifier si slick est initialisé et le détruire si c'est le cas
+          if (recommendedContainer.classList.contains("slick-initialized")) {
+            // Utiliser la fonction slick de jQuery si disponible
+            if (window.jQuery && window.jQuery(recommendedContainer).slick) {
+              window.jQuery(recommendedContainer).slick("unslick");
+            }
+          }
+
+          recommendedContainer.innerHTML = "";
+
+          // Trier les produits par nombre d'avis pour mettre les plus populaires en premier
+          const sortedProducts = [...products].sort(
+            (a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)
+          );
+
+          // Prendre les 10 premiers produits pour les recommandations
+          const recommendedProducts = sortedProducts.slice(0, 10);
+
+          recommendedProducts.forEach((product) => {
+            const productCard = createCardRecommendedProduct(product);
+            recommendedContainer.appendChild(productCard);
+          });
+
+          if (typeof AOS !== "undefined") {
+            AOS.refresh();
+          }
+
+          // Initialiser le slider pour les produits recommandés
+          // Utiliser la fonction slick de jQuery si disponible
+          if (window.jQuery && window.jQuery.fn.slick) {
+            window.jQuery(recommendedContainer).slick({
+              slidesToShow: 4,
+              slidesToScroll: 1,
+              arrows: true,
+              prevArrow: window.jQuery("#recommended-prev"),
+              nextArrow: window.jQuery("#recommended-next"),
+              responsive: [
+                { breakpoint: 1200, settings: { slidesToShow: 3 } },
+                { breakpoint: 992, settings: { slidesToShow: 2 } },
+                { breakpoint: 576, settings: { slidesToShow: 1 } },
+              ],
+            });
+          } else {
+            console.warn(
+              "Slick carousel is not available, slider functionality will be limited"
+            );
+            // Ajouter des gestionnaires d'événements pour les boutons de navigation
+            const prevButton = document.getElementById("recommended-prev");
+            const nextButton = document.getElementById("recommended-next");
+
+            if (prevButton && nextButton) {
+              // Implémentation basique de navigation sans slick
+              let currentIndex = 0;
+              const items = recommendedContainer.children;
+              const itemsPerPage = 4;
+
+              // Fonction pour afficher les éléments actuels
+              const showItems = () => {
+                for (let i = 0; i < items.length; i++) {
+                  if (i >= currentIndex && i < currentIndex + itemsPerPage) {
+                    items[i].style.display = "block";
+                  } else {
+                    items[i].style.display = "none";
+                  }
+                }
+              };
+
+              // Initialiser l'affichage
+              showItems();
+
+              // Gestionnaires d'événements pour les boutons
+              prevButton.addEventListener("click", () => {
+                currentIndex = Math.max(0, currentIndex - itemsPerPage);
+                showItems();
+              });
+
+              nextButton.addEventListener("click", () => {
+                currentIndex = Math.min(
+                  items.length - itemsPerPage,
+                  currentIndex + itemsPerPage
+                );
+                showItems();
+              });
+            }
+          }
+
+          // Mettre à jour l'état des boutons de liste de souhaits
+          checkWishlistStatus();
+        } catch (error) {
+          console.error("Error parsing JSON for recommended products:", error);
+          console.log(xhr.responseText);
+        }
+      } else {
+        console.error("Error fetching recommended products:", xhr.status);
+      }
+    }
+  };
+
+  xhr.onerror = () => {
+    console.error("Network error with API for recommended products:", apiUrl);
+  };
+
+  xhr.open("GET", apiUrl, true);
+  xhr.send();
+}
+
 function fetchCategories() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -952,8 +1152,8 @@ function createProductCardTrending(product) {
         <div class="col-xxl-2 col-xl-3 col-lg-4 col-sm-6" data-aos="fade-up" data-aos-duration="200">
             <div class="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2" data-product-id="${id}">
                 <a href="product-details.html?id=${id}" class="product-card__thumb flex-center rounded-8 position-relative">
-                    ${newBadgeHTML}
-                    <img src="${imageUrl}" alt="${name}" class="w-100 h-auto" onerror="this.src='../assets/images/products/default.png'">
+                  <img src="${imageUrl}" alt="${name}" class="w-100 h-auto" onerror="this.src='../assets/images/products/default.png'">
+                  ${newBadgeHTML}
                 </a>
                 <div class="bg-white p-2 rounded-pill z-1 position-absolute inset-inline-end-0 inset-block-start-0 me-16 mt-16 shadow-sm">
                     <button type="button" class="wishlist-btn w-40 h-40 text-md d-flex justify-content-center align-items-center rounded-circle hover-bg-main-two-600 hover-text-white" 
@@ -1246,6 +1446,22 @@ style.textContent = `
     .featured-product-slider .slick-slide {
         float: none;
         height: auto !important;
+    }
+    
+    /* Fix for recommended products images */
+    .recommended-slider .product-card__thumb {
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .recommended-slider .product-card__thumb img {
+        max-height: 180px;
+        object-fit: contain;
+        width: auto;
+        max-width: 100%;
     }
 `;
 
