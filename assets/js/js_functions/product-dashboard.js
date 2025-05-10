@@ -1,4 +1,4 @@
-  let categories = [];
+let categories = [];
 const subcategories = {};
 var editor1 = new RichTextEditor("#richTextEditor");
 const token = localStorage.getItem("token");
