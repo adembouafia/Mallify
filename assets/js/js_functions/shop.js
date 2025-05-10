@@ -1,4 +1,3 @@
-
 let allProducts = []
 let filteredProducts = []
 let categories = []
@@ -436,13 +435,16 @@ function updatePriceRange() {
 function applyAllFilters() {
   filteredProducts = [...allProducts]
 
+  // Handle category filtering
   const activeCategoryLink = document.querySelector(".category-link.active")
+  
+  // Check if we have an active category and it's not "all"
   if (activeCategoryLink && activeCategoryLink.dataset.category !== "all") {
     const categoryId = activeCategoryLink.dataset.id
     const categoryName = activeCategoryLink.dataset.category
     
     console.log(`Filtering by category: ${categoryName} (ID: ${categoryId})`)
-      filteredProducts = filteredProducts.filter((product) => {
+    filteredProducts = filteredProducts.filter((product) => {
       if (product.parentCategory && product.parentCategory === categoryId) {
         console.log(`Product ${product.productName} matches by parentCategory property (${product.parentCategoryName})`);
         return true;
@@ -480,7 +482,12 @@ function applyAllFilters() {
     })
     
     console.log(`Filtered ${filteredProducts.length} products for category: ${categoryName}`)
+  } else {
+    // This is for "All Categories" - no filtering by category needed
+    console.log("No category filtering applied - showing all products")
   }
+  
+  // Price filter
   if (minPriceInput && maxPriceInput) {
     const minSelectedPrice = minPriceInput.value ? Number(minPriceInput.value) : minPrice
     const maxSelectedPrice = maxPriceInput.value ? Number(maxPriceInput.value) : maxPrice
@@ -556,67 +563,8 @@ function displayProducts(page) {
     productsContainer.appendChild(productCard)
   })
 }
-//need more work on this function
-function createProductCard(product) {
-  const productCard = document.createElement("div")
-  productCard.className =
-    "product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16  position-relative transition-2"
 
-  let badgeHtml = ""
-  if (product.stock <= 5 && product.stock > 0) {
-    badgeHtml = `<span class="product-card__badge bg-warning-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">Limited</span>`
-  } else if (product.stock === 0) {
-    badgeHtml = `<span class="product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">Out of Stock</span>`
-  }
-  const ratingHtml = generateStarRating(product.averageRating || 0)
 
-  // Create the image URL
-  const imageUrl = product.mainImage ? `../uploads/${product.mainImage}` : "../assets/images/products/default.png"
-
-  productCard.innerHTML = `
-        <a href="product-details.html?id=${product._id}" class="product-card__thumb flex-center rounded-8  position-relative">
-            ${badgeHtml}
-            <img src="${imageUrl}" alt="${product.productName}" class="w-auto max-w-100 " />
-        </a>
-        <div class="product-card__content mt-16">
-            <h6 class="title text-lg fw-semibold mt-12 mb-8">
-                <a href="product-details.html?id=${product._id}" class="link text-line-2">${product.productName}</a>
-            </h6>
-            <div class="flex-align mb-20 mt-16 gap-6">
-                <span class="text-xs fw-medium text-gray-500">${product.averageRating || 0}</span>
-                ${ratingHtml}
-                <span class="text-xs fw-medium text-gray-500">(${product.reviewCount || 0})</span>
-            </div>
-            <div class="mt-8">
-                <span class="text-gray-900 text-xs fw-medium mt-8">Stock: ${product.stock}</span>
-            </div>
-
-            <div class="product-card__price my-20">
-                <span class="text-heading text-md fw-semibold">
-                    ${product.productPrice} DT
-                    <span class="text-gray-500 fw-normal">/Qty</span>
-                </span>
-            </div>
-
-            <button 
-                class="product-card__cart btn ${product.stock > 0 ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-500"} py-11 px-24 rounded-8 flex-center gap-8 fw-medium add-to-cart-btn"
-                data-product-id="${product._id}" 
-                ${product.stock === 0 ? "disabled" : ""}>
-                ${product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
-            </button>
-        </div>
-    `
-
-  // Add event listener to the Add to Cart button
-  const addToCartBtn = productCard.querySelector(".add-to-cart-btn")
-  if (addToCartBtn && product.stock > 0) {
-    addToCartBtn.addEventListener("click", () => {
-      addToCart(product._id)
-    })
-  }
-
-  return productCard
-}
 
 
 function generateStarRating(rating) {
@@ -855,28 +803,91 @@ function setupEventListeners() {
       sortingSelect.innerHTML += priceOptions
     }
   }
-
   // List/Grid view toggle
   const listBtn = document.querySelector(".list-btn")
   const gridBtn = document.querySelector(".grid-btn")
-
   if (listBtn && gridBtn) {
     listBtn.addEventListener("click", () => {
-      document.querySelector(".list-grid-wrapper").classList.add("list-view")
+      const productsContainer = document.querySelector(".list-grid-wrapper");
+      productsContainer.classList.add("list-view")
       listBtn.classList.add("bg-main-600", "text-white", "border-main-600")
       listBtn.classList.remove("border-gray-100")
 
       gridBtn.classList.remove("bg-main-600", "text-white", "border-main-600")
       gridBtn.classList.add("border-gray-100")
+      
+      // Adjust single product layout in list view
+      if (productsContainer.childElementCount === 1) {
+        const singleCard = productsContainer.querySelector('.product-card');
+        if (singleCard) {
+          // First clear any existing inline styles
+          singleCard.style.cssText = '';
+          
+          // Use consistent styling for list view
+          singleCard.style.maxWidth = "100%";
+          singleCard.style.margin = "0";
+          singleCard.style.width = "100%";
+          singleCard.style.display = "flex";
+          singleCard.style.flexDirection = "row";
+          singleCard.style.alignItems = "center";
+          singleCard.style.justifyContent = "flex-start";
+          singleCard.style.padding = "20px";
+          
+          // Adjust the thumb and content for better layout in list view
+          const thumb = singleCard.querySelector('.product-card__thumb');
+          const content = singleCard.querySelector('.product-card__content');
+          
+          if (thumb) {
+            thumb.style.cssText = '';
+            thumb.style.maxWidth = "200px";
+            thumb.style.width = "30%";
+            thumb.style.marginRight = "20px";
+            thumb.style.flexShrink = "0";
+          }
+          
+          if (content) {
+            content.style.cssText = '';
+            content.style.marginTop = "0";
+            content.style.width = "60%";
+            content.style.flexGrow = "1";
+            content.style.textAlign = "left";
+          }
+        }
+      }
     })
-
-    gridBtn.addEventListener("click", () => {
-      document.querySelector(".list-grid-wrapper").classList.remove("list-view")
+      gridBtn.addEventListener("click", () => {
+      const productsContainer = document.querySelector(".list-grid-wrapper");
+      productsContainer.classList.remove("list-view")
       gridBtn.classList.add("bg-main-600", "text-white", "border-main-600")
       gridBtn.classList.remove("border-gray-100")
 
       listBtn.classList.remove("bg-main-600", "text-white", "border-main-600")
       listBtn.classList.add("border-gray-100")
+      
+      // Adjust single product layout in grid view
+      if (productsContainer.childElementCount === 1) {
+        const singleCard = productsContainer.querySelector('.product-card');
+        if (singleCard) {
+          // First clear all inline styles with a clean slate
+          singleCard.style.cssText = '';
+          
+          // Use consistent styling for grid view with single product
+          singleCard.style.maxWidth = "350px";
+          singleCard.style.margin = "0 auto";
+          
+          // Reset the thumb and content styles
+          const thumb = singleCard.querySelector('.product-card__thumb');
+          const content = singleCard.querySelector('.product-card__content');
+          
+          if (thumb) {
+            thumb.style.cssText = '';
+          }
+          
+          if (content) {
+            content.style.cssText = '';
+          }
+        }
+      }
     })
   }
 
@@ -916,4 +927,224 @@ function showMessage(message, type = "info") {
   } else {
     alert(message)
   }
+}
+
+function addToWishlist(productId) {
+  const token = localStorage.getItem("token")
+  const clientId = localStorage.getItem("userId")
+  
+  if (!token || !clientId) {
+    showError("Please log in to add products to your wishlist")
+    return
+  }
+  
+  const xhr = new XMLHttpRequest()
+  xhr.open("POST", "http://localhost:3000/favoris/add", true)
+  xhr.setRequestHeader("Content-Type", "application/json")
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      console.log("Product added to wishlist")
+      // Update counter if mallifyCounters is available
+      if (window.mallifyCounters && typeof window.mallifyCounters.incrementWishlistCount === 'function') {
+        window.mallifyCounters.incrementWishlistCount()
+      }
+    } else if (xhr.status === 400) {
+      // Product already in wishlist
+      console.log("Product already in wishlist")
+    } else {
+      showError("Error adding product to wishlist")
+    }
+  }
+  
+  xhr.onerror = () => {
+    showError("Network error occurred")
+  }
+  
+  xhr.send(JSON.stringify({ clientId, productId }))
+}
+
+function removeFromWishlist(productId) {
+  const token = localStorage.getItem("token")
+  const clientId = localStorage.getItem("userId")
+  
+  if (!token || !clientId) {
+    showError("Please log in to remove products from your wishlist")
+    return
+  }
+  
+  const xhr = new XMLHttpRequest()
+  xhr.open("DELETE", "http://localhost:3000/favoris/remove", true)
+  xhr.setRequestHeader("Content-Type", "application/json")
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      console.log("Product removed from wishlist")
+      // Update counter if mallifyCounters is available
+      if (window.mallifyCounters && typeof window.mallifyCounters.decrementWishlistCount === 'function') {
+        window.mallifyCounters.decrementWishlistCount()
+      }
+    } else {
+      showError("Error removing product from wishlist")
+    }
+  }
+  
+  xhr.onerror = () => {
+    showError("Network error occurred")
+  }
+  
+  xhr.send(JSON.stringify({ clientId, productId }))
+}
+
+// Add this function to check if a product is in the user's wishlist
+function isProductInWishlist(productId, callback) {
+  const token = localStorage.getItem("token")
+  const clientId = localStorage.getItem("userId")
+  
+  if (!token || !clientId) {
+    callback(false)
+    return
+  }
+  
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/favoris/${clientId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText)
+        const favorites = response.favorites || []
+        const isInWishlist = favorites.some(item => 
+          item.productId === productId || 
+          (item.productId && item.productId._id === productId)
+        )
+        callback(isInWishlist)
+      } catch (error) {
+        console.error("Error parsing wishlist data:", error)
+        callback(false)
+      }
+    } else {
+      console.error("Failed to fetch wishlist data:", xhr.status)
+      callback(false)
+    }
+  }
+  
+  xhr.onerror = () => {
+    console.error("Network error occurred")
+    callback(false)
+  }
+  
+  xhr.send()
+}
+
+//need more work on this function
+function createProductCard(product) {    const productCard = document.createElement("div")  
+  productCard.className = "product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2"
+
+  let badgeHtml = ""
+  if (product.stock <= 5 && product.stock > 0) {
+    badgeHtml = `<span class="product-card__badge bg-warning-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">Limited</span>`
+  } else if (product.stock === 0) {
+    badgeHtml = `<span class="product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0">Out of Stock</span>`
+  }
+  const ratingHtml = generateStarRating(product.averageRating || 0)
+
+  // Create the image URL
+  const imageUrl = product.mainImage ? `../uploads/${product.mainImage}` : "../assets/images/products/default.png"
+
+  productCard.innerHTML = `
+  <div class="bg-white p-2 rounded-pill z-1 position-absolute inset-inline-end-0 inset-block-start-0 me-16 mt-16 shadow-sm">
+                    <button type="button" class="wishlist-btn w-40 h-40 text-md d-flex justify-content-center align-items-center rounded-circle hover-bg-main-two-600 hover-text-white" data-product-id="${product._id}">
+                        <i class="ph ph-heart fs-4"></i>
+                    </button>
+                </div>        <a href="product-details.html?id=${product._id}" class="product-card__thumb flex-center rounded-8 position-relative">
+            ${badgeHtml}
+            <img src="${imageUrl}" alt="${product.productName}" class="w-auto max-w-100 product-image" />
+        </a>
+        <div class="product-card__content mt-16">
+            <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                <a href="product-details.html?id=${product._id}" class="link text-line-2">${product.productName}</a>
+            </h6>
+            <div class="flex-align mb-20 mt-16 gap-6">
+                <span class="text-xs fw-medium text-gray-500">${product.averageRating || 0}</span>
+                ${ratingHtml}
+                <span class="text-xs fw-medium text-gray-500">(${product.reviewCount || 0})</span>
+            </div>
+            <div class="mt-8">
+                <span class="text-gray-900 text-xs fw-medium mt-8">Stock: ${product.stock}</span>
+            </div>
+
+            <div class="product-card__price my-20">
+                <span class="text-heading text-md fw-semibold">
+                    ${product.productPrice} DT
+                    <span class="text-gray-500 fw-normal">/Qty</span>
+                </span>
+            </div>
+
+            <button 
+                class="product-card__cart btn ${product.stock > 0 ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-500"} py-11 px-24 rounded-8 flex-center gap-8 fw-medium add-to-cart-btn"
+                data-product-id="${product._id}" 
+                ${product.stock === 0 ? "disabled" : ""}>
+                ${product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
+            </button>
+        </div>
+    `
+
+  // Add event listener to the Add to Cart button
+  const addToCartBtn = productCard.querySelector(".add-to-cart-btn")
+  if (addToCartBtn && product.stock > 0) {
+    addToCartBtn.addEventListener("click", () => {
+      addToCart(product._id)
+    })
+  }
+  
+  // Add event listener to the Wishlist button
+  const wishlistBtn = productCard.querySelector(".wishlist-btn")
+  if (wishlistBtn) {
+    // Check if user is logged in and product is in wishlist
+    const token = localStorage.getItem("token")
+    const userId = localStorage.getItem("userId")
+    
+    if (token && userId) {
+      // Check if the product is already in the wishlist
+      isProductInWishlist(product._id, (isInWishlist) => {
+        if (isInWishlist) {
+          const icon = wishlistBtn.querySelector("i")
+          wishlistBtn.classList.add("active")
+          icon.classList.remove("ph", "ph-heart")
+          icon.classList.add("ph-fill", "ph-heart", "text-main-two-600")
+        }
+      })
+    }
+    
+    wishlistBtn.addEventListener("click", () => {
+      if (!token || !userId) {
+        showError("Please log in to add products to your wishlist")
+        return
+      }
+      
+      // Toggle active class for visual feedback
+      wishlistBtn.classList.toggle("active")
+      const icon = wishlistBtn.querySelector("i")
+      
+      if (wishlistBtn.classList.contains("active")) {
+        icon.classList.remove("ph", "ph-heart")
+        icon.classList.add("ph-fill", "ph-heart", "text-main-two-600")
+        
+        // Call the API to add to wishlist
+        addToWishlist(product._id)
+      } else {
+        icon.classList.remove("ph-fill", "ph-heart", "text-main-two-600")
+        icon.classList.add("ph", "ph-heart")
+        
+        // Call the API to remove from wishlist
+        removeFromWishlist(product._id)
+      }
+    })
+  }
+
+  return productCard
 }

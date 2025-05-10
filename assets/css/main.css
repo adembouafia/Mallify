@@ -10549,8 +10549,47 @@ input[type=number] {
 
 .list-grid-wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 24px;
+    justify-content: start;
+}
+
+/* Style for single product case - when it's the only item in the grid */
+.list-grid-wrapper > .product-card:only-child,
+.list-grid-wrapper > .col-xxl-2:only-child .product-card,
+.list-grid-wrapper > .col-xl-3:only-child .product-card,
+.list-grid-wrapper > .col-lg-4:only-child .product-card,
+.list-grid-wrapper > .col-sm-6:only-child .product-card,
+.list-grid-wrapper > div:only-child .product-card {
+    max-width: 350px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Style for single product in list view */
+.list-view.list-grid-wrapper > .product-card:only-child,
+.list-view.list-grid-wrapper > div:only-child .product-card {
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Ensure product images have consistent sizing */
+.product-card__thumb img {
+    max-height: 240px;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Ensure cards don't get too tall in list view */
+.list-view .product-card {
+    min-height: 200px;
+    max-height: 300px;
+}
+
+/* Ensure proper image display in list view */
+.list-view .product-card__thumb img {
+    max-height: 180px;
 }
 .max-w-150 {
     max-width: 150px;
@@ -10559,17 +10598,18 @@ input[type=number] {
 
 @media (min-width: 480px) {
     .list-view {
-        grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+        max-width: 100%;
     }
 
     .list-view .product-card {
         display: flex;
         align-items: center;
         flex-direction: row;
-    }
-
-    .list-view .product-card__thumb {
+    }    .list-view .product-card__thumb {
         max-width: 200px;
+        min-width: 150px;
+        width: 30%;
         height: 100% !important;
     }
 
@@ -10577,6 +10617,7 @@ input[type=number] {
         margin-top: 0 !important;
         margin-left: 20px;
         flex-grow: 1;
+        width: 60%;
     }
 }
 
