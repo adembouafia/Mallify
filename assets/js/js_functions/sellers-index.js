@@ -379,14 +379,18 @@ function setupViewToggle() {
         gridButton.classList.add('border-main-600', 'text-white', 'bg-main-600');
         listButton.classList.remove('border-main-600', 'text-white', 'bg-main-600');
     });
-    
-    listButton.addEventListener('click', function() {
+      listButton.addEventListener('click', function() {
         const rowElement = document.querySelector('#shops-container .row');
         rowElement.classList.add('list-view');
         updateShopCardsLayout(true); // Switch to list (2 per row)
         
         listButton.classList.add('border-main-600', 'text-white', 'bg-main-600');
         gridButton.classList.remove('border-main-600', 'text-white', 'bg-main-600');
+        
+        // Make sure the width adjustment is applied in list view too
+        document.querySelectorAll('.vendors-two-item').forEach(item => {
+            item.style.width = 'calc(100% + 20px)';
+        });
     });
 }
 

@@ -1,9 +1,7 @@
- 
 .max-w-180 {
     max-width: 180px;
 }
 
-/* Vendor/Seller Card Layout - prevent product card styles from affecting these */
 .vendors-two-item-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -12,7 +10,11 @@
 
 .vendors-two-item-wrapper .col-lg-3 {
     flex: 0 0 auto;
-    width: calc(25% - 18px);
+    width: calc(25% - 18px + 15px);
+}
+
+.vendors-two-item {
+    width: calc(100% + 15px);
 }
 
 /* Media queries */
@@ -38,7 +40,7 @@
 
     .products-grid .list-view .product-card__content {
         margin-top: 0 !important;
-        margin-left: 20px;
+        margin-left: 15px;
         flex-grow: 1;
         width: 60%;
     }
@@ -47,18 +49,18 @@
 /* Responsiveness for vendor cards */
 @media (max-width: 1199px) {
     .vendors-two-item-wrapper .col-lg-3 {
-        width: calc(33.333% - 16px);
+        width: calc(33.333% - 16px + 15px);
     }
 }
 
 @media (max-width: 991px) {
     .vendors-two-item-wrapper .col-lg-3 {
-        width: calc(50% - 12px);
+        width: calc(50% - 12px + 15px);
     }
 }
 
 @media (max-width: 575px) {
     .vendors-two-item-wrapper .col-lg-3 {
-        width: 100%;
+        width: calc(100% + 15px);
     }
 }
