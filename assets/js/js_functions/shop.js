@@ -789,7 +789,6 @@ function setupEventListeners() {
     })
   })
 
-  // Sorting
   const sortingSelect = document.getElementById("sorting")
   if (sortingSelect) {
     sortingSelect.addEventListener("change", () => {
