@@ -20,4 +20,7 @@ module.exports = (app) => {
   app.delete("/product/:productId/review/:reviewId", auth, product.deleteReview)
 
   app.get("/product/category/:categoryName", product.getProductsByCategory);
+  app.get("/product/filter", product.getFilteredProducts)
+  app.get("/product/category-counts", product.getCategoryCounts);
+
 }

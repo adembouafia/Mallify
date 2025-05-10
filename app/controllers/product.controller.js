@@ -35,8 +35,6 @@ exports.createProduct = async (req, res) => {
 
     try {
       const { subCategory } = req.body
-
-      // Verify the subcategory exists
       const existingSubCategory = await SubCategory.findById(subCategory)
       if (!existingSubCategory) {
         return res.status(400).json({
@@ -46,14 +44,10 @@ exports.createProduct = async (req, res) => {
       }
 
       let shopId
-
-      // If the user is a vendor, get their shop ID
       if (req.user.role === "vendor") {
-        // Check if shopId is directly in the token
         if (req.user.shopId) {
           shopId = req.user.shopId
         } else {
-          // If not, find the vendor and get their shop
           const vendor = await Vendor.findById(req.user.id)
           if (!vendor || !vendor.shop) {
             return res.status(403).json({
@@ -64,10 +58,7 @@ exports.createProduct = async (req, res) => {
           shopId = vendor.shop
         }
       } else if (req.user.role === "moderator") {
-        // For moderators or admins, they might be managing products for a specific shop
-        // So we'll use the shopId from the request body if provided
         if (req.body.shopId) {
-          // Verify the shop exists
           const shopExists = await Shop.findById(req.body.shopId)
           if (!shopExists) {
             return res.status(404).json({
@@ -117,17 +108,10 @@ exports.createProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     let products = await Product.find().populate("subCategory", "name").populate("shop", "shopName status") // Ajout du status pour vérifier si la boutique est bannie
-
-    // Si l'utilisateur n'est pas un propriétaire de boutique, admin ou superAdmin, filtrer les produits
     if (req.user && (req.user.role === "vendor" || req.user.role === "admin" || req.user.role === "superAdmin")) {
-      // Shop owners, admins, and superAdmins can see all products
     } else {
-      // Filter out banned products and products from banned shops for regular users
       products = products.filter((product) => {
-        // Vérifier si le produit est banni
         if (product.banned) return false
-
-        // Vérifier si la boutique du produit est bannie
         if (product.shop && product.shop.status === "Banned") return false
 
         return true
@@ -148,8 +132,6 @@ exports.getAllProducts = async (req, res) => {
     })
   }
 }
-
-// Get product by ID with populated subCategory and shop
 exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
@@ -161,7 +143,7 @@ exports.getProduct = async (req, res) => {
         },
         select: "name",
       })
-      .populate("shop", "shopName") // Also populate shop information
+      .populate("shop", "shopName") 
 
     if (!product) {
       return res.status(404).json({
@@ -188,17 +170,10 @@ exports.getProduct = async (req, res) => {
 exports.getMyProducts = async (req, res) => {
   try {
     let shopId
-    console.log("step1")
-    // If the user is a vendor, get their shop ID
     if (req.user.role === "vendor") {
-      console.log("step2")
-      // Check if shopId is directly in the token
       if (req.user.shopId) {
         shopId = req.user.shopId
       } else {
-        // If not, find the vendor and get their shop
-        console.log("step3")
-
         const vendor = await Vendor.findById(req.user.id)
         if (!vendor || !vendor.shop) {
           return res.status(403).json({
@@ -209,17 +184,11 @@ exports.getMyProducts = async (req, res) => {
         shopId = vendor.shop
       }
     } else if (req.user.role === "moderator" && req.query.shopId) {
-      // Moderators can view products for a specific shop if they provide the shop ID
       shopId = req.query.shopId
     } else if (req.user.role === "admin" && req.query.shopId) {
-      // Admins can view products for a specific shop if they provide the shop ID
       shopId = req.query.shopId
     } else if (req.user.role === "admin" || req.user.role === "moderator") {
-      // If no shop ID is provided, return all products for admins and moderators
       const products = await Product.find().populate("subCategory", "name").populate("shop", "shopName")
-
-      console.log("step4")
-
       return res.status(200).json({
         status: "success",
         results: products.length,
@@ -263,7 +232,6 @@ exports.updateProduct = async (req, res) => {
     }
 
     try {
-      // First, find the product
       const product = await Product.findById(req.params.id)
       if (!product) {
         return res.status(404).json({
@@ -271,12 +239,8 @@ exports.updateProduct = async (req, res) => {
           message: "Product not found",
         })
       }
-
-      // Check permissions based on role
       if (req.user.role === "vendor") {
         let vendorShopId
-
-        // Get vendor's shop ID
         if (req.user.shopId) {
           vendorShopId = req.user.shopId
         } else {
@@ -289,8 +253,6 @@ exports.updateProduct = async (req, res) => {
           }
           vendorShopId = vendor.shop
         }
-
-        // Check if the product belongs to the vendor's shop
         if (product.shop.toString() !== vendorShopId.toString()) {
           return res.status(403).json({
             status: "fail",
@@ -298,11 +260,7 @@ exports.updateProduct = async (req, res) => {
           })
         }
       }
-      // Admins and moderators can update any product
-
       const { subCategory } = req.body
-
-      // Ensure subCategory exists if provided
       if (subCategory) {
         const existingSubCategory = await SubCategory.findById(subCategory)
         if (!existingSubCategory) {
@@ -312,8 +270,6 @@ exports.updateProduct = async (req, res) => {
           })
         }
       }
-
-      // Prepare product data
       const updatedData = {
         ...req.body,
         mainImage: req.files["mainImage"] ? req.files["mainImage"][0].filename : req.body.currentMainImage,
@@ -321,8 +277,6 @@ exports.updateProduct = async (req, res) => {
           ? req.files["otherImages"].map((file) => file.filename)
           : req.body.currentOtherImages,
       }
-
-      // Don't allow changing the shop
       delete updatedData.shop
 
       const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updatedData, { new: true })
@@ -345,7 +299,6 @@ exports.updateProduct = async (req, res) => {
 // Delete product by ID
 exports.deleteProduct = async (req, res) => {
   try {
-    // First, find the product
     const product = await Product.findById(req.params.id)
     if (!product) {
       return res.status(404).json({
@@ -353,12 +306,8 @@ exports.deleteProduct = async (req, res) => {
         message: "Product not found",
       })
     }
-
-    // Check permissions based on role
     if (req.user.role === "vendor") {
       let vendorShopId
-
-      // Get vendor's shop ID
       if (req.user.shopId) {
         vendorShopId = req.user.shopId
       } else {
@@ -371,8 +320,6 @@ exports.deleteProduct = async (req, res) => {
         }
         vendorShopId = vendor.shop
       }
-
-      // Check if the product belongs to the vendor's shop
       if (product.shop.toString() !== vendorShopId.toString()) {
         return res.status(403).json({
           status: "fail",
@@ -380,8 +327,6 @@ exports.deleteProduct = async (req, res) => {
         })
       }
     }
-    // Admins and moderators can delete any product
-
     await Product.findByIdAndDelete(req.params.id)
 
     res.status(200).json({
@@ -402,9 +347,7 @@ exports.addReview = async (req, res) => {
     const { rating, title, comment } = req.body
     const productId = req.params.id
 
-    console.log("Received data:", { rating, title, comment, productId }) // Log received data
-
-    // Validate input
+    console.log("Received data:", { rating, title, comment, productId })
     if (!rating || !comment) {
       return res.status(400).json({
         status: "fail",
@@ -418,8 +361,6 @@ exports.addReview = async (req, res) => {
         message: "Rating must be between 1 and 5",
       })
     }
-
-    // Find the product
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({
@@ -428,7 +369,7 @@ exports.addReview = async (req, res) => {
       })
     }
 
-    console.log("Product found:", product) // Log product data
+    console.log("Product found:", product)
 
     product.reviews.push({
       productId: product._id,
@@ -438,8 +379,6 @@ exports.addReview = async (req, res) => {
       title: title.trim(),
       comment: comment.trim(),
     })
-
-    // Save the product (pre-save hook will calculate average rating)
     await product.save()
 
     res.status(200).json({
@@ -451,7 +390,7 @@ exports.addReview = async (req, res) => {
       },
     })
   } catch (err) {
-    console.error("Error processing review:", err) // Log any error
+    console.error("Error processing review:", err)
     res.status(400).json({
       status: "fail",
       message: err.message,
@@ -538,8 +477,6 @@ exports.getUserReview = async (req, res) => {
   try {
     const productId = req.params.id
     const userId = req.user.id
-
-    // Find the product
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({
@@ -547,8 +484,6 @@ exports.getUserReview = async (req, res) => {
         message: "Product not found",
       })
     }
-
-    // Find the user's review
     const review = product.reviews.find((review) => review.userId.toString() === userId)
 
     res.status(200).json({
@@ -575,24 +510,18 @@ exports.banProduct = async (req, res) => {
         message: "Product not found",
       })
     }
-
-    // Only admins and superAdmins can ban products
     if (req.user.role !== "admin" && req.user.role !== "superAdmin") {
       return res.status(403).json({
         status: "fail",
         message: "You don't have permission to ban this product",
       })
     }
-
-    // Get the ban reason from the request body or use a default
     const banReason = req.body.banReason || "Counterfeit"
-
-    // Update the product to mark it as banned and include the ban reason
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       {
         banned: true,
-        bannedReason: banReason, // Changed from banReason to bannedReason to match the model
+        bannedReason: banReason,
       },
       { new: true },
     )
@@ -690,59 +619,220 @@ exports.getBannedProducts = async (req, res) => {
   }
 }
 
-// Ajouter cette nouvelle fonction au fichier product.controller.js
-
 // Get products by category
 exports.getProductsByCategory = async (req, res) => {
   try {
-    const categoryName = req.params.categoryName;
-    
-    // Si la catégorie est "all", retourner tous les produits
+    const categoryName = req.params.categoryName
     if (categoryName.toLowerCase() === "all") {
-      return this.getAllProducts(req, res);
+      return this.getAllProducts(req, res)
     }
-    
-    // Trouver les produits dont la sous-catégorie appartient à la catégorie spécifiée
     const products = await Product.find()
       .populate({
         path: "subCategory",
         populate: {
           path: "category",
-          select: "categoryName"
-        }
+          select: "categoryName",
+        },
       })
-      .populate("shop", "shopName status");
-    
+      .populate("shop", "shopName status")
+
     // Filtrer les produits par catégorie
-    const filteredProducts = products.filter(product => {
-      // Vérifier si le produit a une sous-catégorie et si cette sous-catégorie a une catégorie
-      if (product.subCategory && 
-          product.subCategory.category && 
-          product.subCategory.category.categoryName) {
-        return product.subCategory.category.categoryName === categoryName;
+    const filteredProducts = products.filter((product) => {
+      if (product.subCategory && product.subCategory.category && product.subCategory.category.categoryName) {
+        return product.subCategory.category.categoryName === categoryName
       }
-      return false;
-    });
-    
-    // Filtrer les produits bannis pour les utilisateurs normaux
-    let finalProducts = filteredProducts;
+      return false
+    })
+    let finalProducts = filteredProducts
     if (!(req.user && (req.user.role === "vendor" || req.user.role === "admin" || req.user.role === "superAdmin"))) {
-      finalProducts = filteredProducts.filter(product => {
-        if (product.banned) return false;
-        if (product.shop && product.shop.status === "Banned") return false;
-        return true;
-      });
+      finalProducts = filteredProducts.filter((product) => {
+        if (product.banned) return false
+        if (product.shop && product.shop.status === "Banned") return false
+        return true
+      })
     }
-    
+
     res.status(200).json({
       status: "success",
       results: finalProducts.length,
-      products: finalProducts
+      products: finalProducts,
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}
+
+// Get category counts
+exports.getCategoryCounts = async (req, res) => {
+  try {
+    const products = await Product.find({ banned: { $ne: true } })
+      .populate({
+        path: "subCategory",
+        populate: {
+          path: "category",
+          select: "categoryName",
+        },
+      })
+      .populate("shop", "shopName status");
+    const validProducts = products.filter(product => !(product.shop && product.shop.status === "Banned"));
+    const categoryCounts = {};
+    validProducts.forEach(product => {
+      let categoryId = null;
+      if (product.category) {
+        categoryId = typeof product.category === 'object' ? product.category._id : product.category;
+      }
+      else if (product.subCategory && product.subCategory.category) {
+        if (typeof product.subCategory.category === 'string') {
+          categoryId = product.subCategory.category;
+        } else if (product.subCategory.category && product.subCategory.category._id) {
+          categoryId = product.subCategory.category._id;
+        }
+      }
+      else if (product.parentCategory) {
+        categoryId = product.parentCategory;
+      }
+      
+      if (categoryId) {
+        const categoryIdStr = categoryId.toString();
+        categoryCounts[categoryIdStr] = (categoryCounts[categoryIdStr] || 0) + 1;
+      }
+    });
+    
+    res.status(200).json({
+      status: "success",
+      categoryCounts
     });
   } catch (err) {
+    console.error("Error getting category counts:", err);
     res.status(400).json({
       status: "fail",
       message: err.message
     });
   }
 };
+
+
+exports.getFilteredProducts = async (req, res) => {
+  try {
+    const { 
+      category, 
+      subcategory, 
+      name, 
+      minRating, 
+      maxRating, 
+      minPrice, 
+      maxPrice, 
+      search,
+      shop 
+    } = req.query
+    const filter = {}
+    if (shop) {
+      filter.shop = shop
+    }
+    if (category) {
+    }
+    if (subcategory) {
+      filter.subCategory = subcategory
+    }
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      filter.productPrice = {}
+      if (minPrice !== undefined) {
+        filter.productPrice.$gte = Number(minPrice)
+      }
+      if (maxPrice !== undefined) {
+        filter.productPrice.$lte = Number(maxPrice)
+      }
+    }
+    if (minRating !== undefined) {
+      filter.averageRating = { $gte: Number(minRating) }
+    }
+    if (name) {
+      filter.productName = { $regex: name, $options: "i" }
+    }
+    if (search) {
+      filter.$or = [
+        { productName: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { productDetails: { $regex: search, $options: "i" } },
+      ]
+    }
+    if (!(req.user && (req.user.role === "vendor" || req.user.role === "admin" || req.user.role === "superAdmin"))) {
+      filter.banned = { $ne: true }
+    }
+
+    let products
+    if (category) {
+      const subCategories = await SubCategory.find({ category: category }).select("_id")
+      const subCategoryIds = subCategories.map((sc) => sc._id)
+      products = await Product.find({
+        $or: [
+          { category: category }, 
+          { subCategory: { $in: subCategoryIds } }, 
+        ],
+        ...filter,
+      })
+        .populate({
+          path: "subCategory",
+          populate: {
+            path: "category",
+            select: "categoryName",
+          },
+        })
+        .populate("shop", "shopName status")
+    } else {
+      products = await Product.find(filter)
+        .populate({
+          path: "subCategory",
+          populate: {
+            path: "category",
+            select: "categoryName",
+          },
+        })
+        .populate("shop", "shopName status")
+    }
+    products = products.filter((product) => !(product.shop && product.shop.status === "Banned"))
+    const { sort } = req.query
+    if (sort) {
+      switch (sort) {
+        case "rating":
+          products.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+          break
+        case "newest":
+          products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          break
+        case "price_asc":
+          products.sort((a, b) => a.productPrice - b.productPrice)
+          break
+        case "price_desc":
+          products.sort((a, b) => b.productPrice - a.productPrice)
+          break
+      }
+    }
+    const page = Number.parseInt(req.query.page) || 1
+    const limit = Number.parseInt(req.query.limit) || 12
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+    const total = products.length
+
+    const paginatedProducts = products.slice(startIndex, endIndex)
+
+    res.status(200).json({
+      status: "success",
+      results: total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: {
+        products: paginatedProducts,
+      },
+    })
+  } catch (err) {
+    console.error("Error in getFilteredProducts:", err)
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    })
+  }
+}
