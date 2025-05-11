@@ -1,4 +1,3 @@
-// Shop.js - Main shopping functionality with improved search and category filtering
 let allProducts = []
 let filteredProducts = []
 let categories = []
@@ -101,28 +100,9 @@ function showToast(message, type = "success") {
   }
 }
 
-// Ensure jQuery and other dependencies are available
-if (typeof $ === "undefined") {
-  $ = jQuery
-}
 
-if (typeof jQuery === "undefined") {
-  jQuery = $
-}
 
-if (typeof Swal === "undefined") {
-  Swal = {
-    fire: (options) => {
-      alert(options.title + ": " + options.text)
-    },
-  }
-}
-
-if (typeof noUiSlider === "undefined") {
-  console.warn("noUiSlider is not defined. Make sure it is properly loaded.")
-}
-
-// Declare showError and createProductCard
+// Show error messages with SweetAlert
 const showError = (message) => {
   console.error(message)
   Swal.fire({
@@ -133,6 +113,7 @@ const showError = (message) => {
   })
 }
 
+// Create a product card element
 const createProductCard = (product) => {
   const productCard = document.createElement("div")
   productCard.className =
@@ -191,6 +172,7 @@ const createProductCard = (product) => {
   return productCard
 }
 
+// Setup event listeners for product card buttons
 function setupProductCardEventListeners(productCard, productId, productStock) {
   const addToCartBtn = productCard.querySelector(".add-to-cart-btn")
   if (addToCartBtn && productStock > 0) {
@@ -237,7 +219,7 @@ function setupProductCardEventListeners(productCard, productId, productStock) {
   return productCard
 }
 
-// Add to cart function
+// Add product to cart
 function addToCart(productId) {
   const token = localStorage.getItem("token")
   const clientId = localStorage.getItem("userId")
@@ -311,7 +293,7 @@ function addToCart(productId) {
   xhr.send(JSON.stringify(data))
 }
 
-// Add to wishlist function
+// Add product to wishlist
 function addToWishlist(productId) {
   const token = localStorage.getItem("token")
   const clientId = localStorage.getItem("userId")
@@ -392,7 +374,7 @@ function addToWishlist(productId) {
   xhr.send(JSON.stringify(data))
 }
 
-// Remove from wishlist function
+// Remove product from wishlist
 function removeFromWishlist(productId) {
   const token = localStorage.getItem("token")
   const clientId = localStorage.getItem("userId")
@@ -514,6 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initShop()
 })
 
+// Initialize the shop with categories and products
 function initShop() {
   showLoading()
 
@@ -548,6 +531,7 @@ function showLoading() {
   document.body.appendChild(loadingEl)
 }
 
+// Hide loading indicator
 function hideLoading() {
   const loadingEl = document.getElementById("shop-loading")
   if (loadingEl) {
@@ -555,6 +539,7 @@ function hideLoading() {
   }
 }
 
+// Fetch all categories from API
 function fetchCategories() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -592,6 +577,7 @@ function fetchCategories() {
   })
 }
 
+// Fetch all products from API
 function fetchProducts() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -632,6 +618,7 @@ function fetchProducts() {
   })
 }
 
+// Update category sidebar UI 
 function updateCategoryUI() {
   const categoryContainer = document.querySelector(".shop-sidebar__box ul")
 
@@ -703,7 +690,7 @@ function updateCategoryUI() {
   xhr.send()
 }
 
-// render the categories with the counting
+// Render categories with product counts
 function renderCategoriesWithClientCounting() {
   const categoryContainer = document.querySelector(".shop-sidebar__box ul")
   const categoryCounts = new Map()
@@ -763,8 +750,7 @@ function renderCategoriesWithClientCounting() {
   setupCategoryEvents()
 }
 
-// Find the setupCategoryEvents function and update it to ensure it properly filters by category
-
+// Set up category sidebar click events
 function setupCategoryEvents() {
   document.querySelectorAll(".category-link").forEach((link) => {
     link.addEventListener("click", function () {
@@ -875,6 +861,7 @@ function initModernPriceFilter() {
   }
 }
 
+// Initialize rating filter
 function initRatingFilter() {
   const ratingItems = document.querySelectorAll(".rating-filter-item")
 
@@ -1037,7 +1024,7 @@ function applyFiltersFromURL() {
   applyAllFilters()
 }
 
-// Update the applyAllFilters function to ensure it correctly gets the category from URL if not in sidebar
+// Apply all filters and update product display
 function applyAllFilters() {
   showLoading()
   const filters = {}
@@ -1596,17 +1583,14 @@ function setupCategoryDropdown() {
 function initSearchForms() {
   console.log("Initializing search forms")
 
-  // Find all search forms
   const searchForms = document.querySelectorAll("form.form-location-wrapper, form.search-form, form.search-box")
 
   searchForms.forEach((form) => {
     console.log("Setting up search form:", form)
 
     form.addEventListener("submit", function (e) {
-      // Prevent the default form submission
       e.preventDefault()
 
-      // Find the search input
       const searchInput = this.querySelector('input[type="text"], .form-control, .search-form__input')
 
       if (!searchInput) {
@@ -1615,16 +1599,13 @@ function initSearchForms() {
       }
 
       // Get the search term
-      const searchTerm = searchInput.value.trim()
-
-      // Find the category dropdown if it exists
+      const searchTerm = searchInput.value.trim()     
       const categoryDropdown = this.querySelector("select#categories-list, select.category-select")
       let categoryId = ""
 
       if (categoryDropdown) {
         const selectedOption = categoryDropdown.options[categoryDropdown.selectedIndex]
 
-        // Only use category if it's a valid selection
         if (
           categoryDropdown.value &&
           categoryDropdown.value !== "1" &&
@@ -1634,8 +1615,6 @@ function initSearchForms() {
           categoryId = categoryDropdown.value
         }
       }
-
-      // Build the URL
       let url = "shop.html"
       const params = []
 
