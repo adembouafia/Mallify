@@ -1,41 +1,51 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
-const shopSchema = new mongoose.Schema({
-    shopName : {
-        type : String,
-        required : true
+const shopSchema = new mongoose.Schema(
+  {
+    shopName: {
+      type: String,
+      required: true,
     },
-    shopLogo : {
-        type : String,
-        required : true
+    shopLogo: {
+      type: String,
+      required: true,
     },
     adresse: {
-        type : String,
-        required : false
+      type: String,
+      required: false,
     },
     shopdescription: {
-        type : String,
-        required : false
+      type: String,
+      required: false,
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
+    stockLimit: {
+      type: Number,
+      default: 0,
     },
     status: {
-        type : String,
-        enum : ["Pending" , "Approved" , "Rejected", "Banned"],
-        default : "Pending"
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Banned"],
+      default: "Pending",
     },
     bannedReason: {
-        type: String,
+      type: String,
     },
     rejectionReason: {
-        type: String,
-        required: false
+      type: String,
+      required: false,
     },
     vendor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "vendor",
-    }
-},
-{
-    timestamps: true
-});
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "vendor",
+    },
+  },
+  {
+    timestamps: true,
+  },
+)
 
-module.exports = mongoose.model("shop" , shopSchema)
+module.exports = mongoose.model("shop", shopSchema)

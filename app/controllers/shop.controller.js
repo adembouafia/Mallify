@@ -7,8 +7,21 @@ const report = require("../models/report.model")
 const invoice = require("../models/invoice.model")
 const order = require("../models/order.model")
 const delivery = require("../models/delivery.model")
+const multer = require("multer")
+const path = require("path")
 
 dotenv.config()
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+const upload = multer({ storage: storage }).single("shopLogo");
 
 // Get all shops
 exports.getAllShops = async (req, res) => {
@@ -26,11 +39,119 @@ exports.getShopById = async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id).populate("vendor")
     if (!shop) return res.status(404).send({ message: "Shop not found" })
-    res.send(shop)
+    res.send({ shop })
   } catch (err) {
     res.status(500).send({ message: err.message || "Error fetching shop" })
   }
 }
+
+// Modifier la fonction updateShop pour synchroniser le numéro de téléphone avec celui du vendor
+exports.updateShop = async (req, res) => {
+  try {
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).send({ message: err.message })
+      }
+
+      const shopId = req.params.id
+      const shop = await Shop.findById(shopId).populate("vendor")
+
+      if (!shop) {
+        return res.status(404).send({ message: "Shop not found" })
+      }
+
+      // Ajouter des logs pour déboguer
+      console.log("req.userId:", req.userId);
+      console.log("req.user:", req.user);
+      console.log("shop.vendor._id:", shop.vendor._id);
+      console.log("shop.vendor._id.toString():", shop.vendor._id.toString());
+
+      let userId = null;
+      
+      if (!req.userId && req.headers.authorization) {
+        try {
+          const token = req.headers.authorization.split(" ")[1];
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          userId = decoded.id;
+          console.log("ID extrait du token:", userId);
+        } catch (tokenError) {
+          console.error("Erreur lors de l'extraction de l'ID du token:", tokenError);
+        }
+      } else {
+        userId = req.userId;
+      }
+      
+      const vendorId = shop.vendor._id.toString();
+      
+      if (userId && userId !== vendorId && req.role !== "admin" && req.role !== "superAdmin") {
+        return res.status(403).send({ 
+          message: "Not authorized to update this shop",
+          debug: {
+            userId: userId,
+            vendorId: vendorId,
+            role: req.role
+          }
+        });
+      }
+      
+      return updateShopData();
+      
+      // Fonction interne pour mettre à jour les données du shop
+      async function updateShopData() {
+        const updateData = {
+          shopName: req.body.shopName || shop.shopName,
+          shopdescription: req.body.shopdescription || shop.shopdescription,
+          adresse: req.body.adresse || shop.adresse,
+        };
+        
+        // Si le vendor existe, utiliser son numéro de téléphone
+        if (shop.vendor && shop.vendor.phone) {
+          updateData.phone = shop.vendor.phone;
+        }
+
+        // Si un nouveau logo a été téléchargé
+        if (req.file) {
+          updateData.shopLogo = req.file.filename;
+        }
+
+        const updatedShop = await Shop.findByIdAndUpdate(shopId, updateData, { new: true });
+        res.send(updatedShop);
+      }
+    });
+  } catch (err) {
+    console.error("Error in updateShop:", err);
+    res.status(500).send({ message: err.message || "Error updating shop" });
+  }
+};
+
+// Update shop stock limit
+exports.updateStockLimit = async (req, res) => {
+  try {
+    const { stockLimit } = req.body;
+
+    if (stockLimit === undefined || stockLimit === null) {
+      return res.status(400).send({ message: "Stock limit is required" });
+    }
+
+    const shopId = req.params.id;
+    const shop = await Shop.findById(shopId);
+
+    if (!shop) {
+      return res.status(404).send({ message: "Shop not found" });
+    }
+
+    const updatedShop = await Shop.findByIdAndUpdate(
+      shopId,
+      { stockLimit: stockLimit },
+      { new: true }
+    );
+
+    res.send(updatedShop);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Error updating stock limit" });
+  }
+};
+
 
 // Update shop status
 exports.updateShopStatus = async (req, res) => {
@@ -124,5 +245,33 @@ exports.unbanShop = async (req, res) => {
     res.send(shop)
   } catch (err) {
     res.status(500).send({ message: err.message || "Error unbanning shop" })
+  }
+}
+
+exports.updateShopPhone = async (req, res) => {
+  try {
+    const { phone } = req.body
+
+    if (!phone) {
+      return res.status(400).send({ message: "Phone number is required" })
+    }
+
+    const shopId = req.params.id
+    const shop = await Shop.findById(shopId)
+
+    if (!shop) {
+      return res.status(404).send({ message: "Shop not found" })
+    }
+
+    // Vérifier si l'utilisateur est autorisé à mettre à jour ce shop
+    if (req.userId !== shop.vendor.toString() && req.role !== "admin" && req.role !== "superAdmin") {
+      return res.status(403).send({ message: "Not authorized to update this shop" })
+    }
+
+    const updatedShop = await Shop.findByIdAndUpdate(shopId, { phone: phone }, { new: true })
+
+    res.send(updatedShop)
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Error updating shop phone" })
   }
 }

@@ -37,7 +37,7 @@ function updateSidebarInfo() {
   document.getElementById("sidebar-shop-name").textContent = document.getElementById("shop-name").value
   document.getElementById("sidebar-shop-description").textContent = document.getElementById("shop-description").value
   document.getElementById("sidebar-address").textContent = "📍 " + document.getElementById("shop-address").value
-  document.getElementById("sidebar-phone").textContent = "📞 " + document.getElementById("shop-phone").value
+  document.getElementById("sidebar-phone").textContent = "📞 " + document.getElementById("vendor-phone").value // Utiliser le numéro du vendor
 }
 
 function saveShopInfo() {
@@ -54,7 +54,7 @@ function saveShopInfo() {
     shopName: document.getElementById("shop-name").value,
     shopdescription: document.getElementById("shop-description").value,
     adresse: document.getElementById("shop-address").value,
-    phone: document.getElementById("shop-phone").value,
+    // Ne pas inclure le téléphone car il sera synchronisé avec celui du vendor
   }
 
   // Create FormData for file upload
@@ -72,7 +72,7 @@ function saveShopInfo() {
 
   // Send XHR request to update shop info
   const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `/shop/update/${shopId}`, true)
+  xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
@@ -84,6 +84,7 @@ function saveShopInfo() {
         text: "Shop information updated successfully",
       })
     } else {
+      console.error("Error response:", xhr.responseText)
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -116,7 +117,7 @@ function setStockLimit() {
   const limit = document.getElementById("stock-limit").value
 
   const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `/shop/stock-limit/${shopId}`, true)
+  xhr.open("PUT", `http://localhost:3000/shop/stock-limit/${shopId}`, true)
   xhr.setRequestHeader("Content-Type", "application/json")
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
@@ -129,6 +130,7 @@ function setStockLimit() {
         text: `Stock limit set to ${limit}`,
       })
     } else {
+      console.error("Error response:", xhr.responseText)
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -171,18 +173,25 @@ function saveVendorInfo() {
   }
 
   const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `/vendor/update/${currentUserId}`, true)
+  xhr.open("PUT", `http://localhost:3000/vendor/update/${currentUserId}`, true)
   xhr.setRequestHeader("Content-Type", "application/json")
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
     if (xhr.status === 200) {
+      // Mettre à jour le numéro de téléphone dans la sidebar
+      document.getElementById("sidebar-phone").textContent = "📞 " + vendorData.phone
+      
+      // Mettre à jour le champ de téléphone du shop (désactivé)
+      document.getElementById("shop-phone").value = vendorData.phone
+      
       Swal.fire({
         icon: "success",
         title: "Success",
         text: "Vendor information updated successfully",
       })
     } else {
+      console.error("Error response:", xhr.responseText)
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -231,7 +240,7 @@ function saveModeratorInfo() {
   }
 
   const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `/moderator/update/${currentUserId}`, true)
+  xhr.open("PUT", `http://localhost:3000/moderator/update/${currentUserId}`, true)
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
@@ -242,6 +251,7 @@ function saveModeratorInfo() {
         text: "Moderator information updated successfully",
       })
     } else {
+      console.error("Error response:", xhr.responseText)
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -271,9 +281,15 @@ function getUserInfo() {
   try {
     const payloadBase64 = token.split(".")[1]
     const decodedPayload = JSON.parse(atob(payloadBase64))
+    console.log("Token payload:", decodedPayload) // Ajouter pour déboguer
+    
     currentUserRole = decodedPayload.role
     currentUserId = decodedPayload.id
     shopId = decodedPayload.shopId
+
+    console.log("User role:", currentUserRole)
+    console.log("User ID:", currentUserId)
+    console.log("Shop ID:", shopId)
 
     // Role-based sidebar and data loading
     if (currentUserRole === "vendor") {
@@ -359,30 +375,51 @@ function showSection(event, sectionId) {
   }
 }
 
-// Call this first on page load
-window.addEventListener("DOMContentLoaded", () => {
-  getUserInfo()
-})
-
 // Load vendor data
 function loadVendorData() {
   const xhr = new XMLHttpRequest()
-  xhr.open("GET", `/vendor/${currentUserId}`, true)
+  xhr.open("GET", `http://localhost:3000/vendor/${currentUserId}`, true)
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
     if (xhr.status === 200) {
-      const vendorData = JSON.parse(xhr.responseText).vendor
-      document.getElementById("vendor-name").value = vendorData.vendorName
-      document.getElementById("vendor-email").value = vendorData.email
-      document.getElementById("vendor-phone").value = vendorData.phone
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Vendor data:", response)
+        
+        const vendorData = response.vendor
+        document.getElementById("vendor-name").value = vendorData.vendorName || ""
+        document.getElementById("vendor-email").value = vendorData.email || ""
+        document.getElementById("vendor-phone").value = vendorData.phone || ""
+
+        // Mettre à jour également le champ de téléphone du shop
+        const shopPhoneField = document.getElementById("shop-phone")
+        if (shopPhoneField) {
+          shopPhoneField.value = vendorData.phone || ""
+          shopPhoneField.disabled = true // Désactiver le champ pour éviter la modification directe
+          
+          // Ajouter un message d'information sous le champ de téléphone s'il n'existe pas déjà
+          if (!document.querySelector(".phone-info-message")) {
+            const infoMessage = document.createElement("small")
+            infoMessage.className = "phone-info-message"
+            infoMessage.textContent = "Le numéro de téléphone est synchronisé avec celui du vendeur"
+            infoMessage.style.color = "#666"
+            infoMessage.style.display = "block"
+            infoMessage.style.marginTop = "5px"
+            shopPhoneField.parentNode.appendChild(infoMessage)
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing vendor data:", error)
+      }
     } else {
-      console.error("Failed to load vendor data")
+      console.error("Failed to load vendor data. Status:", xhr.status)
+      console.error("Response:", xhr.responseText)
     }
   }
 
   xhr.onerror = () => {
-    console.error("Network error occurred")
+    console.error("Network error occurred while loading vendor data")
   }
 
   xhr.send()
@@ -391,21 +428,29 @@ function loadVendorData() {
 // Load moderator data
 function loadModeratorData() {
   const xhr = new XMLHttpRequest()
-  xhr.open("GET", `/moderator/${currentUserId}`, true)
+  xhr.open("GET", `http://localhost:3000/moderator/${currentUserId}`, true)
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
     if (xhr.status === 200) {
-      const moderatorData = JSON.parse(xhr.responseText).moderator
-      document.getElementById("moderator-name").value = moderatorData.moderatorName
-      document.getElementById("moderator-email").value = moderatorData.email
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Moderator data:", response)
+        
+        const moderatorData = response.moderator
+        document.getElementById("moderator-name").value = moderatorData.moderatorName || ""
+        document.getElementById("moderator-email").value = moderatorData.email || ""
+      } catch (error) {
+        console.error("Error parsing moderator data:", error)
+      }
     } else {
-      console.error("Failed to load moderator data")
+      console.error("Failed to load moderator data. Status:", xhr.status)
+      console.error("Response:", xhr.responseText)
     }
   }
 
   xhr.onerror = () => {
-    console.error("Network error occurred")
+    console.error("Network error occurred while loading moderator data")
   }
 
   xhr.send()
@@ -414,36 +459,44 @@ function loadModeratorData() {
 // Load shop data
 function loadShopData() {
   const xhr = new XMLHttpRequest()
-  xhr.open("GET", `/shop/${shopId}`, true)
+  xhr.open("GET", `http://localhost:3000/shop/${shopId}`, true)
   xhr.setRequestHeader("Authorization", "Bearer " + getToken())
 
   xhr.onload = () => {
     if (xhr.status === 200) {
-      const shopData = JSON.parse(xhr.responseText).shop
-      document.getElementById("shop-name").value = shopData.shopName
-      document.getElementById("shop-description").value = shopData.shopdescription
-      document.getElementById("shop-address").value = shopData.adresse
-      document.getElementById("shop-phone").value = shopData.phone || ""
-      document.getElementById("stock-limit").value = shopData.stockLimit || ""
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Shop data:", response)
+        
+        const shopData = response.shop
+        document.getElementById("shop-name").value = shopData.shopName || ""
+        document.getElementById("shop-description").value = shopData.shopdescription || ""
+        document.getElementById("shop-address").value = shopData.adresse || ""
+        document.getElementById("shop-phone").value = shopData.phone || ""
+        document.getElementById("stock-limit").value = shopData.stockLimit || ""
 
-      // Update sidebar
-      document.getElementById("sidebar-shop-name").textContent = shopData.shopName
-      document.getElementById("sidebar-shop-description").textContent = shopData.shopdescription
-      document.getElementById("sidebar-address").textContent = "📍 " + shopData.adresse
-      document.getElementById("sidebar-phone").textContent = "📞 " + (shopData.phone || "")
-      document.getElementById("sidebar-stock-limit").textContent = "📦 Stock Limit: " + (shopData.stockLimit || "0")
+        // Update sidebar
+        document.getElementById("sidebar-shop-name").textContent = shopData.shopName || "Shop Name"
+        document.getElementById("sidebar-shop-description").textContent = shopData.shopdescription || "Shop Description"
+        document.getElementById("sidebar-address").textContent = "📍 " + (shopData.adresse || "Address")
+        document.getElementById("sidebar-phone").textContent = "📞 " + (shopData.phone || "")
+        document.getElementById("sidebar-stock-limit").textContent = "📦 Stock Limit: " + (shopData.stockLimit || "0")
 
-      // Update shop logo if available
-      if (shopData.shopLogo) {
-        document.getElementById("shop-logo").src = `../../uploads/${shopData.shopLogo}`
+        // Update shop logo if available
+        if (shopData.shopLogo) {
+          document.getElementById("shop-logo").src = `/uploads/${shopData.shopLogo}`
+        }
+      } catch (error) {
+        console.error("Error parsing shop data:", error)
       }
     } else {
-      console.error("Failed to load shop data")
+      console.error("Failed to load shop data. Status:", xhr.status)
+      console.error("Response:", xhr.responseText)
     }
   }
 
   xhr.onerror = () => {
-    console.error("Network error occurred")
+    console.error("Network error occurred while loading shop data")
   }
 
   xhr.send()

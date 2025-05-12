@@ -22,8 +22,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single("shopLogo"); 
 
-
-
 // Register a new vendor
 exports.register = (req, res) => {
     upload(req, res, async (err) => {
@@ -71,8 +69,6 @@ exports.register = (req, res) => {
         }
     });
 };
-
-
 
 // Vendor login
 exports.login = async (req, res) => {
@@ -144,8 +140,6 @@ exports.login = async (req, res) => {
     }
 };
 
-
-
 // Get all vendors
 exports.getAll = async (req, res) => {
     try {
@@ -155,8 +149,6 @@ exports.getAll = async (req, res) => {
         res.status(500).send({ message: err.message || "Error fetching vendors" });
     }
 };
-
-
 
 //forgot password
 exports.forgotPassword = async (req, res) => {
@@ -197,8 +189,6 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-
-
 // Reset Password 
 exports.resetPassword = async (req, res) => {
     const { code, newPassword } = req.body;
@@ -223,5 +213,67 @@ exports.resetPassword = async (req, res) => {
         res.send({ message: "Password has been reset successfully." });
     } catch (err) {
         res.status(500).send({ message: "Error resetting password" });
+    }
+};
+
+// Get vendor by ID
+exports.getVendorById = async (req, res) => {
+    try {
+        const vendor = await Vendor.findById(req.params.id);
+        if (!vendor) {
+            return res.status(404).send({ message: "Vendor not found" });
+        }
+        res.status(200).send({ vendor });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error fetching vendor" });
+    }
+};
+
+// Update vendor
+exports.updateVendor = async (req, res) => {
+    try {
+        const { vendorName, email, phone, vendorPassword } = req.body;
+        
+        // Vérifier si le vendor existe
+        const vendor = await Vendor.findById(req.params.id);
+        if (!vendor) {
+            return res.status(404).send({ message: "Vendor not found" });
+        }
+        
+        // Préparer les données à mettre à jour
+        const updateData = {
+            vendorName: vendorName || vendor.vendorName,
+            email: email || vendor.email,
+            phone: phone || vendor.phone
+        };
+        
+        // Si un nouveau mot de passe est fourni, le hacher
+        if (vendorPassword) {
+            const hashedPassword = await bcrypt.hash(vendorPassword, 10);
+            updateData.vendorPassword = hashedPassword;
+        }
+        
+        // Mettre à jour le vendor
+        const updatedVendor = await Vendor.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true }
+        );
+        
+        // Si le numéro de téléphone a été mis à jour, mettre à jour également le shop
+        if (phone && phone !== vendor.phone) {
+            await Shop.findByIdAndUpdate(
+                vendor.shop,
+                { phone: phone },
+                { new: true }
+            );
+        }
+        
+        res.status(200).send({ 
+            message: "Vendor updated successfully", 
+            vendor: updatedVendor 
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error updating vendor" });
     }
 };

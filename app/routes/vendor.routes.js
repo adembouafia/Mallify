@@ -8,4 +8,8 @@ module.exports = (app) => {
     app.post('/vendor/forgotPassword', vendor.forgotPassword);
     app.post('/vendor/reset-password', vendor.resetPassword);
     app.get('/vendor/get', auth, authorize('admin', 'superAdmin'), vendor.getAll);
+    
+    // Nouvelles routes
+    app.get('/vendor/:id', auth, vendor.getVendorById);
+    app.put('/vendor/update/:id', auth, vendor.updateVendor);
 };

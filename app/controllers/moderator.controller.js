@@ -243,3 +243,16 @@ exports.deleteModerator = async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
+
+// Get moderator by ID
+exports.getModeratorById = async (req, res) => {
+    try {
+        const moderator = await Moderator.findById(req.params.id);
+        if (!moderator) {
+            return res.status(404).send({ message: "Moderator not found" });
+        }
+        res.status(200).send({ moderator });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error fetching moderator" });
+    }
+};

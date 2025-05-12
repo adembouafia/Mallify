@@ -8,6 +8,12 @@ function updateShopNavigation() {
     return
   }
 
+  let manage = document.getElementById("manageModerators")
+
+  if(userRole == "vendor") {
+    manage.style.display = "block"
+  }
+
   console.log(`Fetching shop data for ${userRole} ID:`, userId)
 
   // First, try to get all shops
@@ -44,8 +50,7 @@ function updateShopNavigation() {
                 }
               }
             } else if (userRole === "moderator") {
-              // For moderators: We need to check moderators collection
-              // Let's make a separate request to get moderator info
+              
               getModeratorsShop(userId, shops)
               return // Exit this function as we'll handle it in the callback
             }
