@@ -1,4 +1,3 @@
-
 ;(() => {
   document.addEventListener("DOMContentLoaded", () => {
     console.log("Search Form Handler initialized")
@@ -177,7 +176,7 @@
 
         if (subcategoryId) {
           console.log("Found subcategory ID:", subcategoryId, "for subcategory:", subcategoryName)
-          window.location.href = `shop.html?category=${encodeURIComponent(subcategoryId)}`
+          window.location.href = `shop.html?subcategory=${encodeURIComponent(subcategoryId)}`
         } else {
           console.log("Subcategory ID not found, using name:", subcategoryName)
           window.location.href = `shop.html?name=${encodeURIComponent(subcategoryName)}`

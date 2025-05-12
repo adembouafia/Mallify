@@ -10,6 +10,20 @@ let priceRangeSlider
 let minPriceInput
 let maxPriceInput
 
+// Declare Swal, noUiSlider, and jQuery if they are not already defined
+if (typeof Swal === "undefined") {
+  var Swal = {} // Or attempt to load it via CDN or a module loader
+}
+
+if (typeof noUiSlider === "undefined") {
+  // Attempt to load it via CDN or a module loader.  If you are using a bundler like webpack or parcel, you should import it instead.
+  console.error("noUiSlider is not defined.  Please include the noUiSlider library.")
+}
+
+if (typeof jQuery === "undefined") {
+  var jQuery = {} // Or attempt to load it via CDN or a module loader
+}
+
 // Generate star rating display
 function generateStarRating(rating) {
   let stars = ""
@@ -99,8 +113,6 @@ function showToast(message, type = "success") {
     }, 300)
   }
 }
-
-
 
 // Show error messages with SweetAlert
 const showError = (message) => {
@@ -618,7 +630,7 @@ function fetchProducts() {
   })
 }
 
-// Update category sidebar UI 
+// Update category sidebar UI
 function updateCategoryUI() {
   const categoryContainer = document.querySelector(".shop-sidebar__box ul")
 
@@ -766,13 +778,16 @@ function setupCategoryEvents() {
       this.classList.remove("text-gray-900")
 
       // Update URL with category parameter
+      const newUrl = new URL(window.location.href)
+
+      // Always remove subcategory parameter when clicking on a category
+      newUrl.searchParams.delete("subcategory")
+
       if (this.dataset.category !== "all" && this.dataset.id) {
-        const newUrl = new URL(window.location.href)
         newUrl.searchParams.set("category", this.dataset.id)
         window.history.replaceState({}, "", newUrl)
         console.log("Updated URL with category parameter:", this.dataset.id)
       } else {
-        const newUrl = new URL(window.location.href)
         newUrl.searchParams.delete("category")
         window.history.replaceState({}, "", newUrl)
         console.log("Removed category parameter from URL")
@@ -790,7 +805,7 @@ function setupCategoryEvents() {
 function initModernPriceFilter() {
   const priceRangeElement = document.getElementById("price-range")
 
-  if (window.noUiSlider && priceRangeElement) {
+  if (typeof noUiSlider !== "undefined" && priceRangeElement) {
     priceRangeSlider = noUiSlider.create(priceRangeElement, {
       start: [minPrice, maxPrice],
       connect: true,
@@ -1028,6 +1043,7 @@ function applyFiltersFromURL() {
 function applyAllFilters() {
   showLoading()
   const filters = {}
+  const urlParams = new URLSearchParams(window.location.search)
 
   // Get the active category from the sidebar
   const activeCategoryLink = document.querySelector(".category-link.active")
@@ -1036,7 +1052,6 @@ function applyAllFilters() {
     console.log("Filtering by sidebar category:", activeCategoryLink.dataset.category, filters.category)
   } else {
     // If no active category in sidebar, check URL for category parameter
-    const urlParams = new URLSearchParams(window.location.search)
     const categoryParam = urlParams.get("category")
     if (categoryParam) {
       filters.category = categoryParam
@@ -1044,7 +1059,12 @@ function applyAllFilters() {
     }
   }
 
-  // Rest of the function remains the same...
+  // Check for subcategory parameter in URL
+  const subcategoryParam = urlParams.get("subcategory")
+  if (subcategoryParam) {
+    filters.subcategory = subcategoryParam
+    console.log("Filtering by URL subcategory parameter:", subcategoryParam)
+  }
 
   if (minPriceInput && maxPriceInput) {
     filters.minPrice = minPriceInput.dataset.value
@@ -1087,7 +1107,6 @@ function applyAllFilters() {
   }
 
   // Get search parameters from URL
-  const urlParams = new URLSearchParams(window.location.search)
   const searchParam = urlParams.get("search")
   const nameParam = urlParams.get("name")
 
@@ -1521,6 +1540,8 @@ function setupCategoryDropdown() {
         if (!found) {
           // If no matching sidebar link, update URL and apply filters directly
           const newUrl = new URL(window.location.href)
+          // Remove subcategory parameter when selecting a category
+          newUrl.searchParams.delete("subcategory")
           newUrl.searchParams.set("category", categoryId)
           window.history.replaceState({}, "", newUrl)
 
@@ -1564,6 +1585,8 @@ function setupCategoryDropdown() {
             if (!found) {
               // If no matching sidebar link, update URL and apply filters directly
               const newUrl = new URL(window.location.href)
+              // Remove subcategory parameter when selecting a category
+              newUrl.searchParams.delete("subcategory")
               newUrl.searchParams.set("category", categoryId)
               window.history.replaceState({}, "", newUrl)
 
@@ -1599,7 +1622,7 @@ function initSearchForms() {
       }
 
       // Get the search term
-      const searchTerm = searchInput.value.trim()     
+      const searchTerm = searchInput.value.trim()
       const categoryDropdown = this.querySelector("select#categories-list, select.category-select")
       let categoryId = ""
 
