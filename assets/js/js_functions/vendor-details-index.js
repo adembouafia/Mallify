@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const reviewCount = product.reviewCount || 0;
             
         cardDiv.innerHTML = `
-            <div class="product-card__thumb rounded-8 bg-gray-50 position-relative">
+            <div class="product-card__thumb rounded-8 position-relative">
                 <a href="product-details.html?id=${product._id}" class="w-100 h-100 flex-center">
                     <img src="${productImage}" alt="${product.productName}" class="w-100 max-w-auto">
                 </a>
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${product.productoldPrice ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${product.productoldPrice} DT</span>` : ''}
                     <span class="text-heading text-md fw-semibold ">${product.productPrice} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
                 </div>
-                <a href="product-details.html?id=${product._id}" class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" tabindex="0">
+                <a href="product-details.html?id=${product._id}" class="product-card__cart btn text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" tabindex="0">
                     View Details <i class="ph ph-arrow-right"></i> 
                 </a>
             </div>
