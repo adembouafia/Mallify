@@ -7,5 +7,8 @@ module.exports = (app) => {
     app.get('/order', auth, order.getOrdersByShop);
     app.get('/order/:id', auth, order.getOrderById);
     app.delete('/order/delete/:id', auth, authorize('vendor', 'moderator'), order.deleteOrder);
-    app.get('/client/:id/orders',auth,order.getOrdersByClientId);
+    app.get('/client/:id/orders', auth, order.getOrdersByClientId);
+    
+    // Route pour mettre à jour le statut d'une commande
+    app.put('/order/:id/status', auth, authorize('vendor', 'moderator', 'admin'), order.updateStatusOrder);
 };

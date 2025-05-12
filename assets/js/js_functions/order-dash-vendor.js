@@ -280,6 +280,36 @@ function displayOrderDetails(order) {
   const deliveryCharge = 15.00
   const totalAmount = (parseFloat(subtotal) + parseFloat(deliveryCharge)).toFixed(2)
   
+  // Déterminer les boutons d'action en fonction du statut de la commande
+  let actionButtons = '';
+  
+  if (order.orderStatus === 'pending') {
+    actionButtons = `
+      <div>
+        <a href="#!" class="btn btn-success me-2" id="accept-order-btn">Accepter la commande</a>
+        <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Préparer pour l'expédition</a>
+      </div>
+    `;
+  } else if (order.orderStatus === 'accepted') {
+    actionButtons = `
+      <div>
+        <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Préparer pour l'expédition</a>
+      </div>
+    `;
+  } else if (order.orderStatus === 'completed') {
+    actionButtons = `
+      <div>
+        <span class="badge bg-success p-2">Commande complétée</span>
+      </div>
+    `;
+  } else if (order.orderStatus === 'cancelled') {
+    actionButtons = `
+      <div>
+        <span class="badge bg-danger p-2">Commande annulée</span>
+      </div>
+    `;
+  }
+  
   // Create the order details HTML
   const orderDetailsHTML = `
     <div class="container-xxl p-4">
@@ -327,19 +357,21 @@ function displayOrderDetails(order) {
                     <div class="col">
                       <div class="progress mt-2" style="height: 10px">
                         <div
-                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === 'pending' ? 'bg-warning' : 'bg-success'}"
                           role="progressbar"
-                          style="width: 60%"
-                          aria-valuenow="60"
+                          style="width: ${order.orderStatus === 'pending' ? '60%' : '100%'}"
+                          aria-valuenow="${order.orderStatus === 'pending' ? '60' : '100'}"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         ></div>
                       </div>
                       <div class="d-flex align-items-center gap-2 mt-2">
                         <p class="mb-0">Processing</p>
-                        <div class="spinner-border spinner-border-sm text-warning" role="status">
-                          <span class="visually-hidden">Loading...</span>
-                        </div>
+                        ${order.orderStatus === 'pending' ? `
+                          <div class="spinner-border spinner-border-sm text-warning" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        ` : ''}
                       </div>
                     </div>
                     
@@ -347,10 +379,10 @@ function displayOrderDetails(order) {
                     <div class="col">
                       <div class="progress mt-2" style="height: 10px">
                         <div
-                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === 'completed' ? 'bg-success' : 'bg-primary'}"
                           role="progressbar"
-                          style="width: 0%"
-                          aria-valuenow="0"
+                          style="width: ${order.orderStatus === 'completed' ? '100%' : '0%'}"
+                          aria-valuenow="${order.orderStatus === 'completed' ? '100' : '0'}"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         ></div>
@@ -381,9 +413,7 @@ function displayOrderDetails(order) {
                     Estimated shipping date :
                     <span class="text-dark fw-medium">${formattedShippingDate}</span>
                   </p>
-                  <div>
-                    <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Make As Ready To Ship</a>
-                  </div>
+                  ${actionButtons}
                 </div>
               </div>
               
@@ -531,11 +561,19 @@ function displayOrderDetails(order) {
 
 // Function to setup event listeners for order action buttons
 function setupOrderActionButtons(orderId) {
+  // Accept order button
+  const acceptOrderBtn = document.getElementById("accept-order-btn");
+  if (acceptOrderBtn) {
+    acceptOrderBtn.addEventListener("click", function () {
+      updateOrderStatus(orderId, "accepted");
+    });
+  }
+
   // Make as Ready to Ship button
   const readyToShipBtn = document.getElementById("make-ready-ship-btn");
   if (readyToShipBtn) {
     readyToShipBtn.addEventListener("click", function () {
-      updateOrderStatus(orderId, "ready_for_shipping");
+      updateOrderStatus(orderId, "completed");
     });
   }
 }
@@ -551,7 +589,7 @@ function updateOrderStatus(orderId, status) {
 
   // Create XHR request to update order status
   const xhr = new XMLHttpRequest();
-  xhr.open("PUT", `http://localhost:3000/order/status/${orderId}`, true);
+  xhr.open("PUT", `http://localhost:3000/order/${orderId}/status`, true);
   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   xhr.setRequestHeader("Content-Type", "application/json");
 
@@ -774,6 +812,21 @@ function displayOrders(ordersToDisplay) {
     const customerName =
       firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown";
 
+    // Déterminer la classe de statut et le texte
+    let statusClass = "bg-warning";
+    let statusText = "Pending";
+    
+    if (order.orderStatus === "accepted") {
+      statusClass = "bg-info";
+      statusText = "Accepted";
+    } else if (order.orderStatus === "completed") {
+      statusClass = "bg-success";
+      statusText = "Completed";
+    } else if (order.orderStatus === "cancelled") {
+      statusClass = "bg-danger";
+      statusText = "Cancelled";
+    }
+
     // Create table row
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -783,12 +836,17 @@ function displayOrders(ordersToDisplay) {
             <td>${total.toFixed(2)} DT</td>
             <td>${itemCount}</td>
             <td>#D-${Math.floor(Math.random() * 10000000)}</td>
-            <td>Pending</td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
             <td>
                 <a href="detailsOrders.html?id=${order._id}" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
                     <i class="bi bi-eye"></i>
                 </a>
-                <button class="btn btn-sm btn-outline-danger delete-order" data-id="${order._id}">
+                ${order.orderStatus === 'pending' ? `
+                <button class="btn btn-sm btn-outline-success me-1 accept-order" data-id="${order._id}" title="Accept Order">
+                    <i class="bi bi-check"></i>
+                </button>
+                ` : ''}
+                <button class="btn btn-sm btn-outline-danger delete-order" data-id="${order._id}" title="Delete Order">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
@@ -797,24 +855,45 @@ function displayOrders(ordersToDisplay) {
     ordersTableBody.appendChild(row);
   });
 
-  // Add event listeners to delete buttons
+  // Add event listeners to action buttons
   document.querySelectorAll(".delete-order").forEach((button) => {
     button.addEventListener("click", (e) => {
       const orderId = e.currentTarget.getAttribute("data-id");
       confirmDeleteOrder(orderId);
     });
   });
+
+  // Add event listeners to accept buttons
+  document.querySelectorAll(".accept-order").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const orderId = e.currentTarget.getAttribute("data-id");
+      acceptOrder(orderId);
+    });
+  });
+}
+
+// Function to accept an order
+function acceptOrder(orderId) {
+  if (confirm("Êtes-vous sûr de vouloir accepter cette commande?")) {
+    updateOrderStatus(orderId, "accepted");
+  }
 }
 
 // Update order counts in the info boxes
 function updateOrderCounts() {
   if (!orders) return;
 
+  // Count orders by status
+  const pendingOrders = orders.filter(order => order.orderStatus === 'pending').length;
+  const acceptedOrders = orders.filter(order => order.orderStatus === 'accepted').length;
+  const completedOrders = orders.filter(order => order.orderStatus === 'completed').length;
+  const cancelledOrders = orders.filter(order => order.orderStatus === 'cancelled').length;
+
   // Safely update the order count displays
   updateCountDisplay(".info-box:nth-child(1) .info-box-number", orders.length);
-  updateCountDisplay(".info-box:nth-child(2) .info-box-number", "0"); // Shipped orders
-  updateCountDisplay(".info-box:nth-child(3) .info-box-number", "0"); // Cancelled orders
-  updateCountDisplay(".info-box:nth-child(4) .info-box-number", "0"); // Refunded orders
+  updateCountDisplay(".info-box:nth-child(2) .info-box-number", acceptedOrders); // Accepted orders
+  updateCountDisplay(".info-box:nth-child(3) .info-box-number", completedOrders); // Completed orders
+  updateCountDisplay(".info-box:nth-child(4) .info-box-number", cancelledOrders); // Cancelled orders
 }
 
 // Helper function to safely update count displays
@@ -920,4 +999,115 @@ function deleteOrder(orderId) {
   xhr.send();
 }
 
-//end delete functions
+// Fonction pour charger les notifications
+function loadNotifications() {
+  const token = localStorage.getItem("token")
+  const shopId = localStorage.getItem("shopId") // Assurez-vous que le shopId est stocké dans localStorage
+
+  if (!token || !shopId) {
+    console.error("Token ou shopId manquant")
+    return
+  }
+
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/notifications/shop/${shopId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText)
+        console.log("Notifications chargées:", response.data)
+        
+        // Mettre à jour le compteur de notifications
+        updateNotificationCounter(response.data.filter(n => n.status === "unread").length)
+        
+        // Vous pourriez également afficher les notifications dans un dropdown
+        populateNotificationDropdown(response.data)
+      } catch (error) {
+        console.error("Erreur lors du parsing des notifications:", error)
+      }
+    } else {
+      console.error("Erreur lors du chargement des notifications:", xhr.status)
+    }
+  }
+
+  xhr.onerror = function() {
+    console.error("Erreur réseau lors du chargement des notifications")
+  }
+
+  xhr.send()
+}
+
+// Fonction pour mettre à jour le compteur de notifications
+function updateNotificationCounter(count) {
+  const counter = document.querySelector(".notification-counter")
+  if (counter) {
+    counter.textContent = count
+    counter.style.display = count > 0 ? "block" : "none"
+  }
+}
+
+// Fonction pour peupler le dropdown de notifications
+function populateNotificationDropdown(notifications) {
+  const dropdown = document.querySelector(".notification-dropdown")
+  if (!dropdown) return
+
+  dropdown.innerHTML = ""
+
+  if (notifications.length === 0) {
+    dropdown.innerHTML = "<div class='p-3 text-center'>Aucune notification</div>"
+    return
+  }
+
+  notifications.forEach(notification => {
+    const item = document.createElement("div")
+    item.className = `notification-item p-3 border-bottom ${notification.status === "unread" ? "bg-light" : ""}`
+    
+    item.innerHTML = `
+      <div class="d-flex justify-content-between">
+        <strong>${notification.productId ? notification.productId.productName : "Produit"}</strong>
+        <small>${new Date(notification.createdAt).toLocaleDateString()}</small>
+      </div>
+      <p class="mb-1">${notification.message}</p>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="${notification._id}">
+          ${notification.status === "unread" ? "Marquer comme lu" : "Lu"}
+        </button>
+        <button class="btn btn-sm btn-outline-danger ms-2 delete-notification-btn" data-id="${notification._id}">
+          Supprimer
+        </button>
+      </div>
+    `
+    
+    dropdown.appendChild(item)
+  })
+
+  // Ajouter les gestionnaires d'événements
+  document.querySelectorAll(".mark-read-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      markNotificationAsRead(this.getAttribute("data-id"))
+    })
+  })
+
+  document.querySelectorAll(".delete-notification-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      deleteNotification(this.getAttribute("data-id"))
+    })
+  })
+}
+
+// Charger les notifications au chargement de la page
+document.addEventListener("DOMContentLoaded", () => {
+  // Initialisation existante...
+  
+  // Ajouter le chargement des notifications
+  const shopId = localStorage.getItem("shopId")
+  if (shopId) {
+    loadNotifications()
+    
+    // Recharger les notifications toutes les 5 minutes
+    setInterval(loadNotifications, 5 * 60 * 1000)
+  }
+})

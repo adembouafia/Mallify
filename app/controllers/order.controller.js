@@ -2,6 +2,8 @@ const Cart = require("../models/cart.model")
 const Product = require("../models/product.model")
 const Order = require("../models/order.model")
 const Invoice = require("../models/invoice.model")
+const Shop = require("../models/shop.model")
+const Notification = require("../models/notification.model")
 
 exports.createOrder = async (req, res) => {
   const { idPanier } = req.body
@@ -192,6 +194,121 @@ exports.deleteOrder = async (req, res) => {
   }
 }
 
+// Mettre à jour le statut d'une commande
+exports.updateStatusOrder = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { status } = req.body
+
+    if (!['pending', 'accepted', 'completed', 'cancelled'].includes(status)) {
+      return res.status(400).json({
+        message: "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled",
+      })
+    }
+
+    const order = await Order.findById(id)
+    if (!order) {
+      return res.status(404).json({
+        message: "Commande non trouvée",
+      })
+    }
+
+    // Vérifier les autorisations (seul le vendeur de la boutique ou un modérateur/admin peut modifier)
+    if (req.user.role === 'vendor' && order.shop.toString() !== req.user.shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à modifier cette commande",
+      })
+    }
+
+    // Si la commande passe de 'pending' à 'completed' ou 'accepted', mettre à jour le stock
+    if ((status === 'completed' || status === 'accepted') && order.orderStatus === 'pending') {
+      await updateProductStock(order)
+    }
+
+    order.orderStatus = status
+    await order.save()
+
+    res.status(200).json({
+      message: "Statut de la commande mis à jour avec succès",
+      order,
+    })
+  } catch (err) {
+    console.error("Erreur updateStatusOrder:", err)
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour du statut de la commande",
+      error: err.message,
+    })
+  }
+}
+
+// Fonction pour mettre à jour le stock des produits et créer des notifications si nécessaire
+async function updateProductStock(order) {
+  try {
+    // Vérifier si cartData existe et contient des items
+    if (!order.cartData || !order.cartData.items || order.cartData.items.length === 0) {
+      console.warn("Pas d'items dans la commande pour mettre à jour le stock")
+      return
+    }
+
+    const shopId = order.shop
+    const shop = await Shop.findById(shopId)
+    
+    if (!shop) {
+      console.warn(`Boutique non trouvée: ${shopId}`)
+      return
+    }
+
+    const stockLimit = shop.stockLimit || 0
+
+    // Parcourir tous les produits de la commande
+    for (const item of order.cartData.items) {
+      const productId = item.productId._id
+      const quantity = item.quantity || 1
+
+      // Récupérer le produit actuel
+      const product = await Product.findById(productId)
+      
+      if (!product) {
+        console.warn(`Produit non trouvé: ${productId}`)
+        continue
+      }
+
+      // Mettre à jour le stock
+      const newStock = Math.max(0, product.stock - quantity)
+      product.stock = newStock
+      
+      // Mettre à jour la disponibilité si nécessaire
+      if (newStock === 0) {
+        product.availability = "Out of stock"
+      }
+      
+      await product.save()
+
+      // Vérifier si le stock est inférieur ou égal à la limite
+      if (newStock <= stockLimit) {
+        // Créer une notification
+        const notificationMessage = `Le stock du produit "${product.productName}" est bas (${newStock} restants)`
+        
+        // Afficher la notification dans la console
+        console.log("=== NOTIFICATION CRÉÉE ===")
+        console.log(`Shop ID: ${shopId}`)
+        console.log(`Product ID: ${product._id}`)
+        console.log(`Message: ${notificationMessage}`)
+        console.log("=========================")
+        
+        // Créer la notification dans la base de données
+        await Notification.create({
+          productId: product._id,
+          shopId: shopId,
+          message: notificationMessage,
+        })
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du stock:", error)
+    throw error
+  }
+}
 
 //get all orders for a client
 exports.getOrdersByClientId = async (req, res) => {
