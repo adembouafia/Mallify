@@ -21,6 +21,7 @@
         <div class="shop-info">
           <h2 class="shop-name" id="sidebar-shop-name">Pro Shop</h2>
           <p class="shop-description" id="sidebar-shop-description">Premium products store</p>
+          <p class="shop-role" id="sidebar-role">Shop Owner</p>
         </div>
         <div class="sidebar-footer" style="margin-top: 30px;">
         <p id="sidebar-stock-limit">📦 Stock Limit: 5</p>
@@ -32,6 +33,8 @@
         <li><a href="index.html" >🏠 Dashboard</a></li>
         <li><a href="#" onclick="showSection(event, 'stock-limiter')">📊 Stock Limiter</a></li>
         <li><a href="#" class="active" onclick="showSection(event, 'shop-info')">🏪 Shop Info</a></li>
+        <li><a href="#" onclick="showSection(event, 'vendor-info')">👤 Vendor Info</a></li>
+        <li><a href="#" onclick="showSection(event, 'moderator-info')">👥 Moderator Info</a></li>
       </ul>
       
     </aside>
@@ -47,14 +50,40 @@
           <label>Update Logo:</label>
           <input type="file" id="logo-upload" accept="image/*">
         </div>
-        <button onclick="saveShopInfo()">Save Changes</button>
+        <button id="save-shop-info-btn" onclick="saveShopInfo()">Save Changes</button>
       </section>
-
 
       <section id="stock-limiter" class="settings-section hidden">
         <h2>Stock Limiter Settings</h2>
         <div class="form-group"><input type="number" id="stock-limit" placeholder="Set stock limit"></div>
-        <button onclick="setStockLimit()">Save Limit</button>
+        <button id="save-stock-limit-btn" onclick="setStockLimit()">Save Limit</button>
+      </section>
+
+      <section id="vendor-info" class="settings-section hidden">
+        <h2>Vendor Information</h2>
+        <div class="form-group"><input type="text" id="vendor-name" placeholder="Vendor Name"></div>
+        <div class="form-group"><input type="email" id="vendor-email" placeholder="Email"></div>
+        <div class="form-group"><input type="tel" id="vendor-phone" placeholder="Phone Number"></div>
+        <div class="form-group">
+          <label>Change Password:</label>
+          <input type="password" id="vendor-password" placeholder="New Password">
+        </div>
+        <button onclick="saveVendorInfo()">Save Changes</button>
+      </section>
+
+      <section id="moderator-info" class="settings-section hidden">
+        <h2>Moderator Information</h2>
+        <div class="form-group"><input type="text" id="moderator-name" placeholder="Moderator Name"></div>
+        <div class="form-group"><input type="email" id="moderator-email" placeholder="Email"></div>
+        <div class="form-group">
+          <label>Change Password:</label>
+          <input type="password" id="moderator-password" placeholder="New Password">
+        </div>
+        <div class="form-group">
+          <label>Update Profile Image:</label>
+          <input type="file" id="moderator-image-upload" accept="image/*">
+        </div>
+        <button onclick="saveModeratorInfo()">Save Changes</button>
       </section>
     </main>
   </div>
