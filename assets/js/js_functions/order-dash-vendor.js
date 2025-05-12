@@ -121,57 +121,63 @@ function loadOrderDetails() {
 
 // Function to display order details in the UI
 function displayOrderDetails(order) {
-  const contentArea = document.querySelector(".content-wrapper")
-  if (!contentArea) return
-  
-  console.log("Displaying order details:", order)
-  
+  const contentArea = document.querySelector(".content-wrapper");
+  if (!contentArea) return;
+
+  console.log("Displaying order details:", order);
+
   // Format order date
-  let orderDate = new Date()
-  let formattedDate = "N/A"
+  let orderDate = new Date();
+  let formattedDate = "N/A";
   try {
-    orderDate = new Date(order.createdAt || order.dateCommande)
+    orderDate = new Date(order.createdAt || order.dateCommande);
     if (!isNaN(orderDate.getTime())) {
       formattedDate = orderDate.toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
-      })
+        minute: "2-digit",
+      });
     }
   } catch (e) {
-    console.error("Error formatting date:", e)
+    console.error("Error formatting date:", e);
   }
-  
+
   // Calculate shipping date (3 days after order date)
-  const shippingDate = new Date(orderDate)
-  shippingDate.setDate(shippingDate.getDate() + 3)
+  const shippingDate = new Date(orderDate);
+  shippingDate.setDate(shippingDate.getDate() + 3);
   const formattedShippingDate = shippingDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric"
-  })
-  
+    year: "numeric",
+  });
+
   // Format customer details from the database
-  const firstName = order.idClient?.firstname || ""
-  const lastName = order.idClient?.lastname || ""
-  const customerName = firstName && lastName ? `${firstName} ${lastName}`.trim() : "Unknown Customer"
-  const customerEmail = order.idClient?.email || ""
-  const customerPhone = order.idClient?.phoneNumber || ""
-  
+  const firstName = order.idClient?.firstname || "";
+  const lastName = order.idClient?.lastname || "";
+  const customerName =
+    firstName && lastName
+      ? `${firstName} ${lastName}`.trim()
+      : "Unknown Customer";
+  const customerEmail = order.idClient?.email || "";
+  const customerPhone = order.idClient?.phoneNumber || "";
+
   // Get shipping details - first check if there's shipping details in the order
-  let shippingDetails = order.shippingDetails || {}
-  
+  let shippingDetails = order.shippingDetails || {};
+
   // If no shipping details in order, check if client has shipping info
   if (Object.keys(shippingDetails).length === 0 && order.idClient) {
-    console.log("Checking client for shipping info:", order.idClient)
-    
+    console.log("Checking client for shipping info:", order.idClient);
+
     // Check for shippingInfo in the client model - THIS IS THE KEY CHANGE
     if (order.idClient.shippingInfo) {
-      console.log("Found shipping info in client:", order.idClient.shippingInfo)
-      
-      const clientShippingInfo = order.idClient.shippingInfo
+      console.log(
+        "Found shipping info in client:",
+        order.idClient.shippingInfo
+      );
+
+      const clientShippingInfo = order.idClient.shippingInfo;
       shippingDetails = {
         firstname: firstName,
         lastname: lastName,
@@ -179,17 +185,24 @@ function displayOrderDetails(order) {
         city: clientShippingInfo.city,
         governorate: clientShippingInfo.governorate,
         postCode: clientShippingInfo.postCode,
-        phone: clientShippingInfo.phone || customerPhone
-      }
+        phone: clientShippingInfo.phone || customerPhone,
+      };
     }
     // Check for shipping addresses in the client model (as fallback)
-    else if (order.idClient.shippingAddresses && order.idClient.shippingAddresses.length > 0) {
-      console.log("Found shipping addresses in client:", order.idClient.shippingAddresses)
-      
+    else if (
+      order.idClient.shippingAddresses &&
+      order.idClient.shippingAddresses.length > 0
+    ) {
+      console.log(
+        "Found shipping addresses in client:",
+        order.idClient.shippingAddresses
+      );
+
       // Get default shipping address or first one
-      const clientAddresses = order.idClient.shippingAddresses
-      const defaultAddress = clientAddresses.find(addr => addr.isDefault) || clientAddresses[0]
-      
+      const clientAddresses = order.idClient.shippingAddresses;
+      const defaultAddress =
+        clientAddresses.find((addr) => addr.isDefault) || clientAddresses[0];
+
       shippingDetails = {
         firstname: firstName,
         lastname: lastName,
@@ -197,14 +210,17 @@ function displayOrderDetails(order) {
         city: defaultAddress.city,
         governorate: defaultAddress.governorate,
         postCode: defaultAddress.postCode,
-        phone: defaultAddress.phone || customerPhone
-      }
-    } 
+        phone: defaultAddress.phone || customerPhone,
+      };
+    }
     // If no shipping addresses array, check for defaultShippingInfo
     else if (order.idClient.defaultShippingInfo) {
-      console.log("Found default shipping info in client:", order.idClient.defaultShippingInfo)
-      
-      const defaultInfo = order.idClient.defaultShippingInfo
+      console.log(
+        "Found default shipping info in client:",
+        order.idClient.defaultShippingInfo
+      );
+
+      const defaultInfo = order.idClient.defaultShippingInfo;
       shippingDetails = {
         firstname: firstName,
         lastname: lastName,
@@ -212,104 +228,114 @@ function displayOrderDetails(order) {
         city: defaultInfo.city,
         governorate: defaultInfo.governorate,
         postCode: defaultInfo.postCode,
-        phone: defaultInfo.phone || customerPhone
-      }
+        phone: defaultInfo.phone || customerPhone,
+      };
     }
   }
-  
-  console.log("Final shipping details:", shippingDetails)
-  
+
+  console.log("Final shipping details:", shippingDetails);
+
   // Use shipping details if available, otherwise fall back to client info
-  const shippingName = shippingDetails.firstname && shippingDetails.lastname 
-    ? `${shippingDetails.firstname} ${shippingDetails.lastname}`.trim() 
-    : customerName
-    
-  const shippingPhone = shippingDetails.phone || customerPhone || "No phone number provided"
-  const shippingAddress = shippingDetails.address || "No address provided"
-  const shippingCity = shippingDetails.city || "No city provided"
-  const shippingGovernorate = shippingDetails.governorate || "No governorate provided"
-  const shippingPostCode = shippingDetails.postCode || "No postal code provided"
-  
+  const shippingName =
+    shippingDetails.firstname && shippingDetails.lastname
+      ? `${shippingDetails.firstname} ${shippingDetails.lastname}`.trim()
+      : customerName;
+
+  const shippingPhone =
+    shippingDetails.phone || customerPhone || "No phone number provided";
+  const shippingAddress = shippingDetails.address || "No address provided";
+  const shippingCity = shippingDetails.city || "No city provided";
+  const shippingGovernorate =
+    shippingDetails.governorate || "No governorate provided";
+  const shippingPostCode =
+    shippingDetails.postCode || "No postal code provided";
+
   // Calculate order details
-  let subtotal = 0
-  let items = []
-  
+  let subtotal = 0;
+  let items = [];
+
   console.log("Order object:", order);
-  
+
   // Check if cartData is available and use it to display items
-  if (order.cartData && order.cartData.items && order.cartData.items.length > 0) {
+  if (
+    order.cartData &&
+    order.cartData.items &&
+    order.cartData.items.length > 0
+  ) {
     console.log("Cart items found:", order.cartData.items);
-    
-    order.cartData.items.forEach(item => {
+
+    order.cartData.items.forEach((item) => {
       // In the order model, productId is a complete product object
       const product = item.productId;
       console.log("Product data:", product);
-      
-      const price = Number.parseFloat(product.productPrice) || 0
-      const quantity = Number.parseInt(item.quantity) || 0
-      const itemTotal = price * quantity
-      subtotal += itemTotal
-     
+
+      const price = Number.parseFloat(product.productPrice) || 0;
+      const quantity = Number.parseInt(item.quantity) || 0;
+      const itemTotal = price * quantity;
+      subtotal += itemTotal;
+
       // FIXED: Access the productId field correctly based on your data structure
       let displayProductId = "N/A";
-      
+
       // This is the key fix - product.productId is the field we want
       if (product && product.productId) {
         displayProductId = product.productId;
         console.log("Using product.productId:", displayProductId);
       }
-      
+
       items.push({
         id: displayProductId,
         name: product.productName || "Product Name",
         price: price,
         quantity: quantity,
-        total: itemTotal
-      })
-    })
+        total: itemTotal,
+      });
+    });
   } else {
     console.warn("No cart items found in order:", order);
     // Fallback sample data if no items are found
     items = [
-      { id: "2541", name: "Product 1", quantity: 1, price: 80, total: 80 }
-    ]
-    subtotal = 80.00
+      { id: "2541", name: "Product 1", quantity: 1, price: 80, total: 80 },
+    ];
+    subtotal = 80.0;
   }
-  
+
   // Calculate total amount (no discount or tax)
-  const deliveryCharge = 15.00
-  const totalAmount = (parseFloat(subtotal) + parseFloat(deliveryCharge)).toFixed(2)
-  
+  const deliveryCharge = 15.0;
+  const totalAmount = (
+    parseFloat(subtotal) + parseFloat(deliveryCharge)
+  ).toFixed(2);
+
   // Déterminer les boutons d'action en fonction du statut de la commande
-  let actionButtons = '';
-  
-  if (order.orderStatus === 'pending') {
+  let actionButtons = "";
+
+  if (order.orderStatus === "pending") {
     actionButtons = `
       <div>
         <a href="#!" class="btn btn-success me-2" id="accept-order-btn">Accepter la commande</a>
         <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Préparer pour l'expédition</a>
       </div>
     `;
-  } else if (order.orderStatus === 'accepted') {
+  } else if (order.orderStatus === "accepted") {
     actionButtons = `
       <div>
         <a href="#!" class="btn btn-warning" id="make-ready-ship-btn">Préparer pour l'expédition</a>
       </div>
     `;
-  } else if (order.orderStatus === 'completed') {
+  } else if (order.orderStatus === "completed") {
     actionButtons = `
       <div>
         <span class="badge bg-success p-2">Commande complétée</span>
       </div>
     `;
-  } else if (order.orderStatus === 'cancelled') {
+  } else if (order.orderStatus === "cancelled") {
     actionButtons = `
       <div>
         <span class="badge bg-danger p-2">Commande annulée</span>
       </div>
     `;
   }
-  
+
   // Create the order details HTML
   const orderDetailsHTML = `
     <div class="container-xxl p-4">
@@ -357,21 +383,25 @@ function displayOrderDetails(order) {
                     <div class="col">
                       <div class="progress mt-2" style="height: 10px">
                         <div
-                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === 'pending' ? 'bg-warning' : 'bg-success'}"
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === "pending" ? "bg-warning" : "bg-success"}"
                           role="progressbar"
-                          style="width: ${order.orderStatus === 'pending' ? '60%' : '100%'}"
-                          aria-valuenow="${order.orderStatus === 'pending' ? '60' : '100'}"
+                          style="width: ${order.orderStatus === "pending" ? "60%" : "100%"}"
+                          aria-valuenow="${order.orderStatus === "pending" ? "60" : "100"}"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         ></div>
                       </div>
                       <div class="d-flex align-items-center gap-2 mt-2">
                         <p class="mb-0">Processing</p>
-                        ${order.orderStatus === 'pending' ? `
+                        ${
+                          order.orderStatus === "pending"
+                            ? `
                           <div class="spinner-border spinner-border-sm text-warning" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
-                        ` : ''}
+                        `
+                            : ""
+                        }
                       </div>
                     </div>
                     
@@ -379,10 +409,10 @@ function displayOrderDetails(order) {
                     <div class="col">
                       <div class="progress mt-2" style="height: 10px">
                         <div
-                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === 'completed' ? 'bg-success' : 'bg-primary'}"
+                          class="progress-bar progress-bar progress-bar-striped progress-bar-animated ${order.orderStatus === "completed" ? "bg-success" : "bg-primary"}"
                           role="progressbar"
-                          style="width: ${order.orderStatus === 'completed' ? '100%' : '0%'}"
-                          aria-valuenow="${order.orderStatus === 'completed' ? '100' : '0'}"
+                          style="width: ${order.orderStatus === "completed" ? "100%" : "0%"}"
+                          aria-valuenow="${order.orderStatus === "completed" ? "100" : "0"}"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         ></div>
@@ -437,15 +467,19 @@ function displayOrderDetails(order) {
                         </tr>
                       </thead>
                       <tbody>
-                        ${items.map(item => `
+                        ${items
+                          .map(
+                            (item) => `
                           <tr>
-                            <td>${item.id || 'N/A'}</td>
-                            <td>${item.name || 'N/A'}</td>
+                            <td>${item.id || "N/A"}</td>
+                            <td>${item.name || "N/A"}</td>
                             <td>${item.quantity}</td>
                             <td>${item.price.toFixed(2)} DT</td>
                             <td>${item.total.toFixed(2)} DT</td>
                           </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                       </tbody>
                     </table>
                   </div>
@@ -512,7 +546,7 @@ function displayOrderDetails(order) {
             <div class="card-body">
               <div class="d-flex align-items-center gap-2">
                 <img
-                  src="${order.idClient?.profilePicture ? '/uploads/' + order.idClient.profilePicture : '../../assets/images/team_members/devoloper2.jpg'}"
+                  src="${order.idClient?.profilePicture ? "/uploads/" + order.idClient.profilePicture : "../../assets/images/team_members/devoloper2.jpg"}"
                   alt=""
                   class="rounded object-fit-cover" width="43" height="45"
                 />
@@ -550,13 +584,13 @@ function displayOrderDetails(order) {
         </div>
       </div>
     </div>
-  `
-  
+  `;
+
   // Display the order details in the content area
-  contentArea.innerHTML = orderDetailsHTML
-  
+  contentArea.innerHTML = orderDetailsHTML;
+
   // Add event listeners
-  setupOrderActionButtons(order._id)
+  setupOrderActionButtons(order._id);
 }
 
 // Function to setup event listeners for order action buttons
@@ -815,7 +849,7 @@ function displayOrders(ordersToDisplay) {
     // Déterminer la classe de statut et le texte
     let statusClass = "bg-warning";
     let statusText = "Pending";
-    
+
     if (order.orderStatus === "accepted") {
       statusClass = "bg-info";
       statusText = "Accepted";
@@ -841,11 +875,15 @@ function displayOrders(ordersToDisplay) {
                 <a href="detailsOrders.html?id=${order._id}" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
                     <i class="bi bi-eye"></i>
                 </a>
-                ${order.orderStatus === 'pending' ? `
+                ${
+                  order.orderStatus === "pending"
+                    ? `
                 <button class="btn btn-sm btn-outline-success me-1 accept-order" data-id="${order._id}" title="Accept Order">
                     <i class="bi bi-check"></i>
                 </button>
-                ` : ''}
+                `
+                    : ""
+                }
                 <button class="btn btn-sm btn-outline-danger delete-order" data-id="${order._id}" title="Delete Order">
                     <i class="bi bi-trash"></i>
                 </button>
@@ -884,16 +922,30 @@ function updateOrderCounts() {
   if (!orders) return;
 
   // Count orders by status
-  const pendingOrders = orders.filter(order => order.orderStatus === 'pending').length;
-  const acceptedOrders = orders.filter(order => order.orderStatus === 'accepted').length;
-  const completedOrders = orders.filter(order => order.orderStatus === 'completed').length;
-  const cancelledOrders = orders.filter(order => order.orderStatus === 'cancelled').length;
+  const pendingOrders = orders.filter(
+    (order) => order.orderStatus === "pending"
+  ).length;
+  const acceptedOrders = orders.filter(
+    (order) => order.orderStatus === "accepted"
+  ).length;
+  const completedOrders = orders.filter(
+    (order) => order.orderStatus === "completed"
+  ).length;
+  const cancelledOrders = orders.filter(
+    (order) => order.orderStatus === "cancelled"
+  ).length;
 
   // Safely update the order count displays
   updateCountDisplay(".info-box:nth-child(1) .info-box-number", orders.length);
   updateCountDisplay(".info-box:nth-child(2) .info-box-number", acceptedOrders); // Accepted orders
-  updateCountDisplay(".info-box:nth-child(3) .info-box-number", completedOrders); // Completed orders
-  updateCountDisplay(".info-box:nth-child(4) .info-box-number", cancelledOrders); // Cancelled orders
+  updateCountDisplay(
+    ".info-box:nth-child(3) .info-box-number",
+    completedOrders
+  ); // Completed orders
+  updateCountDisplay(
+    ".info-box:nth-child(4) .info-box-number",
+    cancelledOrders
+  ); // Cancelled orders
 }
 
 // Helper function to safely update count displays
@@ -998,116 +1050,3 @@ function deleteOrder(orderId) {
   // Send the request
   xhr.send();
 }
-
-// Fonction pour charger les notifications
-function loadNotifications() {
-  const token = localStorage.getItem("token")
-  const shopId = localStorage.getItem("shopId") // Assurez-vous que le shopId est stocké dans localStorage
-
-  if (!token || !shopId) {
-    console.error("Token ou shopId manquant")
-    return
-  }
-
-  const xhr = new XMLHttpRequest()
-  xhr.open("GET", `http://localhost:3000/notifications/shop/${shopId}`, true)
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
-  xhr.setRequestHeader("Content-Type", "application/json")
-
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      try {
-        const response = JSON.parse(xhr.responseText)
-        console.log("Notifications chargées:", response.data)
-        
-        // Mettre à jour le compteur de notifications
-        updateNotificationCounter(response.data.filter(n => n.status === "unread").length)
-        
-        // Vous pourriez également afficher les notifications dans un dropdown
-        populateNotificationDropdown(response.data)
-      } catch (error) {
-        console.error("Erreur lors du parsing des notifications:", error)
-      }
-    } else {
-      console.error("Erreur lors du chargement des notifications:", xhr.status)
-    }
-  }
-
-  xhr.onerror = function() {
-    console.error("Erreur réseau lors du chargement des notifications")
-  }
-
-  xhr.send()
-}
-
-// Fonction pour mettre à jour le compteur de notifications
-function updateNotificationCounter(count) {
-  const counter = document.querySelector(".notification-counter")
-  if (counter) {
-    counter.textContent = count
-    counter.style.display = count > 0 ? "block" : "none"
-  }
-}
-
-// Fonction pour peupler le dropdown de notifications
-function populateNotificationDropdown(notifications) {
-  const dropdown = document.querySelector(".notification-dropdown")
-  if (!dropdown) return
-
-  dropdown.innerHTML = ""
-
-  if (notifications.length === 0) {
-    dropdown.innerHTML = "<div class='p-3 text-center'>Aucune notification</div>"
-    return
-  }
-
-  notifications.forEach(notification => {
-    const item = document.createElement("div")
-    item.className = `notification-item p-3 border-bottom ${notification.status === "unread" ? "bg-light" : ""}`
-    
-    item.innerHTML = `
-      <div class="d-flex justify-content-between">
-        <strong>${notification.productId ? notification.productId.productName : "Produit"}</strong>
-        <small>${new Date(notification.createdAt).toLocaleDateString()}</small>
-      </div>
-      <p class="mb-1">${notification.message}</p>
-      <div class="d-flex justify-content-end">
-        <button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="${notification._id}">
-          ${notification.status === "unread" ? "Marquer comme lu" : "Lu"}
-        </button>
-        <button class="btn btn-sm btn-outline-danger ms-2 delete-notification-btn" data-id="${notification._id}">
-          Supprimer
-        </button>
-      </div>
-    `
-    
-    dropdown.appendChild(item)
-  })
-
-  // Ajouter les gestionnaires d'événements
-  document.querySelectorAll(".mark-read-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-      markNotificationAsRead(this.getAttribute("data-id"))
-    })
-  })
-
-  document.querySelectorAll(".delete-notification-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-      deleteNotification(this.getAttribute("data-id"))
-    })
-  })
-}
-
-// Charger les notifications au chargement de la page
-document.addEventListener("DOMContentLoaded", () => {
-  // Initialisation existante...
-  
-  // Ajouter le chargement des notifications
-  const shopId = localStorage.getItem("shopId")
-  if (shopId) {
-    loadNotifications()
-    
-    // Recharger les notifications toutes les 5 minutes
-    setInterval(loadNotifications, 5 * 60 * 1000)
-  }
-})
