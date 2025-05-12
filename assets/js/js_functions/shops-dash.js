@@ -2,22 +2,22 @@ let shops = {
   pending: [],
   approved: [],
   rejected: [],
-}
+};
 
 // Fetch all shops
 function fetchShops() {
-  const xhr = new XMLHttpRequest()
-  xhr.open("GET", "http://localhost:3000/shop/get", true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/shop/get", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const allShops = JSON.parse(xhr.responseText)
+      const allShops = JSON.parse(xhr.responseText);
 
       // Reset shops
-      shops.pending = []
-      shops.approved = []
-      shops.rejected = []
+      shops.pending = [];
+      shops.approved = [];
+      shops.rejected = [];
 
       // Process each shop and categorize by status
       allShops.forEach((shop) => {
@@ -48,79 +48,93 @@ function fetchShops() {
           shopId: `#SH${shop._id.slice(-4).toUpperCase()}`,
           status: shop.status,
           reason: shop.rejectionReason || shop.bannedReason || "",
-        }
+        };
 
         // Categorize by status
-        if (shop.status === "Pending") shops.pending.push(shopItem)
-        else if (shop.status === "Approved" || shop.status === "Banned") shops.approved.push(shopItem)
-        else if (shop.status === "Rejected") shops.rejected.push(shopItem)
-      })
+        if (shop.status === "Pending") {
+          shops.pending.push(shopItem);
+        } else if (shop.status === "Approved" || shop.status === "Banned") {
+          shops.approved.push(shopItem);
+        } else if (shop.status === "Rejected") {
+          shops.rejected.push(shopItem);
+        }
+      });
 
       // Update the dashboard UI
-      updateDashboard()
-      updateStatistics()
+      updateDashboard();
+      updateStatistics();
     } else {
-      showToast("Error fetching shops data", "danger")
+      showToast("Error fetching shops data", "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send()
+  xhr.send();
 }
 
 // Update dashboard statistics
 function updateStatistics() {
   document.querySelector(".stat-card.primary .stat-card-number").textContent =
-    shops.pending.length + shops.approved.length + shops.rejected.length
+    shops.pending.length + shops.approved.length + shops.rejected.length;
 
-  document.querySelector(".stat-card.success .stat-card-number").textContent = shops.approved.length
+  document.querySelector(".stat-card.success .stat-card-number").textContent =
+    shops.approved.length;
 
-  document.querySelector(".stat-card.warning .stat-card-number").textContent = shops.pending.length
+  document.querySelector(".stat-card.warning .stat-card-number").textContent =
+    shops.pending.length;
 
-  document.querySelector(".stat-card.danger .stat-card-number").textContent = shops.rejected.length
+  document.querySelector(".stat-card.danger .stat-card-number").textContent =
+    shops.rejected.length;
 
-  document.querySelector("#pending-tab .badge").textContent = shops.pending.length
-  document.querySelector("#approved-tab .badge").textContent = shops.approved.length
-  document.querySelector("#rejected-tab .badge").textContent = shops.rejected.length
+  document.querySelector("#pending-tab .badge").textContent =
+    shops.pending.length;
+  document.querySelector("#approved-tab .badge").textContent =
+    shops.approved.length;
+  document.querySelector("#rejected-tab .badge").textContent =
+    shops.rejected.length;
 }
 
 // Fetch single shop by ID
 function getShopDetails(shopId) {
-  const xhr = new XMLHttpRequest()
-  xhr.open("GET", `http://localhost:3000/shop/get/${shopId}`, true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `http://localhost:3000/shop/${shopId}`, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const shop = JSON.parse(xhr.responseText)
-      displayShopDetails(shop)
+      const response = JSON.parse(xhr.responseText);
+      // Vérifier si la réponse contient un objet shop (la structure de la réponse)
+      const shop = response.shop || response;
+      displayShopDetails(shop);
     } else {
-      showToast("Error fetching shop details", "danger")
+      showToast("Error fetching shop details", "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send()
+  xhr.send();
 }
 
 // Display shop details in modal
 function displayShopDetails(shop) {
-  const modalContent = document.getElementById("shopDetailsContent")
-  if (!modalContent) return
+  const modalContent = document.getElementById("shopDetailsContent");
+  if (!modalContent) return;
 
-  const shopImage = shop.shopLogo ? `/uploads/${shop.shopLogo}` : "/assets/images/products/aboutUs.jpg"
+  const shopImage = shop.shopLogo
+    ? `/uploads/${shop.shopLogo}`
+    : "/assets/images/products/aboutUs.jpg";
 
   // Déterminer la classe de badge en fonction du statut
-  let badgeClass = "success"
-  if (shop.status === "Rejected") badgeClass = "danger"
-  else if (shop.status === "Pending") badgeClass = "warning"
-  else if (shop.status === "Banned") badgeClass = "danger"
+  let badgeClass = "success";
+  if (shop.status === "Rejected") badgeClass = "danger";
+  else if (shop.status === "Pending") badgeClass = "warning";
+  else if (shop.status === "Banned") badgeClass = "danger";
 
   modalContent.innerHTML = `
       <div class="shop-details">
@@ -168,79 +182,79 @@ function displayShopDetails(shop) {
           }
         </div>
       </div>
-    `
+    `;
 
-  const actionButton = document.getElementById("shopActionButton")
+  const actionButton = document.getElementById("shopActionButton");
   if (actionButton) {
     if (shop.status === "Pending") {
-      actionButton.textContent = "Approve Shop"
-      actionButton.className = "btn btn-success"
+      actionButton.textContent = "Approve Shop";
+      actionButton.className = "btn btn-success";
       actionButton.onclick = () => {
-        const modal = document.getElementById("shopDetailsModal")
+        const modal = document.getElementById("shopDetailsModal");
         // Get the Bootstrap modal instance
-        const bsModal = bootstrap.Modal.getInstance(modal)
-        bsModal.hide()
-        approveShop(shop._id)
-      }
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        bsModal.hide();
+        approveShop(shop._id);
+      };
     } else if (shop.status === "Approved") {
-      actionButton.textContent = "Ban Shop"
-      actionButton.className = "btn btn-danger"
+      actionButton.textContent = "Ban Shop";
+      actionButton.className = "btn btn-danger";
       actionButton.onclick = () => {
-        const reason = prompt("Provide a reason for banning:")
+        const reason = prompt("Provide a reason for banning:");
         if (reason) {
-          const modal = document.getElementById("shopDetailsModal")
+          const modal = document.getElementById("shopDetailsModal");
           // Get the Bootstrap modal instance
-          const bsModal = bootstrap.Modal.getInstance(modal)
-          bsModal.hide()
-          banShop(shop._id, reason)
+          const bsModal = bootstrap.Modal.getInstance(modal);
+          bsModal.hide();
+          banShop(shop._id, reason);
         }
-      }
+      };
     } else if (shop.status === "Banned") {
-      actionButton.textContent = "Unban Shop"
-      actionButton.className = "btn btn-success"
+      actionButton.textContent = "Unban Shop";
+      actionButton.className = "btn btn-success";
       actionButton.onclick = () => {
-        const modal = document.getElementById("shopDetailsModal")
+        const modal = document.getElementById("shopDetailsModal");
         // Get the Bootstrap modal instance
-        const bsModal = bootstrap.Modal.getInstance(modal)
-        bsModal.hide()
-        unbanShop(shop._id)
-      }
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        bsModal.hide();
+        unbanShop(shop._id);
+      };
     } else {
-      actionButton.textContent = "Approve Shop"
-      actionButton.className = "btn btn-success"
+      actionButton.textContent = "Approve Shop";
+      actionButton.className = "btn btn-success";
       actionButton.onclick = () => {
-        const modal = document.getElementById("shopDetailsModal")
+        const modal = document.getElementById("shopDetailsModal");
         // Get the Bootstrap modal instance
-        const bsModal = bootstrap.Modal.getInstance(modal)
-        bsModal.hide()
-        approveShop(shop._id)
-      }
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        bsModal.hide();
+        approveShop(shop._id);
+      };
     }
   }
 
   // Show the modal
-  const shopModal = document.getElementById("shopDetailsModal")
+  const shopModal = document.getElementById("shopDetailsModal");
   if (shopModal) {
-    const myModal = new bootstrap.Modal(shopModal)
-    myModal.show()
+    const myModal = new bootstrap.Modal(shopModal);
+    myModal.show();
   } else {
-    console.error("Shop details modal not found")
+    console.error("Shop details modal not found");
   }
 }
 
 // Render pending shops
 function renderPendingShops() {
-  const container = document.querySelector("#pending .shop-grid .row")
-  if (!container) return
+  const container = document.querySelector("#pending .shop-grid .row");
+  if (!container) return;
 
   container.innerHTML = shops.pending.length
     ? ""
-    : '<div class="col-12"><div class="alert alert-info">No pending shops found.</div></div>'
+    : '<div class="col-12"><div class="alert alert-info">No pending shops found.</div></div>';
 
   shops.pending.forEach((shop) => {
-    const shopCard = document.createElement("div")
-    shopCard.className = "col-xl-3 col-lg-4 col-md-6"
-    shopCard.dataset.shopId = shop.id
+    const shopCard = document.createElement("div");
+    shopCard.className = "col-xl-3 col-lg-4 col-md-6";
+    shopCard.dataset.shopId = shop.id;
     shopCard.innerHTML = `
     <div class="shop-card">
       <div class="shop-card-header">
@@ -282,29 +296,29 @@ function renderPendingShops() {
         <button class="btn btn-outline-primary btn-sm ms-auto view-shop" data-shop-id="${shop.id}"><i class="bi bi-eye me-1"></i>Details</button>
       </div>
     </div>
-  `
-    container.appendChild(shopCard)
-  })
+  `;
+    container.appendChild(shopCard);
+  });
 
-  addShopCardEventListeners()
+  addShopCardEventListeners();
 }
 
 // Render approved shops
 function renderApprovedShops() {
-  const container = document.querySelector("#approved tbody")
-  if (!container) return
+  const container = document.querySelector("#approved tbody");
+  if (!container) return;
 
   container.innerHTML = shops.approved.length
     ? ""
-    : '<tr><td colspan="7" class="text-center">No approved shops found.</td></tr>'
+    : '<tr><td colspan="7" class="text-center">No approved shops found.</td></tr>';
 
   shops.approved.forEach((shop) => {
-    const row = document.createElement("tr")
-    row.dataset.shopId = shop.id
+    const row = document.createElement("tr");
+    row.dataset.shopId = shop.id;
 
     // Déterminer le statut à afficher et la classe CSS
-    const statusClass = shop.status === "Banned" ? "bg-danger" : "bg-success"
-    const statusText = shop.status === "Banned" ? "Banned" : "Active"
+    const statusClass = shop.status === "Banned" ? "bg-danger" : "bg-success";
+    const statusText = shop.status === "Banned" ? "Banned" : "Active";
 
     row.innerHTML = `
     <td>
@@ -355,30 +369,34 @@ function renderApprovedShops() {
         </button>
       </div>
     </td>
-  `
-    container.appendChild(row)
-  })
+  `;
+    container.appendChild(row);
+  });
 
   // Initialize tooltips
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  tooltipTriggerList.map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl))
+  const tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  tooltipTriggerList.map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
 
   // Add event listeners
-  addShopTableEventListeners()
+  addShopTableEventListeners();
 }
 
 // Render rejected shops
 function renderRejectedShops() {
-  const container = document.querySelector("#rejected tbody")
-  if (!container) return
+  const container = document.querySelector("#rejected tbody");
+  if (!container) return;
 
   container.innerHTML = shops.rejected.length
     ? ""
-    : '<tr><td colspan="4" class="text-center">No rejected shops found.</td></tr>'
+    : '<tr><td colspan="4" class="text-center">No rejected shops found.</td></tr>';
 
   shops.rejected.forEach((shop) => {
-    const row = document.createElement("tr")
-    row.dataset.shopId = shop.id
+    const row = document.createElement("tr");
+    row.dataset.shopId = shop.id;
     row.innerHTML = `
     <td>
       <div class="d-flex align-items-center">
@@ -399,94 +417,94 @@ function renderRejectedShops() {
     </td>
     <td>${shop.reason || "No reason provided"}</td>
     <td>${shop.date}</td>
-  `
-    container.appendChild(row)
-  })
+  `;
+    container.appendChild(row);
+  });
 }
 
 // Update shop status (approve)
 function approveShop(shopId) {
-  const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/shop/status/${shopId}`, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   // Add authorization header if available
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const updatedShop = JSON.parse(xhr.responseText)
+      const updatedShop = JSON.parse(xhr.responseText);
 
-      updateLocalShopData(updatedShop)
+      updateLocalShopData(updatedShop);
 
-      showToast("Shop approved successfully", "success")
+      showToast("Shop approved successfully", "success");
     } else {
-      let errorMessage = "Error approving shop"
+      let errorMessage = "Error approving shop";
       try {
         if (xhr.responseText) {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
         }
       } catch (e) {
-        console.error("Error parsing response:", e)
+        console.error("Error parsing response:", e);
       }
-      showToast(errorMessage, "danger")
+      showToast(errorMessage, "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send(JSON.stringify({ status: "Approved" }))
+  xhr.send(JSON.stringify({ status: "Approved" }));
 }
 
 // Update shop status (reject)
 function rejectShop(shopId, reason) {
-  const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `http://localhost:3000/shop/update/${shopId}`, true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/shop/status/${shopId}`, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   // Add authorization header if available
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const updatedShop = JSON.parse(xhr.responseText)
+      const updatedShop = JSON.parse(xhr.responseText);
 
-      updateLocalShopData(updatedShop)
+      updateLocalShopData(updatedShop);
 
-      showToast("Shop rejected successfully", "success")
+      showToast("Shop rejected successfully", "success");
     } else {
-      let errorMessage = "Error rejecting shop"
+      let errorMessage = "Error rejecting shop";
       try {
         if (xhr.responseText) {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
         }
       } catch (e) {
-        console.error("Error parsing response:", e)
+        console.error("Error parsing response:", e);
       }
-      showToast(errorMessage, "danger")
+      showToast(errorMessage, "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
   xhr.send(
     JSON.stringify({
       status: "Rejected",
       rejectionReason: reason,
-    }),
-  )
+    })
+  );
 }
 
 // Mettre à jour les données localement sans refetch complet
@@ -506,9 +524,15 @@ function updateLocalShopData(updatedShop) {
       year: "numeric",
     }),
     owner: {
-      name: updatedShop.vendor ? updatedShop.vendor.vendorName || "Unknown" : "Unknown",
-      email: updatedShop.vendor ? updatedShop.vendor.email || "No email" : "No email",
-      phone: updatedShop.vendor ? updatedShop.vendor.phone || "No phone" : "No phone",
+      name: updatedShop.vendor
+        ? updatedShop.vendor.vendorName || "Unknown"
+        : "Unknown",
+      email: updatedShop.vendor
+        ? updatedShop.vendor.email || "No email"
+        : "No email",
+      phone: updatedShop.vendor
+        ? updatedShop.vendor.phone || "No phone"
+        : "No phone",
       avatar:
         updatedShop.vendor && updatedShop.vendor.profilePicture
           ? `/uploads/${updatedShop.vendor.profilePicture}`
@@ -517,229 +541,241 @@ function updateLocalShopData(updatedShop) {
     shopId: `#SH${updatedShop._id.slice(-4).toUpperCase()}`,
     status: updatedShop.status,
     reason: updatedShop.rejectionReason || updatedShop.bannedReason || "",
-  }
+  };
 
-  const allCategories = ["pending", "approved", "rejected"]
+  const allCategories = ["pending", "approved", "rejected"];
   allCategories.forEach((category) => {
-    const index = shops[category].findIndex((shop) => shop.id === updatedShop._id)
+    const index = shops[category].findIndex(
+      (shop) => shop.id === updatedShop._id
+    );
     if (index !== -1) {
-      shops[category].splice(index, 1)
+      shops[category].splice(index, 1);
     }
-  })
+  });
 
   if (updatedShop.status === "Pending") {
-    shops.pending.push(shopItem)
-  } else if (updatedShop.status === "Approved" || updatedShop.status === "Banned") {
-    shops.approved.push(shopItem)
+    shops.pending.push(shopItem);
+  } else if (
+    updatedShop.status === "Approved" ||
+    updatedShop.status === "Banned"
+  ) {
+    shops.approved.push(shopItem);
   } else if (updatedShop.status === "Rejected") {
-    shops.rejected.push(shopItem)
+    shops.rejected.push(shopItem);
   }
 
-  updateDashboard()
-  updateStatistics()
+  updateDashboard();
+  updateStatistics();
 }
 
 // Delete shop
 function deleteShop(shopId) {
-  if (!confirm("Are you sure you want to delete this shop?")) return
+  if (!confirm("Are you sure you want to delete this shop?")) return;
 
-  const xhr = new XMLHttpRequest()
-  xhr.open("DELETE", `http://localhost:3000/shop/delete/${shopId}`, true)
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `http://localhost:3000/shop/delete/${shopId}`, true);
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       // Supprimer le shop des données locales
-      removeShopFromLocalData(shopId)
+      removeShopFromLocalData(shopId);
 
-      showToast("Shop deleted successfully", "success")
+      showToast("Shop deleted successfully", "success");
     } else {
-      showToast("Error deleting shop", "danger")
+      showToast("Error deleting shop", "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send()
+  xhr.send();
 }
 
 // Supprimer un shop des données locales
 function removeShopFromLocalData(shopId) {
-  const allCategories = ["pending", "approved", "rejected"]
+  const allCategories = ["pending", "approved", "rejected"];
   allCategories.forEach((category) => {
-    const index = shops[category].findIndex((shop) => shop.id === shopId)
+    const index = shops[category].findIndex((shop) => shop.id === shopId);
     if (index !== -1) {
-      shops[category].splice(index, 1)
+      shops[category].splice(index, 1);
     }
-  })
+  });
 
-  updateDashboard()
-  updateStatistics()
+  updateDashboard();
+  updateStatistics();
 }
 
 // Add event listeners to shop cards
 function addShopCardEventListeners() {
   document.querySelectorAll(".approve-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
-      e.preventDefault()
-      const shopId = this.dataset.shopId
-      approveShop(shopId)
-    })
-  })
+      e.preventDefault();
+      const shopId = this.dataset.shopId;
+      approveShop(shopId);
+    });
+  });
 
   document.querySelectorAll(".reject-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
-      e.preventDefault()
-      const shopId = this.dataset.shopId
-      const reason = prompt("Provide a reason for rejection:")
+      e.preventDefault();
+      const shopId = this.dataset.shopId;
+      const reason = prompt("Provide a reason for rejection:");
       if (reason) {
-        rejectShop(shopId, reason)
+        rejectShop(shopId, reason);
       }
-    })
-  })
+    });
+  });
 
   document.querySelectorAll(".view-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
-      e.preventDefault()
-      const shopId = this.dataset.shopId
-      getShopDetails(shopId)
-    })
-  })
+      e.preventDefault();
+      const shopId = this.dataset.shopId;
+      getShopDetails(shopId);
+    });
+  });
 
   document.querySelectorAll(".delete-shop").forEach((button) => {
     button.addEventListener("click", function (e) {
-      e.preventDefault()
-      const shopId = this.dataset.shopId
-      deleteShop(shopId)
-    })
-  })
+      e.preventDefault();
+      const shopId = this.dataset.shopId;
+      deleteShop(shopId);
+    });
+  });
 }
 
 // Remplacer la fonction addShopTableEventListeners par celle-ci
 function addShopTableEventListeners() {
   document.querySelectorAll("#approved .view-shop").forEach((button) => {
     button.addEventListener("click", function () {
-      const shopId = this.dataset.shopId
-      getShopDetails(shopId)
-    })
-  })
+      const shopId = this.dataset.shopId;
+      getShopDetails(shopId);
+    });
+  });
 
   document.querySelectorAll("#approved .edit-shop").forEach((button) => {
     button.addEventListener("click", function () {
-      const shopId = this.dataset.shopId
+      const shopId = this.dataset.shopId;
 
       // Trouver la boutique dans les données
-      const shop = shops.approved.find((s) => s.id === shopId)
+      const shop = shops.approved.find((s) => s.id === shopId);
 
       if (shop && shop.status === "Banned") {
         // Si la boutique est bannie, ouvrir un modal pour débannir
-        const confirmModal = document.getElementById("confirmUnbanModal") || createConfirmUnbanModal()
+        const confirmModal =
+          document.getElementById("confirmUnbanModal") ||
+          createConfirmUnbanModal();
 
         // Mettre à jour le contenu du modal
-        const shopNameElement = confirmModal.querySelector(".shop-name")
+        const shopNameElement = confirmModal.querySelector(".shop-name");
         if (shopNameElement) {
-          shopNameElement.textContent = shop.name
+          shopNameElement.textContent = shop.name;
         }
 
         // Configurer le bouton de confirmation
-        const confirmButton = confirmModal.querySelector(".confirm-unban")
+        const confirmButton = confirmModal.querySelector(".confirm-unban");
         if (confirmButton) {
           confirmButton.onclick = () => {
             // Fermer le modal
-            const bsModal = bootstrap.Modal.getInstance(confirmModal)
-            bsModal.hide()
+            const bsModal = bootstrap.Modal.getInstance(confirmModal);
+            bsModal.hide();
             // Débannir la boutique
-            unbanShop(shopId)
-          }
+            unbanShop(shopId);
+          };
         }
 
         // Afficher le modal
-        const bsModal = new bootstrap.Modal(confirmModal)
-        bsModal.show()
+        const bsModal = new bootstrap.Modal(confirmModal);
+        bsModal.show();
       } else {
         // Sinon, afficher les détails de la boutique pour édition
-        getShopDetails(shopId)
+        getShopDetails(shopId);
       }
-    })
-  })
+    });
+  });
 
   document.querySelectorAll("#approved .delete-shop").forEach((button) => {
     button.addEventListener("click", function () {
-      const shopId = this.dataset.shopId
-      deleteShop(shopId)
-    })
-  })
+      const shopId = this.dataset.shopId;
+      deleteShop(shopId);
+    });
+  });
 
-  document.querySelectorAll("#approved .reject-approved-shop").forEach((button) => {
-    button.addEventListener("click", function () {
-      const shopId = this.dataset.shopId
+  document
+    .querySelectorAll("#approved .reject-approved-shop")
+    .forEach((button) => {
+      button.addEventListener("click", function () {
+        const shopId = this.dataset.shopId;
 
-      // Trouver la boutique dans les données
-      const shop = shops.approved.find((s) => s.id === shopId)
+        // Trouver la boutique dans les données
+        const shop = shops.approved.find((s) => s.id === shopId);
 
-      if (shop) {
-        // Ouvrir un modal pour demander la raison du rejet
-        const confirmModal = document.getElementById("confirmRejectModal") || createConfirmRejectModal()
+        if (shop) {
+          // Ouvrir un modal pour demander la raison du rejet
+          const confirmModal =
+            document.getElementById("confirmRejectModal") ||
+            createConfirmRejectModal();
 
-        // Mettre à jour le contenu du modal
-        const shopNameElement = confirmModal.querySelector(".shop-name")
-        if (shopNameElement) {
-          shopNameElement.textContent = shop.name
-        }
-
-        // Configurer le bouton de confirmation
-        const confirmButton = confirmModal.querySelector(".confirm-reject")
-        const reasonInput = confirmModal.querySelector("#rejectReason")
-
-        if (confirmButton) {
-          confirmButton.onclick = () => {
-            const reason = reasonInput.value.trim()
-            if (!reason) {
-              // Afficher un message d'erreur si aucune raison n'est fournie
-              const errorMessage = confirmModal.querySelector(".error-message")
-              if (errorMessage) {
-                errorMessage.style.display = "block"
-              }
-              return
-            }
-
-            // Cacher le message d'erreur s'il était affiché
-            const errorMessage = confirmModal.querySelector(".error-message")
-            if (errorMessage) {
-              errorMessage.style.display = "none"
-            }
-
-            // Fermer le modal
-            const bsModal = bootstrap.Modal.getInstance(confirmModal)
-            bsModal.hide()
-
-            // Rejeter la boutique
-            rejectShop(shopId, reason)
+          // Mettre à jour le contenu du modal
+          const shopNameElement = confirmModal.querySelector(".shop-name");
+          if (shopNameElement) {
+            shopNameElement.textContent = shop.name;
           }
-        }
 
-        // Réinitialiser le champ de saisie
-        if (reasonInput) {
-          reasonInput.value = ""
-        }
+          // Configurer le bouton de confirmation
+          const confirmButton = confirmModal.querySelector(".confirm-reject");
+          const reasonInput = confirmModal.querySelector("#rejectReason");
 
-        // Afficher le modal
-        const bsModal = new bootstrap.Modal(confirmModal)
-        bsModal.show()
-      }
-    })
-  })
+          if (confirmButton) {
+            confirmButton.onclick = () => {
+              const reason = reasonInput.value.trim();
+              if (!reason) {
+                // Afficher un message d'erreur si aucune raison n'est fournie
+                const errorMessage =
+                  confirmModal.querySelector(".error-message");
+                if (errorMessage) {
+                  errorMessage.style.display = "block";
+                }
+                return;
+              }
+
+              // Cacher le message d'erreur s'il était affiché
+              const errorMessage = confirmModal.querySelector(".error-message");
+              if (errorMessage) {
+                errorMessage.style.display = "none";
+              }
+
+              // Fermer le modal
+              const bsModal = bootstrap.Modal.getInstance(confirmModal);
+              bsModal.hide();
+
+              // Rejeter la boutique
+              rejectShop(shopId, reason);
+            };
+          }
+
+          // Réinitialiser le champ de saisie
+          if (reasonInput) {
+            reasonInput.value = "";
+          }
+
+          // Afficher le modal
+          const bsModal = new bootstrap.Modal(confirmModal);
+          bsModal.show();
+        }
+      });
+    });
 }
 
 // Ajouter cette fonction pour créer le modal de confirmation de débannissement
 function createConfirmUnbanModal() {
-  const modal = document.createElement("div")
-  modal.className = "modal fade"
-  modal.id = "confirmUnbanModal"
-  modal.tabIndex = "-1"
-  modal.setAttribute("aria-labelledby", "confirmUnbanModalLabel")
-  modal.setAttribute("aria-hidden", "true")
+  const modal = document.createElement("div");
+  modal.className = "modal fade";
+  modal.id = "confirmUnbanModal";
+  modal.tabIndex = "-1";
+  modal.setAttribute("aria-labelledby", "confirmUnbanModalLabel");
+  modal.setAttribute("aria-hidden", "true");
 
   modal.innerHTML = `
     <div class="modal-dialog">
@@ -757,20 +793,20 @@ function createConfirmUnbanModal() {
         </div>
       </div>
     </div>
-  `
+  `;
 
-  document.body.appendChild(modal)
-  return modal
+  document.body.appendChild(modal);
+  return modal;
 }
 
 // Ajouter cette fonction pour créer le modal de confirmation de rejet
 function createConfirmRejectModal() {
-  const modal = document.createElement("div")
-  modal.className = "modal fade"
-  modal.id = "confirmRejectModal"
-  modal.tabIndex = "-1"
-  modal.setAttribute("aria-labelledby", "confirmRejectModalLabel")
-  modal.setAttribute("aria-hidden", "true")
+  const modal = document.createElement("div");
+  modal.className = "modal fade";
+  modal.id = "confirmRejectModal";
+  modal.tabIndex = "-1";
+  modal.setAttribute("aria-labelledby", "confirmRejectModalLabel");
+  modal.setAttribute("aria-hidden", "true");
 
   modal.innerHTML = `
     <div class="modal-dialog">
@@ -793,35 +829,36 @@ function createConfirmRejectModal() {
         </div>
       </div>
     </div>
-  `
+  `;
 
-  document.body.appendChild(modal)
-  return modal
+  document.body.appendChild(modal);
+  return modal;
 }
 
 // Update dashboard with fetched data
 function updateDashboard() {
-  renderPendingShops()
-  renderApprovedShops()
-  renderRejectedShops()
+  renderPendingShops();
+  renderApprovedShops();
+  renderRejectedShops();
 }
 
 // Show toast notification
 function showToast(message, type = "info") {
-  let toastContainer = document.querySelector(".toast-container")
+  let toastContainer = document.querySelector(".toast-container");
   if (!toastContainer) {
-    toastContainer = document.createElement("div")
-    toastContainer.className = "toast-container position-fixed bottom-0 end-0 p-3"
-    document.body.appendChild(toastContainer)
+    toastContainer = document.createElement("div");
+    toastContainer.className =
+      "toast-container position-fixed bottom-0 end-0 p-3";
+    document.body.appendChild(toastContainer);
   }
 
-  const toastId = "toast-" + Date.now()
-  const toast = document.createElement("div")
-  toast.className = `toast align-items-center text-white bg-${type} border-0`
-  toast.id = toastId
-  toast.setAttribute("role", "alert")
-  toast.setAttribute("aria-live", "assertive")
-  toast.setAttribute("aria-atomic", "true")
+  const toastId = "toast-" + Date.now();
+  const toast = document.createElement("div");
+  toast.className = `toast align-items-center text-white bg-${type} border-0`;
+  toast.id = toastId;
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "assertive");
+  toast.setAttribute("aria-atomic", "true");
 
   toast.innerHTML = `
   <div class="d-flex">
@@ -830,55 +867,55 @@ function showToast(message, type = "info") {
     </div>
     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
-`
+`;
 
-  toastContainer.appendChild(toast)
+  toastContainer.appendChild(toast);
 
   // Initialize and show toast
-  const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 })
-  bsToast.show()
+  const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
+  bsToast.show();
 
   // Remove toast after it's hidden
   toast.addEventListener("hidden.bs.toast", () => {
-    toast.remove()
-  })
+    toast.remove();
+  });
 }
 
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
-  fetchShops()
+  fetchShops();
 
-  const shopTabs = document.querySelectorAll('button[data-bs-toggle="tab"]')
+  const shopTabs = document.querySelectorAll('button[data-bs-toggle="tab"]');
   shopTabs.forEach((tab) => {
-    tab.addEventListener("shown.bs.tab", () => {})
-  })
+    tab.addEventListener("shown.bs.tab", () => {});
+  });
 
-  const searchInput = document.querySelector(".dashboard-search input")
+  const searchInput = document.querySelector(".dashboard-search input");
   if (searchInput) {
     searchInput.addEventListener("keyup", function (e) {
       if (e.key === "Enter") {
-        const searchTerm = this.value.toLowerCase().trim()
+        const searchTerm = this.value.toLowerCase().trim();
         if (searchTerm) {
-          filterShops(searchTerm)
+          filterShops(searchTerm);
         } else {
-          updateDashboard()
+          updateDashboard();
         }
       }
-    })
+    });
 
-    const searchButton = document.querySelector(".dashboard-search button")
+    const searchButton = document.querySelector(".dashboard-search button");
     if (searchButton) {
       searchButton.addEventListener("click", () => {
-        const searchTerm = searchInput.value.toLowerCase().trim()
+        const searchTerm = searchInput.value.toLowerCase().trim();
         if (searchTerm) {
-          filterShops(searchTerm)
+          filterShops(searchTerm);
         } else {
-          updateDashboard()
+          updateDashboard();
         }
-      })
+      });
     }
   }
-})
+});
 
 // Filter shops by search term
 function filterShops(searchTerm) {
@@ -886,112 +923,112 @@ function filterShops(searchTerm) {
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
-  )
+      shop.location.toLowerCase().includes(searchTerm)
+  );
 
   const filteredApproved = shops.approved.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
-  )
+      shop.location.toLowerCase().includes(searchTerm)
+  );
 
   const filteredRejected = shops.rejected.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm) ||
       shop.owner.name.toLowerCase().includes(searchTerm) ||
-      shop.location.toLowerCase().includes(searchTerm),
-  )
+      shop.location.toLowerCase().includes(searchTerm)
+  );
 
-  const originalShops = { ...shops }
+  const originalShops = { ...shops };
 
-  shops.pending = filteredPending
-  shops.approved = filteredApproved
-  shops.rejected = filteredRejected
+  shops.pending = filteredPending;
+  shops.approved = filteredApproved;
+  shops.rejected = filteredRejected;
 
-  updateDashboard()
-  shops = originalShops
+  updateDashboard();
+  shops = originalShops;
 }
 
 // Ajouter les fonctions pour bannir et débannir une boutique
 function banShop(shopId, reason) {
-  const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `http://localhost:3000/shop/ban/${shopId}`, true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/shop/ban/${shopId}`, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   // Add authorization header if available
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const updatedShop = JSON.parse(xhr.responseText)
+      const updatedShop = JSON.parse(xhr.responseText);
 
       // Mettre à jour les données locales
-      updateLocalShopData(updatedShop)
+      updateLocalShopData(updatedShop);
 
-      showToast("Shop banned successfully", "success")
+      showToast("Shop banned successfully", "success");
     } else {
-      let errorMessage = "Error banning shop"
+      let errorMessage = "Error banning shop";
       try {
         if (xhr.responseText) {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
         }
       } catch (e) {
-        console.error("Error parsing response:", e)
+        console.error("Error parsing response:", e);
       }
-      showToast(errorMessage, "danger")
+      showToast(errorMessage, "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send(JSON.stringify({ bannedReason: reason }))
+  xhr.send(JSON.stringify({ bannedReason: reason }));
 }
 
 function unbanShop(shopId) {
-  const xhr = new XMLHttpRequest()
-  xhr.open("PUT", `http://localhost:3000/shop/unban/${shopId}`, true)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `http://localhost:3000/shop/unban/${shopId}`, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   // Add authorization header if available
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
-      const updatedShop = JSON.parse(xhr.responseText)
+      const updatedShop = JSON.parse(xhr.responseText);
 
       // Mettre à jour les données locales
-      updateLocalShopData(updatedShop)
+      updateLocalShopData(updatedShop);
 
-      showToast("Shop unbanned successfully", "success")
+      showToast("Shop unbanned successfully", "success");
     } else {
-      let errorMessage = "Error unbanning shop"
+      let errorMessage = "Error unbanning shop";
       try {
         if (xhr.responseText) {
-          const response = JSON.parse(xhr.responseText)
-          errorMessage = response.message || errorMessage
+          const response = JSON.parse(xhr.responseText);
+          errorMessage = response.message || errorMessage;
         }
       } catch (e) {
-        console.error("Error parsing response:", e)
+        console.error("Error parsing response:", e);
       }
-      showToast(errorMessage, "danger")
+      showToast(errorMessage, "danger");
     }
-  }
+  };
 
   xhr.onerror = () => {
-    showToast("Network error occurred", "danger")
-  }
+    showToast("Network error occurred", "danger");
+  };
 
-  xhr.send()
+  xhr.send();
 }
 
-const bootstrap = window.bootstrap
+const bootstrap = window.bootstrap;
