@@ -151,6 +151,7 @@ require("./app/routes/delivery.routes")(app);
 require("./app/routes/favoris.routes")(app);
 require("./app/routes/invoice.routes")(app);
 require("./app/routes/moderator.routes")(app);
+require("./app/routes/notification.routes")(app);
 require("./app/routes/order.routes")(app);
 require("./app/routes/product.routes")(app);
 require("./app/routes/report.routes")(app);
