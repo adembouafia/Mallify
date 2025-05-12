@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose")
 
 const shopSchema = new mongoose.Schema(
@@ -18,7 +19,7 @@ const shopSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    phone: {
+    shop_phone: {
       type: String,
       required: false,
     },
@@ -49,3 +50,4 @@ const shopSchema = new mongoose.Schema(
 )
 
 module.exports = mongoose.model("shop", shopSchema)
+

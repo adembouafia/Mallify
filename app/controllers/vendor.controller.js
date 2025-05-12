@@ -37,6 +37,7 @@ exports.register = (req, res) => {
                 shopName: req.body.shopName,
                 adresse: req.body.adresse,
                 shopdescription: req.body.shopdescription,
+                shop_phone : req.body.shop_phone,
                 shopLogo: req.file ? req.file.filename : null
             });
 

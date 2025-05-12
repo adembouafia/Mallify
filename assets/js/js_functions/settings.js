@@ -37,7 +37,7 @@ function updateSidebarInfo() {
   document.getElementById("sidebar-shop-name").textContent = document.getElementById("shop-name").value
   document.getElementById("sidebar-shop-description").textContent = document.getElementById("shop-description").value
   document.getElementById("sidebar-address").textContent = "📍 " + document.getElementById("shop-address").value
-  document.getElementById("sidebar-phone").textContent = "📞 " + document.getElementById("vendor-phone").value // Utiliser le numéro du vendor
+  document.getElementById("sidebar-phone").textContent = "📞 " + document.getElementById("shop-phone").value
 }
 
 function saveShopInfo() {
@@ -54,7 +54,7 @@ function saveShopInfo() {
     shopName: document.getElementById("shop-name").value,
     shopdescription: document.getElementById("shop-description").value,
     adresse: document.getElementById("shop-address").value,
-    // Ne pas inclure le téléphone car il sera synchronisé avec celui du vendor
+    shop_phone: document.getElementById("shop-phone").value,
   }
 
   // Create FormData for file upload
@@ -179,12 +179,7 @@ function saveVendorInfo() {
 
   xhr.onload = () => {
     if (xhr.status === 200) {
-      // Mettre à jour le numéro de téléphone dans la sidebar
-      document.getElementById("sidebar-phone").textContent = "📞 " + vendorData.phone
-      
-      // Mettre à jour le champ de téléphone du shop (désactivé)
-      document.getElementById("shop-phone").value = vendorData.phone
-      
+
       Swal.fire({
         icon: "success",
         title: "Success",
@@ -271,7 +266,7 @@ function saveModeratorInfo() {
   xhr.send(formData)
 }
 
-function getUserInfo() { 
+function getUserInfo() {
   const token = getToken()
   if (!token) {
     window.location.href = "../login.html"
@@ -282,7 +277,7 @@ function getUserInfo() {
     const payloadBase64 = token.split(".")[1]
     const decodedPayload = JSON.parse(atob(payloadBase64))
     console.log("Token payload:", decodedPayload) // Ajouter pour déboguer
-    
+
     currentUserRole = decodedPayload.role
     currentUserId = decodedPayload.id
     shopId = decodedPayload.shopId
@@ -303,7 +298,6 @@ function getUserInfo() {
           item.style.display = "none"
         }
       })
-
     } else if (currentUserRole === "moderator") {
       document.getElementById("sidebar-role").textContent = "Shop Moderator"
       loadModeratorData()
@@ -386,29 +380,11 @@ function loadVendorData() {
       try {
         const response = JSON.parse(xhr.responseText)
         console.log("Vendor data:", response)
-        
+
         const vendorData = response.vendor
         document.getElementById("vendor-name").value = vendorData.vendorName || ""
         document.getElementById("vendor-email").value = vendorData.email || ""
         document.getElementById("vendor-phone").value = vendorData.phone || ""
-
-        // Mettre à jour également le champ de téléphone du shop
-        const shopPhoneField = document.getElementById("shop-phone")
-        if (shopPhoneField) {
-          shopPhoneField.value = vendorData.phone || ""
-          shopPhoneField.disabled = true // Désactiver le champ pour éviter la modification directe
-          
-          // Ajouter un message d'information sous le champ de téléphone s'il n'existe pas déjà
-          if (!document.querySelector(".phone-info-message")) {
-            const infoMessage = document.createElement("small")
-            infoMessage.className = "phone-info-message"
-            infoMessage.textContent = "Le numéro de téléphone est synchronisé avec celui du vendeur"
-            infoMessage.style.color = "#666"
-            infoMessage.style.display = "block"
-            infoMessage.style.marginTop = "5px"
-            shopPhoneField.parentNode.appendChild(infoMessage)
-          }
-        }
       } catch (error) {
         console.error("Error parsing vendor data:", error)
       }
@@ -436,7 +412,7 @@ function loadModeratorData() {
       try {
         const response = JSON.parse(xhr.responseText)
         console.log("Moderator data:", response)
-        
+
         const moderatorData = response.moderator
         document.getElementById("moderator-name").value = moderatorData.moderatorName || ""
         document.getElementById("moderator-email").value = moderatorData.email || ""
@@ -467,19 +443,19 @@ function loadShopData() {
       try {
         const response = JSON.parse(xhr.responseText)
         console.log("Shop data:", response)
-        
+
         const shopData = response.shop
         document.getElementById("shop-name").value = shopData.shopName || ""
         document.getElementById("shop-description").value = shopData.shopdescription || ""
         document.getElementById("shop-address").value = shopData.adresse || ""
-        document.getElementById("shop-phone").value = shopData.phone || ""
+        document.getElementById("shop-phone").value = shopData.shop_phone || ""
         document.getElementById("stock-limit").value = shopData.stockLimit || ""
 
         // Update sidebar
         document.getElementById("sidebar-shop-name").textContent = shopData.shopName || "Shop Name"
         document.getElementById("sidebar-shop-description").textContent = shopData.shopdescription || "Shop Description"
         document.getElementById("sidebar-address").textContent = "📍 " + (shopData.adresse || "Address")
-        document.getElementById("sidebar-phone").textContent = "📞 " + (shopData.phone || "")
+        document.getElementById("sidebar-phone").textContent = "📞 " + (shopData.shop_phone || "")
         document.getElementById("sidebar-stock-limit").textContent = "📦 Stock Limit: " + (shopData.stockLimit || "0")
 
         // Update shop logo if available

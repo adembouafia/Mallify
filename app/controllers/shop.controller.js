@@ -102,12 +102,9 @@ exports.updateShop = async (req, res) => {
           shopName: req.body.shopName || shop.shopName,
           shopdescription: req.body.shopdescription || shop.shopdescription,
           adresse: req.body.adresse || shop.adresse,
+          shop_phone: req.body.shop_phone || shop.shop_phone,
         };
         
-        // Si le vendor existe, utiliser son numéro de téléphone
-        if (shop.vendor && shop.vendor.phone) {
-          updateData.phone = shop.vendor.phone;
-        }
 
         // Si un nouveau logo a été téléchargé
         if (req.file) {
