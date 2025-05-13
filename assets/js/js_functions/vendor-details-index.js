@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fetch shop details using XHR
     function fetchShopDetails(shopId) {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', `http://localhost:3000/shop/get/${shopId}`, true);
+        xhr.open('GET', `http://localhost:3000/shop/${shopId}`, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         
         xhr.onreadystatechange = function() {
