@@ -1201,6 +1201,17 @@ function initializeOrdersSection() {
                 return;
               }
 
+              // Sort orders by date (newest first)
+              orders.sort((a, b) => {
+                const dateA = new Date(
+                  a.dateCommande || a.createdAt || a.date || 0
+                );
+                const dateB = new Date(
+                  b.dateCommande || b.createdAt || b.date || 0
+                );
+                return dateB - dateA; // Descending order (newest first)
+              });
+
               allOrders = orders;
               filteredOrders = [...allOrders];
 
@@ -1382,7 +1393,7 @@ function initializeOrdersSection() {
     orderFooter.className = "order-footer";
 
     // Different buttons based on order status
-    if (statusLower === "delivered") {
+    if (statusLower === "delivered" || statusLower === "completed") {
       orderFooter.innerHTML = `
       <button class="order-action review" id="review-order-${order._id}">
         <i class="ph ph-star"></i> Leave Review
@@ -1397,7 +1408,21 @@ function initializeOrdersSection() {
         <i class="ph ph-file-text"></i> View Receipt
       </button>
     `;
+    } else if (statusLower === "pending" || statusLower === "accepted") {
+      // For pending or accepted orders, show track, receipt and cancel buttons
+      orderFooter.innerHTML = `
+      <button class="order-action track" id="track-order-${order._id}">
+        <i class="ph ph-map-pin"></i> Track Order
+      </button>
+      <button class="order-action receipt" id="receipt-order-${order._id}">
+        <i class="ph ph-file-text"></i> Receipt
+      </button>
+      <button class="order-action cancel" id="cancel-order-${order._id}">
+        <i class="ph ph-x"></i> Cancel Order
+      </button>
+    `;
     } else {
+      // Default for other statuses
       orderFooter.innerHTML = `
       <button class="order-action track" id="track-order-${order._id}">
         <i class="ph ph-map-pin"></i> Track Order
@@ -1450,6 +1475,14 @@ function initializeOrdersSection() {
       button.addEventListener("click", function () {
         const orderId = this.id.replace("review-order-", "");
         leaveReview(orderId);
+      });
+    });
+
+    // Cancel order buttons
+    document.querySelectorAll(".order-action.cancel").forEach((button) => {
+      button.addEventListener("click", function () {
+        const orderId = this.id.replace("cancel-order-", "");
+        cancelOrder(orderId);
       });
     });
   }
@@ -1649,17 +1682,123 @@ function initializeOrdersSection() {
     // For now, we'll just show an alert with some order details
     const orderDate = new Date(
       order.createdAt || order.date || new Date()
-    ).toLocaleDateString();
-    const total = order.totalAmount || calculateSubtotal(order.products || []);
+    ).toLocaleDateString("en-US");
 
-    alert(`
-      Receipt for Order #${orderId}
-      Date: ${orderDate}
-      Status: ${order.status}
-      Total: ${total} DT
-      
-      A detailed receipt will be displayed or downloaded here.
+    alert(`Receipt for Order #${orderId.substring(0, 5)}
+Date: ${orderDate}
+Total Amount: ${order.orderTotal || order.totalAmount || 0} DT
+Status: ${order.orderStatus || order.status || "N/A"}
     `);
+  }
+
+  // Function to cancel an order
+  function cancelOrder(orderId) {
+    console.log(`Cancelling order: ${orderId}`);
+
+    // Confirm the cancellation with the user
+    if (!confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+
+    // Find the order to ensure it can be cancelled
+    const order = allOrders.find((o) => o._id === orderId);
+    if (!order) {
+      alert("Order not found");
+      return;
+    }
+
+    const status = (order.orderStatus || order.status || "").toLowerCase();
+    if (status !== "pending" && status !== "accepted") {
+      alert("Only pending or accepted orders can be cancelled");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Authentication token not found. Please log in again.");
+      return;
+    }
+
+    // Display a loading message on the order card
+    const orderCard = document.getElementById(`my-order-${orderId}`);
+    if (orderCard) {
+      const loadingOverlay = document.createElement("div");
+      loadingOverlay.className = "loading-overlay";
+      loadingOverlay.innerHTML =
+        '<div class="loading-spinner"></div><div class="loading-text">Cancelling order...</div>';
+      loadingOverlay.id = `loading-overlay-${orderId}`;
+      orderCard.style.position = "relative";
+      orderCard.appendChild(loadingOverlay);
+    }
+
+    // Send request to update the order status to cancelled
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", `/order/${orderId}/status`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        // Remove loading overlay
+        const loadingOverlay = document.getElementById(
+          `loading-overlay-${orderId}`
+        );
+        if (loadingOverlay && loadingOverlay.parentNode) {
+          loadingOverlay.parentNode.removeChild(loadingOverlay);
+        }
+
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            console.log("Order cancelled successfully:", response);
+
+            // Update the order in the allOrders array
+            const index = allOrders.findIndex((o) => o._id === orderId);
+            if (index !== -1) {
+              allOrders[index].orderStatus = "cancelled";
+
+              // Also update in filteredOrders
+              const filteredIndex = filteredOrders.findIndex(
+                (o) => o._id === orderId
+              );
+              if (filteredIndex !== -1) {
+                filteredOrders[filteredIndex].orderStatus = "cancelled";
+              }
+            }
+
+            // Re-render the orders to reflect the change
+            renderOrders();
+
+            alert("Order has been cancelled successfully");
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            alert("Error cancelling order. Please try again later.");
+          }
+        } else if (xhr.status === 403 || xhr.status === 401) {
+          console.error("Authentication error:", xhr.responseText);
+          alert("Authentication error. Please log in again.");
+        } else {
+          console.error("Error cancelling order. Status:", xhr.status);
+          alert("Error cancelling order. Please try again later.");
+        }
+      }
+    };
+
+    xhr.onerror = function () {
+      // Remove loading overlay
+      const loadingOverlay = document.getElementById(
+        `loading-overlay-${orderId}`
+      );
+      if (loadingOverlay && loadingOverlay.parentNode) {
+        loadingOverlay.parentNode.removeChild(loadingOverlay);
+      }
+
+      console.error("Network error occurred while cancelling order");
+      alert("Network error. Please check your connection and try again.");
+    };
+
+    // Send the request with the new status
+    xhr.send(JSON.stringify({ status: "cancelled" }));
   }
 
   // Function to leave a review
@@ -1696,10 +1835,10 @@ document.addEventListener("DOMContentLoaded", function () {
 //change password function
 // Change password function
 function initializePasswordChange() {
-  const passwordForm = document.querySelector('.password-form');
-  
+  const passwordForm = document.querySelector(".password-form");
+
   if (!passwordForm) return;
-  
+
   // Fix toggle password visibility functionality
   document.querySelectorAll(".toggle-password").forEach((icon) => {
     icon.addEventListener("click", function () {
@@ -1713,116 +1852,140 @@ function initializePasswordChange() {
       }
     });
   });
-  
+
   // Add submit handler
-  passwordForm.addEventListener('submit', function(e) {
+  passwordForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    
+
     // Get form values
-    const currentPassword = document.getElementById('current-password').value;
-    const newPassword = document.getElementById('new-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    
+    const currentPassword = document.getElementById("current-password").value;
+    const newPassword = document.getElementById("new-password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+
     // Basic validation
     if (!currentPassword || !newPassword || !confirmPassword) {
-      showToast('Error', 'All fields are required', 'error');
+      showToast("Error", "All fields are required", "error");
       return;
     }
-    
+
     if (newPassword !== confirmPassword) {
-      showToast('Error', 'New passwords do not match', 'error');
+      showToast("Error", "New passwords do not match", "error");
       return;
     }
-    
+
     if (newPassword.length < 6) {
-      showToast('Error', 'New password must be at least 6 characters long', 'error');
+      showToast(
+        "Error",
+        "New password must be at least 6 characters long",
+        "error"
+      );
       return;
     }
-    
+
     // Get user ID
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      showToast('Error', 'User ID not found. Please log in again.', 'error');
+      showToast("Error", "User ID not found. Please log in again.", "error");
       return;
     }
-    
+
     // Get token
     const token = localStorage.getItem("token");
     if (!token) {
-      showToast('Error', 'Authentication token not found. Please log in again.', 'error');
+      showToast(
+        "Error",
+        "Authentication token not found. Please log in again.",
+        "error"
+      );
       return;
     }
-    
+
     // Show loading state
-    const submitBtn = passwordForm.querySelector('.submit-btn');
+    const submitBtn = passwordForm.querySelector(".submit-btn");
     const originalBtnText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Updating...';
     submitBtn.disabled = true;
-    
+
     // Create request
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `/client/change-password/${userId}`, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    
-    xhr.onreadystatechange = function() {
+
+    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         // Reset button state
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        
+
         if (xhr.status === 200) {
           try {
             const response = JSON.parse(xhr.responseText);
             console.log("Password change successful:", response);
-            
+
             // Clear form
             passwordForm.reset();
-            
+
             // Show success message
-            showToast('Success', 'Your password has been updated successfully', 'success');
+            showToast(
+              "Success",
+              "Your password has been updated successfully",
+              "success"
+            );
           } catch (e) {
             console.error("Error parsing response:", e);
-            showToast('Error', 'Error updating password', 'error');
+            showToast("Error", "Error updating password", "error");
           }
         } else if (xhr.status === 401) {
           try {
             const response = JSON.parse(xhr.responseText);
-            showToast('Error', response.message || 'Current password is incorrect', 'error');
+            showToast(
+              "Error",
+              response.message || "Current password is incorrect",
+              "error"
+            );
           } catch (e) {
-            showToast('Error', 'Current password is incorrect', 'error');
+            showToast("Error", "Current password is incorrect", "error");
           }
         } else if (xhr.status === 403) {
-          showToast('Error', 'You do not have permission to change this password', 'error');
+          showToast(
+            "Error",
+            "You do not have permission to change this password",
+            "error"
+          );
         } else {
           console.error("Error changing password. Status:", xhr.status);
           console.error("Response:", xhr.responseText);
-          showToast('Error', 'Error updating password. Please try again.', 'error');
+          showToast(
+            "Error",
+            "Error updating password. Please try again.",
+            "error"
+          );
         }
       }
     };
-    
-    xhr.onerror = function() {
+
+    xhr.onerror = function () {
       submitBtn.innerHTML = originalBtnText;
       submitBtn.disabled = false;
-      showToast('Error', 'Network error occurred. Please try again.', 'error');
+      showToast("Error", "Network error occurred. Please try again.", "error");
     };
-    
+
     // Prepare data
     const passwordData = {
       currentPassword: currentPassword,
-      newPassword: newPassword
+      newPassword: newPassword,
     };
-    
+
     // Send request
     xhr.send(JSON.stringify(passwordData));
   });
 }
 
 // Toast notification function (if not already defined)
-function showToast(title, message, type = 'info') {
+function showToast(title, message, type = "info") {
   // Check if Toastify is available
-  if (typeof Toastify === 'function') {
+  if (typeof Toastify === "function") {
     Toastify({
       text: `${title}: ${message}`,
       duration: 3000,
@@ -1830,10 +1993,15 @@ function showToast(title, message, type = 'info') {
       position: "right",
       className: `toast-${type}`,
       style: {
-        background: type === 'success' ? "#4CAF50" : 
-                    type === 'error' ? "#F44336" : 
-                    type === 'warning' ? "#FF9800" : "#2196F3",
-      }
+        background:
+          type === "success"
+            ? "#4CAF50"
+            : type === "error"
+              ? "#F44336"
+              : type === "warning"
+                ? "#FF9800"
+                : "#2196F3",
+      },
     }).showToast();
   } else {
     // Fallback to alert if Toastify is not available
@@ -1842,7 +2010,7 @@ function showToast(title, message, type = 'info') {
 }
 
 // Call the initialization function when the DOM is loaded
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Initialize password change form
   initializePasswordChange();
 });

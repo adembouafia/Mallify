@@ -11,5 +11,5 @@ module.exports = (app) => {
     app.get('/client/:id/orders', auth, order.getOrdersByClientId);
     
     // Route pour mettre à jour le statut d'une commande
-    app.put('/order/:id/status', auth, authorize('vendor', 'moderator', 'admin'), order.updateStatusOrder);
+    app.put('/order/:id/status', auth, order.updateStatusOrder);
 };
