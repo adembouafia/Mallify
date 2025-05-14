@@ -298,6 +298,72 @@
         max-width: 400px;
         margin-left: auto;
       }
+      /* Nouveaux styles pour les cartes statistiques alignées */
+      .stat-card-new {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .stat-card-new:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .stat-icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.5rem;
+      }
+      
+      .stat-content {
+        flex: 1;
+      }
+      
+      .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0;
+        line-height: 1.2;
+      }
+      
+      .stat-label {
+        color: #6b7280;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+      }
+      
+      /* Couleurs de fond pour les cartes statistiques */
+      .stat-card-new.total {
+        background-color: #f3f4ff;
+      }
+      
+      .stat-card-new.completed {
+        background-color: #ecfdf5;
+      }
+      
+      .stat-card-new.accepted {
+        background-color: #f0fdff;
+      }
+      
+      .stat-card-new.pending {
+        background-color: #fff7ed;
+      }
+      
+      .stat-card-new.cancelled {
+        background-color: #fef2f2;
+      }
     </style>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -495,21 +561,6 @@
               </li>
               <li class="nav-item">
                 <a
-                  href="orderHistoris.html"
-                  class="nav-link"
-                >
-                  <i class="nav-icon bi bi-clipboard-fill"></i>
-                  <p>
-                    Order Histories
-                    <span class="nav-badge badge text-bg-secondary me-3"
-                      >6</span
-                    >
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a
                   href="invoice.html"
                   class="nav-link"
                 >
@@ -562,7 +613,7 @@
                   <div class="input-group dashboard-search">
                     <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input type="text" class="form-control search-input" placeholder="Search orders...">
-                    <button class="btn btn-primary" type="button">Search</button>
+                    <button class="btn btn-primary search-button" type="button">Search</button>
                   </div>
                 </div>
               </div>
@@ -574,55 +625,58 @@
         <div class="dashboard-stats">
           <div class="container-fluid">
             <div class="row">
-              <div class="col-md-3 col-sm-6">
-                <div class="stat-card primary">
-                  <div class="stat-card-content">
-                    <div class="stat-card-icon">
-                      <i class="bi bi-cart"></i>
-                    </div>
-                    <div class="stat-card-info">
-                      <h2 class="stat-card-number">0</h2>
-                      <p class="stat-card-title">Total Orders</p>
-                    </div>
+              <div class="col">
+                <div class="stat-card-new" style="border-left: 4px solid #6366f1;">
+                  <div class="stat-icon-circle" style="background-color: #6366f1;">
+                    <i class="bi bi-cart text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number total-orders-count">0</h2>
+                    <p class="stat-label">Total Orders</p>
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 col-sm-6">
-                <div class="stat-card success">
-                  <div class="stat-card-content">
-                    <div class="stat-card-icon">
-                      <i class="bi bi-check-circle"></i>
-                    </div>
-                    <div class="stat-card-info">
-                      <h2 class="stat-card-number">0</h2>
-                      <p class="stat-card-title">Completed</p>
-                    </div>
+              <div class="col">
+                <div class="stat-card-new" style="border-left: 4px solid #10b981;">
+                  <div class="stat-icon-circle" style="background-color: #10b981;">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number completed-orders-count">0</h2>
+                    <p class="stat-label">Completed</p>
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 col-sm-6">
-                <div class="stat-card warning">
-                  <div class="stat-card-content">
-                    <div class="stat-card-icon">
-                      <i class="bi bi-hourglass-split"></i>
-                    </div>
-                    <div class="stat-card-info">
-                      <h2 class="stat-card-number">0</h2>
-                      <p class="stat-card-title">Pending</p>
-                    </div>
+              <div class="col">
+                <div class="stat-card-new" style="border-left: 4px solid #0dcaf0;">
+                  <div class="stat-icon-circle" style="background-color: #0dcaf0;">
+                    <i class="bi bi-check2-all text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number accepted-orders-count">0</h2>
+                    <p class="stat-label">Accepted</p>
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 col-sm-6">
-                <div class="stat-card danger">
-                  <div class="stat-card-content">
-                    <div class="stat-card-icon">
-                      <i class="bi bi-x-circle"></i>
-                    </div>
-                    <div class="stat-card-info">
-                      <h2 class="stat-card-number">0</h2>
-                      <p class="stat-card-title">Cancelled</p>
-                    </div>
+              <div class="col">
+                <div class="stat-card-new" style="border-left: 4px solid #f59e0b;">
+                  <div class="stat-icon-circle" style="background-color: #f59e0b;">
+                    <i class="bi bi-hourglass-split text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number pending-orders-count">0</h2>
+                    <p class="stat-label">Pending</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="stat-card-new" style="border-left: 4px solid #ef4444;">
+                  <div class="stat-icon-circle" style="background-color: #ef4444;">
+                    <i class="bi bi-x-circle text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number cancelled-orders-count">0</h2>
+                    <p class="stat-label">Cancelled</p>
                   </div>
                 </div>
               </div>
@@ -636,35 +690,40 @@
             <ul class="nav nav-tabs" id="orderTabs" role="tablist">
               <li class="nav-item">
                 <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" aria-controls="all" aria-selected="true">
-                  <i class="bi bi-grid"></i> All Orders <span class="badge bg-primary">0</span>
+                  <i class="bi bi-grid"></i> All Orders <span class="badge bg-primary all-orders-badge">0</span>
                 </button>
               </li>
               <li class="nav-item">
                 <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" aria-controls="pending" aria-selected="false">
-                  <i class="bi bi-hourglass-split"></i> Pending <span class="badge bg-warning">0</span>
+                  <i class="bi bi-hourglass-split"></i> Pending <span class="badge bg-warning pending-orders-badge">0</span>
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" aria-controls="accepted" aria-selected="false">
+                  <i class="bi bi-check2-all"></i> Accepted <span class="badge bg-info accepted-orders-badge">0</span>
                 </button>
               </li>
               <li class="nav-item">
                 <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" aria-controls="completed" aria-selected="false">
-                  <i class="bi bi-check-circle"></i> Completed <span class="badge bg-success">0</span>
+                  <i class="bi bi-check-circle"></i> Completed <span class="badge bg-success completed-orders-badge">0</span>
                 </button>
               </li>
               <li class="nav-item">
                 <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" aria-controls="cancelled" aria-selected="false">
-                  <i class="bi bi-x-circle"></i> Cancelled <span class="badge bg-danger">0</span>
+                  <i class="bi bi-x-circle"></i> Cancelled <span class="badge bg-danger cancelled-orders-badge">0</span>
                 </button>
               </li>
               <li class="ms-auto">
                 <div class="tab-actions">
                   <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-outline-secondary dropdown-toggle sort-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-sort-down"></i> Sort by
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="#">Newest First</a></li>
-                      <li><a class="dropdown-item" href="#">Oldest First</a></li>
-                      <li><a class="dropdown-item" href="#">Amount (High to Low)</a></li>
-                      <li><a class="dropdown-item" href="#">Amount (Low to High)</a></li>
+                      <li><a class="dropdown-item sort-option" data-sort="newest" href="#">Newest First</a></li>
+                      <li><a class="dropdown-item sort-option" data-sort="oldest" href="#">Oldest First</a></li>
+                      <li><a class="dropdown-item sort-option" data-sort="high" href="#">Amount (High to Low)</a></li>
+                      <li><a class="dropdown-item sort-option" data-sort="low" href="#">Amount (Low to High)</a></li>
                     </ul>
                   </div>
                 </div>
@@ -682,6 +741,15 @@
                 <div class="card order-card shadow-sm">
                   <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">All Orders</h5>
+                    <div class="d-flex align-items-center">
+                      <select class="form-select me-2 items-per-page">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      <span>entries per page</span>
+                    </div>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
@@ -698,8 +766,11 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="all-orders-table">
                           <!-- Les données seront chargées dynamiquement ici -->
+                          <tr>
+                            <td colspan="8" class="text-center">Loading orders...</td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -749,31 +820,46 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="pending-orders-table">
                           <!-- Les données seront chargées dynamiquement ici -->
+                          <tr>
+                            <td colspan="8" class="text-center">Loading pending orders...</td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                      <div class="pagination-info">
-                        Showing 0 to 0 of 0 entries
-                      </div>
-                      <nav aria-label="Orders pagination">
-                        <ul class="pagination pagination-sm mb-0">
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                              <i class="bi bi-chevron-left"></i>
-                            </a>
-                          </li>
-                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item">
-                            <a class="page-link" href="#">
-                              <i class="bi bi-chevron-right"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
+                  </div>
+                </div>
+              </div>
+      
+              <!-- Accepted Orders Tab -->
+              <div class="tab-pane fade" id="accepted" role="tabpanel" aria-labelledby="accepted-tab">
+                <div class="card order-card shadow-sm">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Accepted Orders</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle">
+                        <thead>
+                          <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Items</th>
+                            <th>Delivery Number</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody id="accepted-orders-table">
+                          <!-- Les données seront chargées dynamiquement ici -->
+                          <tr>
+                            <td colspan="8" class="text-center">Loading accepted orders...</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
@@ -800,31 +886,13 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="completed-orders-table">
                           <!-- Les données seront chargées dynamiquement ici -->
+                          <tr>
+                            <td colspan="8" class="text-center">Loading completed orders...</td>
+                          </tr>
                         </tbody>
                       </table>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                      <div class="pagination-info">
-                        Showing 0 to 0 of 0 entries
-                      </div>
-                      <nav aria-label="Orders pagination">
-                        <ul class="pagination pagination-sm mb-0">
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                              <i class="bi bi-chevron-left"></i>
-                            </a>
-                          </li>
-                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item">
-                            <a class="page-link" href="#">
-                              <i class="bi bi-chevron-right"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
                     </div>
                   </div>
                 </div>
@@ -851,31 +919,13 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cancelled-orders-table">
                           <!-- Les données seront chargées dynamiquement ici -->
+                          <tr>
+                            <td colspan="8" class="text-center">Loading cancelled orders...</td>
+                          </tr>
                         </tbody>
                       </table>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                      <div class="pagination-info">
-                        Showing 0 to 0 of 0 entries
-                      </div>
-                      <nav aria-label="Orders pagination">
-                        <ul class="pagination pagination-sm mb-0">
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                              <i class="bi bi-chevron-left"></i>
-                            </a>
-                          </li>
-                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item">
-                            <a class="page-link" href="#">
-                              <i class="bi bi-chevron-right"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
                     </div>
                   </div>
                 </div>
