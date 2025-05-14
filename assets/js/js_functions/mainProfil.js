@@ -1134,7 +1134,7 @@ function initializeOrdersSection() {
   let allOrders = [];
   let filteredOrders = [];
   let currentPage = 1;
-  const ordersPerPage = 5;
+  const ordersPerPage = 2;
 
   // Initialize
   loadOrders();

@@ -238,10 +238,18 @@ exports.updateStatusOrder = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!["pending", "accepted", "completed", "cancelled"].includes(status)) {
+    if (
+      ![
+        "pending",
+        "accepted",
+        "completed",
+        "cancelled",
+        "non_returned",
+      ].includes(status)
+    ) {
       return res.status(400).json({
         message:
-          "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled",
+          "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled, non_returned",
       });
     }
 
@@ -389,10 +397,8 @@ exports.getOrdersByClientId = async (req, res) => {
     res.status(200).send(orders);
   } catch (err) {
     console.error("Error fetching client orders:", err);
-    res
-      .status(500)
-      .send({
-        message: err.message || "Error retrieving orders for this client",
-      });
+    res.status(500).send({
+      message: err.message || "Error retrieving orders for this client",
+    });
   }
 };
