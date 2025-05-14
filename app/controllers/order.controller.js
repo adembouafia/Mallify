@@ -134,16 +134,48 @@ exports.getOrdersByShop = async (req, res) => {
     }
 
     // No need to populate idPanier since we have cartData
-    const orders = await Order.find({ shop: shopId }).populate("idClient").populate("shop")
+    const orders = await Order.find({ 
+      shop: shopId,
+      orderStatus: { $in: ['pending', 'accepted'] } // Seulement les commandes actives
+    }).populate("idClient").populate("shop")
 
     res.status(200).json({
-      message: "Liste des commandes pour la boutique",
+      message: "Liste des commandes actives pour la boutique",
       orders,
     })
   } catch (err) {
     console.error("Erreur getOrdersByShop:", err)
     res.status(500).json({
       message: "Erreur lors de la récupération des commandes",
+      error: err.message,
+    })
+  }
+}
+
+// Get order histories (completed or cancelled orders)
+exports.getOrderHistoriesByShop = async (req, res) => {
+  try {
+    const shopId = req.user?.shopId
+    if (!shopId) {
+      return res.status(400).json({
+        message: "Shop ID manquant. Assurez-vous d'être authentifié(e) et que le token contient bien shopId.",
+      })
+    }
+
+    // Récupérer uniquement les commandes terminées ou annulées
+    const orders = await Order.find({ 
+      shop: shopId,
+      orderStatus: { $in: ['completed', 'cancelled'] } 
+    }).populate("idClient").populate("shop")
+
+    res.status(200).json({
+      message: "Historique des commandes pour la boutique",
+      orders,
+    })
+  } catch (err) {
+    console.error("Erreur getOrderHistoriesByShop:", err)
+    res.status(500).json({
+      message: "Erreur lors de la récupération de l'historique des commandes",
       error: err.message,
     })
   }
@@ -220,11 +252,31 @@ exports.updateStatusOrder = async (req, res) => {
       })
     }
 
-    // Si la commande passe de 'pending' à 'completed' ou 'accepted', mettre à jour le stock
-    if ((status === 'completed' || status === 'accepted') && order.orderStatus === 'pending') {
+    // Si la commande passe de 'pending' à 'accepted', générer une facture
+    if (status === 'accepted' && order.orderStatus === 'pending') {
+      // Vérifier si une facture existe déjà pour cette commande
+      const existingInvoice = await Invoice.findOne({ idCommande: order._id })
+      
+      // Si aucune facture n'existe, en créer une nouvelle
+      if (!existingInvoice) {
+        const invoice = new Invoice({
+          idCommande: order._id,
+          dateFacture: new Date(),
+          montantTotal: order.orderTotal,
+          statutPaiement: 'non payé',
+          shop: order.shop,
+          idClient: order.idClient
+        })
+        
+        await invoice.save()
+        console.log(`Facture générée automatiquement pour la commande ${order._id}`)
+      }
+      
+      // Mettre à jour le stock des produits
       await updateProductStock(order)
     }
 
+    // Mettre à jour le statut de la commande
     order.orderStatus = status
     await order.save()
 
