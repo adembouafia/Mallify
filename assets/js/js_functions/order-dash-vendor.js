@@ -8,8 +8,8 @@ let currentOrder = null;
 
 // DOM elements
 const ordersTableBody = document.querySelector("table tbody");
-const searchInput = document.querySelector('input[placeholder="Search..."]');
-const searchButton = document.querySelector(".input-group button");
+const searchInput = document.querySelector('.search-input'); // Mise à jour du sélecteur
+const searchButton = document.querySelector(".search-container button"); // Mise à jour du sélecteur
 const entriesSelect = document.querySelector(".form-select");
 const paginationInfo = document.querySelector(".pagination-info");
 const paginationLinks = document.querySelector(".pagination");
@@ -469,7 +469,7 @@ function displayOrderDetails(order) {
                     <tr>
                       <td class="px-0">
                         <p class="d-flex mb-0 align-items-center gap-1">
-                          <iconify-icon icon="solar:clipboard-text-broken"></iconify-icon>
+                          <i class="bi bi-clipboard-check"></i>
                           Sub Total :
                         </p>
                       </td>
@@ -480,7 +480,7 @@ function displayOrderDetails(order) {
                     <tr>
                       <td class="px-0">
                         <p class="d-flex mb-0 align-items-center gap-1">
-                          <iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon>
+                          <i class="bi bi-truck"></i>
                           Delivery Charge :
                         </p>
                       </td>
@@ -525,7 +525,7 @@ function displayOrderDetails(order) {
               <div class="d-flex justify-content-between mt-3">
                 <h5 class="card-title">Contact Number</h5>
                 <div>
-                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
+                  <a href="#!"><i class="bi bi-pencil"></i></a>
                 </div>
               </div>
               <p class="mb-1">${customerPhone || shippingPhone || "No phone number provided"}</p>
@@ -533,7 +533,7 @@ function displayOrderDetails(order) {
               <div class="d-flex justify-content-between mt-3">
                 <h5 class="card-title">Shipping Address</h5>
                 <div>
-                  <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
+                  <a href="#!"><i class="bi bi-pencil"></i></a>
                 </div>
               </div>
 
@@ -600,6 +600,7 @@ function updateOrderStatus(orderId, status) {
         loadOrderDetails();
 
         // Show success message
+        // SweetAlert is assumed to be available globally or imported elsewhere
         Swal.fire({
           title: "Success!",
           text: `Order successfully marked as ${status.replace("_", " ")}`,
@@ -813,44 +814,46 @@ function displayOrders(ordersToDisplay) {
       firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown";
 
     // Déterminer la classe de statut et le texte
-    let statusClass = "bg-warning";
+    let statusClass = "status-pending";
     let statusText = "Pending";
     
     if (order.orderStatus === "accepted") {
-      statusClass = "bg-info";
+      statusClass = "status-shipped";
       statusText = "Accepted";
     } else if (order.orderStatus === "completed") {
-      statusClass = "bg-success";
+      statusClass = "status-shipped";
       statusText = "Completed";
     } else if (order.orderStatus === "cancelled") {
-      statusClass = "bg-danger";
+      statusClass = "status-cancelled";
       statusText = "Cancelled";
     }
 
     // Create table row
     const row = document.createElement("tr");
     row.innerHTML = `
-            <td>#${order._id ? order._id.substring(0, 8) : "N/A"}</td>
-            <td>${formattedDate}</td>
-            <td>${customerName}</td>
-            <td>${total.toFixed(2)} DT</td>
-            <td>${itemCount}</td>
-            <td>#D-${Math.floor(Math.random() * 10000000)}</td>
-            <td><span class="badge ${statusClass}">${statusText}</span></td>
-            <td>
-                <a href="detailsOrders.html?id=${order._id}" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                    <i class="bi bi-eye"></i>
-                </a>
-                ${order.orderStatus === 'pending' ? `
-                <button class="btn btn-sm btn-outline-success me-1 accept-order" data-id="${order._id}" title="Accept Order">
-                    <i class="bi bi-check"></i>
-                </button>
-                ` : ''}
-                <button class="btn btn-sm btn-outline-danger delete-order" data-id="${order._id}" title="Delete Order">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+      <td><span class="order-id">#${order._id ? order._id.substring(0, 8) : "N/A"}</span></td>
+      <td><span class="date-text">${formattedDate}</span></td>
+      <td><span class="customer-name">${customerName}</span></td>
+      <td><span class="price-amount">${total.toFixed(2)} DT</span></td>
+      <td><span class="items-count">${itemCount}</span></td>
+      <td><span class="delivery-number">#D-${Math.floor(Math.random() * 10000000)}</span></td>
+      <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+      <td>
+        <div class="d-flex">
+          <a href="detailsOrders.html?id=${order._id}" class="btn btn-action btn-outline-primary me-1" title="View Details">
+            <i class="bi bi-eye"></i>
+          </a>
+          ${order.orderStatus === 'pending' ? `
+          <button class="btn btn-action btn-outline-success me-1 accept-order" data-id="${order._id}" title="Accept Order">
+            <i class="bi bi-check"></i>
+          </button>
+          ` : ''}
+          <button class="btn btn-action btn-outline-danger delete-order" data-id="${order._id}" title="Delete Order">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </td>
+    `;
 
     ordersTableBody.appendChild(row);
   });
@@ -891,9 +894,9 @@ function updateOrderCounts() {
 
   // Safely update the order count displays
   updateCountDisplay(".info-box:nth-child(1) .info-box-number", orders.length);
-  updateCountDisplay(".info-box:nth-child(2) .info-box-number", acceptedOrders); // Accepted orders
-  updateCountDisplay(".info-box:nth-child(3) .info-box-number", completedOrders); // Completed orders
-  updateCountDisplay(".info-box:nth-child(4) .info-box-number", cancelledOrders); // Cancelled orders
+  updateCountDisplay(".info-box:nth-child(2) .info-box-number", completedOrders); // Completed/shipped orders
+  updateCountDisplay(".info-box:nth-child(3) .info-box-number", cancelledOrders); // Cancelled orders
+  updateCountDisplay(".info-box:nth-child(4) .info-box-number", pendingOrders + acceptedOrders); // Payment refund (placeholder)
 }
 
 // Helper function to safely update count displays
@@ -919,26 +922,30 @@ function updatePaginationLinks(currentPage, totalPages) {
 
   // Previous button
   html += `
-        <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
-            <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
-        </li>
-    `;
+    <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+      <a class="page-link" href="#" data-page="${currentPage - 1}">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+  `;
 
   // Page numbers
   for (let i = 1; i <= totalPages; i++) {
     html += `
-            <li class="page-item ${i === currentPage ? "active" : ""}">
-                <a class="page-link" href="#" data-page="${i}">${i}</a>
-            </li>
-        `;
+      <li class="page-item ${i === currentPage ? "active" : ""}">
+        <a class="page-link" href="#" data-page="${i}">${i}</a>
+      </li>
+    `;
   }
 
   // Next button
   html += `
-        <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
-            <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
-        </li>
-    `;
+    <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+      <a class="page-link" href="#" data-page="${currentPage + 1}">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+  `;
 
   paginationLinks.innerHTML = html;
 
@@ -959,9 +966,20 @@ function updatePaginationLinks(currentPage, totalPages) {
 
 // Confirm and delete an order
 function confirmDeleteOrder(orderId) {
-  if (confirm("Are you sure you want to delete this order?")) {
-    deleteOrder(orderId);
-  }
+  Swal.fire({
+    title: "Êtes-vous sûr?",
+    text: "Voulez-vous vraiment supprimer cette commande?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Oui, supprimer",
+    cancelButtonText: "Annuler"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteOrder(orderId);
+    }
+  });
 }
 
 // Delete an order via XHR instead of fetch
@@ -983,16 +1001,28 @@ function deleteOrder(orderId) {
     if (xhr.status === 200) {
       // Reload orders after successful deletion
       loadOrders();
-      alert("Order deleted successfully");
+      Swal.fire({
+        title: "Supprimé!",
+        text: "La commande a été supprimée avec succès.",
+        icon: "success"
+      });
     } else {
       console.error("Error deleting order:", xhr.status);
-      alert(`Error deleting order. Status: ${xhr.status}`);
+      Swal.fire({
+        title: "Erreur!",
+        text: `Erreur lors de la suppression de la commande. Statut: ${xhr.status}`,
+        icon: "error"
+      });
     }
   };
 
   xhr.onerror = function () {
     console.error("Network error when deleting order");
-    alert("Network error. Please check your connection and try again.");
+    Swal.fire({
+      title: "Erreur réseau",
+      text: "Veuillez vérifier votre connexion et réessayer.",
+      icon: "error"
+    });
   };
 
   // Send the request
@@ -1085,7 +1115,8 @@ function updateNotificationCounter(count) {
 }
 
 // Fonction pour peupler le dropdown de notifications
-function populateNotificationDropdown(notifications) {  const notificationList = document.querySelector(".notification-dropdown .notification-list")
+function populateNotificationDropdown(notifications) {  
+  const notificationList = document.querySelector(".notification-dropdown .notification-list")
   if (!notificationList) {
     console.error("Notification list element not found")
     return
