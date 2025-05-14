@@ -602,17 +602,11 @@ function displayOrderDetails(order) {
               
               <div class="d-flex justify-content-between mt-3">
                 <h5 class="card-title">Contact Number</h5>
-                <div>
-                  <a href="#!"><i class="bi bi-pencil"></i></a>
-                </div>
               </div>
               <p class="mb-1">${customerPhone || shippingPhone || "No phone number provided"}</p>
 
               <div class="d-flex justify-content-between mt-3">
                 <h5 class="card-title">Shipping Address</h5>
-                <div>
-                  <a href="#!"><i class="bi bi-pencil"></i></a>
-                </div>
               </div>
 
               <div>                
