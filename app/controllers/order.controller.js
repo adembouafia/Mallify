@@ -78,7 +78,6 @@ exports.createOrder = async (req, res) => {
     });
 
     const orders = [];
-    const invoices = [];
 
     for (const [shopId, data] of Object.entries(itemsByShop)) {
       // Create order with complete cart data and set the orderStatus field
@@ -93,21 +92,12 @@ exports.createOrder = async (req, res) => {
 
       await order.save();
 
-      const invoice = new Invoice({
-        idCommande: order._id,
-        montantTotal: data.total,
-        shop: shopId,
-        idClient: cart.clientId,
-      });
-
-      await invoice.save();
 
       const populatedOrder = await Order.findById(order._id)
         .populate("idClient")
         .populate("shop");
 
       orders.push(populatedOrder);
-      invoices.push(invoice);
     }
 
     // Clear the cart after successful order creation
@@ -116,7 +106,6 @@ exports.createOrder = async (req, res) => {
     res.status(201).json({
       message: "Commandes créées avec succès",
       orders,
-      invoices,
     });
   } catch (err) {
     console.error(err);
@@ -287,25 +276,6 @@ exports.updateStatusOrder = async (req, res) => {
 
     // Si la commande passe de 'pending' à 'accepted', générer une facture
     if (status === "accepted" && order.orderStatus === "pending") {
-      // Vérifier si une facture existe déjà pour cette commande
-      const existingInvoice = await Invoice.findOne({ idCommande: order._id });
-
-      // Si aucune facture n'existe, en créer une nouvelle
-      if (!existingInvoice) {
-        const invoice = new Invoice({
-          idCommande: order._id,
-          dateFacture: new Date(),
-          montantTotal: order.orderTotal,
-          statutPaiement: "non payé",
-          shop: order.shop,
-          idClient: order.idClient,
-        });
-
-        await invoice.save();
-        console.log(
-          `Facture générée automatiquement pour la commande ${order._id}`
-        );
-      }
 
       // Mettre à jour le stock des produits
       await updateProductStock(order);

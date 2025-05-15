@@ -272,7 +272,7 @@ function fetchInvoices(startDate, endDate) {
         if (tableBody) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="6" style="text-align: center; padding: 30px; color: red;">
+              <td colspan="7" style="text-align: center; padding: 30px; color: red;">
                 Error loading invoices: ${error.message}
               </td>
             </tr>
@@ -285,7 +285,7 @@ function fetchInvoices(startDate, endDate) {
       if (tableBody) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; padding: 30px; color: red;">
+            <td colspan="7" style="text-align: center; padding: 30px; color: red;">
               Error loading invoices. Status: ${xhr.status}
             </td>
           </tr>
@@ -300,7 +300,7 @@ function fetchInvoices(startDate, endDate) {
     if (tableBody) {
       tableBody.innerHTML = `
         <tr>
-          <td colspan="6" style="text-align: center; padding: 30px; color: red;">
+          <td colspan="7" style="text-align: center; padding: 30px; color: red;">
             Network error. Please check your connection and try again.
           </td>
         </tr>
@@ -428,11 +428,10 @@ function formatInvoicesData(apiInvoices) {
     console.log("Shop data for invoice:", {
       originalShop: shop,
       formattedShop: shopData,
-    });
-
-    // Return formatted invoice
+    }); // Return formatted invoice
     return {
-      orderId: `${invoice._id ? invoice._id.substring(0, 8) : "N/A"}`,
+      invoiceId: invoice._id.substring(0, 8)  || "N/A",
+      orderId: invoice.idCommande?._id.substring(0, 8)  || invoice.idCommande || "N/A",
       date: new Date(invoice.dateFacture),
       customer: customerData,
       shop: shopData,
@@ -453,7 +452,7 @@ function updateInvoiceTable(data) {
     // No data for the selected period
     const emptyRow = document.createElement("tr");
     emptyRow.innerHTML = `
-            <td colspan="6" style="text-align: center; padding: 30px;">
+            <td colspan="7" style="text-align: center; padding: 30px;">
                 No invoices found for the selected period
             </td>
         `;
@@ -485,10 +484,10 @@ function updateInvoiceTable(data) {
     const statusClass = `status-${invoice.status.toLowerCase()}`;
     const statusText =
       invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1);
-
     row.innerHTML = `
+            <td>#${invoice.invoiceId}</td>
+            <td>#${invoice.orderId}</td>
             <td>${formattedDate}</td>
-            <td>${invoice.orderId}</td>
             <td>${invoice.customer.name}</td>
             <td>${invoice.amount.toFixed(2)} DT</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
