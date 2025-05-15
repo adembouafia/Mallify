@@ -92,7 +92,6 @@ exports.createOrder = async (req, res) => {
 
       await order.save();
 
-
       const populatedOrder = await Order.findById(order._id)
         .populate("idClient")
         .populate("shop");
@@ -292,18 +291,44 @@ exports.updateStatusOrder = async (req, res) => {
 
     // Si la commande passe de 'pending' à 'accepted', générer une facture
     if (status === "accepted" && order.orderStatus === "pending") {
-
       // Mettre à jour le stock des produits
       await updateProductStock(order);
-    }
-
-    // Mettre à jour le statut de la commande
+    } // Mettre à jour le statut de la commande
     order.orderStatus = status;
     await order.save();
+
+    // Synchroniser le statut de la livraison associée si elle existe
+    const associatedDelivery = await Delivery.findOne({ idCommande: id });
+    if (associatedDelivery) {
+      // Mapper les statuts de commande avec les statuts de livraison
+      let deliveryStatus;
+      switch (status) {
+        case "shipped":
+          deliveryStatus = "InProgress";
+          break;
+        case "completed":
+          deliveryStatus = "Delivered";
+          break;
+        case "cancelled":
+          deliveryStatus = "Cancelled";
+          break;
+        case "postponed":
+          deliveryStatus = "Delayed";
+          break;
+        default:
+          // Garder le statut actuel pour les autres cas
+          deliveryStatus = associatedDelivery.statut;
+      }
+
+      // Mettre à jour le statut de livraison
+      associatedDelivery.statut = deliveryStatus;
+      await associatedDelivery.save();
+    }
 
     res.status(200).json({
       message: "Statut de la commande mis à jour avec succès",
       order,
+      deliveryUpdated: associatedDelivery ? true : false,
     });
   } catch (err) {
     console.error("Erreur updateStatusOrder:", err);
@@ -433,13 +458,25 @@ exports.makeToShip = async (req, res) => {
         statutPaiement: "unpaid",
       });
       await invoice.save();
+    } // Update order status to shipped
+    order.orderStatus = "shipped";
+    await order.save(); // Vérifier si une livraison existe déjà
+    let existingDelivery = await Delivery.findOne({ idCommande: orderId });
+    if (existingDelivery) {
+      // Mettre à jour le statut de la livraison existante
+      existingDelivery.statut = "InProgress";
+      await existingDelivery.save();
+
+      // Return success response with updated data
+      return res.status(200).json({
+        message: "Commande passée en statut expédiée et livraison mise à jour",
+        order,
+        invoice,
+        delivery: existingDelivery,
+      });
     }
 
-    // Update order status to shipped
-    order.orderStatus = "shipped";
-    await order.save();
-
-    // Créer automatiquement une livraison
+    // Créer automatiquement une livraison si elle n'existe pas
     const client = await Client.findById(order.idClient);
     if (!client) {
       return res.status(404).json({
@@ -451,8 +488,13 @@ exports.makeToShip = async (req, res) => {
     let deliveryAddress = "";
     if (client.shippingInfo && client.shippingInfo.address) {
       deliveryAddress = `${client.shippingInfo.address}, ${client.shippingInfo.city}, ${client.shippingInfo.governorate}, ${client.shippingInfo.postCode}`;
-    } else if (client.shippingAddresses && client.shippingAddresses.length > 0) {
-      const defaultAddress = client.shippingAddresses.find((addr) => addr.isDefault) || client.shippingAddresses[0];
+    } else if (
+      client.shippingAddresses &&
+      client.shippingAddresses.length > 0
+    ) {
+      const defaultAddress =
+        client.shippingAddresses.find((addr) => addr.isDefault) ||
+        client.shippingAddresses[0];
       deliveryAddress = `${defaultAddress.address}, ${defaultAddress.city}, ${defaultAddress.governorate}, ${defaultAddress.postCode}`;
     } else if (client.defaultShippingInfo) {
       deliveryAddress = `${client.defaultShippingInfo.address}, ${client.defaultShippingInfo.city}, ${client.defaultShippingInfo.governorate}, ${client.defaultShippingInfo.postCode}`;
