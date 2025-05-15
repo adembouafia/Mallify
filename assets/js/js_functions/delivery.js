@@ -326,7 +326,7 @@ function displayDeliveries(deliveries, tableId) {
     // Récupérer les informations de la commande associée
     const orderId = delivery.idCommande
       ? typeof delivery.idCommande === "object"
-        ? delivery.idCommande._id
+        ? delivery.idCommande._id.substring(0, 8) 
         : delivery.idCommande
       : "N/A";
 
@@ -347,7 +347,7 @@ function displayDeliveries(deliveries, tableId) {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td><span class="delivery-number">${deliveryNumber}</span></td>
-      <td><span class="order-id">${orderId}</span></td>
+      <td><span class="order-id">#${orderId}</span></td>
       <td><span class="customer-name">${delivery.clientInfo.prenom} ${delivery.clientInfo.nom}</span></td>
       <td><span class="items-count">${itemCount}</span></td>
       <td>${delivery.deliveryAdresse.split(",")[0]}</td>
