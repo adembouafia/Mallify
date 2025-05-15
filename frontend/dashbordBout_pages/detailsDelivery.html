@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Admin Dashboard</title>
+    <title>Delivery Details</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -29,6 +29,75 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <style>
+      .delivery-info-card .card-body {
+        padding: 1.25rem;
+      }
+      .delivery-status {
+        padding: 0.35em 0.65em;
+        font-size: 0.875em;
+        border-radius: 0.25rem;
+      }
+      .delivery-items-table img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+      }
+      .delivery-actions .btn {
+        margin-right: 0.5rem;
+      }
+      .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+      }
+      
+      .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      
+      .status-shipped {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+      
+      .status-pending, .status-inprogress {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      
+      .status-cancelled {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+      
+      .status-postponed {
+        background-color: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+      
+      .btn-responsive {
+        white-space: nowrap;
+        margin-bottom: 5px;
+      }
+      
+      @media (max-width: 768px) {
+        .btn-responsive {
+          padding: 0.25rem 0.5rem;
+          font-size: 0.875rem;
+        }
+        .btn-responsive i {
+          margin-right: 0;
+        }
+        .btn-responsive span {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -195,33 +264,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="delivery.html" class="nav-link active">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
                     Delivery
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="delivery.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>All Deliveries</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="deliveryCancelled.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Delivery Cancelled</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="deliveryPostponed.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Delivery Postponed</p>
-                    </a>
-                  </li>
-                </ul>
               </li>
               <li class="nav-item">
                 <a
@@ -259,249 +308,19 @@
       <!--end::Sidebar-->
       <!--begin::App Main-->
       <main class="app-main">
-          <div class="container-xxl p-4">
-            <div class="row">
-              <div class="col-xl-9 col-lg-8">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="card">
-                      <div class="card-header">
-                        <h4 class="card-title">Delivery Details</h4>
-                      </div>
-                      <div class="table-responsive">
-                        <table class="table align-middle mb-0 table-hover table-centered text-center">
-                          <thead class="bg-light-subtle border-bottom">
-                            <tr>
-                              <th>Product ID</th>
-                              <th>Product Name</th>
-                              <th>Quantity</th>
-                              <th>Unit Price</th>
-                              <th>Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>#5313216</td>
-                              <td>Wireless Headphones</td>
-                              <td>1</td>
-                              <td>$80.00</td>
-                              <td>$80.00</td>
-                            </tr>
-                            <tr>
-                              <td>#5313217</td>
-                              <td>Bluetooth Speaker</td>
-                              <td>4</td>
-                              <td>$80.00</td>
-                              <td>$320.00</td>
-                            </tr>
-                            <tr>
-                              <td>#5313218</td>
-                              <td>Smartwatch</td>
-                              <td>2</td>
-                              <td>$80.00</td>
-                              <td>$160.00</td>
-                            </tr>
-                            <tr>
-                              <td>#5313219</td>
-                              <td>Phone Case</td>
-                              <td>5</td>
-                              <td>$10.00</td>
-                              <td>$50.00</td>
-                            </tr>
-                            <tr>
-                              <td>#5313220</td>
-                              <td>Power Bank</td>
-                              <td>1</td>
-                              <td>$80.00</td>
-                              <td>$80.00</td>
-                            </tr>
-                            <tr class="fw-bold border-top fs-5 text">
-                              <td colspan="4" class="text-end">Total Amount</td>
-                              <td>$690.00</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      
-                    </div>
-                    <br>
-                    <div class="card">
-                      <div class="card-body">
-                        <div
-                          class="d-flex flex-wrap align-items-center justify-content-between gap-2"
-                        >
-                          <div>
-                            <h4
-                              class="fw-medium text-dark d-flex align-items-center gap-2 p-2"
-                            >
-                                #D-57837678	
-                              <span
-                                class="border border-warning text-warning fs-7 mx-2 px-2 py-1 rounded"
-                                >On the Way</span>
-                            </h4>
-                            <p class="mb-0">
-                              Delivery / Delivery Details / #D-57837678 - April 23 ,
-                              2024 at 6:23 pm
-                            </p>
-                          </div>
-                          <div style="margin-right: 30px;">
-                            <a href="#!" class="btn btn-warning">Edit Delivery</a>
-                          </div>
-                        </div>
-
-                        <div class="mt-3">
-                            <h4 class="fw-medium text-dark">Progress</h4>
-                          </div>
-                          <div class="row row-cols-xxl-5 row-cols-md-2 row-cols-1">
-                            <!-- Order Confirming -->
-                            <div class="col">
-                              <div class="progress mt-2" style="height: 10px">
-                                <div
-                                  class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-                                  role="progressbar"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                              <p class="mb-0 mt-2">Order Confirming</p>
-                            </div>
-                          
-                            <!-- Processing -->
-                            <div class="col">
-                              <div class="progress mt-2" style="height: 10px">
-                                <div
-                                  class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-                                  role="progressbar"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                              <p class="mb-0 mt-2">Processing</p>
-                            </div>
-                          
-                            <!-- Shipping -->
-                            <div class="col">
-                              <div class="progress mt-2" style="height: 10px">
-                                <div
-                                  class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-                                  role="progressbar"
-                                  style="width: 100%"
-                                ></div>
-                              </div>
-                              <p class="mb-0 mt-2">Shipping</p>
-                            </div>
-                          
-                            <!-- Delivered -->
-                            <div class="col">
-                              <div class="progress mt-2" style="height: 10px">
-                                <div
-                                  class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
-                                  role="progressbar"
-                                  style="width: 50%"
-                                ></div>
-                              </div>
-                              <div class="d-flex align-items-center gap-2 mt-2">
-                                <p class="mb-0">Delivered</p>
-                                <div class="spinner-border spinner-border-sm text-warning" role="status">
-                                  <span class="visually-hidden">Loading...</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                      </div>
-                      <div class="card-footer d-flex align-items-center justify-content-around flex-wrap gap-2">
-                        <p class="border rounded mb-0 px-2 py-1 bg-body">
-                          <i class="bi bi-box-arrow-in-right fs-4 align-middle"></i>
-                          Estimated Delivery date :
-                          <span class="text-dark fw-medium">Apr 25 , 2024</span>
-                        </p>
-                        <div>
-                          <a href="#!" class="btn btn-success btn-responsive">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Make As Delivered</span>
-                          </a>
-                        </div>
-                        <div>
-                          <a href="#!" class="btn btn-danger btn-responsive">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Make as Cancelled</span>
-                          </a>
-                        </div>
-                        <div>
-                          <a href="#!" class="btn btn-warning btn-responsive">
-                            <i class="bi bi-clock"></i>
-                            <span>Make As Postponed</span>
-                          </a>
-                        </div>
-                      </div>                      
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-7">   
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Customer Details</h4>
-                  </div>
-                  <div class="card-body">
-                    <div class="d-flex align-items-center gap-2">
-                      <img
-                        src="../../assets/images/team_members/devoloper2.jpg"
-                        alt=""
-                        class="rounded object-fit-cover" width="43" height="45"
-                      />
-                      <div>
-                        <p class="mb-1">Gaston Lapierre</p>
-                        <a href="#!" class="link-primary fw-medium"
-                          >hello@dundermuffilin.com</a
-                        >
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-3">
-                      <h5 class="card-title">Contact Number</h5>
-                      <div>
-                        <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
-                      </div>
-                    </div>
-                    <p class="mb-1">(723) 732-760-5760</p>
-
-                    <div class="d-flex justify-content-between mt-3">
-                      <h5 class="card-title">Shipping Address</h5>
-                      <div>
-                        <a href="#!"><i class="bx bx-edit-alt fs-18"></i></a>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p class="mb-1">Wilson's Jewelers LTD</p>
-                      <p class="mb-1">1344 Hershell Hollow Road ,</p>
-                      <p class="mb-1">Tukwila, WA 98168 ,</p>
-                      <p class="mb-1">United States</p>
-                      <p class="">(723) 732-760-5760</p>
-                    </div>
-                  </div>
-                </div>
-                <br>
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mapouter">
-                      <div class="gmap_canvas">
-                        <iframe
-                          class="gmap_iframe rounded"
-                          width="100%"
-                          style="height: 283px"
-                          frameborder="0"
-                          scrolling="no"
-                          marginheight="0"
-                          marginwidth="0"
-                          src="https://maps.google.com/maps?width=1980&amp;height=400&amp;hl=en&amp;q=University of Oxford&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-                        ></iframe>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div class="container-xxl p-4">
+          <!-- Loading container -->
+          <div id="loading-container" class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
             </div>
           </div>
+          
+          <!-- Delivery details content will be loaded here -->
+          <div id="delivery-details-container" style="display: none;">
+            <!-- Content will be dynamically inserted here by JavaScript -->
+          </div>
+        </div>
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->
@@ -545,6 +364,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../assets/js/js_functions/vendor-dash-home.js"></script>
+    <script src="../../assets/js/js_functions/delivery.js"></script>
     <script src="../../assets/js/js_functions/loadNotifications.js"></script>
 
     <!--end::Script-->

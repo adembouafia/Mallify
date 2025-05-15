@@ -25,10 +25,369 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
-      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      integrity="sha256-4MX+61mt9NVvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <style>
+      /* Styles spécifiques pour la section main */
+      .order-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-box {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .info-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-box-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .info-box-content {
+        padding: 10px;
+      }
+
+      .info-box-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-shipped {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+
+      .status-accepted {
+        background-color: rgba(37, 99, 235, 0.15);
+        color: #2563eb;
+      }
+
+      .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      .status-cancelled {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+
+      .status-postponed {
+        background-color: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+
+      .table-hover tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+        transform: scale(1.01);
+      }
+
+      .btn-action {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-action:hover {
+        transform: translateY(-2px);
+      }
+
+      .search-container {
+        position: relative;
+      }
+
+      .search-container .bi-search {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+      }
+
+      .search-input {
+        padding-left: 35px;
+        border-radius: 20px;
+      }
+
+      .page-title {
+        color: #4f46e5;
+        font-weight: 600;
+      }
+
+      .order-id {
+        font-weight: 600;
+        color: #4f46e5;
+      }
+
+      .customer-name {
+        font-weight: 500;
+      }
+
+      .price-amount {
+        font-weight: 600;
+      }
+
+      .items-count {
+        background-color: #f3f4f6;
+        border-radius: 20px;
+        padding: 2px 8px;
+        font-size: 0.85rem;
+      }
+
+      .delivery-number {
+        font-size: 0.85rem;
+        color: #6b7280;
+      }
+
+      .date-text {
+        color: #6b7280;
+        font-size: 0.85rem;
+      }
+
+      /* Styles pour les cartes statistiques */
+      .stat-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card.primary {
+        background-color: rgba(79, 70, 229, 0.1);
+        border-left: 4px solid #4f46e5;
+      }
+
+      .stat-card.success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid #10b981;
+      }
+
+      .stat-card.warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border-left: 4px solid #f59e0b;
+      }
+
+      .stat-card.danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid #ef4444;
+      }
+
+      .stat-card-content {
+        display: flex;
+        align-items: center;
+      }
+
+      .stat-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.5rem;
+      }
+
+      .stat-card.primary .stat-card-icon {
+        background-color: #4f46e5;
+        color: white;
+      }
+
+      .stat-card.success .stat-card-icon {
+        background-color: #10b981;
+        color: white;
+      }
+
+      .stat-card.warning .stat-card-icon {
+        background-color: #f59e0b;
+        color: white;
+      }
+
+      .stat-card.danger .stat-card-icon {
+        background-color: #ef4444;
+        color: white;
+      }
+
+      .stat-card-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        line-height: 1;
+      }
+
+      .stat-card-title {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 0;
+      }
+
+      /* Styles pour les onglets */
+      .dashboard-tabs {
+        margin-bottom: 20px;
+      }
+
+      .dashboard-tabs .nav-tabs {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .dashboard-tabs .nav-link {
+        border: none;
+        padding: 12px 20px;
+        color: #6b7280;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+      }
+
+      .dashboard-tabs .nav-link.active {
+        color: #4f46e5;
+        background-color: transparent;
+        border-bottom: 3px solid #4f46e5;
+      }
+
+      .dashboard-tabs .nav-link:hover:not(.active) {
+        border-bottom: 3px solid #e5e7eb;
+      }
+
+      .dashboard-tabs .badge {
+        margin-left: 5px;
+      }
+
+      /* Styles pour l'en-tête du tableau de bord */
+      .dashboard-header {
+        padding: 20px 0;
+        background-color: #f9fafb;
+        margin-bottom: 20px;
+      }
+
+      .dashboard-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #111827;
+      }
+
+      .dashboard-search {
+        max-width: 400px;
+        margin-left: auto;
+      }
+      /* Nouveaux styles pour les cartes statistiques alignées */
+      .stat-card-new {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        height: 100%;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .stat-card-new:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.5rem;
+      }
+
+      .stat-content {
+        flex: 1;
+      }
+
+      .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0;
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        color: #6b7280;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+      }
+
+      /* Couleurs de fond pour les cartes statistiques */
+      .stat-card-new.total {
+        background-color: #f3f4ff;
+      }
+
+      .stat-card-new.completed {
+        background-color: #ecfdf5;
+      }
+
+      .stat-card-new.accepted {
+        background-color: #f0fdff;
+      }
+
+      .stat-card-new.pending {
+        background-color: #fff7ed;
+      }
+
+      .stat-card-new.cancelled {
+        background-color: #fef2f2;
+      }
+
+      .status-shipped {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+
+      /* Style pour le badge bg-purple */
+      .badge.bg-purple {
+        background-color: #8b5cf6;
+        color: white;
+      }
+    </style>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -190,33 +549,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="delivery.html" class="nav-link active">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
                     Delivery
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="delivery.html" class="nav-link active">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>All Deliveries</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="deliveryCancelled.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Delivery Cancelled</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./widgets/cards.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Delivery Postponed</p>
-                    </a>
-                  </li>
-                </ul>
               </li>
               <li class="nav-item">
                 <a href="invoice.html" class="nav-link">
@@ -246,380 +585,515 @@
         <!--end::Sidebar Wrapper-->
       </aside>
       <!--end::Sidebar-->
+
       <!--begin::App Main-->
       <main class="app-main">
-        <div class="container py-4 px-4">
-          <div class="card shadow-sm">
-            <div class="card-header bg-white border-bottom-0 pb-0">
-              <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">All Deliveries</h4>
-                <div>
-                  <button class="btn btn-sm btn-outline-secondary me-2">
-                    <i class="bi bi-filter"></i> Filter
-                  </button>
-                </div>
+        <div class="dashboard-header">
+          <div class="container-fluid">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <h1 class="dashboard-title">Delivery Management</h1>
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                      <a href="index.html"
+                        ><i class="bi bi-house-door"></i> Home</a
+                      >
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                      Deliveries
+                    </li>
+                  </ol>
+                </nav>
               </div>
-              <div
-                class="d-flex justify-content-between align-items-center mt-3"
-              >
-                <div class="pagination-info">
-                  Show
-                  <select
-                    class="form-select form-select-sm d-inline-block w-auto mx-2"
-                  >
-                    <option>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                    <option>100</option>
-                  </select>
-                  entries
-                </div>
-                <div class="input-group input-group-sm" style="width: 250px">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Search..."
-                  />
-                  <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                  </button>
+              <div class="col-lg-6">
+                <div class="dashboard-actions">
+                  <div class="input-group dashboard-search">
+                    <span class="input-group-text"
+                      ><i class="bi bi-search"></i
+                    ></span>
+                    <input
+                      type="text"
+                      class="form-control search-input"
+                      placeholder="Search deliveries..."
+                    />
+                    <button class="btn btn-primary search-button" type="button">
+                      Search
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="card-body pt-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0 text-center">
-                  <thead>
-                    <tr>
-                      <th>Agent avatar</th>
-                      <th>Delivery Agent</th>
-                      <th>Delivery Number</th>
-                      <th>Order ID</th>
-                      <th>Customer</th>
-                      <th>Items</th>
-                      <th>Location</th>
-                      <th>Total</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody class="align-middle">
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1 action-btn"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger action-btn"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1 action-btn"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <img
-                          src="../../assets/images/dashboard/devoloper1.jpg"
-                          alt="avatar"
-                          class="rounded-circle object-fit-cover"
-                          width="37"
-                          height="37"
-                        />
-                      </td>
-                      <td>Koussay Abroud</td>
-                      <td>#D-57837678</td>
-                      <td>#583488/80</td>
-                      <td>Gail C. Anderson</td>
-                      <td>4</td>
-                      <td>Sousse</td>
-                      <td>$1,230.00</td>
-                      <td>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-success me-1"
-                          title="Make as Delivered"
-                        >
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-outline-danger"
-                          title="Make as Cancelled"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </a>
-                        <a
-                          href="detailsDelivery.html"
-                          class="btn btn-sm btn-outline-secondary me-1"
-                          title="View Details"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          </div>
+        </div>
 
-              <div
-                class="d-flex justify-content-between align-items-center mt-3"
-              >
-                <div class="pagination-info">Showing 1 to 10 of 10 entries</div>
-                <nav>
-                  <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled">
-                      <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item active">
-                      <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">Next</a>
-                    </li>
-                  </ul>
-                </nav>
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+          <div class="container-fluid mb-4">
+            <div class="row">
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #6366f1"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #6366f1"
+                  >
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number total-deliveries-count">0</h2>
+                    <p class="stat-label">Total Deliveries</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #10b981"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #10b981"
+                  >
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number delivered-count">0</h2>
+                    <p class="stat-label">Delivered</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #3b82f6"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #3b82f6"
+                  >
+                    <i class="bi bi-hourglass-split text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number in-progress-count">0</h2>
+                    <p class="stat-label">In Progress</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #8b5cf6"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #8b5cf6"
+                  >
+                    <i class="bi bi-calendar2-plus text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number postponed-count">0</h2>
+                    <p class="stat-label">Postponed</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #ef4444"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #ef4444"
+                  >
+                    <i class="bi bi-x-circle text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number cancelled-count">0</h2>
+                    <p class="stat-label">Cancelled</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Tabs -->
+          <div class="dashboard-tabs">
+            <div class="container-fluid">
+              <ul class="nav nav-tabs" id="deliveryTabs" role="tablist">
+                <li class="nav-item">
+                  <button
+                    class="nav-link active"
+                    id="all-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#all"
+                    type="button"
+                    aria-controls="all"
+                    aria-selected="true"
+                  >
+                    <i class="bi bi-grid"></i> All Deliveries
+                    <span class="badge bg-primary all-deliveries-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="in-progress-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#in-progress"
+                    type="button"
+                    aria-controls="in-progress"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-hourglass-split"></i> In Progress
+                    <span class="badge bg-primary in-progress-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="delivered-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#delivered"
+                    type="button"
+                    aria-controls="delivered"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-check-circle"></i> Delivered
+                    <span class="badge bg-success delivered-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="postponed-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#postponed"
+                    type="button"
+                    aria-controls="postponed"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-calendar2-plus"></i> Postponed
+                    <span class="badge bg-purple postponed-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="cancelled-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#cancelled"
+                    type="button"
+                    aria-controls="cancelled"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-x-circle"></i> Cancelled
+                    <span class="badge bg-danger cancelled-badge">0</span>
+                  </button>
+                </li>
+                <li class="ms-auto">
+                  <div class="tab-actions">
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-outline-secondary dropdown-toggle sort-dropdown"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sort-down"></i> Sort by
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="newest"
+                            href="#"
+                            >Newest First</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="oldest"
+                            href="#"
+                            >Oldest First</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Dashboard Content -->
+          <div class="dashboard-content">
+            <div class="container-fluid">
+              <div class="tab-content" id="deliveryTabsContent">
+                <!-- All Deliveries Tab -->
+                <div
+                  class="tab-pane fade show active"
+                  id="all"
+                  role="tabpanel"
+                  aria-labelledby="all-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">All Deliveries</h5>
+                      <div class="d-flex align-items-center">
+                        <div class="me-2">
+                          <select class="form-select form-select-sm items-per-page">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Agent</th>
+                              <th>Delivery Number</th>
+                              <th>Order ID</th>
+                              <th>Customer</th>
+                              <th>Items</th>
+                              <th>Location</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="all-deliveries-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="9" class="text-center">
+                                Loading deliveries...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div
+                        class="d-flex justify-content-between align-items-center mt-3"
+                      >
+                        <div class="pagination-info">
+                          Showing 0 to 0 of 0 entries
+                        </div>
+                        <nav aria-label="Deliveries pagination">
+                          <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled">
+                              <a
+                                class="page-link"
+                                href="#"
+                                tabindex="-1"
+                                aria-disabled="true"
+                              >
+                                <i class="bi bi-chevron-left"></i>
+                              </a>
+                            </li>
+                            <li class="page-item active">
+                              <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="#">
+                                <i class="bi bi-chevron-right"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- In Progress Deliveries Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="in-progress"
+                  role="tabpanel"
+                  aria-labelledby="in-progress-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">In Progress Deliveries</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Agent</th>
+                              <th>Delivery Number</th>
+                              <th>Order ID</th>
+                              <th>Customer</th>
+                              <th>Items</th>
+                              <th>Location</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="in-progress-deliveries-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="9" class="text-center">
+                                Loading in progress deliveries...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Delivered Deliveries Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="delivered"
+                  role="tabpanel"
+                  aria-labelledby="delivered-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Delivered Deliveries</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Agent</th>
+                              <th>Delivery Number</th>
+                              <th>Order ID</th>
+                              <th>Customer</th>
+                              <th>Items</th>
+                              <th>Location</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="delivered-deliveries-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="9" class="text-center">
+                                Loading delivered deliveries...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Postponed Deliveries Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="postponed"
+                  role="tabpanel"
+                  aria-labelledby="postponed-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Postponed Deliveries</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Agent</th>
+                              <th>Delivery Number</th>
+                              <th>Order ID</th>
+                              <th>Customer</th>
+                              <th>Items</th>
+                              <th>Location</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="postponed-deliveries-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="9" class="text-center">
+                                Loading postponed deliveries...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cancelled Deliveries Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="cancelled"
+                  role="tabpanel"
+                  aria-labelledby="cancelled-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Cancelled Deliveries</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Agent</th>
+                              <th>Delivery Number</th>
+                              <th>Order ID</th>
+                              <th>Customer</th>
+                              <th>Items</th>
+                              <th>Location</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="cancelled-deliveries-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="9" class="text-center">
+                                Loading cancelled deliveries...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </main>
       <!--end::App Main-->
+
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
