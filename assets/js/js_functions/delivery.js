@@ -346,12 +346,6 @@ function displayDeliveries(deliveries, tableId) {
     // Construire le HTML de la ligne
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>
-        <div class="d-flex align-items-center">
-          <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover me-2" width="37" height="37" />
-          <span>Agent de livraison</span>
-        </div>
-      </td>
       <td><span class="delivery-number">${deliveryNumber}</span></td>
       <td><span class="order-id">${orderId}</span></td>
       <td><span class="customer-name">${delivery.clientInfo.prenom} ${delivery.clientInfo.nom}</span></td>
@@ -931,29 +925,92 @@ function displayDeliveryDetails(delivery) {
     // Fallback if no items are found
     console.warn("No items found in delivery order");
   }
-
   // Get customer details
-  const customerName = `${delivery.clientInfo.prenom} ${delivery.clientInfo.nom}`;
-  let customerEmail = "N/A";
-  let customerPhone = "N/A";
-  let customerAddress = delivery.deliveryAdresse || "N/A";
+  const firstName = delivery.clientInfo?.prenom || "";
+  const lastName = delivery.clientInfo?.nom || "";
+  const customerName =
+    firstName && lastName
+      ? `${firstName} ${lastName}`.trim()
+      : "Unknown Customer";
+  let customerEmail = delivery.idClient?.email || "N/A";
+  let customerPhone = delivery.idClient?.phoneNumber || "N/A";
 
-  // Try to get more detailed customer info if available
-  if (delivery.idClient) {
-    if (typeof delivery.idClient === "object") {
-      customerEmail = delivery.idClient.email || "N/A";
-      customerPhone = delivery.idClient.phoneNumber || "N/A";
+  // Get shipping details
+  let shippingDetails = {};
 
-      // If we have more detailed address info
-      if (delivery.idClient.shippingInfo) {
-        const info = delivery.idClient.shippingInfo;
-        customerAddress = `${info.address || ""}, ${info.city || ""}, ${info.governorate || ""}, ${info.postCode || ""}`;
-      }
+  // First try to get shipping details from deliveryAdresse
+  if (delivery.deliveryAdresse) {
+    const addressParts = delivery.deliveryAdresse
+      .split(",")
+      .map((part) => part.trim());
+    if (addressParts.length >= 3) {
+      shippingDetails = {
+        address: addressParts[0] || "",
+        city: addressParts[1] || "",
+        governorate: addressParts[2] || "",
+        postCode: addressParts[3] || "",
+      };
+    } else {
+      shippingDetails = {
+        address: delivery.deliveryAdresse,
+      };
     }
   }
 
-  // Split address into parts for display
-  const addressParts = customerAddress.split(",").map((part) => part.trim());
+  // Then check if client has shipping info in client object (higher priority)
+  if (delivery.idClient && typeof delivery.idClient === "object") {
+    // Check for shippingInfo in the client model
+    if (delivery.idClient.shippingInfo) {
+      console.log(
+        "Found shipping info in client:",
+        delivery.idClient.shippingInfo
+      );
+
+      const clientShippingInfo = delivery.idClient.shippingInfo;
+      shippingDetails = {
+        address: clientShippingInfo.address,
+        city: clientShippingInfo.city,
+        governorate: clientShippingInfo.governorate,
+        postCode: clientShippingInfo.postCode,
+        phone: clientShippingInfo.phone || customerPhone,
+      };
+    }
+    // Check for shipping addresses in the client model (as fallback)
+    else if (
+      delivery.idClient.shippingAddresses &&
+      delivery.idClient.shippingAddresses.length > 0
+    ) {
+      console.log(
+        "Found shipping addresses in client:",
+        delivery.idClient.shippingAddresses
+      );
+
+      // Get default shipping address or first one
+      const clientAddresses = delivery.idClient.shippingAddresses;
+      const defaultAddress =
+        clientAddresses.find((addr) => addr.isDefault) || clientAddresses[0];
+
+      shippingDetails = {
+        address: defaultAddress.address,
+        city: defaultAddress.city,
+        governorate: defaultAddress.governorate,
+        postCode: defaultAddress.postCode,
+        phone: defaultAddress.phone || customerPhone,
+      };
+    }
+  }
+
+  console.log("Final shipping details:", shippingDetails);
+
+  // Set shipping address components
+  const shippingAddress = shippingDetails.address || "No address provided";
+  const shippingCity = shippingDetails.city || "No city provided";
+  const shippingGovernorate =
+    shippingDetails.governorate || "No governorate provided";
+  const shippingPostCode =
+    shippingDetails.postCode || "No postal code provided";
+  const shippingPhone =
+    shippingDetails.phone || customerPhone || "No phone number provided";
 
   // Determine which action buttons to show based on status
   let actionButtons = "";
@@ -1150,8 +1207,7 @@ function displayDeliveryDetails(delivery) {
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-xl-3 col-lg-7">   
+      </div>      <div class="col-xl-3 col-lg-7">   
         <div class="card">
           <div class="card-header">
             <h4 class="card-title">Customer Details</h4>
@@ -1159,7 +1215,7 @@ function displayDeliveryDetails(delivery) {
           <div class="card-body">
             <div class="d-flex align-items-center gap-2">
               <img
-                src="../../assets/images/team_members/devoloper2.jpg"
+                src="${delivery.idClient?.profilePicture ? `/uploads/${delivery.idClient.profilePicture}` : "../../assets/images/team_members/devoloper2.jpg"}"
                 alt=""
                 class="rounded object-fit-cover" width="43" height="45"
               />
@@ -1168,37 +1224,21 @@ function displayDeliveryDetails(delivery) {
                 <a href="mailto:${customerEmail}" class="link-primary fw-medium">${customerEmail}</a>
               </div>
             </div>
+            
             <div class="d-flex justify-content-between mt-3">
               <h5 class="card-title">Contact Number</h5>
             </div>
-            <p class="mb-1">${customerPhone}</p>
+            <p class="mb-1">${shippingPhone}</p>
 
             <div class="d-flex justify-content-between mt-3">
               <h5 class="card-title">Shipping Address</h5>
             </div>
 
-            <div>
-              ${addressParts.map((part) => `<p class="mb-1">${part}</p>`).join("")}
-              <p class="mb-1">${customerPhone}</p>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <div class="mapouter">
-              <div class="gmap_canvas">
-                <iframe
-                  class="gmap_iframe rounded"
-                  width="100%"
-                  style="height: 283px"
-                  frameborder="0"
-                  scrolling="no"
-                  marginheight="0"
-                  marginwidth="0"
-                  src="https://maps.google.com/maps?width=1980&amp;height=400&amp;hl=en&amp;q=${encodeURIComponent(customerAddress)}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-                ></iframe>
-              </div>
+            <div>                
+              <p class="m-2"><strong>Address:</strong> ${shippingAddress}</p>
+              <p class="m-2"><strong>City:</strong> ${shippingCity}</p>
+              <p class="m-2"><strong>Governorate:</strong> ${shippingGovernorate}</p>
+              <p class="m-2"><strong>Postal Code:</strong> ${shippingPostCode}</p>
             </div>
           </div>
         </div>
