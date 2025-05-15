@@ -1109,13 +1109,12 @@ function generateCustomPDF() {
                 }
             </style>
         </head>
-        <body>
-            <div class="pdf-container">                <div class="pdf-header">                    <div class="logo-container">
-                        <img src="${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.logo || "../../assets/images/dashboard/shop-logo.jpg" : "../../assets/images/dashboard/shop-logo.jpg"}" class="logo" alt="Shop Logo">
+        <body>            <div class="pdf-container">                <div class="pdf-header">                    <div class="logo-container">
+                        <img src="${filteredData.length > 0 && filteredData[0].shop && filteredData[0].shop.shopLogo ? `http://localhost:3000/uploads/${filteredData[0].shop.shopLogo}` : "../../assets/images/dashboard/shop-logo.jpg"}" class="logo" alt="Shop Logo">
                         <div class="company-info">
-                            <h1>${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.name || "Abroud Shop" : "Abroud Shop"}</h1>
-                            <p>${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.address || "Hamman sousse, Sousse" : "Hamman sousse, Sousse"}</p>
-                            <p>${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.email || "abShop@gmail.com" : "abShop@gmail.com"} | ${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.phone || "+216 26 788 694" : "+216 26 788 694"}</p>
+                            <h1>${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.shopName || "Abroud Shop" : "Abroud Shop"}</h1>
+                            <p>${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.adresse || "Hamman sousse, Sousse" : "Hamman sousse, Sousse"}</p>
+                            <p>Téléphone: ${filteredData.length > 0 && filteredData[0].shop ? filteredData[0].shop.shop_phone || "+216 26 788 694" : "+216 26 788 694"}</p>
                         </div>
                     </div>
                     <div class="invoice-info">
