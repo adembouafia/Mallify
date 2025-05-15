@@ -400,16 +400,17 @@ function formatInvoicesData(apiInvoices) {
           quantity: 1,
         },
       ];
+    } // Format status based on invoice.statutPaiement
+    let status;
+    if (invoice.statutPaiement === "paid") {
+      status = "paid";
+    } else {
+      status = "unpaid";
     }
 
-    // Format status
-    let status = "pending";
-    if (invoice.statutPaiement === "payé") {
-      status = "completed";
-    } else if (order.orderStatus === "cancelled") {
+    // Override with order status if cancelled
+    if (order.orderStatus === "cancelled") {
       status = "cancelled";
-    } else if (order.orderStatus === "accepted") {
-      status = "pending";
     } // Get shop data
     console.log("Complete order object:", order);
     const shop = order.shop || {};
@@ -430,8 +431,9 @@ function formatInvoicesData(apiInvoices) {
       formattedShop: shopData,
     }); // Return formatted invoice
     return {
-      invoiceId: invoice._id.substring(0, 8)  || "N/A",
-      orderId: invoice.idCommande?._id.substring(0, 8)  || invoice.idCommande || "N/A",
+      invoiceId: invoice._id.substring(0, 8) || "N/A",
+      orderId:
+        invoice.idCommande?._id.substring(0, 8) || invoice.idCommande || "N/A",
       date: new Date(invoice.dateFacture),
       customer: customerData,
       shop: shopData,
