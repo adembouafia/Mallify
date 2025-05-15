@@ -205,10 +205,26 @@ exports.getOrderById = async (req, res) => {
 exports.deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);
+    const delivery = await Delivery.findOneAndDelete({
+      idCommande: req.params.id,
+    });
+    if (delivery) {
+      console.log("Livraison supprimée avec succès");
+    } else {
+      console.log("Aucune livraison trouvée pour cette commande");
+    }
 
-    if (!order) {
+    const invoice = await Invoice.findOneAndDelete({
+      idCommande: req.params.id,
+    });
+    if (invoice) {
+      console.log("Facture supprimée avec succès");
+    } else {
+      console.log("Aucune facture trouvée pour cette commande");
+    }
+    if (!order && !delivery && !invoice) {
       return res.status(404).json({
-        message: "Commande non trouvée",
+        message: "Aucune commande, livraison ou facture trouvée",
       });
     }
 
