@@ -125,6 +125,8 @@ function isTokenExpired(tokenPayload) {
   const currentTime = Math.floor(Date.now() / 1000);
   return tokenPayload.exp < currentTime;
 }
+
+
 function updateUIWithUserData(userData) {
   if (!userData) {
     console.error("No user data provided");
@@ -239,6 +241,8 @@ function updateUIWithUserData(userData) {
 
   console.log("Profile updated with user data:", firstName, lastName, email);
 }
+
+
 function showContent(contentId) {
   const contentSections = {
     "profile-info": "profile-info-content",
@@ -273,6 +277,7 @@ function showContent(contentId) {
     activeMenuItem.classList.add("active");
   }
 }
+
 
 function loadWishlistFromDatabase() {
   const wishlistContainer = document.getElementById("wishlist-container");
@@ -399,6 +404,7 @@ function loadWishlistFromDatabase() {
 
   xhr.send();
 }
+
 
 function createProductCard(item) {
   const card = document.createElement("div");
@@ -695,6 +701,8 @@ function initializeProfileEditModal() {
     });
   }
 }
+
+
 function getTokenPayload() {
   try {
     const token = localStorage.getItem("token");
@@ -709,6 +717,8 @@ function getTokenPayload() {
     return null;
   }
 }
+
+
 function updateUIAfterProfileUpdate(firstname, lastname, email, modalEl) {
   const displayName = document.getElementById("profileName");
   const displayEmail = document.getElementById("profileEmail");
@@ -744,6 +754,7 @@ function updateUIAfterProfileUpdate(firstname, lastname, email, modalEl) {
     console.error("Error updating userData in localStorage:", e);
   }
 }
+
 
 function loadUserProfileData() {
   const userId =
@@ -854,6 +865,8 @@ function setupLogout() {
     });
   }
 }
+
+
 function initializeProfileImageUpload() {
   const imageInput = document.getElementById("profileImageInput");
   const profileImage = document.getElementById("profileImage");
@@ -1850,7 +1863,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-//change password function
+
 // Change password function
 function initializePasswordChange() {
   const passwordForm = document.querySelector(".password-form");
@@ -2026,6 +2039,7 @@ function showToast(title, message, type = "info") {
     alert(`${title}: ${message}`);
   }
 }
+
 
 // Call the initialization function when the DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
