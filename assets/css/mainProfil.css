@@ -579,6 +579,26 @@ font-size: 1.1rem;
   font-weight: 600;
   font-size: 1rem;
 }
+#my-orders-content .cancellation-reason {
+  padding: 1rem 1.5rem;
+  background-color: rgba(239, 68, 68, 0.05);
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  border-radius: 15px;
+}
+
+#my-orders-content .reason-label {
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: 0.25rem;
+}
+
+#my-orders-content .reason-text {
+  color: #64748b;
+  font-style: italic;
+}
+
 #my-orders-content .order-footer {
   display: flex;
   justify-content: flex-end;
