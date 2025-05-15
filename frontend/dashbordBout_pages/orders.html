@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -36,74 +36,79 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
       }
-      
+
       .order-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
       }
-      
+
       .info-box {
         border-radius: 10px;
         overflow: hidden;
         transition: all 0.3s ease;
       }
-      
+
       .info-box:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
       }
-      
+
       .info-box-icon {
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      
+
       .info-box-content {
         padding: 10px;
       }
-      
+
       .info-box-number {
         font-size: 1.5rem;
         font-weight: 600;
       }
-      
+
       .status-badge {
         padding: 5px 10px;
         border-radius: 20px;
         font-size: 0.75rem;
         font-weight: 600;
       }
-      
+
       .status-shipped {
         background-color: rgba(16, 185, 129, 0.1);
         color: #10b981;
       }
 
       .status-accepted {
-        background-color: rgba(37, 99, 235, 0.15); 
-        color: #2563eb; 
+        background-color: rgba(37, 99, 235, 0.15);
+        color: #2563eb;
       }
-      
+
       .status-pending {
         background-color: rgba(245, 158, 11, 0.1);
         color: #f59e0b;
       }
-      
+
       .status-cancelled {
         background-color: rgba(239, 68, 68, 0.1);
         color: #ef4444;
       }
-      
+
+      .status-postponed {
+        background-color: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+
       .table-hover tbody tr {
         transition: all 0.2s ease;
       }
-      
+
       .table-hover tbody tr:hover {
         background-color: rgba(0, 0, 0, 0.02);
         transform: scale(1.01);
       }
-      
+
       .btn-action {
         width: 32px;
         height: 32px;
@@ -114,15 +119,15 @@
         border-radius: 6px;
         transition: all 0.2s ease;
       }
-      
+
       .btn-action:hover {
         transform: translateY(-2px);
       }
-      
+
       .search-container {
         position: relative;
       }
-      
+
       .search-container .bi-search {
         position: absolute;
         left: 10px;
@@ -130,47 +135,47 @@
         transform: translateY(-50%);
         color: #9ca3af;
       }
-      
+
       .search-input {
         padding-left: 35px;
         border-radius: 20px;
       }
-      
+
       .page-title {
         color: #4f46e5;
         font-weight: 600;
       }
-      
+
       .order-id {
         font-weight: 600;
         color: #4f46e5;
       }
-      
+
       .customer-name {
         font-weight: 500;
       }
-      
+
       .price-amount {
         font-weight: 600;
       }
-      
+
       .items-count {
         background-color: #f3f4f6;
         border-radius: 20px;
         padding: 2px 8px;
         font-size: 0.85rem;
       }
-      
+
       .delivery-number {
         font-size: 0.85rem;
         color: #6b7280;
       }
-      
+
       .date-text {
         color: #6b7280;
         font-size: 0.85rem;
       }
-      
+
       /* Styles pour les cartes statistiques */
       .stat-card {
         border-radius: 10px;
@@ -179,37 +184,37 @@
         margin-bottom: 20px;
         transition: all 0.3s ease;
       }
-      
+
       .stat-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
       }
-      
+
       .stat-card.primary {
         background-color: rgba(79, 70, 229, 0.1);
         border-left: 4px solid #4f46e5;
       }
-      
+
       .stat-card.success {
         background-color: rgba(16, 185, 129, 0.1);
         border-left: 4px solid #10b981;
       }
-      
+
       .stat-card.warning {
         background-color: rgba(245, 158, 11, 0.1);
         border-left: 4px solid #f59e0b;
       }
-      
+
       .stat-card.danger {
         background-color: rgba(239, 68, 68, 0.1);
         border-left: 4px solid #ef4444;
       }
-      
+
       .stat-card-content {
         display: flex;
         align-items: center;
       }
-      
+
       .stat-card-icon {
         width: 48px;
         height: 48px;
@@ -220,49 +225,49 @@
         margin-right: 15px;
         font-size: 1.5rem;
       }
-      
+
       .stat-card.primary .stat-card-icon {
         background-color: #4f46e5;
         color: white;
       }
-      
+
       .stat-card.success .stat-card-icon {
         background-color: #10b981;
         color: white;
       }
-      
+
       .stat-card.warning .stat-card-icon {
         background-color: #f59e0b;
         color: white;
       }
-      
+
       .stat-card.danger .stat-card-icon {
         background-color: #ef4444;
         color: white;
       }
-      
+
       .stat-card-number {
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 5px;
         line-height: 1;
       }
-      
+
       .stat-card-title {
         font-size: 0.9rem;
         color: #6b7280;
         margin-bottom: 0;
       }
-      
+
       /* Styles pour les onglets */
       .dashboard-tabs {
         margin-bottom: 20px;
       }
-      
+
       .dashboard-tabs .nav-tabs {
         border-bottom: 1px solid #e5e7eb;
       }
-      
+
       .dashboard-tabs .nav-link {
         border: none;
         padding: 12px 20px;
@@ -270,35 +275,35 @@
         font-weight: 500;
         border-bottom: 3px solid transparent;
       }
-      
+
       .dashboard-tabs .nav-link.active {
         color: #4f46e5;
         background-color: transparent;
         border-bottom: 3px solid #4f46e5;
       }
-      
+
       .dashboard-tabs .nav-link:hover:not(.active) {
         border-bottom: 3px solid #e5e7eb;
       }
-      
+
       .dashboard-tabs .badge {
         margin-left: 5px;
       }
-      
+
       /* Styles pour l'en-tête du tableau de bord */
       .dashboard-header {
         padding: 20px 0;
         background-color: #f9fafb;
         margin-bottom: 20px;
       }
-      
+
       .dashboard-title {
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 5px;
         color: #111827;
       }
-      
+
       .dashboard-search {
         max-width: 400px;
         margin-left: auto;
@@ -313,14 +318,16 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
         height: 100%;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
-      
+
       .stat-card-new:hover {
         transform: translateY(-5px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
-      
+
       .stat-icon-circle {
         width: 50px;
         height: 50px;
@@ -331,43 +338,54 @@
         margin-right: 15px;
         font-size: 1.5rem;
       }
-      
+
       .stat-content {
         flex: 1;
       }
-      
+
       .stat-number {
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 0;
         line-height: 1.2;
       }
-      
+
       .stat-label {
         color: #6b7280;
         margin-bottom: 0;
         font-size: 0.9rem;
       }
-      
+
       /* Couleurs de fond pour les cartes statistiques */
       .stat-card-new.total {
         background-color: #f3f4ff;
       }
-      
+
       .stat-card-new.completed {
         background-color: #ecfdf5;
       }
-      
+
       .stat-card-new.accepted {
         background-color: #f0fdff;
       }
-      
+
       .stat-card-new.pending {
         background-color: #fff7ed;
       }
-      
+
       .stat-card-new.cancelled {
         background-color: #fef2f2;
+      }
+
+      .status-shipped {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+
+      /* Style pour le badge bg-purple */
+      .badge.bg-purple {
+        background-color: #8b5cf6;
+        color: white;
       }
     </style>
   </head>
@@ -453,12 +471,16 @@
                 </li>
 
                 <li class="user-footer">
-                  <a href="Settings.html" class="btn btn-default btn-flat">Settings </a>
-                  <a href="#" class="btn btn-default btn-flat float-end" onclick="handleLogout()"
+                  <a href="Settings.html" class="btn btn-default btn-flat"
+                    >Settings
+                  </a>
+                  <a
+                    href="#"
+                    class="btn btn-default btn-flat float-end"
+                    onclick="handleLogout()"
                     >Sign out</a
                   >
                 </li>
-                
               </ul>
             </li>
           </ul>
@@ -494,10 +516,7 @@
                 </a>
               </li>
               <li class="nav-item" id="manageModerators" style="display: none">
-                <a
-                  href="moderators.html"
-                  class="nav-link"
-                >
+                <a href="moderators.html" class="nav-link">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
                     Moderators
@@ -506,10 +525,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="products.html"
-                  class="nav-link"
-                >
+                <a href="products.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Products
@@ -521,10 +537,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="orders.html"
-                  class="nav-link  active"
-                >
+                <a href="orders.html" class="nav-link active">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Orders
@@ -565,10 +578,7 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a
-                  href="invoice.html"
-                  class="nav-link"
-                >
+                <a href="invoice.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Invoice
@@ -580,10 +590,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="reports.html"
-                  class="nav-link"
-                >
+                <a href="reports.html" class="nav-link">
                   <i class="nav-icon bi bi-tree-fill"></i>
                   <p>
                     Reports
@@ -598,7 +605,7 @@
         <!--end::Sidebar Wrapper-->
       </aside>
       <!--end::Sidebar-->
-      
+
       <!--begin::App Main-->
       <main class="app-main">
         <div class="dashboard-header">
@@ -608,31 +615,51 @@
                 <h1 class="dashboard-title">Orders Management</h1>
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                    <li class="breadcrumb-item">
+                      <a href="index.html"
+                        ><i class="bi bi-house-door"></i> Home</a
+                      >
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                      Orders
+                    </li>
                   </ol>
                 </nav>
               </div>
               <div class="col-lg-6">
                 <div class="dashboard-actions">
                   <div class="input-group dashboard-search">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control search-input" placeholder="Search orders...">
-                    <button class="btn btn-primary search-button" type="button">Search</button>
+                    <span class="input-group-text"
+                      ><i class="bi bi-search"></i
+                    ></span>
+                    <input
+                      type="text"
+                      class="form-control search-input"
+                      placeholder="Search orders..."
+                    />
+                    <button class="btn btn-primary search-button" type="button">
+                      Search
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      
+
         <!-- Dashboard Stats -->
         <div class="dashboard-stats">
-          <div class="container-fluid">
+          <div class="container-fluid mb-4">
             <div class="row">
               <div class="col">
-                <div class="stat-card-new" style="border-left: 4px solid #6366f1;">
-                  <div class="stat-icon-circle" style="background-color: #6366f1;">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #6366f1"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #6366f1"
+                  >
                     <i class="bi bi-cart text-white"></i>
                   </div>
                   <div class="stat-content">
@@ -642,8 +669,14 @@
                 </div>
               </div>
               <div class="col">
-                <div class="stat-card-new" style="border-left: 4px solid #10b981;">
-                  <div class="stat-icon-circle" style="background-color: #10b981;">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #10b981"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #10b981"
+                  >
                     <i class="bi bi-check-circle text-white"></i>
                   </div>
                   <div class="stat-content">
@@ -653,8 +686,14 @@
                 </div>
               </div>
               <div class="col">
-                <div class="stat-card-new" style="border-left: 4px solid #0dcaf0;">
-                  <div class="stat-icon-circle" style="background-color: #0dcaf0;">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #0dcaf0"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #0dcaf0"
+                  >
                     <i class="bi bi-check2-all text-white"></i>
                   </div>
                   <div class="stat-content">
@@ -664,8 +703,31 @@
                 </div>
               </div>
               <div class="col">
-                <div class="stat-card-new" style="border-left: 4px solid #f59e0b;">
-                  <div class="stat-icon-circle" style="background-color: #f59e0b;">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #3b82f6"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #3b82f6"
+                  >
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h2 class="stat-number shipped-orders-count">0</h2>
+                    <p class="stat-label">Shipped</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #f59e0b"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #f59e0b"
+                  >
                     <i class="bi bi-hourglass-split text-white"></i>
                   </div>
                   <div class="stat-content">
@@ -675,8 +737,14 @@
                 </div>
               </div>
               <div class="col">
-                <div class="stat-card-new" style="border-left: 4px solid #ef4444;">
-                  <div class="stat-icon-circle" style="background-color: #ef4444;">
+                <div
+                  class="stat-card-new"
+                  style="border-left: 4px solid #ef4444"
+                >
+                  <div
+                    class="stat-icon-circle"
+                    style="background-color: #ef4444"
+                  >
                     <i class="bi bi-x-circle text-white"></i>
                   </div>
                   <div class="stat-content">
@@ -687,241 +755,491 @@
               </div>
             </div>
           </div>
-        </div>
-      
-        <!-- Dashboard Tabs -->
-        <div class="dashboard-tabs">
-          <div class="container-fluid">
-            <ul class="nav nav-tabs" id="orderTabs" role="tablist">
-              <li class="nav-item">
-                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" aria-controls="all" aria-selected="true">
-                  <i class="bi bi-grid"></i> All Orders <span class="badge bg-primary all-orders-badge">0</span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" aria-controls="pending" aria-selected="false">
-                  <i class="bi bi-hourglass-split"></i> Pending <span class="badge bg-warning pending-orders-badge">0</span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" aria-controls="accepted" aria-selected="false">
-                  <i class="bi bi-check2-all"></i> Accepted <span class="badge bg-info accepted-orders-badge">0</span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" aria-controls="completed" aria-selected="false">
-                  <i class="bi bi-check-circle"></i> Completed <span class="badge bg-success completed-orders-badge">0</span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" aria-controls="cancelled" aria-selected="false">
-                  <i class="bi bi-x-circle"></i> Cancelled <span class="badge bg-danger cancelled-orders-badge">0</span>
-                </button>
-              </li>
-              <li class="ms-auto">
-                <div class="tab-actions">
-                  <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle sort-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-sort-down"></i> Sort by
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item sort-option" data-sort="newest" href="#">Newest First</a></li>
-                      <li><a class="dropdown-item sort-option" data-sort="oldest" href="#">Oldest First</a></li>
-                      <li><a class="dropdown-item sort-option" data-sort="high" href="#">Amount (High to Low)</a></li>
-                      <li><a class="dropdown-item sort-option" data-sort="low" href="#">Amount (Low to High)</a></li>
-                    </ul>
+
+          <!-- Dashboard Tabs -->
+          <div class="dashboard-tabs">
+            <div class="container-fluid">
+              <ul class="nav nav-tabs" id="orderTabs" role="tablist">
+                <li class="nav-item">
+                  <button
+                    class="nav-link active"
+                    id="all-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#all"
+                    type="button"
+                    aria-controls="all"
+                    aria-selected="true"
+                  >
+                    <i class="bi bi-grid"></i> All Orders
+                    <span class="badge bg-primary all-orders-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="pending-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#pending"
+                    type="button"
+                    aria-controls="pending"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-hourglass-split"></i> Pending
+                    <span class="badge bg-warning pending-orders-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="accepted-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#accepted"
+                    type="button"
+                    aria-controls="accepted"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-check2-all"></i> Accepted
+                    <span class="badge bg-info accepted-orders-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="shipped-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#shipped"
+                    type="button"
+                    aria-controls="shipped"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-truck"></i> Shipped
+                    <span class="badge bg-primary shipped-orders-badge">0</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="completed-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#completed"
+                    type="button"
+                    aria-controls="completed"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-check-circle"></i> Completed
+                    <span class="badge bg-success completed-orders-badge"
+                      >0</span
+                    >
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="cancelled-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#cancelled"
+                    type="button"
+                    aria-controls="cancelled"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-x-circle"></i> Cancelled
+                    <span class="badge bg-danger cancelled-orders-badge"
+                      >0</span
+                    >
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    id="postponed-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#postponed"
+                    type="button"
+                    aria-controls="postponed"
+                    aria-selected="false"
+                  >
+                    <i class="bi bi-calendar2-plus"></i> Postponed
+                    <span class="badge bg-purple postponed-orders-badge"
+                      >0</span
+                    >
+                  </button>
+                </li>
+                <li class="ms-auto">
+                  <div class="tab-actions">
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-outline-secondary dropdown-toggle sort-dropdown"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sort-down"></i> Sort by
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="newest"
+                            href="#"
+                            >Newest First</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="oldest"
+                            href="#"
+                            >Oldest First</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="high"
+                            href="#"
+                            >Amount (High to Low)</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item sort-option"
+                            data-sort="low"
+                            href="#"
+                            >Amount (Low to High)</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      
-        <!-- Dashboard Content -->
-        <div class="dashboard-content">
-          <div class="container-fluid">
-            <div class="tab-content" id="orderTabsContent">
-              <!-- All Orders Tab -->
-              <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
-                <div class="card order-card shadow-sm">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">All Orders</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Items</th>
-                            <th>Delivery Number</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody id="all-orders-table">
-                          <!-- Les données seront chargées dynamiquement ici -->
-                          <tr>
-                            <td colspan="8" class="text-center">Loading orders...</td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+          <!-- Dashboard Content -->
+          <div class="dashboard-content">
+            <div class="container-fluid">
+              <div class="tab-content" id="orderTabsContent">
+                <!-- All Orders Tab -->
+                <div
+                  class="tab-pane fade show active"
+                  id="all"
+                  role="tabpanel"
+                  aria-labelledby="all-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">All Orders</h5>
                     </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                      <div class="pagination-info">
-                        Showing 0 to 0 of 0 entries
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="all-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
-                      <nav aria-label="Orders pagination">
-                        <ul class="pagination pagination-sm mb-0">
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                              <i class="bi bi-chevron-left"></i>
-                            </a>
-                          </li>
-                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item">
-                            <a class="page-link" href="#">
-                              <i class="bi bi-chevron-right"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
+
+                      <div
+                        class="d-flex justify-content-between align-items-center mt-3"
+                      >
+                        <div class="pagination-info">
+                          Showing 0 to 0 of 0 entries
+                        </div>
+                        <nav aria-label="Orders pagination">
+                          <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled">
+                              <a
+                                class="page-link"
+                                href="#"
+                                tabindex="-1"
+                                aria-disabled="true"
+                              >
+                                <i class="bi bi-chevron-left"></i>
+                              </a>
+                            </li>
+                            <li class="page-item active">
+                              <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="#">
+                                <i class="bi bi-chevron-right"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-      
-              <!-- Pending Orders Tab -->
-              <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-                <div class="card order-card shadow-sm">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Pending Orders</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Items</th>
-                            <th>Delivery Number</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody id="pending-orders-table">
-                          <!-- Les données seront chargées dynamiquement ici -->
-                          <tr>
-                            <td colspan="8" class="text-center">Loading pending orders...</td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                <!-- Pending Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="pending"
+                  role="tabpanel"
+                  aria-labelledby="pending-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Pending Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="pending-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading pending orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-      
-              <!-- Accepted Orders Tab -->
-              <div class="tab-pane fade" id="accepted" role="tabpanel" aria-labelledby="accepted-tab">
-                <div class="card order-card shadow-sm">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Accepted Orders</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Items</th>
-                            <th>Delivery Number</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody id="accepted-orders-table">
-                          <!-- Les données seront chargées dynamiquement ici -->
-                          <tr>
-                            <td colspan="8" class="text-center">Loading accepted orders...</td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                <!-- Accepted Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="accepted"
+                  role="tabpanel"
+                  aria-labelledby="accepted-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Accepted Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="accepted-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading accepted orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-      
-              <!-- Completed Orders Tab -->
-              <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                <div class="card order-card shadow-sm">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Completed Orders</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Items</th>
-                            <th>Delivery Number</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody id="completed-orders-table">
-                          <!-- Les données seront chargées dynamiquement ici -->
-                          <tr>
-                            <td colspan="8" class="text-center">Loading completed orders...</td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                <!-- Shipped Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="shipped"
+                  role="tabpanel"
+                  aria-labelledby="shipped-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Shipped Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="shipped-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading shipped orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-      
-              <!-- Cancelled Orders Tab -->
-              <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
-                <div class="card order-card shadow-sm">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Cancelled Orders</h5>
+
+                <!-- Completed Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="completed"
+                  role="tabpanel"
+                  aria-labelledby="completed-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Completed Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="completed-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading completed orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Items</th>
-                            <th>Delivery Number</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody id="cancelled-orders-table">
-                          <!-- Les données seront chargées dynamiquement ici -->
-                          <tr>
-                            <td colspan="8" class="text-center">Loading cancelled orders...</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                </div>
+
+                <!-- Cancelled Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="cancelled"
+                  role="tabpanel"
+                  aria-labelledby="cancelled-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Cancelled Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="cancelled-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading cancelled orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Postponed Orders Tab -->
+                <div
+                  class="tab-pane fade"
+                  id="postponed"
+                  role="tabpanel"
+                  aria-labelledby="postponed-tab"
+                >
+                  <div class="card order-card shadow-sm">
+                    <div
+                      class="card-header bg-white d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Postponed Orders</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Customer</th>
+                              <th>Total</th>
+                              <th>Items</th>
+                              <th>Delivery Number</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="postponed-orders-table">
+                            <!-- Les données seront chargées dynamiquement ici -->
+                            <tr>
+                              <td colspan="8" class="text-center">
+                                Loading postponed orders...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -931,7 +1249,7 @@
         </div>
       </main>
       <!--end::App Main-->
-      
+
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
@@ -970,9 +1288,7 @@
       integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
       crossorigin="anonymous"
     ></script>
-
     <script src="../../assets/js/js_functions/order-dash-vendor.js"></script>
-    <!-- Add this in the <head> or before your script tags -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../assets/js/js_functions/vendor-dash-home.js"></script>
     <script src="../../assets/js/js_functions/loadNotifications.js"></script>

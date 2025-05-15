@@ -4,6 +4,8 @@ const Order = require("../models/order.model");
 const Invoice = require("../models/invoice.model");
 const Shop = require("../models/shop.model");
 const Notification = require("../models/notification.model");
+const Client = require("../models/client.model");
+const Delivery = require("../models/delivery.model");
 
 exports.createOrder = async (req, res) => {
   const { idPanier } = req.body;
@@ -236,7 +238,7 @@ exports.deleteOrder = async (req, res) => {
 exports.updateStatusOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, refusalReason } = req.body;
 
     if (
       ![
@@ -245,19 +247,32 @@ exports.updateStatusOrder = async (req, res) => {
         "completed",
         "cancelled",
         "non_returned",
+        "shipped",
+        "postponed",
       ].includes(status)
     ) {
       return res.status(400).json({
         message:
-          "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled, non_returned",
+          "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled, non_returned, shipped, postponed",
       });
     }
 
+    // Si le statut est "cancelled", une raison doit être fournie
+    if (status === "cancelled" && !refusalReason) {
+      return res.status(400).json({
+        message: "Une raison de refus est requise pour annuler une commande",
+      });
+    }
     const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({
         message: "Commande non trouvée",
       });
+    }
+
+    // Si la commande est annulée, enregistrer la raison
+    if (status === "cancelled") {
+      order.refusalReason = refusalReason;
     }
 
     // Vérifier les autorisations (seul le vendeur de la boutique ou un modérateur/admin peut modifier)
@@ -399,6 +414,92 @@ exports.getOrdersByClientId = async (req, res) => {
     console.error("Error fetching client orders:", err);
     res.status(500).send({
       message: err.message || "Error retrieving orders for this client",
+    });
+  }
+};
+
+// Modifier la fonction makeToShip pour créer automatiquement une livraison
+exports.makeToShip = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    // Find the order
+    const order = await Order.findById(orderId).populate("idClient");
+    if (!order) {
+      return res.status(404).json({ message: "Commande non trouvée" });
+    }
+
+    // Check if order is in accepted status
+    if (order.orderStatus !== "accepted") {
+      return res.status(400).json({
+        message:
+          "La commande doit être acceptée avant de pouvoir être expédiée",
+        currentStatus: order.orderStatus,
+      });
+    }
+
+    // Create invoice if it doesn't exist
+    let invoice = await Invoice.findOne({ idCommande: orderId });
+    if (!invoice) {
+      invoice = new Invoice({
+        idCommande: orderId,
+        montantTotal: order.orderTotal,
+        statutPaiement: "unpaid",
+      });
+      await invoice.save();
+    }
+
+    // Update order status to shipped
+    order.orderStatus = "shipped";
+    await order.save();
+
+    // Créer automatiquement une livraison
+    const client = await Client.findById(order.idClient);
+    if (!client) {
+      return res.status(404).json({
+        message: "Client non trouvé",
+      });
+    }
+
+    // Déterminer l'adresse de livraison
+    let deliveryAddress = "";
+    if (client.shippingInfo && client.shippingInfo.address) {
+      deliveryAddress = `${client.shippingInfo.address}, ${client.shippingInfo.city}, ${client.shippingInfo.governorate}, ${client.shippingInfo.postCode}`;
+    } else if (client.shippingAddresses && client.shippingAddresses.length > 0) {
+      const defaultAddress = client.shippingAddresses.find((addr) => addr.isDefault) || client.shippingAddresses[0];
+      deliveryAddress = `${defaultAddress.address}, ${defaultAddress.city}, ${defaultAddress.governorate}, ${defaultAddress.postCode}`;
+    } else if (client.defaultShippingInfo) {
+      deliveryAddress = `${client.defaultShippingInfo.address}, ${client.defaultShippingInfo.city}, ${client.defaultShippingInfo.governorate}, ${client.defaultShippingInfo.postCode}`;
+    } else {
+      deliveryAddress = "Adresse non spécifiée";
+    }
+
+    // Créer la livraison
+    const newDelivery = new Delivery({
+      idCommande: orderId,
+      idClient: order.idClient,
+      deliveryAdresse: deliveryAddress,
+      deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Date de livraison estimée à 3 jours
+      statut: "InProgress",
+      clientInfo: {
+        nom: client.lastname,
+        prenom: client.firstname,
+      },
+    });
+
+    const savedDelivery = await newDelivery.save();
+
+    // Return success response with created data
+    res.status(200).json({
+      message: "Commande passée en statut expédiée et livraison créée",
+      order,
+      invoice,
+      delivery: savedDelivery,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Erreur lors du traitement de la commande",
+      error: err.message,
     });
   }
 };

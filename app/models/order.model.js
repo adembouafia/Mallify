@@ -1,16 +1,16 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 // Define a schema for the cart data to be embedded in orders
 const OrderCartItemSchema = new mongoose.Schema({
   productId: {
-    type: Object, 
+    type: Object,
     required: true,
   },
   quantity: {
     type: Number,
     default: 1,
   },
-})
+});
 
 const OrderCartDataSchema = new mongoose.Schema({
   clientId: {
@@ -22,7 +22,7 @@ const OrderCartDataSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-})
+});
 
 const orderSchema = new mongoose.Schema({
   idPanier: {
@@ -53,9 +53,24 @@ const orderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ['pending', 'accepted', 'completed', 'cancelled'],
-    default: 'pending'
-  }
-})
+    enum: [
+      "pending",
+      "accepted",
+      "completed",
+      "cancelled",
+      "shipped",
+      "postponed",
+    ],
+    default: "pending",
+  },
+  postponedDate: {
+    type: Date,
+    default: null,
+  },
+  refusalReason: {
+    type: String,
+    default: null,
+  },
+});
 
-module.exports = mongoose.model("Order", orderSchema)
+module.exports = mongoose.model("Order", orderSchema);

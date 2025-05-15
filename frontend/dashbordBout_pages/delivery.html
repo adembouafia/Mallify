@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -112,11 +112,16 @@
                 </li>
 
                 <li class="user-footer">
-                  <a href="Settings.html" class="btn btn-default btn-flat">Settings </a>
-                  <a href="#" class="btn btn-default btn-flat float-end" onclick="handleLogout()">Sign out</a
+                  <a href="Settings.html" class="btn btn-default btn-flat"
+                    >Settings
+                  </a>
+                  <a
+                    href="#"
+                    class="btn btn-default btn-flat float-end"
+                    onclick="handleLogout()"
+                    >Sign out</a
                   >
                 </li>
-                
               </ul>
             </li>
           </ul>
@@ -152,10 +157,7 @@
                 </a>
               </li>
               <li class="nav-item" id="manageModerators" style="display: none">
-                <a
-                  href="moderators.html"
-                  class="nav-link"
-                >
+                <a href="moderators.html" class="nav-link">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
                     Moderators
@@ -164,10 +166,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="products.html"
-                  class="nav-link"
-                >
+                <a href="products.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Products
@@ -179,10 +178,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="orders.html"
-                  class="nav-link"
-                >
+                <a href="orders.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Orders
@@ -223,10 +219,7 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a
-                  href="invoice.html"
-                  class="nav-link"
-                >
+                <a href="invoice.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Invoice
@@ -238,10 +231,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="reports.html"
-                  class="nav-link"
-                >
+                <a href="reports.html" class="nav-link">
                   <i class="nav-icon bi bi-tree-fill"></i>
                   <p>
                     Reports
@@ -259,220 +249,374 @@
       <!--begin::App Main-->
       <main class="app-main">
         <div class="container py-4 px-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white border-bottom-0 pb-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">All Deliveries</h4>
-                        <div>
-                            <button class="btn btn-sm btn-outline-secondary me-2">
-                                <i class="bi bi-filter"></i> Filter
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div class="pagination-info">
-                            Show <select class="form-select form-select-sm d-inline-block w-auto mx-2">
-                                <option>10</option>
-                                <option>25</option>
-                                <option>50</option>
-                                <option>100</option>
-                            </select> entries
-                        </div>
-                        <div class="input-group input-group-sm" style="width: 250px;">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <button class="btn btn-outline-secondary" type="button">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
+          <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom-0 pb-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">All Deliveries</h4>
+                <div>
+                  <button class="btn btn-sm btn-outline-secondary me-2">
+                    <i class="bi bi-filter"></i> Filter
+                  </button>
                 </div>
-                <div class="card-body pt-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 text-center">
-                            <thead>
-                                <tr>
-                                    <th>Agent avatar</th>
-                                    <th>Delivery Agent</th>
-                                    <th>Delivery Number</th>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Location</th>
-                                    <th>Total</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="align-middle">
-                                <tr>
-                                    <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                    <td>Koussay Abroud</td>
-                                    <td>#D-57837678</td>
-                                    <td>#583488/80</td>
-                                    <td>Gail C. Anderson</td>
-                                    <td>4</td>
-                                    <td>Sousse</td>
-                                    <td>$1,230.00</td>
-                                    <td>
-                                      <a href="#" class="btn btn-sm btn-outline-success me-1 action-btn" title="Make as Delivered">
-                                        <i class="bi bi-check-circle"></i>
-                                      </a>                                     
-                                      <a href="#" class="btn btn-sm btn-outline-danger action-btn" title="Make as Cancelled">
-                                        <i class="bi bi-trash"></i>
-                                      </a>
-                                      <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1 action-btn" title="View Details">
-                                        <i class="bi bi-eye"></i>
-                                      </a> 
-                                    </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                                    
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                                      
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                                   
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                                
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                                     
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td> <img src="../../assets/images/dashboard/devoloper1.jpg" alt="avatar" class="rounded-circle object-fit-cover" width="37" height="37"></td>
-                                  <td>Koussay Abroud</td>
-                                  <td>#D-57837678</td>
-                                  <td>#583488/80</td>
-                                  <td>Gail C. Anderson</td>
-                                  <td>4</td>
-                                  <td>Sousse</td>
-                                  <td>$1,230.00</td>
-                                  <td>
-                                    <a href="#" class="btn btn-sm btn-outline-success me-1" title="Make as Delivered">
-                                      <i class="bi bi-check-circle"></i>
-                                    </a>                            
-                                    <a href="#" class="btn btn-sm btn-outline-danger" title="Make as Cancelled">
-                                      <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a href="detailsDelivery.html" class="btn btn-sm btn-outline-secondary me-1" title="View Details">
-                                      <i class="bi bi-eye"></i>
-                                    </a> 
-                                  </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div class="pagination-info">
-                            Showing 1 to 10 of 10 entries
-                        </div>
-                        <nav>
-                            <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+              </div>
+              <div
+                class="d-flex justify-content-between align-items-center mt-3"
+              >
+                <div class="pagination-info">
+                  Show
+                  <select
+                    class="form-select form-select-sm d-inline-block w-auto mx-2"
+                  >
+                    <option>10</option>
+                    <option>25</option>
+                    <option>50</option>
+                    <option>100</option>
+                  </select>
+                  entries
                 </div>
+                <div class="input-group input-group-sm" style="width: 250px">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                  />
+                  <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </div>
             </div>
+            <div class="card-body pt-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0 text-center">
+                  <thead>
+                    <tr>
+                      <th>Agent avatar</th>
+                      <th>Delivery Agent</th>
+                      <th>Delivery Number</th>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Items</th>
+                      <th>Location</th>
+                      <th>Total</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="align-middle">
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1 action-btn"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger action-btn"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1 action-btn"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <img
+                          src="../../assets/images/dashboard/devoloper1.jpg"
+                          alt="avatar"
+                          class="rounded-circle object-fit-cover"
+                          width="37"
+                          height="37"
+                        />
+                      </td>
+                      <td>Koussay Abroud</td>
+                      <td>#D-57837678</td>
+                      <td>#583488/80</td>
+                      <td>Gail C. Anderson</td>
+                      <td>4</td>
+                      <td>Sousse</td>
+                      <td>$1,230.00</td>
+                      <td>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-success me-1"
+                          title="Make as Delivered"
+                        >
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Make as Cancelled"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </a>
+                        <a
+                          href="detailsDelivery.html"
+                          class="btn btn-sm btn-outline-secondary me-1"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div
+                class="d-flex justify-content-between align-items-center mt-3"
+              >
+                <div class="pagination-info">Showing 1 to 10 of 10 entries</div>
+                <nav>
+                  <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                      <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">Next</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
       <!--end::App Main-->
@@ -509,10 +653,9 @@
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="../../assets/js/js_functions/shopAdmin.js"></script>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../assets/js/js_functions/vendor-dash-home.js"></script>
+    <script src="../../assets/js/js_functions/delivery.js"></script>
     <script src="../../assets/js/js_functions/loadNotifications.js"></script>
 
     <!--end::Script-->
