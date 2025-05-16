@@ -13910,8 +13910,8 @@ body:not(.app-loaded) .app-footer {
 }
 
 .dropdown-menu-lg {
-  min-width: 280px;
-  max-width: 300px;
+  min-width: 340px;
+  max-width: 340px;
   padding: 0;
 }
 .dropdown-menu-lg .dropdown-divider {

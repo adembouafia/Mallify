@@ -452,22 +452,18 @@ function showPostponeDialog(deliveryId) {
     html: `
       <label for="postpone-date" class="swal2-label">Nouvelle date de livraison</label>
       <input id="postpone-date" class="swal2-input" type="date" required>
-      <label for="postpone-time" class="swal2-label">Nouvelle heure de livraison</label>
-      <input id="postpone-time" class="swal2-input" type="time" required>
     `,
     showCancelButton: true,
     confirmButtonText: "Reporter",
     cancelButtonText: "Annuler",
     preConfirm: () => {
       const date = document.getElementById("postpone-date").value;
-      const time = document.getElementById("postpone-time").value;
-
-      if (!date || !time) {
+      if (!date) {
         Swal.showValidationMessage("Veuillez remplir tous les champs");
         return false;
       }
 
-      return `${date}T${time}`;
+      return `${date}`;
     },
   }).then((result) => {
     if (result.isConfirmed) {
