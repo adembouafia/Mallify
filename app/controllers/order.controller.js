@@ -507,7 +507,7 @@ exports.makeToShip = async (req, res) => {
       idCommande: orderId,
       idClient: order.idClient,
       deliveryAdresse: deliveryAddress,
-      deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Date de livraison estimée à 3 jours
+      deliveryDate: new Date(Date.now()),
       statut: "InProgress",
       clientInfo: {
         nom: client.lastname,

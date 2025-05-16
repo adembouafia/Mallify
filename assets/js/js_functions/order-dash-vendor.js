@@ -192,7 +192,7 @@ function displayOrderDetails(order) {
 
   // Calculate shipping date (3 days after order date)
   const shippingDate = new Date(orderDate);
-  shippingDate.setDate(shippingDate.getDate() + 3);
+  shippingDate.setDate(shippingDate.getDate() );
   const formattedShippingDate = shippingDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

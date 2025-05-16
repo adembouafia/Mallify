@@ -3,6 +3,74 @@ const Client = require("../models/client.model");
 const Order = require("../models/order.model");
 const Invoice = require("../models/invoice.model");
 
+// Vérifier et mettre à jour automatiquement les livraisons reportées
+exports.checkPostponedDeliveries = async () => {
+  try {
+    const currentDate = new Date();
+    
+    // Trouver toutes les commandes avec le statut "postponed" dont la date de report est atteinte ou dépassée
+    const postponedOrders = await Order.find({
+      orderStatus: "postponed",
+      postponedDate: { $lte: currentDate }
+    });
+    
+    console.log(`Nombre de commandes reportées à traiter: ${postponedOrders.length}`);
+    
+    if (postponedOrders.length === 0) {
+      return {
+        message: "Aucune livraison reportée à mettre à jour",
+        updated: 0
+      };
+    }
+    
+    let updatedCount = 0;
+    
+    // Pour chaque commande reportée dont la date est atteinte
+    for (const order of postponedOrders) {
+      // Trouver la livraison associée à cette commande
+      const delivery = await Delivery.findOne({ idCommande: order._id });
+      
+      if (delivery && delivery.statut === "Postponed") {
+        // Mettre à jour le statut de la livraison à "InProgress"
+        await delivery.editStatut("InProgress");
+        
+        // Mettre à jour le statut de la commande à "shipped"
+        await Order.findByIdAndUpdate(order._id, {
+          orderStatus: "shipped",
+          postponedDate: null // Réinitialiser la date de report
+        });
+        
+        updatedCount++;
+        console.log(`Livraison ${delivery._id} mise à jour automatiquement de Postponed à InProgress`);
+      }
+    }
+    
+    return {
+      message: `${updatedCount} livraisons reportées ont été mises à jour automatiquement`,
+      updated: updatedCount
+    };
+  } catch (err) {
+    console.error("Erreur lors de la vérification des livraisons reportées:", err);
+    return {
+      message: "Erreur lors de la vérification des livraisons reportées",
+      error: err.message
+    };
+  }
+};
+
+// Endpoint pour vérifier manuellement les livraisons reportées
+exports.checkPostponedDeliveriesEndpoint = async (req, res) => {
+  try {
+    const result = await exports.checkPostponedDeliveries();
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({
+      message: "Erreur lors de la vérification des livraisons reportées",
+      error: err.message
+    });
+  }
+};
+
 // Créer une nouvelle livraison
 exports.createDelivery = async (req, res) => {
   try {
@@ -50,6 +118,9 @@ exports.createDelivery = async (req, res) => {
 // Obtenir toutes les livraisons
 exports.getAllDeliveries = async (req, res) => {
   try {
+    // Vérifier d'abord les livraisons reportées
+    await exports.checkPostponedDeliveries();
+    
     // Utiliser populate avec plus de profondeur pour obtenir les détails de la commande
     const deliveries = await Delivery.find()
       .populate({

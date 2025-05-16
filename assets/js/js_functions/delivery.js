@@ -20,7 +20,42 @@ document.addEventListener("DOMContentLoaded", () => {
     // Refresh notifications every 5 minutes
     setInterval(loadNotifications, 5 * 60 * 1000);
   }
+  
+  // Vérifier les livraisons reportées au chargement de la page
+  checkPostponedDeliveries();
+  
+  // Vérifier les livraisons reportées toutes les 5 minutes
+  setInterval(checkPostponedDeliveries, 5 * 60 * 1000);
 });
+
+// Fonction pour vérifier les livraisons reportées
+function checkPostponedDeliveries() {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/delivery/check-postponed", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader(
+    "Authorization",
+    `Bearer ${localStorage.getItem("token")}`
+  );
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      console.log("Vérification des livraisons reportées:", response.message);
+      
+      // Si des livraisons ont été mises à jour, recharger les données
+      if (response.updated > 0) {
+        loadDeliveries();
+      }
+    }
+  };
+
+  xhr.onerror = () => {
+    console.error("Erreur lors de la vérification des livraisons reportées");
+  };
+
+  xhr.send();
+}
 
 // =============================================
 // DELIVERY DASHBOARD FUNCTIONS
@@ -326,7 +361,7 @@ function displayDeliveries(deliveries, tableId) {
     // Récupérer les informations de la commande associée
     const orderId = delivery.idCommande
       ? typeof delivery.idCommande === "object"
-        ? delivery.idCommande._id.substring(0, 8) 
+        ? delivery.idCommande._id.substring(0, 8)
         : delivery.idCommande
       : "N/A";
 
@@ -855,7 +890,7 @@ function displayDeliveryDetails(delivery) {
 
   // Calculate estimated delivery date (2 days after current delivery date)
   const estimatedDate = new Date(deliveryDate);
-  estimatedDate.setDate(estimatedDate.getDate() + 2);
+  estimatedDate.setDate(estimatedDate.getDate());
   const formattedEstimatedDate = estimatedDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

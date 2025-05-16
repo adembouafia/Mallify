@@ -9,4 +9,5 @@ module.exports = (app) => {
     app.get('/delivery/:id',auth,authorize('vendor', 'moderator', 'superAdmin', 'admin'),delivery.getDeliveryById);
     app.put('/delivery/statut/:id',auth,authorize('vendor', 'moderator', 'admin', 'superAdmin'),delivery.updateDeliveryStatut);
     app.delete('/delivery/delete/:id',auth,authorize('vendor' , 'moderator'),delivery.deleteDelivery);
+    app.get('/delivery/check-postponed',auth,authorize('vendor', 'moderator', 'admin', 'superAdmin'),delivery.checkPostponedDeliveriesEndpoint);
 };
