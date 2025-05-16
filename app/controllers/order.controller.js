@@ -313,7 +313,7 @@ exports.updateStatusOrder = async (req, res) => {
           deliveryStatus = "Cancelled";
           break;
         case "postponed":
-          deliveryStatus = "Delayed";
+          deliveryStatus = "Postponed";
           break;
         default:
           // Garder le statut actuel pour les autres cas
