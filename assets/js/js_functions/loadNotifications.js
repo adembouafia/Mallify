@@ -120,8 +120,11 @@ function showNotifications(notifications) {
         <small class="text-muted">${relativeDate(date)}</small>
       </div>
       <div class="notification-actions">
-        <button class="btn btn-sm btn-link mark-read-btn" data-id="${n._id}">
+        <button class="btn btn-sm btn-link mark-read-btn" data-id="${n._id}" title="Marquer comme lu">
           <i class="bi bi-check-circle"></i>
+        </button>
+        <button class="btn btn-sm btn-link delete-notification-btn" data-id="${n._id}" title="Supprimer">
+          <i class="bi bi-trash text-danger"></i>
         </button>
       </div>
     `
@@ -139,7 +142,7 @@ function setupListeners() {
         loadNotifications()
         toast("Toutes les notifications ont été marquées comme lues", "success")
       },
-      () => toast("Erreur lors de l’opération", "error"),
+      () => toast("Erreur lors de l'opération", "error"),
     )
   })
 
@@ -148,9 +151,10 @@ function setupListeners() {
   })
 
   notificationList.addEventListener("click", (e) => {
-    const btn = e.target.closest(".mark-read-btn")
-    if (btn) {
-      const id = btn.dataset.id
+    // Gestion du bouton "marquer comme lu"
+    const readBtn = e.target.closest(".mark-read-btn")
+    if (readBtn) {
+      const id = readBtn.dataset.id
       makeRequest(
         "PUT",
         `${API_BASE_URL}/notifications/read/${id}`,
@@ -160,6 +164,26 @@ function setupListeners() {
         },
         () => toast("Erreur lors du marquage", "error"),
       )
+    }
+
+    // Gestion du bouton "supprimer"
+    const deleteBtn = e.target.closest(".delete-notification-btn")
+    if (deleteBtn) {
+      const id = deleteBtn.dataset.id
+
+      // Confirmation avant suppression
+      if (confirm("Êtes-vous sûr de vouloir supprimer cette notification ?")) {
+        makeRequest(
+          "DELETE",
+          `${API_BASE_URL}/notifications/${id}`,
+          null,
+          () => {
+            loadNotifications()
+            toast("Notification supprimée avec succès", "success")
+          },
+          () => toast("Erreur lors de la suppression", "error"),
+        )
+      }
     }
   })
 }
@@ -179,7 +203,7 @@ function relativeDate(date) {
 }
 
 function toast(msg, type = "info") {
-  Swal.fire({
+  window.Swal.fire({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
@@ -220,5 +244,20 @@ css.textContent = `
   .bi-box-fill.text-warning {
     color: #ffc107 !important;
   }
+  .notification-actions {
+    display: flex;
+    align-items: center;
+  }
+  .notification-actions .btn {
+    padding: 0.25rem 0.5rem;
+  }
+  .delete-notification-btn:hover .bi-trash {
+    color: #dc3545 !important;
+  }
 `
 document.head.appendChild(css)
+
+// Import Swal library
+const script = document.createElement("script")
+script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+document.head.appendChild(script)
