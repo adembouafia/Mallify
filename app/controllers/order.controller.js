@@ -267,6 +267,7 @@ exports.updateStatusOrder = async (req, res) => {
         message: "Une raison de refus est requise pour annuler une commande",
       })
     }
+
     const order = await Order.findById(id)
     if (!order) {
       return res.status(404).json({
@@ -280,7 +281,13 @@ exports.updateStatusOrder = async (req, res) => {
 
       // Créer une notification pour l'annulation de commande
       const client = await Client.findById(order.idClient)
-      if (client) {
+
+      // Vérifier qui annule la commande
+      const isVendorCancellation =
+        req.user.role === "vendor" || req.user.role === "moderator"
+
+      // Ne créer une notification que si c'est le client qui annule
+      if (client && !isVendorCancellation) {
         const notificationMessage = `La commande #${order._id.toString().slice(-6)} a été annulée par ${client.firstname} ${client.lastname}. Raison: ${refusalReason}`
 
         await Notification.create({
@@ -395,24 +402,35 @@ async function updateProductStock(order) {
 
       // Vérifier si le stock est inférieur ou égal à la limite
       if (newStock <= stockLimit) {
-        // Créer une notification
-        const notificationMessage = `Le stock du produit "${product.productName}" est bas (${newStock} restants)`
+        if (newStock === 0) {
+          const notificationMessage = `Le stock du produit "${product.productName}" est épuisé (${newStock} restants)`
 
-        // Afficher la notification dans la console
-        console.log("=== NOTIFICATION CRÉÉE ===")
-        console.log(`Shop ID: ${shopId}`)
-        console.log(`Product ID: ${product._id}`)
-        console.log(`Message: ${notificationMessage}`)
-        console.log(`Type: stock`)
-        console.log("=========================")
+          await Notification.create({
+            productId: product._id,
+            shopId: shopId,
+            type: "stock",
+            message: notificationMessage,
+          })
+        }else {
+          // Créer une notification
+          const notificationMessage = `Le stock du produit "${product.productName}" est bas (${newStock} restants)`
 
-        // Créer la notification dans la base de données
-        await Notification.create({
-          productId: product._id,
-          shopId: shopId,
-          type: "stock",
-          message: notificationMessage,
-        })
+          // Afficher la notification dans la console
+          console.log("=== NOTIFICATION CRÉÉE ===")
+          console.log(`Shop ID: ${shopId}`)
+          console.log(`Product ID: ${product._id}`)
+          console.log(`Message: ${notificationMessage}`)
+          console.log(`Type: stock`)
+          console.log("=========================")
+
+          // Créer la notification dans la base de données
+          await Notification.create({
+            productId: product._id,
+            shopId: shopId,
+            type: "stock",
+            message: notificationMessage,
+          })
+        }
       }
     }
   } catch (error) {
