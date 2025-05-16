@@ -4,12 +4,27 @@ const notificationSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: true,
+    required: false,
   },
   shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shop",
     required: true,
+  },
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Order",
+    required: false,
+  },
+  clientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Client",
+    required: false,
+  },
+  type: {
+    type: String,
+    enum: ["stock", "order", "delivery"],
+    default: "stock",
   },
   status: {
     type: String,

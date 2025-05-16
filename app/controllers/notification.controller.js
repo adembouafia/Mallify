@@ -4,7 +4,11 @@ const Notification = require("../models/notification.model")
 exports.getNotificationsByShop = async (req, res) => {
   try {
     const { shopId } = req.params
-    const notifications = await Notification.find({ shopId }).populate("productId", "productName").sort({ createdAt: -1 })
+    const notifications = await Notification.find({ shopId })
+      .populate("productId", "productName")
+      .populate("orderId", "orderTotal orderStatus")
+      .populate("clientId", "firstname lastname")
+      .sort({ createdAt: -1 })
     console.log(`Notifications récupérées pour la boutique ${shopId}: ${notifications.length}`)
     res.status(200).json({ status: "success", data: notifications })
   } catch (err) {
@@ -27,11 +31,7 @@ exports.countUnreadNotifications = async (req, res) => {
 // Mark a notification as read
 exports.markAsRead = async (req, res) => {
   try {
-    const notification = await Notification.findByIdAndUpdate(
-      req.params.id,
-      { status: "read" },
-      { new: true }
-    )
+    const notification = await Notification.findByIdAndUpdate(req.params.id, { status: "read" }, { new: true })
     console.log(`Notification ${req.params.id} marquée comme lue`)
     res.status(200).json({ status: "success", data: notification })
   } catch (err) {
@@ -44,10 +44,7 @@ exports.markAsRead = async (req, res) => {
 exports.markAllAsRead = async (req, res) => {
   try {
     const { shopId } = req.params
-    await Notification.updateMany(
-      { shopId, status: "unread" },
-      { status: "read" }
-    )
+    await Notification.updateMany({ shopId, status: "unread" }, { status: "read" })
     res.status(200).json({ status: "success", message: "All notifications marked as read" })
   } catch (err) {
     res.status(500).json({ status: "fail", message: err.message })
