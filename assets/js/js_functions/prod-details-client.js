@@ -110,17 +110,6 @@ function displayProductDetails(product) {
   let iconColor = "text-success"
   let bgColor = "bg-success-50"
 
-  // Set icon and colors based on availability status
-  if (availability.toLowerCase().includes("out") || availability.toLowerCase().includes("unavailable")) {
-    iconClass = "ph-x-circle"
-    iconColor = "text-danger"
-    bgColor = "bg-danger-50"
-  } else if (availability.toLowerCase().includes("limited") || product.stock < 5) {
-    iconClass = "ph-clock"
-    iconColor = "text-warning"
-    bgColor = "bg-warning-50"
-  }
-
   if (!availabilityElement) {
     // Create a new availability element if it doesn't exist
     const stockContainer = stockElement ? stockElement.parentElement : null
