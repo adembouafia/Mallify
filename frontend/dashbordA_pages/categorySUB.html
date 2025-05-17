@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Admin Dashboard</title>
+    <title>Category Management - Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -21,8 +21,9 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    />    <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <link rel="stylesheet" href="../../assets/css/category-management.css" />
+    <link rel="stylesheet" href="../../assets/css/sidebar-fix.css" />
     
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -213,6 +214,18 @@
               </li>
               <li class="nav-item">
                 <a
+                  href="categorySUB.html"
+                  class="nav-link active"
+                >
+                  <i class="nav-icon bi bi-tags-fill"></i>
+                  <p>
+                    Categories
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
                   href="bannedProducts.html"
                   class="nav-link"
                 >
@@ -222,234 +235,168 @@
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
-               </li>
-               <li class="nav-item">
-                <a
-                  href="blogs.html"
-                  class="nav-link active"
-                >
-                  <i class="nav-icon bi bi-lightbulb-fill"></i>
-                  <p>
-                    Blogs
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-              </li>
+               </li>              
+              
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
         </div>
         <!--end::Sidebar Wrapper-->
       </aside>
-      <!--end::Sidebar-->
-      <!--begin::App Main-->
-      <main class="app-main">
-        <!-- Contenu principal pour la gestion des blogs -->
+      <!--end::Sidebar-->      <!--begin::App Main-->
+      <main class="app-main">        <!-- Main content for category management -->
         <div class="container-fluid p-4">
-          <!-- En-tête de la page -->
-          <div class="blog-header">
+          <!-- Page header -->          <div class="category-header d-flex justify-content-between align-items-center mb-4">
             <div>
-              <h1 class="mb-1">Gestion des Blogs</h1>
+              <h1 class="mb-1">Category Management</h1>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Blogs</li>
+                  <li class="breadcrumb-item active" aria-current="page">Categories</li>
                 </ol>
               </nav>
             </div>
-            <button id="addBlogBtn" class="btn btn-primary">
-              <i class="bi bi-plus-lg me-1"></i> Ajouter un article
-            </button>
-          </div>
-
-          <!-- Statistiques des blogs -->
-          <div class="blog-stats">
-            <div class="stat-card">
-              <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                <i class="bi bi-file-earmark-text"></i>
-              </div>
-              <div class="stat-info">
-                <h3>24</h3>
-                <p>Total des articles</p>
+            <div class="d-flex gap-2">
+              <button id="addCategoryBtn" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Category
+              </button>
+              <button id="addSubcategoryBtn" class="btn btn-outline-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Subcategory
+              </button>
+            </div>
+          </div>          <!-- Category statistics -->
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                  <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                    <i class="bi bi-grid-3x3-gap-fill fs-3 text-primary"></i>
+                  </div>                  <div>
+                    <h6 class="text-muted mb-1">Categories</h6>
+                    <h3 id="categoriesCount" class="mb-0">0</h3>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-success bg-opacity-10 text-success">
-                <i class="bi bi-eye"></i>
-              </div>
-              <div class="stat-info">
-                <h3>12.5K</h3>
-                <p>Vues totales</p>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-info bg-opacity-10 text-info">
-                <i class="bi bi-chat-left-text"></i>
-              </div>
-              <div class="stat-info">
-                <h3>142</h3>
-                <p>Commentaires</p>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                <i class="bi bi-pencil-square"></i>
-              </div>
-              <div class="stat-info">
-                <h3>3</h3>
-                <p>Brouillons</p>
-              </div>
-            </div>
-          </div>
-
-        <!-- Formulaire d'ajout/modification de blog -->
-        <div id="blogFormContainer" class="blog-form-container card shadow-sm">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 class="mb-0" id="formTitle">Ajouter un nouvel article</h5>
-            <button type="button" class="btn-close" id="closeFormBtn" aria-label="Close"></button>
-            </div>
-            <div class="card-body">
-            <form id="blogForm" enctype="multipart/form-data">
-                <input type="hidden" id="blogId">
-                <div class="row">
-                <div class="col-md-8">
-                    <div class="mb-3">
-                    <label for="title" class="form-label">Titre</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Titre de l'article" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description courte de l'article" required></textarea>
-                    <small class="text-muted">Une brève description qui apparaîtra dans la liste des blogs</small>
-                    </div>
-                    <div class="mb-3">
-                    <label for="content" class="form-label">Contenu</label>
-                    <textarea class="form-control" id="content" name="content" rows="10" placeholder="Contenu complet de l'article" required></textarea>
-                    <small class="text-muted">Le contenu détaillé de votre article</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="mb-3">
-                    <label for="mainImageBlog" class="form-label">Image principale (obligatoire)</label>
-                    <input type="file" class="form-control" id="mainImageBlog" name="mainImageBlog" accept="image/*">
-                    <div class="mt-2">
-                        <div class="border rounded p-2 text-center bg-light">
-                        <img id="mainImagePreview" src="../../assets/images/placeholder.jpg" alt="Preview" class="img-fluid" style="max-height: 150px;">
-                        </div>
-                    </div>
-                    </div>
-                    <div class="mb-3">
-                    <label for="otherImagesBlog" class="form-label">Images supplémentaires (optionnel)</label>
-                    <input type="file" class="form-control" id="otherImagesBlog" name="otherImagesBlog" accept="image/*" multiple>
-                    <small class="text-muted">Vous pouvez sélectionner plusieurs images</small>
-                    <div id="otherImagesPreview" class="d-flex flex-wrap gap-2 mt-2">
-                        <!-- Les aperçus des images supplémentaires seront ajoutés ici -->
-                    </div>
-                    </div>
-                    <div class="mb-3">
-                    <label for="category" class="form-label">Catégorie</label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">Sélectionner une catégorie</option>
-                        <option value="Technology">Technologie</option>
-                        <option value="Fashion">Mode</option>
-                        <option value="Health">Santé</option>
-                        <option value="Food">Alimentation</option>
-                        <option value="Travel">Voyage</option>
-                        <option value="Lifestyle">Style de vie</option>
-                    </select>
-                    </div>
-                    <div class="mb-3">
-                    <label for="tags" class="form-label">Tags</label>
-                    <input type="text" class="form-control" id="tags" name="tags" placeholder="Ajouter des tags séparés par des virgules">
-                    <small class="text-muted">Ex: technologie, innovation, web</small>
-                    </div>
-                    <div class="mb-3">
-                    <label for="status" class="form-label">Statut</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="published">Publié</option>
-                        <option value="draft">Brouillon</option>
-                    </select>
-                    </div>
-                </div>
-                </div>
-                <div class="d-flex justify-content-end gap-2 mt-3">
-                <button type="button" id="cancelBtn" class="btn btn-light">Annuler</button>
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                </div>
-            </form>
-            </div>
-        </div>
-
-          <!-- Filtres de recherche -->
-          <div class="card shadow-sm mb-4">
-            <div class="card-body">
-              <div class="blog-filter">
-                <div class="filter-item">
-                  <input type="text" class="form-control" placeholder="Rechercher un article...">
-                </div>
-                <div class="filter-item">
-                  <select class="form-select">
-                    <option value="">Toutes les catégories</option>
-                    <option value="Technology">Technologie</option>
-                    <option value="Fashion">Mode</option>
-                    <option value="Health">Santé</option>
-                    <option value="Food">Alimentation</option>
-                    <option value="Travel">Voyage</option>
-                    <option value="Lifestyle">Style de vie</option>
-                  </select>
-                </div>
-                <div class="filter-item">
-                  <select class="form-select">
-                    <option value="">Tous les statuts</option>
-                    <option value="published">Publié</option>
-                    <option value="draft">Brouillon</option>
-                  </select>
-                </div>
-                <div class="filter-item">
-                  <button class="btn btn-outline-secondary w-100">Filtrer</button>
+            <div class="col-md-6 mb-3 mb-md-0">
+              <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                  <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                    <i class="bi bi-list-nested fs-3 text-success"></i>
+                  </div>
+                  <div>
+                    <h6 class="text-muted mb-1">Subcategories</h6>
+                    <h3 id="subCategoriesCount" class="mb-0">0</h3>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Tableau des blogs -->
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-hover blog-table">
-                  <thead>
-                    <tr>
-                      <th width="60" class="align-middle">#</th>
-                      <th width="80" class="align-middle">Image</th>
-                      <th class="align-middle">Titre</th>
-                      <th class="align-middle">Catégorie</th>
-                      <th class="align-middle">Date</th>
-                      <th class="align-middle">Commentaires</th>
-                      <th class="text-center align-middle">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="blogTableBody">
-                    <!-- Les blogs seront ajoutés ici dynamiquement -->
-                  </tbody>
-                </table>
+          <div class="row">            <!-- Left column: Categories -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="card shadow-sm h-100">                <div class="card-header bg-light">
+                  <h5 class="mb-0">Categories List</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover category-table">
+                      <thead>
+                        <tr>
+                          <th width="60">#</th>
+                          <th>Category Name</th>
+                          <th width="80">Subcat.</th>
+                          <th width="120" class="text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="categoryTableBody">                      <!-- Categories will be added here dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="card-footer">
-              <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center mb-0">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
-                  </li>
-                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Suivant</a>
-                  </li>
-                </ul>
-              </nav>
+            <!-- Right column: Subcategories -->
+            <div class="col-lg-6">              <div class="card shadow-sm h-100">                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Subcategories List</h5>
+                  <button id="resetFilterBtn" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-funnel me-1"></i>Show All
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover subcategory-table">
+                      <thead>
+                        <tr>
+                          <th width="60">#</th>
+                          <th>Subcategory Name</th>
+                          <th>Parent Category</th>
+                          <th width="120" class="text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="subcategoryTableBody">
+                        <!-- Subcategories will be added here dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>          </div>
+
+          <!-- Modal for adding/editing a category -->
+          <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">                <div class="modal-header">
+                  <h5 class="modal-title" id="categoryModalLabel">Add Category</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="mb-3">
+                      <label for="categoryName" class="form-label">Category Name</label>
+                      <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>          <!-- Modal for adding/editing a subcategory -->
+          <div class="modal fade" id="subcategoryModal" tabindex="-1" aria-labelledby="subcategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="subcategoryModalLabel">Add Subcategory</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="subcategoryForm">
+                    <input type="hidden" id="subcategoryId">
+                    <div class="mb-3">
+                      <label for="subcategoryParent" class="form-label">Parent Category</label>
+                      <select class="form-select" id="subcategoryParent" name="category" required>
+                        <option value="">Select a category</option>
+                        <!-- Categories will be added here dynamically -->
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="subcategoryName" class="form-label">Subcategory Name</label>
+                      <input type="text" class="form-control" id="subcategoryName" name="name" required>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="saveSubcategoryBtn">Save</button>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </main>
       
@@ -465,8 +412,7 @@
       <!--end::Footer-->
     </div>
     <!--end::App Wrapper-->
-    <!--begin::Script-->
-    <script
+    <!--begin::Script-->    <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
       crossorigin="anonymous"
@@ -482,7 +428,7 @@
     <!-- Ajout du script SweetAlert2 pour les alertes -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="../../assets/js/js_functions/blog-dash.js"></script>
+    <script src="../../assets/js/js_functions/categorySUB-dash-translated.js"></script>
   </body>
   <!--end::Body-->
 </html>

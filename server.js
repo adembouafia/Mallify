@@ -143,7 +143,6 @@ mongoose
 // IMPORTANT: Load API routes first, before the HTML routes
 // This ensures API routes take precedence over static page routes
 require("./app/routes/admin.routes")(app);
-require("./app/routes/blog.routes")(app);
 require("./app/routes/cart.routes")(app);
 require("./app/routes/client.routes")(app);
 require("./app/routes/category.routes")(app);

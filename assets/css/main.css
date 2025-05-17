@@ -10688,13 +10688,6 @@ input[type=number] {
 }
 
 /* ======================= Checkout Css End ============================= */
-/* ========================= Blog Css Start ============================= */
-.blog-item {
-    margin-bottom: 48px;
-}
-.blog-item:last-child {
-    margin-bottom: 0;
-}
 
 /* =========================  Css End ============================= */
 .line-wrapper > div {
