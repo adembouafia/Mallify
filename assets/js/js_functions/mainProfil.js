@@ -1430,7 +1430,7 @@ function initializeOrdersSection() {
         <i class="ph ph-file-text"></i> View Receipt
       </button>
     `;
-    } else if (statusLower === "pending" || statusLower === "accepted") {
+    } else if (statusLower === "pending" || statusLower === "accepted" || statusLower === "shipped") {
       // For pending or accepted orders, show track, receipt and cancel buttons
       orderFooter.innerHTML = `
       <button class="order-action track" id="track-order-${order._id}">
