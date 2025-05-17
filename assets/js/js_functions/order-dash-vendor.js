@@ -192,7 +192,7 @@ function displayOrderDetails(order) {
 
   // Calculate shipping date (3 days after order date)
   const shippingDate = new Date(orderDate);
-  shippingDate.setDate(shippingDate.getDate() );
+  shippingDate.setDate(shippingDate.getDate());
   const formattedShippingDate = shippingDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -383,7 +383,6 @@ function displayOrderDetails(order) {
     actionButtons = `
       <div>
         <a href="#!" class="btn btn-primary me-2" id="reschedule-order-btn">Reprogrammer</a>
-        <a href="#!" class="btn btn-success me-2" id="accept-order-btn">Accepter la commande</a>
         <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Annuler la commande</a>
       </div>
     `;
@@ -1507,20 +1506,362 @@ function cancelOrder(orderId) {
 
 // Function to accept an order
 function acceptOrder(orderId) {
+  // Afficher un indicateur de chargement
   Swal.fire({
-    title: "Accepter la commande",
-    text: "Êtes-vous sûr de vouloir accepter cette commande?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, accepter",
-    cancelButtonText: "Annuler",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      updateOrderStatus(orderId, "accepted");
-    }
+    title: "Vérification du stock...",
+    text: "Nous vérifions la disponibilité des produits",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
   });
+
+  // Récupérer les détails de la commande pour vérifier le stock
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  // Créer une requête XHR pour obtenir les détails de la commande
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        const order = response.order;
+
+        // Vérifier si la commande a des produits
+        if (
+          !order.cartData ||
+          !order.cartData.items ||
+          order.cartData.items.length === 0
+        ) {
+          Swal.fire({
+            title: "Erreur!",
+            text: "Impossible de vérifier le stock: aucun produit trouvé dans la commande",
+            icon: "error",
+          });
+          return;
+        }
+
+        // Vérifier le stock pour chaque produit
+        checkStockForAllProducts(order, token);
+      } catch (error) {
+        console.error(
+          "Erreur lors de l'analyse des détails de la commande:",
+          error
+        );
+        Swal.fire({
+          title: "Erreur!",
+          text: "Erreur lors de la vérification du stock",
+          icon: "error",
+        });
+      }
+    } else {
+      console.error(
+        "Erreur lors de la récupération des détails de la commande:",
+        xhr.status
+      );
+      Swal.fire({
+        title: "Erreur!",
+        text: "Erreur lors de la récupération des détails de la commande",
+        icon: "error",
+      });
+    }
+  };
+
+  xhr.onerror = () => {
+    console.error(
+      "Erreur réseau lors de la récupération des détails de la commande"
+    );
+    Swal.fire({
+      title: "Erreur réseau",
+      text: "Veuillez vérifier votre connexion et réessayer",
+      icon: "error",
+    });
+  };
+
+  // Envoyer la requête
+  xhr.send();
+}
+
+// Modifier la fonction checkStockForAllProducts pour mieux gérer les IDs de produits et les erreurs
+function checkStockForAllProducts(order, token) {
+  // Tableau pour stocker les produits avec stock insuffisant
+  const productsWithInsufficientStock = [];
+  let pendingRequests = 0;
+  let failedRequests = 0;
+
+  // Pour chaque produit dans la commande
+  order.cartData.items.forEach((item) => {
+    const product = item.productId;
+    const quantityOrdered = item.quantity;
+
+    // Déterminer l'ID du produit à utiliser
+    let productId = null;
+
+    // Essayer différentes propriétés pour trouver un ID valide
+    if (product._id) {
+      productId = product._id;
+    } else if (product.productId) {
+      productId = product.productId;
+    } else if (product.id) {
+      productId = product.id;
+    }
+
+    // Si aucun ID valide n'est trouvé, ajouter à la liste des produits avec stock insuffisant
+    if (!productId) {
+      console.error("Impossible de déterminer l'ID du produit:", product);
+      productsWithInsufficientStock.push({
+        name: product.productName || "Produit inconnu",
+        ordered: quantityOrdered,
+        available: 0,
+        error: "ID de produit invalide",
+      });
+      return; // Passer au produit suivant
+    }
+
+    // Incrémenter le compteur de requêtes en attente
+    pendingRequests++; // Vérifier le stock actuel du produit
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = () => {
+      pendingRequests--;
+      if (xhr.status === 200) {
+        try {
+          const productData = JSON.parse(xhr.responseText);
+          let currentStock = 0;
+          let productName = "Produit inconnu";
+
+          // Accéder correctement aux données du produit dans la réponse API
+          if (productData.data && productData.data.product) {
+            if (productData.data.product.stock !== undefined) {
+              currentStock = productData.data.product.stock;
+            }
+            if (productData.data.product.productName) {
+              productName = productData.data.product.productName;
+            }
+          }
+          console.log(
+            `Produit ${productName}: Stock disponible = ${currentStock}, Quantité commandée = ${quantityOrdered}`
+          );
+
+          if (currentStock < quantityOrdered) {
+            productsWithInsufficientStock.push({
+              name: productName,
+              ordered: quantityOrdered,
+              available: currentStock,
+            });
+          }
+        } catch (error) {
+          console.error(
+            "Erreur lors de l'analyse des données du produit:",
+            error
+          );
+          failedRequests++;
+          productsWithInsufficientStock.push({
+            name: product.productName || "Produit inconnu",
+            ordered: quantityOrdered,
+            available: "Erreur",
+            error: "Erreur lors de l'analyse des données",
+          });
+        }
+      } else {
+        console.error(
+          `Erreur lors de la récupération des données du produit ${productId}:`,
+          xhr.status
+        );
+        failedRequests++;
+        productsWithInsufficientStock.push({
+          name: product.productName || "Produit inconnu",
+          ordered: quantityOrdered,
+          available: "Erreur",
+          error: `Erreur ${xhr.status} lors de la récupération des données`,
+        });
+      }
+
+      if (pendingRequests === 0) {
+        processStockCheckResults(
+          order._id,
+          productsWithInsufficientStock,
+          failedRequests
+        );
+      }
+    };
+
+    xhr.ontimeout = () => {
+      pendingRequests--;
+      failedRequests++;
+      console.error(
+        `Timeout lors de la récupération des données du produit ${productId}`
+      );
+      productsWithInsufficientStock.push({
+        name: product.productName || "Produit inconnu",
+        ordered: quantityOrdered,
+        available: "Timeout",
+        error: "La requête a expiré",
+      });
+
+      if (pendingRequests === 0) {
+        processStockCheckResults(
+          order._id,
+          productsWithInsufficientStock,
+          failedRequests
+        );
+      }
+    };
+
+    xhr.onerror = () => {
+      pendingRequests--;
+      failedRequests++;
+      console.error(
+        `Erreur réseau lors de la récupération des données du produit ${productId}`
+      );
+      productsWithInsufficientStock.push({
+        name: product.productName || "Produit inconnu",
+        ordered: quantityOrdered,
+        available: "Erreur",
+        error: "Erreur réseau",
+      });
+
+      if (pendingRequests === 0) {
+        processStockCheckResults(
+          order._id,
+          productsWithInsufficientStock,
+          failedRequests
+        );
+      }
+    };
+
+    xhr.send();
+  });
+
+  if (pendingRequests === 0) {
+    processStockCheckResults(
+      order._id,
+      productsWithInsufficientStock,
+      failedRequests
+    );
+  }
+}
+
+// Mettre à jour la fonction processStockCheckResults pour gérer les erreurs
+function processStockCheckResults(
+  orderId,
+  productsWithInsufficientStock,
+  failedRequests
+) {
+  // Fermer l'indicateur de chargement
+  Swal.close();
+
+  // Si des requêtes ont échoué mais qu'il n'y a pas de problème de stock identifié
+  if (
+    failedRequests > 0 &&
+    productsWithInsufficientStock.length === failedRequests
+  ) {
+    // Construire le message d'erreur
+    let errorMessage =
+      "Impossible de vérifier le stock pour certains produits:<br><br>";
+    errorMessage += "<ul>";
+    productsWithInsufficientStock.forEach((product) => {
+      errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Erreur inconnue"}</li>`;
+    });
+    errorMessage += "</ul>";
+    errorMessage += "<br>Voulez-vous quand même accepter la commande?";
+
+    // Afficher l'erreur avec option de continuer
+    Swal.fire({
+      title: "Erreur de vérification du stock",
+      html: errorMessage,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, accepter quand même",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateOrderStatus(orderId, "accepted");
+      }
+    });
+    return;
+  }
+
+  // Si des produits ont un stock insuffisant
+  if (productsWithInsufficientStock.length > 0) {
+    // Filtrer pour ne garder que les produits avec un vrai problème de stock (pas les erreurs)
+    const realStockIssues = productsWithInsufficientStock.filter(
+      (p) => !p.error
+    );
+
+    if (realStockIssues.length > 0) {
+      // Construire le message d'erreur pour les problèmes de stock
+      let errorMessage =
+        "Les produits suivants n'ont pas de stock suffisant:<br><br>";
+      errorMessage += "<ul>";
+      realStockIssues.forEach((product) => {
+        errorMessage += `<li><strong>${product.name}</strong>: Commandé: ${product.ordered}, Disponible: ${product.available}</li>`;
+      });
+      errorMessage += "</ul>";
+
+      // Afficher l'erreur
+      Swal.fire({
+        title: "Stock insuffisant!",
+        html: errorMessage,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } else if (failedRequests > 0) {
+      // S'il n'y a que des erreurs techniques, proposer de continuer
+      let errorMessage =
+        "Impossible de vérifier le stock pour certains produits:<br><br>";
+      errorMessage += "<ul>";
+      productsWithInsufficientStock.forEach((product) => {
+        errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Erreur inconnue"}</li>`;
+      });
+      errorMessage += "</ul>";
+      errorMessage += "<br>Voulez-vous quand même accepter la commande?";
+
+      Swal.fire({
+        title: "Erreur de vérification du stock",
+        html: errorMessage,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Oui, accepter quand même",
+        cancelButtonText: "Annuler",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          updateOrderStatus(orderId, "accepted");
+        }
+      });
+    }
+  } else {
+    // Si tous les produits ont un stock suffisant, demander confirmation pour accepter la commande
+    Swal.fire({
+      title: "Stock vérifié avec succès",
+      text: "Tous les produits sont disponibles en stock. Voulez-vous accepter cette commande?",
+      icon: "success",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, accepter",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateOrderStatus(orderId, "accepted");
+      }
+    });
+  }
 }
 
 // Mettre à jour la fonction updateOrderCounts pour inclure les commandes reportées
