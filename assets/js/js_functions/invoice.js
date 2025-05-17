@@ -217,9 +217,33 @@ function fetchInvoices(startDate, endDate) {
     return;
   }
 
+  // Récupérer le shopId depuis le localStorage
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
+  if (!shopId) {
+    console.error("Aucun shopId trouvé dans le localStorage");
+    showErrorMessage(
+      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+    );
+    return;
+  }
+
+  console.log("Chargement des factures pour le shop:", shopId);
+
   // Create XHR request to get invoices
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/invoice", true);
+  xhr.open("GET", `http://localhost:3000/invoice?shopId=${shopId}`, true);
   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = function () {
@@ -1248,4 +1272,18 @@ function getMonthName(monthIndex) {
     "December",
   ];
   return months[monthIndex];
+}
+
+// Fonction pour afficher un message d'erreur
+function showErrorMessage(message) {
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      title: "Erreur",
+      text: message,
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  } else {
+    alert(message);
+  }
 }

@@ -3,7 +3,19 @@ const Invoice = require("../models/invoice.model");
 // Récupérer toutes les factures
 exports.getAllInvoices = async (req, res) => {
   try {
-    const invoices = await Invoice.find().populate({
+    // Récupérer le shopId depuis la requête
+    const shopId = req.query.shopId;
+
+    if (!shopId) {
+      return res.status(400).json({
+        message: "Le paramètre shopId est requis",
+      });
+    }
+
+    console.log(`Recherche des factures pour le shop: ${shopId}`);
+
+    // Récupérer toutes les factures
+    const allInvoices = await Invoice.find().populate({
       path: "idCommande",
       populate: [
         {
@@ -16,11 +28,22 @@ exports.getAllInvoices = async (req, res) => {
         },
         {
           path: "shop",
-          select: "shopName shopLogo adresse shop_phone",
+          select: "shopName shopLogo adresse shop_phone _id",
         },
       ],
     });
-    res.status(200).json({ invoices });
+
+    // Filtrer les factures qui correspondent au shopId spécifié
+    const filteredInvoices = allInvoices.filter(
+      (invoice) =>
+        invoice.idCommande &&
+        invoice.idCommande.shop &&
+        invoice.idCommande.shop._id.toString() === shopId
+    );
+
+    console.log(`Factures trouvées pour ce shop: ${filteredInvoices.length}`);
+
+    res.status(200).json({ invoices: filteredInvoices });
   } catch (err) {
     res
       .status(500)
