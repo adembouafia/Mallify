@@ -128,19 +128,18 @@ function createProductCard(product) {
             <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
         </div>
         <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
-        ${
-          availability === "In stock"
-            ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
-            : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
-        }        <div class="product-card__price mt-16 mb-30">
+        ${availability === "In stock"
+          ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+          : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+        }
+        <div class="product-card__price mt-16 mb-30">
             <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} DT</span>
             <span class="text-heading text-md fw-semibold ">${price} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
         </div>
             <button 
-                class="product-card__cart btn ${availability === "In stock" ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-400"} py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
-                data-product-id="${id}"
-                ${availability !== "In stock" || product.stock <= 0 ? "disabled" : ""}>
-                ${availability === "In stock" && product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
             </button>
         </div>
     </div>
@@ -449,97 +448,43 @@ function addToCart(productId, buttonElement) {
   buttonElement.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Adding...`;
   buttonElement.disabled = true;
 
-  // Vérifie d'abord le stock du produit avant d'ajouter au panier
-  const checkStockXhr = new XMLHttpRequest();
-  checkStockXhr.open(
-    "GET",
-    `http://localhost:3000/product/get/${productId}`,
-    true
-  );
-  checkStockXhr.setRequestHeader("Content-Type", "application/json");
-  checkStockXhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:3000/cart/add", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
-  checkStockXhr.onreadystatechange = () => {
-    if (checkStockXhr.readyState === 4) {
-      if (checkStockXhr.status === 200) {
-        try {
-          const response = JSON.parse(checkStockXhr.responseText);
-          const product = response.data.product;
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === 4) {
+      buttonElement.innerHTML = originalHTML;
+      buttonElement.disabled = false;
 
-          if (!product) {
-            buttonElement.innerHTML = originalHTML;
-            buttonElement.disabled = false;
-            showToast("Error", "Product not found.", "error");
-            return;
-          }
+      if (xhr.status === 200) {
+        showToast("Success", "Product added to cart!", "success");
 
-          if (product.stock <= 0 || product.availability !== "In stock") {
-            buttonElement.innerHTML = "Out of Stock";
-            buttonElement.disabled = true;
-            showToast("Error", "This product is out of stock.", "error");
-            return;
-          }
-
-          // Si le stock est disponible, procéder à l'ajout au panier
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", "http://localhost:3000/cart/add", true);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-              buttonElement.innerHTML = originalHTML;
-              buttonElement.disabled = false;
-
-              if (xhr.status === 200) {
-                showToast("Success", "Product added to cart!", "success");
-
-                // Immediately update cart count in real-time
-                if (
-                  window.mallifyCounters &&
-                  typeof window.mallifyCounters.fetchCartCount === "function"
-                ) {
-                  window.mallifyCounters.fetchCartCount(clientId, token);
-                }
-              } else {
-                try {
-                  const response = JSON.parse(xhr.responseText);
-                  showToast(
-                    "Error",
-                    response.message || "Failed to add product to cart.",
-                    "error"
-                  );
-                } catch (e) {
-                  showToast(
-                    "Error",
-                    "An error occurred. Please try again.",
-                    "error"
-                  );
-                }
-              }
-            }
-          };
-
-          const data = JSON.stringify({ clientId, productId, quantity: 1 });
-          xhr.send(data);
-        } catch (error) {
-          buttonElement.innerHTML = originalHTML;
-          buttonElement.disabled = false;
-          showToast(
-            "Error",
-            "Failed to check product stock: " + error.message,
-            "error"
-          );
+        // Immediately update cart count in real-time
+        if (
+          window.mallifyCounters &&
+          typeof window.mallifyCounters.fetchCartCount === "function"
+        ) {
+          window.mallifyCounters.fetchCartCount(clientId, token);
         }
       } else {
-        buttonElement.innerHTML = originalHTML;
-        buttonElement.disabled = false;
-        showToast("Error", "Failed to check product availability", "error");
+        try {
+          const response = JSON.parse(xhr.responseText);
+          showToast(
+            "Error",
+            response.message || "Failed to add product to cart.",
+            "error"
+          );
+        } catch (e) {
+          showToast("Error", "An error occurred. Please try again.", "error");
+        }
       }
     }
   };
 
-  checkStockXhr.send();
+  const data = JSON.stringify({ clientId, productId, quantity: 1 });
+  xhr.send(data);
 }
 
 document.addEventListener("click", (event) => {
@@ -647,19 +592,16 @@ function createProductCardTopSelling(product) {
                     <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
                 </div>
                 <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
-                ${
-                  availability === "In stock"
-                    ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
-                    : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
-                }                <div class="product-card__price my-20">
+                ${availability === "In stock"
+                  ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+                  : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+                }
+                <div class="product-card__price my-20">
                     <span class="text-heading text-md fw-semibold">${price} Dt <span class="text-gray-500 fw-normal">/Qty</span></span>
                 </div>
-                <button 
-                    class="product-card__cart btn ${availability === "In stock" ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-400"} py-11 px-24 rounded-pill flex-center gap-8 fw-medium" 
-                    data-product-id="${id}"
-                    ${availability !== "In stock" || product.stock <= 0 ? "disabled" : ""}>
-                    ${availability === "In stock" && product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
-                </button>
+                <a href="cart.html" class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-center gap-8 fw-medium" tabindex="0" data-product-id="${id}">
+                    Add To Cart <i class="ph ph-shopping-cart"></i> 
+                </a>
             </div>
         </div>
     `;
@@ -780,19 +722,16 @@ function createCardFeaturedProduct(produit) {
           <span class="text-gray-500 text-xs">By ${shopName}</span>
         </div>
         <div class="mt-6">
-          ${
-            availability === "In stock"
-              ? `<span class="py-2 px-8 text-xs rounded-pill bg-success-200  text-success-900 mt-4">${availability}</span>`
-              : `<span class="py-2 px-8 text-xs rounded-pill bg-warning-100 text-danger-600  mt-4">${availability}</span>`
+          ${availability === "In stock"
+            ? `<span class="py-2 px-8 text-xs rounded-pill bg-success-200  text-success-900 mt-4">${availability}</span>`
+            : `<span class="py-2 px-8 text-xs rounded-pill bg-warning-100 text-danger-600  mt-4">${availability}</span>`
           }
-        </div>        <div class="product-card__price my-8">
+        </div>
+        <div class="product-card__price my-8">
           <span class="text-heading text-sm fw-semibold">${price} DT <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
         </div>
-        <button 
-          class="product-card__cart btn ${availability === "In stock" ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-400"} py-6 px-12 rounded-8 flex-center gap-6 fw-medium text-xs" 
-          data-product-id="${id}"
-          ${availability !== "In stock" || product.stock <= 0 ? "disabled" : ""}>
-          ${availability === "In stock" && product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
+        <button class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-6 px-12 rounded-8 flex-center gap-6 fw-medium text-xs" data-product-id="${id}">
+          Add To Cart <i class="ph ph-shopping-cart"></i>
         </button>
       </div>
     </div>
@@ -920,7 +859,7 @@ function createCardRecommendedProduct(produit) {
   wrapper.setAttribute(
     "data-aos-duration",
     Math.floor(Math.random() * 800) + 400
-  );
+  ); 
   wrapper.innerHTML = `
     <div class="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2" data-product-id="${id}">
       <a href="product-details.html?id=${id}" class="product-card__thumb flex-center rounded-8 position-relative">
@@ -946,19 +885,18 @@ function createCardRecommendedProduct(produit) {
           <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
         </div>
         <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
-        ${
-          availability === "In stock"
-            ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
-            : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
-        }        <div class="product-card__price mt-16 mb-30">
+        ${availability === "In stock"
+          ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+          : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+        }
+        <div class="product-card__price mt-16 mb-30">
           ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
           <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
         </div>
         <button 
-          class="product-card__cart btn ${availability === "In stock" ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-400"} py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
-          data-product-id="${id}"
-          ${availability !== "In stock" || product.stock <= 0 ? "disabled" : ""}>
-          ${availability === "In stock" && product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
+          class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+          data-product-id="${id}">
+          Add To Cart <i class="ph ph-shopping-cart"></i> 
         </button>
       </div>
     </div>
@@ -1203,6 +1141,8 @@ function populateCategoryTabs(categories) {
             );
           }
         });
+        // Note: Bootstrap should automatically handle new tabs if they follow the pattern.
+        // If event delegation is set up on pillsTab container, new buttons will also trigger it.
       });
     }
   }
@@ -1258,19 +1198,18 @@ function createProductCardTrending(product) {
                         <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
                     </div>
                     <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16 fw-normal">By ${shopName}</span>
-                    ${
-                      availability === "In stock"
-                        ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
-                        : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
-                    }                    <div class="product-card__price mt-16 mb-30">
+                    ${availability === "In stock"
+                      ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+                      : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+                    }
+                    <div class="product-card__price mt-16 mb-30">
                         ${product.discountPercentage ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
                         <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
                     </div>
                      <button 
-                        class="product-card__cart btn ${availability === "In stock" ? "bg-gray-50 text-heading hover-bg-main-600 hover-text-white" : "bg-gray-100 text-gray-400"} py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
-                        data-product-id="${id}"
-                        ${availability !== "In stock" || product.stock <= 0 ? "disabled" : ""}>
-                        ${availability === "In stock" && product.stock > 0 ? 'Add To Cart <i class="ph ph-shopping-cart"></i>' : "Out of Stock"}
+                        class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                        data-product-id="${id}">
+                        Add To Cart <i class="ph ph-shopping-cart"></i> 
                     </button>
                 </div>
             </div>
