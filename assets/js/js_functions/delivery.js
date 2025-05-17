@@ -587,8 +587,33 @@ function searchDeliveries(searchTerm) {
     return;
   }
 
+  // Récupérer le shopId depuis le localStorage
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
+  if (!shopId) {
+    shopId = localStorage.getItem("shopId");
+  }
+
+  if (!shopId) {
+    console.error("Aucun shopId trouvé dans le localStorage");
+    showErrorMessage(
+      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+    );
+    return;
+  }
+
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `/delivery/all`, true);
+  xhr.open("GET", `http://localhost:3000/delivery/all?shopId=${shopId}`, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader(
     "Authorization",
@@ -734,8 +759,30 @@ function updatePagination(totalItems) {
 
 // Fonction pour trier les livraisons
 function sortDeliveries(sortBy) {
+  // Récupérer le shopId depuis le localStorage
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
+
+  if (!shopId) {
+    console.error("Aucun shopId trouvé dans le localStorage");
+    showErrorMessage(
+      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+    );
+    return;
+  }
+
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `/delivery/all`, true);
+  xhr.open("GET", `http://localhost:3000/delivery/all?shopId=${shopId}`, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader(
     "Authorization",
