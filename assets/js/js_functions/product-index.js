@@ -1203,8 +1203,6 @@ function populateCategoryTabs(categories) {
             );
           }
         });
-        // Note: Bootstrap should automatically handle new tabs if they follow the pattern.
-        // If event delegation is set up on pillsTab container, new buttons will also trigger it.
       });
     }
   }
