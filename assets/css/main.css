@@ -7685,7 +7685,10 @@ input:focus-visible {
 .text-xs {
     font-size: 0.75rem !important;
 }
-
+.text-xs-bold {
+    font-size: 0.75rem !important;
+    font-weight: bold !important;
+}
 .text-sm {
     font-size: 0.875rem !important;
 }

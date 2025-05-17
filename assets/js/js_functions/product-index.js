@@ -91,6 +91,7 @@ function createProductCard(product) {
   const name = product.productName || "N/A";
   const id = product._id;
   const shopName = product.shop?.shopName || "Unknown Shop";
+  const availability = product.availability;
 
   // Log shop info to debug
   console.log(
@@ -126,7 +127,11 @@ function createProductCard(product) {
             <span class="text-xs fw-medium text-gray-500">${rating}</span>
             <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
         </div>
-        <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">${shopName}</span>
+        <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
+        ${availability === "In stock"
+          ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+          : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+        }
         <div class="product-card__price mt-16 mb-30">
             <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} DT</span>
             <span class="text-heading text-md fw-semibold ">${price} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
@@ -557,6 +562,7 @@ function createProductCardTopSelling(product) {
   const name = product.productName || "N/A";
   const id = product._id;
   const shopName = product.shop?.shopName || "Unknown Shop";
+  const availability = product.availability;
 
   const wrapper = document.createElement("div");
   wrapper.setAttribute("data-aos", "fade-up");
@@ -585,7 +591,11 @@ function createProductCardTopSelling(product) {
                     <span class="text-xs fw-medium text-gray-500">${rating}</span>
                     <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
                 </div>
-                <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">${shopName}</span>
+                <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
+                ${availability === "In stock"
+                  ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+                  : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+                }
                 <div class="product-card__price my-20">
                     <span class="text-heading text-md fw-semibold">${price} Dt <span class="text-gray-500 fw-normal">/Qty</span></span>
                 </div>
@@ -679,6 +689,7 @@ function createCardFeaturedProduct(produit) {
   const name = produit.productName || "N/A";
   const id = produit._id;
   const shopName = produit.shop?.shopName || "Unknown Shop";
+  const availability = produit.availability;
 
   const wrapper = document.createElement("div");
   wrapper.className = "col-md-6";
@@ -709,6 +720,12 @@ function createCardFeaturedProduct(produit) {
         <div class="flex-align gap-4">
           <span class="text-main-two-600 text-xs d-flex"><i class="ph-fill ph-storefront"></i></span>
           <span class="text-gray-500 text-xs">By ${shopName}</span>
+        </div>
+        <div class="mt-6">
+          ${availability === "In stock"
+            ? `<span class="py-2 px-8 text-xs rounded-pill bg-success-200  text-success-900 mt-4">${availability}</span>`
+            : `<span class="py-2 px-8 text-xs rounded-pill bg-warning-100 text-danger-600  mt-4">${availability}</span>`
+          }
         </div>
         <div class="product-card__price my-8">
           <span class="text-heading text-sm fw-semibold">${price} DT <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
@@ -829,6 +846,7 @@ function createCardRecommendedProduct(produit) {
   const name = produit.productName || "N/A";
   const id = produit._id;
   const shopName = produit.shop?.shopName || "Mallify";
+  const availability = produit.availability;
 
   const discountPercentage = Math.round(
     ((originalPrice - price) / originalPrice) * 100
@@ -866,7 +884,11 @@ function createCardRecommendedProduct(produit) {
           <span class="text-xs fw-medium text-gray-500">${rating.toFixed(1)}</span>
           <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
         </div>
-        <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">Fulfilled by ${shopName}</span>
+        <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16">By ${shopName}</span>
+        ${availability === "In stock"
+          ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+          : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+        }
         <div class="product-card__price mt-16 mb-30">
           ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
           <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
@@ -1138,6 +1160,7 @@ function createProductCardTrending(product) {
   const name = product.productName || "N/A";
   const id = product._id;
   const shopName = product.shop?.shopName || "Unknown Shop";
+  const availability = product.availability;
   const createdAt = new Date(product.createdAt);
   const today = new Date();
   const threeDaysAgo = new Date(today.setDate(today.getDate() - 3));
@@ -1174,7 +1197,11 @@ function createProductCardTrending(product) {
                         <span class="text-xs fw-medium text-gray-500">${rating.toFixed(1)}</span>
                         <span class="text-xs fw-medium text-gray-500">(${reviews})</span>
                     </div>
-                    <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16 fw-normal">Fulfilled by ${shopName}</span>
+                    <span class="py-2 px-8 text-xs rounded-pill text-main-two-600 bg-main-two-50 mt-16 fw-normal">By ${shopName}</span>
+                    ${availability === "In stock"
+                      ? `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-success-200  text-success-900 mt-16">${availability}</span>`
+                      : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
+                    }
                     <div class="product-card__price mt-16 mb-30">
                         ${product.discountPercentage ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
                         <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
