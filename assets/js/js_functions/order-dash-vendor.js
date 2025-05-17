@@ -1710,6 +1710,7 @@ function checkStockForAllProducts(order, token) {
         error: "La requête a expiré",
       });
 
+      
       if (pendingRequests === 0) {
         processStockCheckResults(
           order._id,
