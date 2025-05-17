@@ -136,11 +136,18 @@ function createProductCard(product) {
             <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} DT</span>
             <span class="text-heading text-md fw-semibold ">${price} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
         </div>
-            <button 
+          ${availability === "In stock"
+            ?`<button 
                 class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
                 data-product-id="${id}">
                 Add To Cart <i class="ph ph-shopping-cart"></i> 
-            </button>
+            </button>`
+            :`<button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium disabled" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>`
+          }
         </div>
     </div>
     `;
@@ -599,9 +606,18 @@ function createProductCardTopSelling(product) {
                 <div class="product-card__price my-20">
                     <span class="text-heading text-md fw-semibold">${price} Dt <span class="text-gray-500 fw-normal">/Qty</span></span>
                 </div>
-                <a href="cart.html" class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-center gap-8 fw-medium" tabindex="0" data-product-id="${id}">
-                    Add To Cart <i class="ph ph-shopping-cart"></i> 
-                </a>
+                ${availability === "In stock"
+                  ?`<button 
+                      class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                      data-product-id="${id}">
+                      Add To Cart <i class="ph ph-shopping-cart"></i> 
+                  </button>`
+                  :`<button 
+                      class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium disabled" 
+                      data-product-id="${id}">
+                      Add To Cart <i class="ph ph-shopping-cart"></i> 
+                  </button>`
+                }
             </div>
         </div>
     `;
@@ -730,9 +746,18 @@ function createCardFeaturedProduct(produit) {
         <div class="product-card__price my-8">
           <span class="text-heading text-sm fw-semibold">${price} DT <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
         </div>
-        <button class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-6 px-12 rounded-8 flex-center gap-6 fw-medium text-xs" data-product-id="${id}">
-          Add To Cart <i class="ph ph-shopping-cart"></i>
-        </button>
+          ${availability === "In stock"
+            ?`<button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>`
+            :`<button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium disabled" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>`
+          }
       </div>
     </div>
   `;
@@ -893,11 +918,18 @@ function createCardRecommendedProduct(produit) {
           ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
           <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
         </div>
-        <button 
-          class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
-          data-product-id="${id}">
-          Add To Cart <i class="ph ph-shopping-cart"></i> 
-        </button>
+          ${availability === "In stock"
+            ?`<button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>`
+            :`<button 
+                class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium disabled" 
+                data-product-id="${id}">
+                Add To Cart <i class="ph ph-shopping-cart"></i> 
+            </button>`
+          }
       </div>
     </div>
   `;
@@ -1206,11 +1238,18 @@ function createProductCardTrending(product) {
                         ${product.discountPercentage ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
                         <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
                     </div>
-                     <button 
-                        class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
-                        data-product-id="${id}">
-                        Add To Cart <i class="ph ph-shopping-cart"></i> 
-                    </button>
+                    ${availability === "In stock"
+                      ?`<button 
+                          class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" 
+                          data-product-id="${id}">
+                          Add To Cart <i class="ph ph-shopping-cart"></i> 
+                      </button>`
+                      :`<button 
+                          class="product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium disabled" 
+                          data-product-id="${id}">
+                          Add To Cart <i class="ph ph-shopping-cart"></i> 
+                      </button>`
+                    }
                 </div>
             </div>
         </div>
