@@ -1,0 +1,62 @@
+.btn-preorder {
+    min-height: 47px;
+    padding: 6px 30px;
+    font-weight: 700;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+    letter-spacing: .05em;
+    font-size: 16px;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.6;
+    background-color: #4FA7EC;
+    color: #fff;
+    border-radius: 6px;
+}
+
+.pre-order-2-button {
+    background-color: #2F8FDB;
+    border-radius: 5px;
+    border-color: #0478CD;
+    border-width: 1px;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-family: inherit;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 7px 30px;
+}
+
+.button-preorder-wrapper {
+    padding: 0;
+    border: none;
+    font: inherit;
+    /* color: inherit; */
+    background-color: transparent;
+}
+
+.spurit-po-wrapper .design-pre-order-template-wrapper .pre-order-2-button.hover {
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.show {
+    display: block !important;
+}
+
+.pre-order-reformed-button {
+    padding: 0 !important;
+    border: none !important;
+    font: inherit !important;
+    background-color: transparent !important;
+}
+
+.pre-order-reformed-button:hover {
+    background-color: unset !important;
+}

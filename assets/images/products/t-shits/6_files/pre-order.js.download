@@ -1,0 +1,1979 @@
+"use strict";
+const PREORDER_STATUS_ENABLED = 1;
+
+const PREORDER_STATUS_DISABLED = 0;
+const PREORDER_STATUS_SOLD_OUT = -1;
+const INVENTORY_POLICY_CONTINUE = 'continue';
+const DISABLED_PRE_ORDER_STATUS_SHOW_MESSAGE = 'showMessage';
+const SOLD_OUT_MSG = 'Sold out';
+const LOCATION_LIST_SELECTION_ALL = 'All';
+const BUTTON_PREORDER_WRAPPER = 'button-preorder-wrapper';
+const STYLE_UNSET_VALUE = 'unset';
+const LOCATION_CONDITION_ONE = 1;
+const LOCATION_CONDITION_TWO = 2;
+const LOCATION_CONDITION_THREE = 3;
+
+const ATC_BUTTON_CLASSNAME = [
+	'product-form__submit',
+	'button',
+	'button--full-width',
+	'button--secondary',
+	'spo-container',
+	'pre-order-reformed-button'
+];
+const FULL_PAYMENT = 'full-payment';
+const DEFAULT_TANDC_SETTINGS = {
+	TITLE: "Terms and Conditions",
+	DESCRIPTION: "When you place an order through the Site, we will maintain your Order Information for our records unless and until you ask us to delete this information.",
+	AGREE_MESSAGE: "I agree to the Terms and Conditions of this Pre-Order",
+	ERROR_MESSAGE: "You must agree to terms and conditions before proceeding",
+	BTN_CONFIRM_TEXT: "OK",
+};
+const COUNTER_TYPE = {
+	DISABLE: 'disable',
+	SHOW_ONLY_COUNTER_LABEL: 'show_only_counter_label',
+	SHOW_ONLY_COUNTER_BAR: 'show_only_counter_bar',
+	SHOW_BOTH: 'show_both'
+};
+const DEFAULT_PREORDER_COUNTER = {
+	preorder_counter_template: '[P] out of [T] sold',
+	type: "pre-ordered",
+	is_display_bar: "disable",
+	foreground_bar_color: '#1698E5',
+	background_bar_color: '#E9E6C4',
+};
+const CS_SHOP_TYPE = {
+	NEW: 'new',
+	OLD: 'old',
+};
+const SCHEDULE_TIME_FORMAT_24 = "HH:mm";
+const INNER_DATE_FORMAT = "YYYY-MM-DD";
+const DATETIME_FORMAT = "[HH]:[mm] [DDD] [FM] [YYYY]";
+
+class PreOrderButton extends HTMLElement {
+
+	constructor() {
+		super();
+		this.addWarningPopupHtml();
+	}
+
+	static get observedAttributes() { return ['variant_id', 'product_id', 'is_setting_load', , 'is_submit']; }
+
+	connectedCallback() {
+		this.checkAndDisplayPreorderBtn();
+	}
+
+	/**
+	* @returns {string}
+	*/
+	catchLocation(configLocation, settingLocation) {
+		let currentLocation;
+		for (const location in configLocation) {
+			if (configLocation[location] === settingLocation.country_code
+				|| configLocation[location] === LOCATION_LIST_SELECTION_ALL
+			) {
+				currentLocation = configLocation[location];
+			}
+		}
+		return currentLocation;
+	}
+
+	checkAppUrl(url) {
+		let tempUrl;
+		if (url.charAt(url.length - 1) === '/') {
+			tempUrl = url.substring(0, url.length - 1);
+		} else {
+			tempUrl = url;
+		}
+		return tempUrl;
+	}
+
+	// Daily Limit Handling
+	async fetchDailyQuantityRemaining(appUrl, productId) {
+		try {
+			const response = await fetch(`
+        ${appUrl}/api/products/${productId}/daily-quantity-remaining
+      `);
+			const data = await response.json();
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	isShowSellingPlan(selling_plan_allocations) {
+		let isShowSellingPlan = false;
+		let sellingPlanAllocations = selling_plan_allocations;
+		if (sellingPlanAllocations && sellingPlanAllocations.length > 0) {
+			isShowSellingPlan = true;
+		}
+		return isShowSellingPlan;
+	}
+
+	showSellingPlan(sellingPlanGroupId) {
+		const checkSellingPlan = this.isShowSellingPlan(sellingPlanGroupId);
+		if (document.querySelector('.selling-plan-group') && checkSellingPlan) {
+			const sellingPlanGroup = document.querySelector('.selling-plan-group');
+			const form = document.querySelector('preorder-button form[action^="/cart/add"].form');
+			const productFormBtns = document.querySelector('preorder-button .product-form__buttons');
+			form.insertBefore(sellingPlanGroup, productFormBtns);
+		}
+	}
+
+	hiddenSellingPlanGroup() {
+		if (document.querySelector('.selling-plan-group')) {
+			const sellingPlanGroup = document.querySelector('.selling-plan-group');
+			sellingPlanGroup.style.display = 'none';
+		}
+	}
+
+	/**
+	 * @param {object|null} atcStyle
+	 */
+	implementATCStyleForPreOrderBtn(atcStyle = null) {
+		if (document.querySelector('.button-preorder-wrapper')) {
+			const preOrder2Btn = document.querySelector('.pre-order-2-button');
+			const spanPreOrderButton = document.querySelector('span[data-editable^=pre-order-button]');
+			const spanPreOrderButtonHover = document.querySelector('span[data-editable^=pre-order-button-hover]');
+			const productFormBtns = document.querySelector('.product-form__buttons');
+			const dataPreOrderATCBtn = document.querySelector('button[data-pre-order-atc-button]');
+			if (atcStyle) {
+				spanPreOrderButton.style.fontSize = atcStyle.fontSize || STYLE_UNSET_VALUE;
+				productFormBtns.style.margin = '-2px';
+				dataPreOrderATCBtn.style.padding = '2px';
+				preOrder2Btn.style.width = atcStyle.width ? `${atcStyle.width}px` : STYLE_UNSET_VALUE;
+				preOrder2Btn.style.height = atcStyle.height ? `${atcStyle.height}px` : STYLE_UNSET_VALUE;
+				preOrder2Btn.style.lineHeight = atcStyle.lineHeight || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.letterSpacing = atcStyle.letterSpacing || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.backgroundColor = atcStyle.backgroundColor || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.font = atcStyle.font || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.color = atcStyle.color || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.border = atcStyle.border || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.borderRadius = atcStyle.borderRadius || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.boxShadow = atcStyle.boxShadow || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.justifyContent = atcStyle.justifyContent || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.alignItems = atcStyle.alignItems || STYLE_UNSET_VALUE;
+				preOrder2Btn.style.display = 'flex';
+
+				spanPreOrderButtonHover.style.width = atcStyle.width ? `${atcStyle.width}px` : STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.height = atcStyle.height ? `${atcStyle.height}px` : STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.lineHeight = atcStyle.lineHeight || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.letterSpacing = atcStyle.letterSpacing || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.backgroundColor = atcStyle.backgroundColor || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.font = atcStyle.font || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.color = atcStyle.color || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.border = atcStyle.border || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.borderRadius = atcStyle.borderRadius || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.boxShadow = atcStyle.boxShadow || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.justifyContent = atcStyle.justifyContent || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.alignItems = atcStyle.alignItems || STYLE_UNSET_VALUE;
+				spanPreOrderButtonHover.style.display = 'none';
+			}
+		}
+	}
+
+	/**
+	 * @param {object|null} atcStyle
+	 */
+	implementATCStyleForComingSoon(atcStyle = null) {
+		if (
+			document.querySelectorAll('span[data-editable^="coming-soon-dropping"]') &&
+			document.querySelector('span[data-editable^="coming-soon-button"]')
+		) {
+			const csMessage = document.querySelectorAll('span[data-editable^="coming-soon-dropping"]');
+			const csButton = document.querySelector('span[data-editable^="coming-soon-button"]');
+
+			if (atcStyle) {
+				// Coming soon button
+				csButton.style.fontSize = atcStyle.fontSize || STYLE_UNSET_VALUE;
+				csButton.style.width = atcStyle.width ? `${atcStyle.width}px` : STYLE_UNSET_VALUE;
+				csButton.style.height = atcStyle.height ? `${atcStyle.height}px` : STYLE_UNSET_VALUE;
+				csButton.style.lineHeight = atcStyle.lineHeight || STYLE_UNSET_VALUE;
+				csButton.style.letterSpacing = atcStyle.letterSpacing || STYLE_UNSET_VALUE;
+				csButton.style.backgroundColor = atcStyle.backgroundColor || STYLE_UNSET_VALUE;
+				csButton.style.font = atcStyle.font || STYLE_UNSET_VALUE;
+				csButton.style.color = atcStyle.color || STYLE_UNSET_VALUE;
+				csButton.style.border = atcStyle.border || STYLE_UNSET_VALUE;
+				csButton.style.borderRadius = atcStyle.borderRadius || STYLE_UNSET_VALUE;
+				csButton.style.boxShadow = atcStyle.boxShadow || STYLE_UNSET_VALUE;
+				csButton.style.alignItems = atcStyle.alignItems || STYLE_UNSET_VALUE;
+				csButton.style.justifyContent = atcStyle.justifyContent || STYLE_UNSET_VALUE;
+				csButton.style.display = 'flex';
+
+				// Coming soon dropping text
+				for (let i = 0; i < csMessage.length; i++) {
+					csMessage[i].style.fontSize = atcStyle.fontSize || STYLE_UNSET_VALUE;
+					csMessage[i].style.lineHeight = atcStyle.lineHeight || STYLE_UNSET_VALUE;
+					csMessage[i].style.letterSpacing = atcStyle.letterSpacing || STYLE_UNSET_VALUE;
+					csMessage[i].style.font = atcStyle.font || STYLE_UNSET_VALUE;
+					csMessage[i].style.color = atcStyle.color || STYLE_UNSET_VALUE;
+				}
+			}
+		}
+	}
+
+	getATCBtnStyle() {
+		const atcBtn = document.querySelector('.product-form__submit');
+        if(!atcBtn){
+            return null;
+        }
+		let elTagName, elStyle;
+
+		if (atcBtn && atcBtn.offsetWidth > 0 && atcBtn.offsetHeight > 0) {
+			localStorage.setItem('size', JSON.stringify({
+				height: atcBtn.offsetHeight || `462px`,
+				width: atcBtn.offsetWidth || `49px`,
+			}));
+		}
+
+		for (let index of atcBtn.children) {
+			if (index.tagName === 'SPAN' || index.tagName === 'P') {
+				elTagName = index ? index : null;
+			} else {
+				elTagName = atcBtn;
+			}
+		}
+
+		if (elTagName) {
+			const size = JSON.parse(localStorage.getItem('size'));
+
+			elStyle = {
+				width: size.width || `462px`,
+				height: size.height || `49px`,
+				fontSize: window.getComputedStyle(elTagName)?.getPropertyValue('font-size'),
+				letterSpacing: window.getComputedStyle(elTagName)?.getPropertyValue('letter-spacing'),
+				lineHeight: window.getComputedStyle(elTagName)?.getPropertyValue('line-height'),
+				backgroundColor: window.getComputedStyle(atcBtn)?.getPropertyValue('background-color'),
+				color: window.getComputedStyle(atcBtn)?.getPropertyValue('color'),
+				font: window.getComputedStyle(atcBtn)?.getPropertyValue('font'),
+				border: window.getComputedStyle(atcBtn)?.getPropertyValue('border'),
+				borderRadius: window.getComputedStyle(atcBtn, ':after')
+					? window.getComputedStyle(atcBtn, ':after')['border-radius']
+					: null,
+				boxShadow: window.getComputedStyle(atcBtn, ':after')
+					? window.getComputedStyle(atcBtn, ':after')['box-shadow']
+					: null,
+				justifyContent: window.getComputedStyle(atcBtn)
+					? window.getComputedStyle(atcBtn)['justify-content']
+					: null,
+				alignItems: window.getComputedStyle(atcBtn)
+					? window.getComputedStyle(atcBtn)['align-items']
+					: null,
+			};
+		}
+		return elStyle ? elStyle : null;
+	}
+
+	async checkAndDisplayPreorderBtn() {
+		const atcStyle = this.getATCBtnStyle();
+		const urlProduct = window.location;
+		const url = new URL(urlProduct);
+		const action = url.searchParams.get("action");
+		let appName = 'Preorder2';
+		if (Spurit.appName && Spurit[Spurit.appName].settings) {
+			appName = Spurit.appName;
+		}
+		if (Spurit.appPomName && Spurit[Spurit.appPomName].settings) {
+			appName = Spurit.appPomName;
+		}
+		if (appName && Spurit[appName] && Spurit[appName]?.settings) {
+			this.global = Spurit[appName];
+			this.appName = appName;
+			this.snippet = Spurit[this.appName].snippet;
+			this.products = this.global.settings.product_all;
+			this.variants = this.global.settings.variants;
+			this.defaultSetting = this.global.settings.defaultSetting;
+			this.variant_id = this.getAttribute('variant_id');
+			this.product_id = this.getAttribute('product_id');
+			this.timezone = this.global.settings.timezone;
+			this.globalConfig = this.global.settings.config;
+			let currentItemSettings = this.getItemSettings();
+			this.settings = currentItemSettings;
+			this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+			this.showShopifyAddToCartButton();
+			let isShowCommingSoon = this.shouldShowCommingSoon();
+
+			// comming soon
+			if (isShowCommingSoon) {
+				let preorder_state = this.querySelector('#preorder_state');
+				const { comingSoonBtnStyle } = Spurit[appName].settings.config;
+				const getShopType = this.checkShop();
+
+				preorder_state.innerHTML = this.getCommingSoonBtnHtml();
+				this.classList.remove('hidden');
+				this.hideShopifyAddToCartButton();
+				this.showPreOrderWrapper();
+				this.hideSoldOutMessageWrapper();
+
+				if (getShopType === CS_SHOP_TYPE.NEW) {
+					if (
+						!comingSoonBtnStyle ||
+						(comingSoonBtnStyle && comingSoonBtnStyle === 'atc_style')
+					) {
+						this.implementATCStyleForComingSoon(atcStyle);
+					}
+				} else {
+					if (comingSoonBtnStyle && comingSoonBtnStyle === 'atc_style') {
+						this.implementATCStyleForComingSoon(atcStyle);
+					}
+				}
+
+				return;
+			}
+
+			// Daily Limit Handling
+			let data;
+			if (this.settings.config.isDailyLimit) {
+				const appUrl = this.checkAppUrl(this.appUrl);
+				data = await this.fetchDailyQuantityRemaining(appUrl, this.product_id);
+			}
+
+
+			const customStyle = Spurit[appName]?.settings?.config?.design?.params?.customStyle;
+
+			if (action === "preview") {
+				if (!customStyle) {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+					this.implementATCStyleForPreOrderBtn(atcStyle);
+				} else {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+				}
+				return;
+			}
+			if (!this.globalConfig) return;
+			let isValidLocation = LOCATION_CONDITION_ONE;
+			const { config_location } = this.settings;
+			let configLocationSelect = config_location ? config_location : this.globalConfig?.locations;
+			let isLocationAll = true;
+
+			if (this.globalConfig?.locations !== LOCATION_LIST_SELECTION_ALL) {
+				if (configLocationSelect[0] === LOCATION_LIST_SELECTION_ALL) {
+					configLocationSelect = this.globalConfig.locations;
+					isLocationAll = configLocationSelect[0] === LOCATION_LIST_SELECTION_ALL;
+				} else {
+					configLocationSelect = config_location;
+					isLocationAll = configLocationSelect ?
+						configLocationSelect[0] === LOCATION_LIST_SELECTION_ALL : this.globalConfig?.locations[0] === LOCATION_LIST_SELECTION_ALL;
+				}
+			} else {
+				isLocationAll = configLocationSelect ?
+					configLocationSelect[0] === LOCATION_LIST_SELECTION_ALL : this.globalConfig?.locations[0] === LOCATION_LIST_SELECTION_ALL;
+			}
+			let status = this.getItemStatus(currentItemSettings, data ? data : null, null);
+			let loc
+			if (!isLocationAll) {
+				this.getGeoLocation(geoLocation => {
+					this.currentLocation = geoLocation;
+					loc = geoLocation;
+					let location = this.catchLocation(configLocationSelect, loc);
+					if (configLocationSelect) {
+						if (location !== loc.country_code) {
+							isValidLocation = LOCATION_CONDITION_TWO
+						} else {
+							isValidLocation = LOCATION_CONDITION_THREE
+						}
+					}
+					status = this.getItemStatus(currentItemSettings, data ? data : null, loc);
+					this.processDisplayPreorder({
+						status,
+						atcStyle,
+						currentItemSettings,
+						isValidLocation,
+						customStyle
+					});
+					return
+				});
+			}
+			this.processDisplayPreorder({
+				status,
+				atcStyle,
+				currentItemSettings,
+				isValidLocation,
+				customStyle
+			});
+		}
+	}
+
+	async processDisplayPreorder(params) {
+		const {
+			status,
+			atcStyle,
+			currentItemSettings,
+			isValidLocation,
+			customStyle,
+
+		} = params
+		// Get URL from preview page in customize theme
+		const url = window.location.href || document.URL;
+		const isUrlIncluded = url.includes('oseid');
+		if (isValidLocation === LOCATION_CONDITION_ONE) {
+			if (status === PREORDER_STATUS_ENABLED || isUrlIncluded) {
+				if (!customStyle) {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+					this.implementATCStyleForPreOrderBtn(atcStyle);
+				} else {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+				}
+			}
+			if (status === PREORDER_STATUS_SOLD_OUT) {
+				if (this.settings.auto_turn_off_po && !this.settings.is_active) {
+					this.hidePreorderBtn();
+				} else {
+					this.hiddenSellingPlanGroup();
+					this.showSoldOutMessage(currentItemSettings);
+				}
+			}
+			if (status === PREORDER_STATUS_DISABLED) {
+				this.hidePreorderBtn();
+			}
+		} else if (isValidLocation === LOCATION_CONDITION_TWO) {
+			if (status === PREORDER_STATUS_ENABLED) {
+				this.hiddenSellingPlanGroup();
+				this.showSoldOutMessage(currentItemSettings);
+			}
+			if (status === PREORDER_STATUS_SOLD_OUT) {
+				if (this.settings.auto_turn_off_po && !this.settings.is_active) {
+					this.hidePreorderBtn();
+				} else {
+					this.hiddenSellingPlanGroup();
+					this.showSoldOutMessage(currentItemSettings);
+				}
+			}
+			if (status === PREORDER_STATUS_DISABLED) {
+				this.hidePreorderBtn();
+			}
+		} else if (isValidLocation === LOCATION_CONDITION_THREE) {
+			if (status === PREORDER_STATUS_ENABLED || isUrlIncluded) {
+				if (!customStyle) {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+					this.implementATCStyleForPreOrderBtn(atcStyle);
+				} else {
+					this.showSellingPlan(this.settings?.snippetSetting?.selling_plan_allocations);
+					this.showPreorderBtn();
+				}
+			} else if (status === PREORDER_STATUS_SOLD_OUT) {
+				if (this.settings.auto_turn_off_po && !this.settings.is_active) {
+					this.hidePreorderBtn();
+				} else {
+					this.hiddenSellingPlanGroup();
+					this.showSoldOutMessage(currentItemSettings);
+				}
+				this.hiddenSellingPlanGroup();
+				this.showSoldOutMessage(currentItemSettings);
+			} else if (status === PREORDER_STATUS_DISABLED) {
+				this.hidePreorderBtn();
+			}
+		}
+	}
+	/**
+   * @returns {string}
+   */
+	checkShop() {
+		const createdAt = Spurit[this.appName].settings.shop_created_at;
+		const dateFromCreatedAt = window.moment(createdAt).format('DD/MM/YYYY');
+		const dateShopNew = "06/04/2023";
+		const date = (date) => {
+			const parts = date.split('/');
+			return new Date(parts[2], parts[1] - 1, parts[0]);
+		};
+
+		if (date(dateShopNew) >= date(dateFromCreatedAt)) {
+			return CS_SHOP_TYPE.OLD;
+		}
+		return CS_SHOP_TYPE.NEW;
+	}
+
+	/**
+	* @param {number} days
+	* @param {number} hours
+	* @param {number} minutes
+	* @returns {string}
+	*/
+	parseMilSecondsToDaysHoursMinutes(days, hours, minutes) {
+		let time = `${days}d ${hours}h ${minutes}m`;
+		if (minutes === 0) {
+			if (hours === 0) {
+				if (days === 0) {
+					time = "";
+				} else {
+					time = `${days}d`;
+				}
+			} else {
+				if (days === 0) {
+					time = `${hours}h`;
+				} else {
+					time = `${days}d ${hours}h`;
+				}
+			}
+		} else {
+			if (hours === 0) {
+				if (days === 0) {
+					time = `${minutes}m`;
+				} else {
+					time = `${days}d ${hours}h ${minutes}m`;
+				}
+			} else {
+				if (days === 0) {
+					time = `${hours}h ${minutes}m`;
+				} else {
+					time = `${days}d ${hours}h ${minutes}m`;
+				}
+			}
+		}
+		return time;
+	}
+
+	/**
+	 * @param {object} settings
+	 * @returns {object}
+	 */
+	configPreOrderCounter(settings) {
+		const defaultSetting = Spurit[this.appName].settings.defaultSetting;
+		let defaultConfigPreOrderCounter = {};
+
+		if (!Boolean(defaultSetting.config_preorder_counter)) {
+			defaultConfigPreOrderCounter = DEFAULT_PREORDER_COUNTER;
+		} else {
+			defaultConfigPreOrderCounter = typeof defaultSetting.config_preorder_counter === 'string'
+				? JSON.parse(defaultSetting.config_preorder_counter)
+				: defaultSetting.config_preorder_counter;
+		}
+
+		const preOrderCounterSetting = settings?.config_preorder_counter
+			? settings?.config_preorder_counter
+			: defaultConfigPreOrderCounter;
+
+		return preOrderCounterSetting;
+	}
+
+	showPreorderBtn() {
+		const settings = this.settings;
+		const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+		let currentItemSettings = this.getItemSettings();
+		const configPreOrderCounterSetting = this.configPreOrderCounter(currentItemSettings || settings);
+		let preorder_state = this.querySelector('#preorder_state');
+		preorder_state.innerHTML = this.getBtnHtml();
+		const preOrderCounterWrapper = document.querySelector('.pre-order-counter-wrapper');
+
+		if (
+			preOrderCounterWrapper &&
+			configPreOrderCounterSetting.is_display_bar === COUNTER_TYPE.DISABLE
+		) {
+			preOrderCounterWrapper.style.display = 'none';
+		}
+
+		if (this.isShowTandC) {
+			this.tandcButtonRenderAction();
+		}
+
+		this.classList.remove('hidden');
+		this.hideShopifyAddToCartButton();
+		this.showPreOrderWrapper();
+		this.hideSoldOutMessageWrapper();
+
+		const timeRemaining = document.querySelector('.time-remaining');
+		const timeRemaingText = timeRemaining ? timeRemaining.textContent : '';
+
+		if (configPreOrderCounterSetting) {
+			const counterEle = document.getElementById("myBar");
+			const counterEleBackground = document.getElementById("myProgress");
+			const counterNum = configPreOrderCounterSetting.type === "pre-ordered"
+				? Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity)) / settings.config.quantityLimit * 100
+				: (
+					settings.config.quantityLimit - Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity))
+				) / settings.config.quantityLimit * 100;
+
+			if (counterEle) {
+				counterEle.style.width = counterNum + "%";
+				counterEle.style.backgroundColor = configPreOrderCounterSetting.foreground_bar_color;
+			}
+			if (counterEleBackground) {
+				counterEleBackground.style.backgroundColor = configPreOrderCounterSetting.background_bar_color;
+			}
+		}
+
+		let countDownDate = window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).valueOf();
+		if (timeRemaining) {
+			let now = window.moment.tz(timezoneLocal).valueOf();
+			let distance = countDownDate - now;
+			let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)) + 1;
+			let time = this.parseMilSecondsToDaysHoursMinutes(days, hours, minutes)
+			timeRemaining.innerText = timeRemaingText.replaceAll(/\[D]/g, time);
+		}
+	}
+
+	/**
+   * @return {string}
+   */
+	getCounterText() {
+		let currentItemSettings = this.getItemSettings();
+		const configPreOrderCounterSetting = this.configPreOrderCounter(currentItemSettings);
+
+		if (!configPreOrderCounterSetting || !this.settings.config.quantityLimit) return '';
+
+		const isShowCounterText = configPreOrderCounterSetting.is_display_bar === COUNTER_TYPE.SHOW_BOTH ||
+			configPreOrderCounterSetting.is_display_bar === COUNTER_TYPE.SHOW_ONLY_COUNTER_LABEL;
+		if (!isShowCounterText) return '';
+
+		const preOrderCounterTemplate = configPreOrderCounterSetting.preorder_counter_template
+		if (configPreOrderCounterSetting.type === "pre-ordered") {
+			return preOrderCounterTemplate
+				.replaceAll(/\[P]/g, Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity)))
+				.replaceAll(/\[T]/g, this.settings.config.quantityLimit);
+		} else {
+			return preOrderCounterTemplate
+				.replaceAll(/\[L]/g, this.settings.config.quantityLimit - Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity)))
+				.replaceAll(/\[T]/g, this.settings.config.quantityLimit);
+		}
+	}
+
+	/**
+	* @returns {String}
+	*/
+	getTimeZoneNumber(timezoneName) {
+		return window.moment.tz(timezoneName).format('Z');
+	}
+
+	/**
+	 * @return {string}
+	 */
+	getEndDateText() {
+		const settings = this.settings
+		const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+		if (this.settings.config_date_time && this.settings.date_stop) {
+			if (this.settings.config_date_time.is_display_preorder_end_date_enabled) {
+				switch (this.settings.config_date_time.format_date) {
+					case 'DD/MM/YYYY': {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('DD/MM/YYYY'));
+					}
+					case 'MM/DD/YYYY': {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('MM/DD/YYYY'));
+					}
+					case 'MMM DD YYYY': {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('MMM DD YYYY'));
+					}
+					case 'DD MMM YYYY': {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('DD MMM YYYY'));
+					}
+					case 'DD FM YYYY': {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('DD MMMM YYYY'));
+					}
+					default: {
+						return this.settings.config_date_time.display_preorder_end_date.replaceAll(/\[E]/g, window.moment.tz(`${settings.date_stop} ${settings.time_end}${this.getTimeZoneNumber("UTC")}`, timezoneLocal).format('MM/DD/YYYY'));
+					}
+				}
+			} else {
+				return '';
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * @returns {boolean}
+	 */
+	isShowEndDate() {
+		const settings = this.settings;
+		if (settings.date_stop) {
+			if (settings?.config_date_time?.is_display_preorder_end_date_enabled || settings?.config_date_time?.is_display_preorder_time_remaining_enabled)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return {string}
+	 */
+	getTimeRemainingText() {
+		if (this.settings.config_date_time && this.settings.date_stop) {
+			return this.settings.config_date_time.is_display_preorder_time_remaining_enabled ? this.settings.config_date_time.display_preorder_time_remaining : '';
+		}
+		return '';
+	}
+
+	getBtnHtml() {
+		let html = '';
+		let currentItemSettings = this.getItemSettings();
+		const configPreOrderCounterSetting = this.configPreOrderCounter(currentItemSettings);
+		const preorderTxt = (this.settings.config && this.settings.config.buttonText) ? this.settings.config.buttonText : 'Pre-Order';
+		const preorderMsg = (this.settings.config && this.settings.config.buttonMessage) ? this.settings.config.buttonMessage.replaceAll(/\[L]/g,
+			this.settings.config.quantityLimit - Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity)))
+			.replaceAll(/\[P]/g, Math.abs(parseInt(currentItemSettings.snippetSetting.inventory_quantity)))
+			.replaceAll(/\[T]/g, this.settings.config.quantityLimit) : 'We will fulfill the order as soon as this item becomes available';
+		const preorderCounterBar = (
+			this.settings.config.quantityLimit &&
+			configPreOrderCounterSetting &&
+			(
+				configPreOrderCounterSetting.is_display_bar === COUNTER_TYPE.SHOW_BOTH ||
+				configPreOrderCounterSetting.is_display_bar === COUNTER_TYPE.SHOW_ONLY_COUNTER_BAR
+			) && parseInt(currentItemSettings.snippetSetting.inventory_quantity) <= 0
+		) ? "<div id='myProgress'><div id='myBar'></div></div>" : '';
+		const endDate = this.getEndDateText();
+		const timeRemaining = this.getTimeRemainingText();
+		const counterText = this.getCounterText();
+
+		let preOrderBtnHtml = `
+			<div class="pre-order-counter-wrapper">
+				${preorderCounterBar}
+				<p class="counter-text">${counterText}</p>
+			</div>
+			${this.isShowEndDate() ? (
+				`<div class="end-date-wrapper">
+					<p class="time-remaining">${timeRemaining}</p>
+					<p class="end-date">${endDate}</p>
+				</div>`
+			) : ''}
+			<div style="position: relative;">
+				<button class="button-preorder-wrapper" type="submit" data-pre-order-atc-button="1">
+					<span data-editable="pre-order-button" class="pre-order-2-button">${preorderTxt}</span>
+					<span data-editable="pre-order-button-hover" class="pre-order-2-button hover">${preorderTxt}</span>
+				</button>
+				<span data-editable="pre-order-message" id="pre-order-message" class="pre-order-2-message">${preorderMsg}</span>
+			</div>
+		`;
+
+		let settings = this.settings;
+
+		// comming soon
+		if (settings.is_coming_soon_active && settings.config_coming_soon) {
+			html = this.getCommingSoonBtnHtml();
+		}
+
+		// t&c
+		if (settings.is_t_and_c_active) {
+			let tAndCNewVersion = document.getElementsByTagName('tandc-button');
+			if (tAndCNewVersion && tAndCNewVersion.length == 0) {
+				this.isShowTandC = true;
+				preOrderBtnHtml += this.getTAndCHtml();
+			} else {
+				this.isShowTandC = false;
+			}
+		}
+
+
+		if (html == '') {
+			html = preOrderBtnHtml;
+		}
+
+		return html;
+	}
+
+	getTAndCHtml() {
+		let settings = this.settings;
+		const globalDefaultSettings = Spurit[this.appName].settings || this.global.settings.defaultSetting;
+		const defaultConfigTAndC = globalDefaultSettings.defaultSetting.config_t_and_c || DEFAULT_TANDC_SETTINGS;
+		const t_and_c_view = {
+			title: settings.config_t_and_c && settings.config_t_and_c.t_and_c_header
+				? settings.config_t_and_c.t_and_c_header
+				: defaultConfigTAndC.t_and_c_header || DEFAULT_TANDC_SETTINGS.TITLE,
+			description: settings.config_t_and_c && settings.config_t_and_c.t_and_c_message
+				? settings.config_t_and_c.t_and_c_message
+				: defaultConfigTAndC.t_and_c_message || DEFAULT_TANDC_SETTINGS.DESCRIPTION,
+			agree_message: settings.config_t_and_c && settings.config_t_and_c.t_and_c_agree_message
+				? settings.config_t_and_c.t_and_c_agree_message
+				: defaultConfigTAndC.t_and_c_agree_message || DEFAULT_TANDC_SETTINGS.AGREE_MESSAGE,
+			error_message: settings.config_t_and_c && settings.config_t_and_c.t_and_c_error_message
+				? settings.config_t_and_c.t_and_c_error_message
+				: defaultConfigTAndC.t_and_c_error_message || DEFAULT_TANDC_SETTINGS.ERROR_MESSAGE,
+			btn_confirm_message: settings.config_t_and_c && settings.config_t_and_c.t_and_c_error_confirm_btn_text
+				? settings.config_t_and_c.t_and_c_error_confirm_btn_text
+				: defaultConfigTAndC.t_and_c_error_confirm_btn_text || DEFAULT_TANDC_SETTINGS.BTN_CONFIRM_TEXT,
+		};
+		let html = `
+			<div class="design-t_and_c-template-wrapper">
+				<button type="button" class="t_and_c_accordion" id="t_and_c_accordion">
+					${t_and_c_view.title}
+					<svg viewBox="0 0 20 20" id="ChevronUpMinor" style="display:none; height:20px; float:right;" xmlns="http://www.w3.org/2000/svg"><path d="M15 13a.997.997 0 01-.707-.293L10 8.414l-4.293 4.293a.999.999 0 11-1.414-1.414l5-5a.999.999 0 011.414 0l5 5A.999.999 0 0115 13z" fill="#5C5F62"/></svg>
+					<svg viewBox="0 0 20 20" id="ChevronDownMinor" style="height:20px; float:right;" xmlns="http://www.w3.org/2000/svg"><path d="M10 14a.997.997 0 01-.707-.293l-5-5a.999.999 0 111.414-1.414L10 11.586l4.293-4.293a.999.999 0 111.414 1.414l-5 5A.997.997 0 0110 14z" fill="#5C5F62"/></svg>
+				</button>
+				<div class="t_and_c_panel">${t_and_c_view.description}</div>
+		`;
+		if (settings.is_t_and_c_agree_active && settings.is_t_and_c_agree_active === true) {
+			html += `
+				<div class="t_and_c_panel-check">
+					<input type="checkbox" id="t_and_c_panel-input" name="t_and_c_status" value="1">
+					<label>${t_and_c_view.agree_message}</label>
+				</div>
+			`;
+		}
+		html += `</div>`;
+		html += `
+			<div id="t_a_c-error" class="tac_modal_error">
+				<div class="tac_modal_error-content">
+					<div class="tac_modal_error-body">${t_and_c_view.error_message}</div>
+					<div class="tac_modal_error-footer">
+						<button type="button" class="tac_modal_error-btn-default" id="tac_modal_error-close">
+							${t_and_c_view.btn_confirm_message}
+						</button>
+					</div>
+				</div>
+			</div>
+		`;
+		return html;
+	}
+
+	tandcButtonRenderAction() {
+		setTimeout(function () {
+			var acc = document.getElementById("t_and_c_accordion");
+			var ChevronDownMinor = document.getElementById("ChevronDownMinor")
+			var ChevronUpMinor = document.getElementById("ChevronUpMinor")
+
+			acc && acc.addEventListener("click", function () {
+				if (this.classList.toggle("active")) {
+					ChevronUpMinor.style.display = "block";
+					ChevronDownMinor.style.display = "none";
+				} else {
+					ChevronUpMinor.style.display = "none";
+					ChevronDownMinor.style.display = "block";
+				}
+
+				var panel = this.nextElementSibling;
+				if (panel.style.display === "block") {
+					panel.style.display = "none";
+				} else {
+					panel.style.display = "block";
+				}
+			});
+		}, 1000);
+	}
+
+	shouldShowCommingSoon() {
+		let isShowCommingSoon = false;
+		let settings = this.settings;
+		if (!settings.is_coming_soon_active || parseInt(settings.snippetSetting.inventory_quantity) > 0) return false
+		if (settings.config_coming_soon && settings.config_coming_soon.available_from &&
+			settings.config_coming_soon.available_time && settings?.is_available_from_active) {
+			// check comming soon date
+			const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+			let endDate = window.moment.tz(settings.config_coming_soon.available_from + ' ' + settings.config_coming_soon.available_time + this.getTimeZoneNumber("UTC"), timezoneLocal);
+			let todayDate = window.moment.tz(timezoneLocal);
+
+			if (todayDate.isSameOrBefore(endDate)) {
+				isShowCommingSoon = true;
+			}
+		}
+		if (!settings?.is_available_from_active) {
+			isShowCommingSoon = true;
+		}
+		return isShowCommingSoon;
+	}
+
+	getPageViewCoomingSoon() {
+		try {
+			let comingSoonObject = this
+			const { product_id, variant_id } = this
+			const shopId = this.defaultSetting.shop_id
+			const isIncreaseUniqueView = true
+			let appUrl = Spurit.appUrl;
+			if (appUrl.slice(-1) !== '/') {
+				appUrl = appUrl + '/';
+			}
+			comingSoonObject.ajax('POST',
+				appUrl + "api/increase-view",
+				'product_id=' + product_id + '&variant_id=' + variant_id + '&shop_id=' + shopId + '&is_increase_unique_view=' + isIncreaseUniqueView,
+				function (response) {
+					if (!response) return
+				}, true
+			);
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	getCommingSoonBtnHtml() {
+		let comingSoonBtnHtml = '';
+		let settings = this.settings;
+		const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+		let endDate = window.moment.tz(settings.config_coming_soon?.available_from + 'T' + settings.config_coming_soon?.available_time + this.getTimeZoneNumber("UTC"), timezoneLocal);
+		let todayDate = window.moment.tz(timezoneLocal);
+
+		const isShowCS = (todayDate.isSameOrBefore(endDate) && settings.is_available_from_active) ||
+			(!settings.is_available_from_active)
+		if (isShowCS) {
+			let buttonComingSoonText = settings.config_coming_soon?.coming_soon_header || 'Coming Soon';
+			let buttonComingSoonMessage = settings.config_coming_soon?.coming_soon_message || 'Dropping on';
+			let buttonComingSoonDefaultText = this.globalConfig.design.params.isFollowPreOrder !== undefined ? 'pre-order-2-button' : 'coming-soon-default-2-button';
+			let droppingOnMessageDefault = this.globalConfig.design.params.isFollowPreOrder !== undefined ? 'coming-soon-2-message' : 'coming-soon-default-2-message';
+			let messageDirectionClassName = this.globalConfig.selectedPosition || this.globalConfig.design.params.messageDirectionClassName;
+			let messageVisibilityClassName = this.globalConfig.visible || this.globalConfig.design.params.messageVisibilityClassName;
+
+			let availableFrom = endDate.format(this.formatDateTime(settings.config_coming_soon?.date_format)).replaceAll(/TZ/g, `${this.getTimeZoneNumber(timezoneLocal).substring(0, 1)}${this.getTimeZoneNumber(timezoneLocal).substring(1, 3) - 0}`);
+			let customStyle = this.globalConfig.design.params.customStyle;
+			const positionTop = this.isPositionTop();
+			const positionBottom = this.isPositionBottom();
+
+			comingSoonBtnHtml = `
+				<div id="comming_soon" class="design-pre-order-template-wrapper ${messageVisibilityClassName}-visible ${messageDirectionClassName}-direction ${customStyle}-style">
+					<span data-editable="coming-soon-dropping" class="${droppingOnMessageDefault} ${positionTop}">${buttonComingSoonMessage} ${availableFrom}</span>
+					<button type="button" class="coming-soon-item">
+						<span data-editable="coming-soon-button" class="${buttonComingSoonDefaultText}">${buttonComingSoonText}</span>
+					</button>
+					<span data-editable="coming-soon-dropping" class="${droppingOnMessageDefault} ${positionBottom}">${buttonComingSoonMessage} ${availableFrom}</span>
+				</div>
+			`;
+		}
+
+		this.getPageViewCoomingSoon();
+		return comingSoonBtnHtml;
+	}
+
+	/**
+	 * @return {string}
+	 */
+	getButtonMessageDirection() {
+		return this.globalConfig.selectedPosition || this.globalConfig.design.params.messageDirectionClassName;
+	}
+
+	formatDateTime(format) {
+		if (!format) return;
+		return format.replaceAll(/\[DD]/g, "DD")
+			.replaceAll(/\[D]/g, "D")
+			.replaceAll(/\[DDD]/g, "Do")
+			.replaceAll(/\[MM]/g, "MM")
+			.replaceAll(/\[M]/g, "M")
+			.replaceAll(/\[FM]/g, "MMMM")
+			.replaceAll(/\[MMM]/g, "MMM")
+			.replaceAll(/\[YYYY]/g, "YYYY")
+			.replaceAll(/\[YY]/g, "YY")
+			.replaceAll(/\[HH]/g, "HH")
+			.replaceAll(/\[hh]/g, "hh")
+			.replaceAll(/\[mm]/g, format.search(/\[HH]/g) === -1 ? format.search(/\[ss]/g) === -1 ? "mm a" : "mm" : "mm")
+			.replaceAll(/\[ss]/g, format.search(/\[HH]/g) === -1 ? "ss a" : "ss");
+	}
+
+	/**
+	 * @return {string}
+	 */
+	isPositionTop() {
+		const position = this.settings.config_coming_soon?.position
+		const isAvailableFromActive = this.settings.is_available_from_active
+		if (position === 'top' && isAvailableFromActive) return 'top'
+		return 'hide'
+	}
+
+	/**
+	 * @return {string}
+	 */
+	isPositionBottom() {
+		const position = this.settings.config_coming_soon?.position
+		const isAvailableFromActive = this.settings.is_available_from_active
+		if (position === 'bottom' && isAvailableFromActive) return 'bottom'
+		return 'hide'
+	}
+
+	getSoldOutHtml() {
+		return '<span id="sold_out_msg">Sold out</span>';
+	}
+
+	hideShopifyAddToCartButton() {
+		let defaultShopifyProductFormElement = document.getElementsByTagName('product-form');
+		if (defaultShopifyProductFormElement) {
+			for (let i = 0; i < defaultShopifyProductFormElement.length; i++) {
+				for (let j = 0; j < defaultShopifyProductFormElement[i].childNodes.length; j++) {
+					if (defaultShopifyProductFormElement[i].childNodes[j].tagName == "FORM") {
+						defaultShopifyProductFormElement[i].childNodes[j].classList.remove('show');
+						defaultShopifyProductFormElement[i].childNodes[j].classList.add('hidden');
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	showShopifyAddToCartButton() {
+		let defaultShopifyProductFormElement = document.getElementsByTagName('product-form');
+		if (defaultShopifyProductFormElement) {
+			for (let i = 0; i < defaultShopifyProductFormElement.length; i++) {
+				for (let j = 0; j < defaultShopifyProductFormElement[i].childNodes.length; j++) {
+					if (defaultShopifyProductFormElement[i].childNodes[j].tagName == "FORM") {
+						defaultShopifyProductFormElement[i].childNodes[j].classList.remove('hidden');
+						defaultShopifyProductFormElement[i].childNodes[j].classList.add('show');
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	hidePreorderBtn() {
+		this.classList.add('hidden');
+		this.hidePreOrderWrapper();
+		this.hideSoldOutMessageWrapper();
+		this.showShopifyAddToCartButton();
+		const productForm = document.querySelector('preorder-button .product-form');
+		const sellingPlanGroup = document.querySelector('.selling-plan-group');
+		const errorMessageWrapper = document.querySelector('.product-form__error-message-wrapper');
+		if (sellingPlanGroup) {
+			productForm.insertBefore(sellingPlanGroup, errorMessageWrapper);
+		}
+	}
+
+	showSoldOutMessage(currentItemSettings) {
+		let sold_out_state = this.querySelector('#sold_out_state');
+		sold_out_state.innerHTML = this.getSoldOutHtml();
+		this.classList.remove('hidden');
+		let soldOutMsg = SOLD_OUT_MSG;
+		if (currentItemSettings && currentItemSettings.config && currentItemSettings.config.closedPreOrderMessage) {
+			soldOutMsg = currentItemSettings.config.closedPreOrderMessage;
+		}
+		this.querySelector("#sold_out_msg").innerText = soldOutMsg;
+		this.hideShopifyAddToCartButton();
+		this.hidePreOrderWrapper();
+		this.showSoldOutMessageWrapper();
+	}
+
+	showPreOrderWrapper() {
+		this.querySelector("#preorder_state").classList.remove('hidden');
+		this.querySelector("#preorder_state").classList.add('show');
+	}
+
+	hidePreOrderWrapper() {
+		this.querySelector("#preorder_state").classList.remove('show');
+		this.querySelector("#preorder_state").classList.add('hidden');
+	}
+
+	showSoldOutMessageWrapper() {
+		this.querySelector("#sold_out_state").classList.remove('hidden');
+		this.querySelector("#sold_out_state").classList.add('show');
+	}
+
+	hideSoldOutMessageWrapper() {
+		this.querySelector("#sold_out_state").classList.remove('show');
+		this.querySelector("#sold_out_state").classList.add('hidden');
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == 'is_submit') {
+			if (oldValue === 'false' && newValue === 'true') {
+				this.submitForm();
+			}
+		} else {
+			if (Spurit.appUrl) {
+				this.appUrl = Spurit.appUrl;
+				if (this.appUrl.slice(-1) !== '/') {
+					this.appUrl = this.appUrl + '/';
+				}
+				this.checkAndDisplayPreorderBtn();
+			}
+		}
+
+	}
+
+	submitForm() {
+		if (this.settings.is_t_and_c_agree_active) {
+			let tAndCCheckBox = document.getElementById('t_and_c_panel-input');
+			if (tAndCCheckBox && !tAndCCheckBox.checked) {
+				let TACModalError = document.getElementById("t_a_c-error");
+				TACModalError.style.display = "block";
+
+				window.onclick = function (event) {
+					if (event.target == TACModalError) {
+						TACModalError.style.display = "none";
+					}
+				}
+
+				let tacClose = document.getElementById("tac_modal_error-close");
+				tacClose && tacClose.addEventListener("click", function () {
+					TACModalError.style.display = "none";
+				});
+				this.setAttribute('is_submit', false);
+				return;
+			}
+		}
+		let addToCartForm = this.querySelector('form[action="/cart/add"]');
+		let quantityElement = document.querySelector('input[name="quantity"]');
+		let selling_plan_element = document.getElementsByName('selling_plan');
+		let sellingPlanId = null;
+		if (selling_plan_element?.length > 0) {
+			selling_plan_element?.forEach(sp_ele => {
+				const spEleValue = sp_ele?.attributes?.value?.value;
+				if (!!sp_ele?.checked && spEleValue?.length > 0) {
+					sellingPlanId = spEleValue;
+				}
+			});
+		}
+		let quantity = 1;
+		if (quantityElement) {
+			quantity = quantityElement.value;
+		}
+		// check the cart if this variant already exist
+		if (this.isThisItemAlreadyInCart()) {
+			let currentQuantityInCart = this.getVariantQuantityFromCart(this.variant_id);
+			let newQuantity = parseInt(quantity) + parseInt(currentQuantityInCart);
+			// update cart
+			this.updatePreorderItemInCart(newQuantity, sellingPlanId);
+		} else {
+			this.addNewPreorderItemsToCart(quantity, sellingPlanId);
+		}
+	}
+
+	updatePreorderItemInCart(newQuantity, selling_plan_id) {
+		let line = parseInt(this.lineItemIndex) + 1;
+		let variantId = this.variant_id;
+		let preOrderLabel = 'Pre-ordered items';
+		let formData = {};
+		if (this.settings.config && this.settings.config.preOrderLabel) {
+			preOrderLabel = this.settings.config.preOrderLabel.replaceAll(/\[L]/g, 'L')
+				.replaceAll(/\[P]/g, 'P')
+				.replaceAll(/\[T]/g, 'T');
+		}
+
+		if (selling_plan_id) {
+			formData = {
+				'line': line,
+				'quantity': newQuantity,
+				'properties': {},
+				'selling_plan': selling_plan_id
+			};
+		} else {
+			formData = {
+				'line': line,
+				'quantity': newQuantity,
+				'properties': {}
+			};
+		}
+		formData.properties[preOrderLabel] = '' + newQuantity;
+
+		fetch('/cart/change.js', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(formData),
+		})
+			.then(response => {
+				return response.json();
+			})
+			.then(result => {
+				if (result.items && result.items.length > 0) {
+					window.location.href = '/cart';
+				}
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+	}
+
+	isThisItemAlreadyInCart() {
+		let isInCart = false;
+
+		if (window.Spurit.globalSnippet.cart && window.Spurit.globalSnippet.cart.items) {
+			let listItemsInCart = window.Spurit.globalSnippet.cart.items;
+			listItemsInCart = listItemsInCart.filter((cartItem, index) => {
+				if (cartItem.variant_id === parseInt(this.variant_id)) {
+					this.lineItemIndex = index;
+				}
+				return (cartItem.variant_id === parseInt(this.variant_id))
+			});
+
+			if (listItemsInCart.length > 0) {
+				let preOrderLabel = 'Pre-ordered items';
+				if (this.settings.config && this.settings.config.preOrderLabel) {
+					preOrderLabel = this.settings.config.preOrderLabel;
+				}
+				listItemsInCart.forEach(item => {
+					if (item.properties[preOrderLabel]) {
+						isInCart = true;
+					}
+				});
+			}
+		}
+
+		return isInCart;
+	}
+
+	getFullPaymentId(selling_plan_allocations) {
+		let fullPaymentId;
+		selling_plan_allocations.length > 0 && selling_plan_allocations.forEach(selling_plan => {
+			if (selling_plan?.name.includes("Full payment")) {
+				fullPaymentId = selling_plan.selling_plan_id;
+			}
+		})
+		return fullPaymentId;
+	}
+
+	checkSettingConfigShippingDate(settingConfig) {
+		let result = {};
+
+		if (typeof settingConfig === 'string') {
+			result = JSON.parse(settingConfig);
+		} else {
+			result = settingConfig;
+		}
+
+		return result;
+	}
+
+	getTimeZone(timezone) {
+		return window.moment.tz(timezone).format("Z");
+	}
+
+	shouldShowShippingDate(configShippingDate) {
+		let isShow = false;
+
+
+		if (
+			configShippingDate &&
+			configShippingDate.date &&
+			configShippingDate.time
+		) {
+			const { date, time } = configShippingDate;
+			const exceedDate = window.moment.tz(`${date} ${time}${this.getTimeZone("UTC")}`, window.Intl.DateTimeFormat().resolvedOptions().timeZone);
+			const todayDate = window.moment.tz(window.Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+			if (todayDate.isSameOrBefore(exceedDate)) {
+				isShow = true;
+			}
+		}
+
+		return isShow;
+	}
+
+	getFormatDateTime(settings) {
+		const date_format = settings?.date_format;
+		const date = settings?.date;
+		const time = settings?.time;
+
+		const dateFormat = date_format || DATETIME_FORMAT;
+		const dateTime = date + "T" + time + window.moment.tz("UTC").format("Z");
+		const timeZoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+		return window.moment.tz(dateTime, timeZoneLocal).format(this.formatDateTime(dateFormat));
+	}
+
+	async addNewPreorderItemsToCart(quantity, selling_plan_id) {
+		const { preOrderLimitWarning, isEnableQuantityLeftPopup } = Spurit[this.appName].settings.config;
+		let currentItemSettings = this.getItemSettings();
+		const fullPaymentId = this.getFullPaymentId(currentItemSettings?.snippetSetting?.selling_plan_allocations);
+		let preOrderLabel = 'Pre-ordered items';
+		if (this.settings.config && this.settings.config.preOrderLabel) {
+			preOrderLabel = this.settings.config.preOrderLabel.replaceAll(/\[L]/g, 'L')
+				.replaceAll(/\[P]/g, 'P')
+				.replaceAll(/\[T]/g, 'T');
+		}
+		let formData = {};
+		if (!!fullPaymentId) {
+			if (selling_plan_id && selling_plan_id !== fullPaymentId) {
+				formData = {
+					'items': [{
+						'id': this.variant_id,
+						'quantity': quantity,
+						'properties': {},
+						'selling_plan': selling_plan_id
+					}]
+				};
+			} else {
+				formData = {
+					'items': [{
+						'id': this.variant_id,
+						'quantity': quantity,
+						'properties': {},
+						'selling_plan': fullPaymentId
+					}]
+				};
+			}
+		} else {
+			if (selling_plan_id && selling_plan_id !== FULL_PAYMENT) {
+				formData = {
+					'items': [{
+						'id': this.variant_id,
+						'quantity': quantity,
+						'properties': {},
+						'selling_plan': selling_plan_id
+					}]
+				};
+			} else {
+				formData = {
+					'items': [{
+						'id': this.variant_id,
+						'quantity': quantity,
+						'properties': {},
+					}]
+				};
+			}
+		}
+		formData.items[0].properties[preOrderLabel] = '' + quantity;
+		const { config_shipping_date, is_shipping_date_active } = this.settings;
+		const isShippingDateActive = Boolean(is_shipping_date_active);
+		const configShippingDate = this.checkSettingConfigShippingDate(config_shipping_date);
+		const isShowShippingDate = this.shouldShowShippingDate(configShippingDate);
+		const { isEnableShowEstDeliveryDate } = Spurit[this.appName]?.settings?.config
+		const isValidShowEstDeliveryDate = isShippingDateActive && isShowShippingDate && !!isEnableShowEstDeliveryDate
+		if (isValidShowEstDeliveryDate) {
+			const DEFAULT_CONFIG_SHIPPING_DATE = {
+				text: "Estimated shipping date on",
+				date_format: "[HH]:[mm] [DDD] [FM] [YYYY]",
+			};
+			const estDeliveryDateLineItemLabel = Spurit[this.appName]?.settings?.config?.estDeliveryDateLineItem.replaceAll(/\[L]/g, 'L')
+				.replaceAll(/\[P]/g, 'P')
+				.replaceAll(/\[T]/g, 'T');
+			const parseConfigShippingDate = this.checkSettingConfigShippingDate(this.settings.config_shipping_date);
+
+			const view = {
+				text: parseConfigShippingDate?.text || DEFAULT_CONFIG_SHIPPING_DATE.text,
+				date_time: parseConfigShippingDate ? this.getFormatDateTime(parseConfigShippingDate) : '',
+			};
+			formData.items[0].properties[estDeliveryDateLineItemLabel] = '' + view?.date_time;
+		}
+
+		// Daily Limit Handling
+		if (currentItemSettings.config.isDailyLimit) {
+			const appUrl = this.checkAppUrl(this.appUrl);
+			const dataDailyLimit = await this.fetchDailyQuantityRemaining(appUrl, currentItemSettings.product_id);
+			const remain = this.getRemain(dataDailyLimit, currentItemSettings.variant_id);
+
+			if (remain) {
+				if (parseInt(formData.items[0].properties[preOrderLabel]) > remain) {
+					const confirm = !!isEnableQuantityLeftPopup
+						? await this.confirm(preOrderLimitWarning.replace(':limit', remain))
+						: true;
+					if (confirm) {
+						formData.items[0].properties[preOrderLabel] = '' + remain;
+						formData.items[0].quantity = '' + remain;
+						fetch('/cart/add.js', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(formData),
+						})
+							.then(response => response.json())
+							.then(result => {
+								if (result.items && result.items.length > 0) {
+									window.location.href = '/cart';
+								}
+							})
+							.catch(error => console.log(error));
+					}
+				} else {
+					fetch('/cart/add.js', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(formData),
+					})
+						.then(response => response.json())
+						.then(result => {
+							if (result.items && result.items.length > 0) {
+								window.location.href = '/cart';
+							}
+						})
+						.catch(error => console.log(error));
+				}
+			} else {
+				fetch('/cart/add.js', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(formData),
+				})
+					.then(response => response.json())
+					.then(result => {
+						if (result.items && result.items.length > 0) {
+							window.location.href = '/cart';
+						}
+					})
+					.catch(error => console.log(error));
+			}
+		}
+
+		if (this.settings.config.quantityLimit) {
+			if (formData.items[0].properties[preOrderLabel] > this.settings.config.quantityLimit) {
+				const confirm = !!isEnableQuantityLeftPopup
+					? await this.confirm(preOrderLimitWarning.replace(
+						':limit',
+						quantity - ((quantity - this.settings.config.quantityLimit) - parseInt(currentItemSettings.snippetSetting.inventory_quantity))))
+					: true;
+				if (confirm) {
+					formData.items[0].properties[preOrderLabel] = '' + (
+						quantity - ((quantity - this.settings.config.quantityLimit) - parseInt(currentItemSettings.snippetSetting.inventory_quantity))
+					);
+					formData.items[0].quantity = '' + (
+						quantity - ((quantity - this.settings.config.quantityLimit) - parseInt(currentItemSettings.snippetSetting.inventory_quantity))
+					);
+					fetch('/cart/add.js', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(formData),
+					})
+						.then(response => {
+							return response.json();
+						})
+						.then(result => {
+							if (result.items && result.items.length > 0) {
+								window.location.href = '/cart';
+							}
+						})
+						.catch((error) => {
+							console.error('Error:', error);
+						});
+				}
+			} else {
+				fetch('/cart/add.js', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(formData),
+				})
+					.then(response => {
+						return response.json();
+					})
+					.then(result => {
+						if (result.items && result.items.length > 0) {
+							window.location.href = '/cart';
+						}
+					})
+					.catch((error) => {
+						console.error('Error:', error);
+					});
+			}
+		} else {
+			fetch('/cart/add.js', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData),
+			})
+				.then(response => {
+					return response.json();
+				})
+				.then(result => {
+					if (result.items && result.items.length > 0) {
+						window.location.href = '/cart';
+					}
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+		}
+	}
+
+	confirm(message) {
+		this.elements.accept.innerText = 'OK';
+		this.elements.message.innerText = message;
+		this.toggle(true)
+		return this.waitForUser()
+	}
+
+	waitForUser() {
+		return new Promise(resolve => {
+			this.dialog.addEventListener('cancel', () => {
+				this.toggle()
+				resolve(false)
+			}, { once: true })
+			this.elements.accept.addEventListener('click', () => {
+				let value = this.hasFormData ? this.collectFormData(new FormData(this.elements.form)) : true;
+				this.toggle()
+				resolve(value)
+			}, { once: true })
+		})
+	}
+
+	toggle(open = false) {
+		if (open) this.dialog.showModal()
+		if (!this.dialogSupported) {
+			if (this.settings) {
+				document.body.classList.toggle(this.settings.bodyClass, open)
+				this.dialog.hidden = !open
+			}
+		}
+	}
+
+	addWarningPopupHtml() {
+		this.dialogSupported = typeof HTMLDialogElement === 'function'
+		this.dialog = document.createElement('dialog')
+		this.dialog.role = 'dialog'
+		this.dialog.dataset.component = this.dialogSupported ? 'dialog' : 'no-dialog';
+
+		this.dialog.innerHTML = `
+		<form class="fieldset-popup__warning" method="dialog" data-ref="form">
+		<fieldset data-ref="fieldset" role="document">
+		<legend data-ref="message" id="${Math.round(Date.now()).toString(36)}"></legend>
+		<div data-ref="template"></div>
+		</fieldset>
+		<menu class="menu-popup__warning">
+		<button${this.dialogSupported ? "" : ` type="button"`
+			} data-ref="cancel"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+		<button${this.dialogSupported ? "" : ` type="button"`
+			} data-ref="accept" value="default"></button>
+		</menu>
+		</form>
+		`;
+		const dialogWrapper = document.createElement("div");
+		dialogWrapper.classList.add("dialog-wrapper");
+		dialogWrapper.setAttribute("id", "dialog-wrapper__id");
+		dialogWrapper.appendChild(this.dialog);
+		document.body.appendChild(dialogWrapper);
+
+		this.elements = {};
+		this.dialog.querySelectorAll('[data-ref]').forEach(el => this.elements[el.dataset.ref] = el)
+		this.toggle();
+	}
+
+	getItemSettings() {
+		const defaultSettings = {
+			is_active: false,
+			config: this.defaultSetting.config || {},
+			date_start: this.defaultSetting.date_start || null,
+			date_stop: this.defaultSetting.date_stop || null,
+			time_start: this.defaultSetting.time_start || null,
+			time_end: this.defaultSetting.time_end || null,
+			config_date_time: JSON.parse(this.defaultSetting.config_date_time) || {},
+			config_preorder_counter: this.defaultSetting.config_preorder_counter || null,
+			config_coming_soon: this.defaultSetting?.config_coming_soon || {
+				coming_soon_header: "Coming Soon",
+				coming_soon_message: "Dropping on",
+				available_from: moment().format(INNER_DATE_FORMAT),
+				date_format: "[HH]:[mm] [DDD] [FM] [YYYY]",
+				position: 'bottom',
+				is_publish_cs_calendar: false,
+				is_available_from_active: false,
+				available_time: window.moment
+					.tz(window.Intl.DateTimeFormat().resolvedOptions().timeZone)
+					.format(SCHEDULE_TIME_FORMAT_24)
+			},
+			is_available_from_active: this.defaultSetting.is_available_from_active || false
+		};
+
+		let settings = { ...defaultSettings };
+
+		settings.discount = {
+			value: this.defaultSetting.discount_value || 0,
+			type: this.defaultSetting.discount_type || 'percentage'
+		};
+
+		if (this.variant_id && this.variants[this.variant_id]) {
+			if (
+				this.variants[this.variant_id].config ||
+				this.variants[this.variant_id].date_start ||
+				this.variants[this.variant_id].date_stop ||
+				(this.variants[this.variant_id].discount && this.variants[this.variant_id].discount.value)
+			) {
+				settings = this.variants[this.variant_id];
+			} else {
+				settings.is_active = this.variants[this.variant_id].is_active;
+				settings.is_t_and_c_active = this.variants[this.variant_id].is_t_and_c_active;
+				settings.is_t_and_c_agree_active = this.variants[this.variant_id].is_t_and_c_agree_active;
+				settings.is_coming_soon_active = this.variants[this.variant_id].is_coming_soon_active;
+				settings.is_notify_active = this.variants[this.variant_id].is_notify_active;
+				settings.config_coming_soon = this.variants[this.variant_id].config_coming_soon || this.products[this.product_id].config_coming_soon;
+				settings.config_t_and_c = this.variants[this.variant_id].config_t_and_c || null;
+				settings.config_notify = this.variants[this.variant_id].config_notify || null;
+				settings.config_preorder_counter = this.variants[this.variant_id].config_preorder_counter || null;
+				settings.is_available_from_active = this.variants[this.variant_id]?.is_available_from_active;
+
+				if (this.variants[this.variant_id].discount && this.variants[this.variant_id].discount.value !== null) {
+					settings.discount = this.variants[this.variant_id].discount;
+				}
+			}
+		} else if (this.product_id && this.products[this.product_id]) {
+			if (
+				this.products[this.product_id].config ||
+				this.products[this.product_id].date_start ||
+				this.products[this.product_id].date_stop ||
+				(this.products[this.product_id].discount && this.products[this.product_id].discount.value)
+			) {
+				settings = this.products[this.product_id];
+			} else {
+				settings.is_active = this.products[this.product_id].is_active;
+				settings.is_t_and_c_active = this.products[this.product_id].is_t_and_c_active;
+				settings.is_t_and_c_agree_active = this.products[this.product_id].is_t_and_c_agree_active;
+				settings.is_coming_soon_active = this.products[this.product_id].is_coming_soon_active;
+				settings.is_notify_active = this.products[this.product_id].is_notify_active;
+				settings.config_coming_soon = this.products[this.product_id].config_coming_soon;
+				settings.config_t_and_c = this.products[this.product_id].config_t_and_c || null;
+				settings.config_notify = this.products[this.product_id].config_notify || null;
+				settings.config_preorder_counter = this.products[this.product_id].config_preorder_counter || null;
+				settings.is_available_from_active = this.products[this.product_id]?.is_available_from_active;
+
+				if (this.products[this.product_id].discount && this.products[this.product_id].discount.value !== null) {
+					settings.discount = this.products[this.product_id].discount;
+				}
+			}
+		}
+		if (this.product_id && this.products[this.product_id]?.config_location) {
+			settings.config_location = this.products[this.product_id]?.config_location;
+		}
+
+		settings.snippetSetting = this.getItemSnippetSetting();
+
+		if (settings.config === null) {
+			settings.config = defaultSettings.config;
+		}
+
+		if (settings.config_coming_soon === null) {
+			settings.config_coming_soon = defaultSettings?.config_coming_soon;
+			settings.is_available_from_active = defaultSettings?.is_available_from_active;
+		}
+
+		if (!settings.config.hasCustomCheckoutLabel) {
+			settings.config.preOrderLabel = settings.config.buttonMessage;
+		}
+
+		return settings;
+	}
+
+	getItemSnippetSetting() {
+		let itemSnippetSetting = null;
+		if (Spurit[this.appName].snippet.products) {
+			Object.values(Spurit[this.appName].snippet.products).find(
+				product => !!product.variants.find(variant => {
+					if (variant.id == this.variant_id) {
+						itemSnippetSetting = variant;
+						return true;
+					}
+					return false;
+				})
+			);
+		}
+		return itemSnippetSetting;
+	}
+
+	// Daily Limit Handling
+	getRemain(dataDailyRemain, variantId) {
+		let dataRemaining;
+		dataDailyRemain?.variants?.forEach(variant => {
+			if (variant.variant_id === variantId) {
+				dataRemaining = variant.remain;
+			}
+		});
+		return dataRemaining;
+	}
+
+	getItemStatus(currentItemSettings, dataDailyRemain = null, geoDataLocation) {
+		const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+		const now = window.moment.tz(timezoneLocal);
+		const dateStop = window.moment.tz(
+			currentItemSettings.date_stop + ' ' + currentItemSettings.time_end + window.moment.tz('UTC').format('Z'), timezoneLocal
+		);
+		let dataRemaining;
+
+		if (currentItemSettings.config.isDailyLimit && dataDailyRemain) {
+			dataRemaining = this.getRemain(dataDailyRemain, currentItemSettings.variant_id);
+		}
+		// Daily Limit Handling
+		if (currentItemSettings.config.isDailyLimit && currentItemSettings.is_active) {
+			if (currentItemSettings.snippetSetting.inventory_quantity <= 0) {
+				if (!this.checkLocation(this.globalConfig, null, geoDataLocation)) {
+					return PREORDER_STATUS_SOLD_OUT;
+				}
+				if (currentItemSettings.date_stop && currentItemSettings.time_end) {
+					if (now.isSameOrAfter(dateStop)) {
+						return PREORDER_STATUS_SOLD_OUT;
+					}
+				}
+				if (!this.checkLimits(currentItemSettings, dataRemaining ? dataRemaining : null)) {
+					return PREORDER_STATUS_SOLD_OUT;
+				}
+				if (dataRemaining <= 0) {
+					return PREORDER_STATUS_SOLD_OUT;
+				} else {
+					return PREORDER_STATUS_ENABLED;
+				}
+			}
+			return PREORDER_STATUS_DISABLED;
+		}
+
+		if (currentItemSettings.snippetSetting) {
+			let inStockQuantity = currentItemSettings.snippetSetting.inventory_quantity;
+			if (inStockQuantity > 0) {
+				return PREORDER_STATUS_DISABLED;
+			}
+		}
+
+		if (currentItemSettings.is_active && currentItemSettings.date_stop && currentItemSettings.time_end) {
+			const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+			const now = window.moment.tz(timezoneLocal);
+			const dateStop = window.moment.tz(
+				currentItemSettings.date_stop + ' ' + currentItemSettings.time_end + window.moment.tz('UTC').format('Z'), timezoneLocal
+			);
+
+			if (now.isSameOrAfter(dateStop)) {
+				return PREORDER_STATUS_SOLD_OUT;
+			}
+		}
+
+		if (!this.isVariantAllowed(currentItemSettings)) {
+			if (
+				!this.isVariantAllowed(currentItemSettings, true) && currentItemSettings.config &&
+				currentItemSettings.config.disabledPreOrderStatus === DISABLED_PRE_ORDER_STATUS_SHOW_MESSAGE &&
+				currentItemSettings.is_active
+			) {
+				return PREORDER_STATUS_SOLD_OUT;
+			} else {
+				return PREORDER_STATUS_DISABLED;
+			}
+		}
+
+		// Daily Limit Handling
+		if (
+			!this.checkLimits(currentItemSettings, dataRemaining ? dataRemaining : null) ||
+			!this.checkLocation(this.globalConfig, dataRemaining ? dataRemaining : null, geoDataLocation)
+		) {
+			return PREORDER_STATUS_SOLD_OUT;
+		}
+
+		if (currentItemSettings.snippetSetting && currentItemSettings.config) {
+			let quantityTotal = this.getVariantQuantityFromCart(currentItemSettings.snippetSetting.id);
+			let inStockQuantity = currentItemSettings.snippetSetting.inventory_quantity;
+			let preOrderLimit = currentItemSettings.config.quantityLimit;
+			if (preOrderLimit && quantityTotal >= preOrderLimit + inStockQuantity) {
+				return PREORDER_STATUS_SOLD_OUT;
+			}
+		}
+
+		return PREORDER_STATUS_ENABLED;
+	}
+
+	getCurrentDateTime(timezone) {
+		let options = {
+			timeZone: timezone,
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+		},
+			formatter = new Intl.DateTimeFormat([], options);
+
+		return formatter.format(new Date());
+	}
+
+	checkLimits(currentItemSettings, remain = null) {
+		let timezone = this.timezone;
+		const timezoneLocal = window.Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+		if (!currentItemSettings || !timezoneLocal) {
+			return true;
+		}
+
+		const now = window.moment.tz(timezoneLocal);
+
+		if (
+			currentItemSettings.date_start &&
+			currentItemSettings.date_stop &&
+			!now.isBetween(
+				window.moment.tz(`${currentItemSettings.date_start} ${currentItemSettings.time_start}${window.moment.tz('UTC').format('Z')}`, timezoneLocal),
+				window.moment.tz(`${currentItemSettings.date_stop} ${currentItemSettings.time_end}${window.moment.tz('UTC').format('Z')}`, timezoneLocal)
+			)
+		) {
+			return false;
+		}
+
+		// Daily Limit Handling
+		if (remain) {
+			return remain > 0;
+		}
+
+		if (
+			currentItemSettings.is_coming_soon_active &&
+			currentItemSettings.config_coming_soon &&
+			currentItemSettings.config_coming_soon.available_from
+		) {
+			const comingSoonDateCheck = window.moment.tz(
+				currentItemSettings.config_coming_soon.available_from + ' ' + currentItemSettings.config_coming_soon.available_time,
+				timezone
+			);
+
+			if (now.isSameOrBefore(comingSoonDateCheck)) {
+				return true;
+			}
+		}
+
+		return !(
+			currentItemSettings.config
+			&& currentItemSettings.config.quantityLimit
+			&& currentItemSettings.config.quantityLimit <= -1 * currentItemSettings.snippetSetting.inventory_quantity
+		);
+	}
+
+	isVariantAllowed(currentItemSettings, ignoreInventoryQuantity = false) {
+		if (!currentItemSettings || !currentItemSettings.is_active) {
+			return false;
+		}
+		return !!(
+			currentItemSettings.snippetSetting.inventory_policy === INVENTORY_POLICY_CONTINUE &&
+			(ignoreInventoryQuantity || currentItemSettings.snippetSetting.inventory_quantity <= 0)
+		);
+	}
+
+	getVariantQuantityFromCart(variantId) {
+		let quantityTotal = 0;
+		this.listItemsInCart = window.Spurit.globalSnippet.cart.items;
+		this.listItemsInCart
+			.filter(cartItem => cartItem.variant_id == variantId)
+			.forEach(cartItem => quantityTotal += cartItem.quantity);
+		return quantityTotal;
+	}
+
+	ajax(method = 'GET', url, data = null, callback = () => null, noXHeaders = false) {
+		if (typeof (XMLHttpRequest) === 'undefined') {
+			throw new Error('XMLHttpRequest is not supported');
+		}
+
+		let XmlHttpObject = new XMLHttpRequest();
+		url += (url.indexOf('?') === -1 ? '?' : '&') + 'hash=' + Math.random();
+		method = method.toUpperCase();
+
+		// Make request
+		XmlHttpObject.open(method, url, true);
+		XmlHttpObject.onreadystatechange = function () {
+			if (XmlHttpObject.readyState === 4) {
+				callback(
+					XmlHttpObject.responseText,
+					XmlHttpObject.status,
+					XmlHttpObject.statusText
+				);
+			}
+		};
+		if (method === 'POST') {
+			XmlHttpObject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		}
+		if (!noXHeaders) {
+			XmlHttpObject.setRequestHeader('X-Requested-With', 'xmlhttprequest'); // HTTP_X_REQUESTED_WITH
+		}
+
+		if (data !== null && typeof (data) !== 'string') {
+			data = JSON.stringify(data);
+		}
+		XmlHttpObject.send(data);
+	};
+
+	getGeoLocation(callback) {
+		this.ajax(
+			'GET',
+			this.appUrl + 'getlocation',
+			null,
+			data => callback(JSON.parse(data)),
+			true
+		);
+	}
+
+	arraysAreEqual(arr1, arr2) {
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
+
+		for (let i = 0; i < arr1.length; i++) {
+			if (arr1[i] !== arr2[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	checkLocation(shopConfig, remain = 0, geoDataLocation) {
+		if (!geoDataLocation) {
+			return true;
+		}
+
+		// Daily Limit Handling
+		if (remain) {
+			return remain > 0;
+		}
+
+		const productConfigLocations = this.settings.config_location ? this.settings.config_location : shopConfig.locations;
+		let listAllowLocations = Object.values(shopConfig.locations);
+		const equalLocation = this.arraysAreEqual(['All'], listAllowLocations);
+		if (equalLocation) {
+			if (productConfigLocations && productConfigLocations[0] === LOCATION_LIST_SELECTION_ALL) {
+				return true
+			} else {
+				listAllowLocations = Object.values(productConfigLocations);
+				return listAllowLocations.some(item => item === geoDataLocation.country_code)
+			}
+		} else {
+			if (productConfigLocations && productConfigLocations[0] === LOCATION_LIST_SELECTION_ALL) {
+				listAllowLocations = Object.values(shopConfig.locations);
+				return listAllowLocations.some(item => item === geoDataLocation.country_code)
+			} else {
+				if (productConfigLocations && typeof productConfigLocations === 'object' && Object.values(productConfigLocations).some(item => item === geoDataLocation.country_code)) {
+					if (shopConfig.locations && typeof shopConfig.locations === 'object' && Object.values(shopConfig.locations).some(item => item === geoDataLocation.country_code)) {
+						return true
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+		}
+	}
+}
+
+function onChangeVariantCallback(_this) {
+	let variantId = _this.value;
+	let preOrderButton = _this.closest("preorder-button");
+	preOrderButton.setAttribute('variant_id', variantId);
+}
+
+function onFormSubmit(_this, event) {
+	event.preventDefault();
+	let preOrderButton = document.getElementsByTagName("preorder-button");
+	if (preOrderButton[0]) {
+		preOrderButton[0].setAttribute('is_submit', true);
+	}
+}
+
+customElements.define('preorder-button', PreOrderButton)
+
+window.addEventListener('DOMContentLoaded', (event) => {
+	// Hide shopify ATC button
+	let defaultShopifyProductFormElement = document.getElementsByTagName('product-form');
+	if (defaultShopifyProductFormElement) {
+		for (let i = 0; i < defaultShopifyProductFormElement.length; i++) {
+			for (let j = 0; j < defaultShopifyProductFormElement[i].childNodes.length; j++) {
+				if (defaultShopifyProductFormElement[i].childNodes[j].tagName === "FORM") {
+					defaultShopifyProductFormElement[i].childNodes[j].classList.remove('show');
+					defaultShopifyProductFormElement[i].childNodes[j].classList.add('hidden');
+					break;
+				}
+			}
+		}
+	}
+	var interval = setInterval(function () {
+		let appName = 'Preorder2';
+		// Show ATC button after uninstall app
+		if (!Spurit.appName || !Spurit.appPomName) {
+			if (defaultShopifyProductFormElement) {
+				for (let i = 0; i < defaultShopifyProductFormElement.length; i++) {
+					for (let j = 0; j < defaultShopifyProductFormElement[i].childNodes.length; j++) {
+						if (defaultShopifyProductFormElement[i].childNodes[j].tagName === "FORM") {
+							defaultShopifyProductFormElement[i].childNodes[j].classList.remove('hidden');
+							defaultShopifyProductFormElement[i].childNodes[j].classList.add('show');
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (Spurit.appName && Spurit[Spurit.appName].settings) {
+			appName = Spurit.appName;
+		}
+		if (Spurit.appPomName && Spurit[Spurit.appPomName].settings) {
+			appName = Spurit.appPomName;
+		}
+		if (appName && Spurit[appName] && Spurit[appName].settings) {
+			let preOrderButton = document.getElementsByTagName("preorder-button");
+			if (preOrderButton[0]) {
+				preOrderButton[0].setAttribute('is_setting_load', true);
+				clearInterval(interval);
+			}
+		}
+	}, 300);
+});
