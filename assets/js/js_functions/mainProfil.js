@@ -126,7 +126,6 @@ function isTokenExpired(tokenPayload) {
   return tokenPayload.exp < currentTime;
 }
 
-
 function updateUIWithUserData(userData) {
   if (!userData) {
     console.error("No user data provided");
@@ -242,7 +241,6 @@ function updateUIWithUserData(userData) {
   console.log("Profile updated with user data:", firstName, lastName, email);
 }
 
-
 function showContent(contentId) {
   const contentSections = {
     "profile-info": "profile-info-content",
@@ -277,7 +275,6 @@ function showContent(contentId) {
     activeMenuItem.classList.add("active");
   }
 }
-
 
 function loadWishlistFromDatabase() {
   const wishlistContainer = document.getElementById("wishlist-container");
@@ -404,7 +401,6 @@ function loadWishlistFromDatabase() {
 
   xhr.send();
 }
-
 
 function createProductCard(item) {
   const card = document.createElement("div");
@@ -702,7 +698,6 @@ function initializeProfileEditModal() {
   }
 }
 
-
 function getTokenPayload() {
   try {
     const token = localStorage.getItem("token");
@@ -717,7 +712,6 @@ function getTokenPayload() {
     return null;
   }
 }
-
 
 function updateUIAfterProfileUpdate(firstname, lastname, email, modalEl) {
   const displayName = document.getElementById("profileName");
@@ -754,7 +748,6 @@ function updateUIAfterProfileUpdate(firstname, lastname, email, modalEl) {
     console.error("Error updating userData in localStorage:", e);
   }
 }
-
 
 function loadUserProfileData() {
   const userId =
@@ -865,7 +858,6 @@ function setupLogout() {
     });
   }
 }
-
 
 function initializeProfileImageUpload() {
   const imageInput = document.getElementById("profileImageInput");
@@ -1290,6 +1282,26 @@ function initializeOrdersSection() {
     const orderCard = document.createElement("div");
     orderCard.className = "order-card";
     orderCard.id = `my-order-${order._id}`;
+    let shopName = "Unknown Shop";
+
+    try {
+      if (typeof order.shop === "object" && order.shop !== null) {
+        if (order.shop.shopName) {
+          shopName = order.shop.shopName;
+          console.log("Found shopName in order.shop.shopName:", shopName);
+        }
+      }
+
+      // Autres vérifications possibles
+      if (shopName === "Unknown Shop" && order.shopName) {
+        shopName = order.shopName;
+        console.log("Found shopName in order.shopName:", shopName);
+      }
+    } catch (error) {
+      console.error("Error extracting shop name:", error);
+    }
+
+    console.log("Final shop name extracted:", shopName);
 
     // Format date
     const orderDate = new Date(
@@ -1303,13 +1315,12 @@ function initializeOrdersSection() {
 
     // Determine the status
     const orderStatus = order.orderStatus || order.status || "pending";
-    const statusLower = orderStatus.toLowerCase();
-
-    // Create order header
+    const statusLower = orderStatus.toLowerCase(); // Create order header
     const orderHeader = document.createElement("div");
     orderHeader.className = "order-header";
     orderHeader.innerHTML = `
     <span class="order-id">#ORD-${order._id.substring(0, 5)}</span>
+    <span class="order-shop styled-shop"><i class="ph ph-storefront"></i> ${shopName}</span>
     <span class="order-date">${formattedDate}</span>
     <span class="order-status ${statusLower}">${capitalizeFirstLetter(orderStatus)}</span>
   `;
@@ -1430,7 +1441,11 @@ function initializeOrdersSection() {
         <i class="ph ph-file-text"></i> View Receipt
       </button>
     `;
-    } else if (statusLower === "pending" || statusLower === "accepted" || statusLower === "shipped") {
+    } else if (
+      statusLower === "pending" ||
+      statusLower === "accepted" ||
+      statusLower === "shipped"
+    ) {
       // For pending or accepted orders, show track, receipt and cancel buttons
       orderFooter.innerHTML = `
       <button class="order-action track" id="track-order-${order._id}">
@@ -1714,123 +1729,153 @@ Status: ${order.orderStatus || order.status || "N/A"}
   }
 
   // Function to cancel an order
-function cancelOrder(orderId) {
-  const order = allOrders.find((o) => o._id === orderId);
-  if (!order) {
-    Swal.fire("Erreur", "Commande introuvable", "error");
-    return;
-  }
+  function cancelOrder(orderId) {
+    const order = allOrders.find((o) => o._id === orderId);
+    if (!order) {
+      Swal.fire("Erreur", "Commande introuvable", "error");
+      return;
+    }
 
-  const status = (order.orderStatus || order.status || "").toLowerCase();
-  if (status !== "pending" && status !== "accepted") {
-    Swal.fire("Non autorisé", "Seules les commandes en attente ou acceptées peuvent être annulées.", "warning");
-    return;
-  }
+    const status = (order.orderStatus || order.status || "").toLowerCase();
+    if (status !== "pending" && status !== "accepted") {
+      Swal.fire(
+        "Non autorisé",
+        "Seules les commandes en attente ou acceptées peuvent être annulées.",
+        "warning"
+      );
+      return;
+    }
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    Swal.fire("Erreur d'authentification", "Veuillez vous reconnecter.", "error");
-    return;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire(
+        "Erreur d'authentification",
+        "Veuillez vous reconnecter.",
+        "error"
+      );
+      return;
+    }
 
-  Swal.fire({
-    title: "Annuler la commande",
-    input: "textarea",
-    inputLabel: "Veuillez indiquer la raison de l'annulation (obligatoire)",
-    inputPlaceholder: "Raison de l'annulation...",
-    inputAttributes: {
-      "aria-label": "Raison de l'annulation"
-    },
-    showCancelButton: true,
-    confirmButtonText: "Annuler la commande",
-    cancelButtonText: "Annuler",
-    inputValidator: (value) => {
-      if (!value || value.trim() === "") {
-        return "La raison d'annulation est obligatoire.";
+    Swal.fire({
+      title: "Annuler la commande",
+      input: "textarea",
+      inputLabel: "Veuillez indiquer la raison de l'annulation (obligatoire)",
+      inputPlaceholder: "Raison de l'annulation...",
+      inputAttributes: {
+        "aria-label": "Raison de l'annulation",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Annuler la commande",
+      cancelButtonText: "Annuler",
+      inputValidator: (value) => {
+        if (!value || value.trim() === "") {
+          return "La raison d'annulation est obligatoire.";
+        }
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const refusalReason = result.value;
+
+      // Afficher le chargement
+      const orderCard = document.getElementById(`my-order-${orderId}`);
+      if (orderCard) {
+        const loadingOverlay = document.createElement("div");
+        loadingOverlay.className = "loading-overlay";
+        loadingOverlay.innerHTML =
+          '<div class="loading-spinner"></div><div class="loading-text">Annulation en cours...</div>';
+        loadingOverlay.id = `loading-overlay-${orderId}`;
+        orderCard.style.position = "relative";
+        orderCard.appendChild(loadingOverlay);
       }
-    }
-  }).then((result) => {
-    if (!result.isConfirmed) return;
 
-    const refusalReason = result.value;
+      // Requête AJAX
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `/order/${orderId}/status`, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
-    // Afficher le chargement
-    const orderCard = document.getElementById(`my-order-${orderId}`);
-    if (orderCard) {
-      const loadingOverlay = document.createElement("div");
-      loadingOverlay.className = "loading-overlay";
-      loadingOverlay.innerHTML =
-        '<div class="loading-spinner"></div><div class="loading-text">Annulation en cours...</div>';
-      loadingOverlay.id = `loading-overlay-${orderId}`;
-      orderCard.style.position = "relative";
-      orderCard.appendChild(loadingOverlay);
-    }
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          const loadingOverlay = document.getElementById(
+            `loading-overlay-${orderId}`
+          );
+          if (loadingOverlay && loadingOverlay.parentNode) {
+            loadingOverlay.parentNode.removeChild(loadingOverlay);
+          }
 
-    // Requête AJAX
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", `/order/${orderId}/status`, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+          if (xhr.status === 200) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              const index = allOrders.findIndex((o) => o._id === orderId);
+              if (index !== -1) {
+                allOrders[index].orderStatus = "cancelled";
+                allOrders[index].status = "cancelled";
+                allOrders[index].refusalReason = refusalReason;
 
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        const loadingOverlay = document.getElementById(`loading-overlay-${orderId}`);
+                const filteredIndex = filteredOrders.findIndex(
+                  (o) => o._id === orderId
+                );
+                if (filteredIndex !== -1) {
+                  filteredOrders[filteredIndex].orderStatus = "cancelled";
+                  filteredOrders[filteredIndex].status = "cancelled";
+                  filteredOrders[filteredIndex].refusalReason = refusalReason;
+                }
+              }
+
+              renderOrders();
+
+              Swal.fire("Succès", "La commande a bien été annulée.", "success");
+            } catch (error) {
+              console.error("Erreur de parsing:", error);
+              Swal.fire(
+                "Erreur",
+                "Erreur lors de l'annulation de la commande.",
+                "error"
+              );
+            }
+          } else if (xhr.status === 403 || xhr.status === 401) {
+            console.error("Erreur d'authentification:", xhr.responseText);
+            Swal.fire(
+              "Erreur d'authentification",
+              "Veuillez vous reconnecter.",
+              "error"
+            );
+          } else {
+            console.error("Erreur serveur:", xhr.status);
+            Swal.fire(
+              "Erreur",
+              "Impossible d'annuler la commande. Veuillez réessayer.",
+              "error"
+            );
+          }
+        }
+      };
+
+      xhr.onerror = function () {
+        const loadingOverlay = document.getElementById(
+          `loading-overlay-${orderId}`
+        );
         if (loadingOverlay && loadingOverlay.parentNode) {
           loadingOverlay.parentNode.removeChild(loadingOverlay);
         }
 
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);            const index = allOrders.findIndex((o) => o._id === orderId);
-            if (index !== -1) {
-              allOrders[index].orderStatus = "cancelled";
-              allOrders[index].status = "cancelled";
-              allOrders[index].refusalReason = refusalReason;
-              
-              const filteredIndex = filteredOrders.findIndex((o) => o._id === orderId);
-              if (filteredIndex !== -1) {
-                filteredOrders[filteredIndex].orderStatus = "cancelled";
-                filteredOrders[filteredIndex].status = "cancelled";
-                filteredOrders[filteredIndex].refusalReason = refusalReason;
-              }
-            }
+        console.error("Erreur réseau");
+        Swal.fire(
+          "Erreur réseau",
+          "Veuillez vérifier votre connexion.",
+          "error"
+        );
+      };
 
-            renderOrders();
-
-            Swal.fire("Succès", "La commande a bien été annulée.", "success");
-          } catch (error) {
-            console.error("Erreur de parsing:", error);
-            Swal.fire("Erreur", "Erreur lors de l'annulation de la commande.", "error");
-          }
-        } else if (xhr.status === 403 || xhr.status === 401) {
-          console.error("Erreur d'authentification:", xhr.responseText);
-          Swal.fire("Erreur d'authentification", "Veuillez vous reconnecter.", "error");
-        } else {
-          console.error("Erreur serveur:", xhr.status);
-          Swal.fire("Erreur", "Impossible d'annuler la commande. Veuillez réessayer.", "error");
-        }
-      }
-    };
-
-    xhr.onerror = function () {
-      const loadingOverlay = document.getElementById(`loading-overlay-${orderId}`);
-      if (loadingOverlay && loadingOverlay.parentNode) {
-        loadingOverlay.parentNode.removeChild(loadingOverlay);
-      }
-
-      console.error("Erreur réseau");
-      Swal.fire("Erreur réseau", "Veuillez vérifier votre connexion.", "error");
-    };
-
-    xhr.send(
-      JSON.stringify({
-        status: "cancelled",
-        refusalReason: refusalReason,
-      })
-    );
-  });
-}
-
+      xhr.send(
+        JSON.stringify({
+          status: "cancelled",
+          refusalReason: refusalReason,
+        })
+      );
+    });
+  }
 
   // Function to leave a review
   function leaveReview(orderId) {
@@ -1862,7 +1907,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initializeOrdersSection();
   }
 });
-
 
 // Change password function
 function initializePasswordChange() {
@@ -2039,7 +2083,6 @@ function showToast(title, message, type = "info") {
     alert(`${title}: ${message}`);
   }
 }
-
 
 // Call the initialization function when the DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {

@@ -927,3 +927,34 @@ font-size: 1.1rem;
   }
 }
 
+/* Style pour l'élément boutique dans les commandes */
+#my-orders-content .order-shop.styled-shop {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+  font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1.25rem;
+  font-size: 0.875rem;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(79, 70, 229, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#my-orders-content .order-shop.styled-shop:hover {
+  background-color: rgba(79, 70, 229, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
+}
+
+#my-orders-content .order-shop.styled-shop i {
+  font-size: 1rem;
+  margin-right: 0.1rem;
+}
+
