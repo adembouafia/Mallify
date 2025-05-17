@@ -10,9 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // We're on the main delivery dashboard page
     initDeliveryDashboard();
   }
-
   // Add notification loading
-  const shopId = localStorage.getItem("shopId");
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
   if (shopId) {
     // Load notifications immediately
     loadNotifications();
@@ -20,18 +31,48 @@ document.addEventListener("DOMContentLoaded", () => {
     // Refresh notifications every 5 minutes
     setInterval(loadNotifications, 5 * 60 * 1000);
   }
-  
+
   // Vérifier les livraisons reportées au chargement de la page
   checkPostponedDeliveries();
-  
+
   // Vérifier les livraisons reportées toutes les 5 minutes
   setInterval(checkPostponedDeliveries, 5 * 60 * 1000);
 });
 
 // Fonction pour vérifier les livraisons reportées
 function checkPostponedDeliveries() {
+  // Récupérer le shopId depuis le localStorage
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
+  // Si nous n'avons pas pu obtenir le shopId à partir de userData, essayer de l'obtenir directement
+  if (!shopId) {
+    shopId = localStorage.getItem("shopId");
+  }
+
+  if (!shopId) {
+    console.error(
+      "Aucun shopId trouvé dans le localStorage pour la vérification des livraisons reportées"
+    );
+    return;
+  }
+
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/delivery/check-postponed", true);
+  xhr.open(
+    "GET",
+    `http://localhost:3000/delivery/check-postponed?shopId=${shopId}`,
+    true
+  );
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader(
     "Authorization",
@@ -42,7 +83,7 @@ function checkPostponedDeliveries() {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.responseText);
       console.log("Vérification des livraisons reportées:", response.message);
-      
+
       // Si des livraisons ont été mises à jour, recharger les données
       if (response.updated > 0) {
         loadDeliveries();
@@ -174,10 +215,34 @@ function setupDeliveryEventListeners() {
 
 // Fonction pour charger les livraisons
 function loadDeliveries() {
-  console.log("Chargement des livraisons...");
+  console.log("Loading deliveries...");
+
+  // Récupérer le shopId depuis le localStorage
+  const userDataString = localStorage.getItem("userData");
+  let shopId;
+
+  try {
+    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      shopId = userData.shop;
+    }
+  } catch (error) {
+    console.error("Erreur lors du parsing des données utilisateur:", error);
+  }
+
+  if (!shopId) {
+    console.error("Aucun shopId trouvé dans le localStorage");
+    showErrorMessage(
+      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+    );
+    return;
+  }
+
+  console.log("Chargement des livraisons pour le shop:", shopId);
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/delivery/all", true);
+  xhr.open("GET", `http://localhost:3000/delivery/all?shopId=${shopId}`, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader(
     "Authorization",
@@ -304,7 +369,7 @@ function displayDeliveries(deliveries, tableId) {
 
   if (!deliveries || deliveries.length === 0) {
     deliveryTable.innerHTML =
-      '<tr><td colspan="9" class="text-center">Aucune livraison trouvée</td></tr>';
+      '<tr><td colspan="9" class="text-center">No Deliveries Found</td></tr>';
     return;
   }
 
