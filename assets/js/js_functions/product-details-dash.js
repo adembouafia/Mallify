@@ -66,7 +66,7 @@ function displayProductDetails(product) {
     // Update product ID
     const productIdElement = document.querySelector('p.text-muted');
     if (productIdElement) {
-        productIdElement.textContent = `Product ID: #${product.productId || "N/A"}`;
+        productIdElement.textContent = `Product REF: #${product.productId || "N/A"}`;
     }
 
     // Update price
