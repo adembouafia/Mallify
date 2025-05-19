@@ -56,13 +56,19 @@ function updateUserMenuInfo() {
         const userDataStr = localStorage.getItem("userData");
         const token = localStorage.getItem("token");
         const userType = localStorage.getItem("userType");
+        const userRole = localStorage.getItem("userRole");
         
         // If no data or token exists, don't update the menu
         if ((!adminDataStr && !userDataStr) || !token) {
             console.log("No admin data found in localStorage");
             return;
         }
-        
+          let manage = document.getElementById("manageAdmins")
+
+          if(userRole == "superAdmin"){
+            manage.style.display = "block"
+          }
+
         // Try to get admin data from either admin or userData storage
         let admin;
         if (adminDataStr) {
