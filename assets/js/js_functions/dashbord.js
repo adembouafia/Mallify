@@ -144,11 +144,19 @@ function updateInfoBoxes(metrics) {
   } else {
     console.error("Incomes box element not found");
   }
-
   // Update Avg. Product Rating box
   if (avgRatingBox) {
     const rating = metrics.avgRating !== undefined ? metrics.avgRating : "N/A";
-    avgRatingBox.innerHTML = rating;
+    
+    // Format the rating display with stars if it's a numeric value
+    if (rating !== "N/A") {
+      const numericRating = parseFloat(rating);
+      const stars = '★'.repeat(Math.round(numericRating)) + '☆'.repeat(5 - Math.round(numericRating));
+      avgRatingBox.innerHTML = `${rating} <small>${stars}</small>`;
+    } else {
+      avgRatingBox.innerHTML = rating;
+    }
+    
     console.log("Updated avg rating box with:", rating);
   } else {
     console.error("Avg rating box element not found");
@@ -1406,19 +1414,18 @@ function fetchDashboardData() {
                 })); // Calculate average product rating if available
               let avgRating = "N/A";
               let totalRatings = 0;
-              let sumRatings = 0;
-
-              // Check if we have products with ratings
+              let sumRatings = 0;              // Check if we have products with ratings
               if (
                 productsData.data.products &&
                 productsData.data.products.length > 0
               ) {
                 productsData.data.products.forEach((product) => {
+                  // Use averageRating from the product model instead of avgRating
                   if (
-                    product.avgRating !== undefined &&
-                    product.avgRating !== null
+                    product.averageRating !== undefined &&
+                    product.averageRating !== null
                   ) {
-                    sumRatings += parseFloat(product.avgRating);
+                    sumRatings += parseFloat(product.averageRating);
                     totalRatings++;
                   }
                 });
