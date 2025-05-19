@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -53,17 +53,35 @@
             <li class="nav-item dropdown notifications-menu">
               <a class="nav-link" data-bs-toggle="dropdown" href="#">
                 <i class="bi bi-bell-fill"></i>
-                <span class="notification-counter navbar-badge badge text-bg-warning">0</span>
+                <span
+                  class="notification-counter navbar-badge badge text-bg-warning"
+                  >0</span
+                >
               </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end notification-dropdown">
-                <span class="dropdown-item dropdown-header notification-count-header">0 Notifications</span>
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end notification-dropdown"
+              >
+                <span
+                  class="dropdown-item dropdown-header notification-count-header"
+                  >0 Notifications</span
+                >
                 <div class="notification-list">
                   <!-- Notifications will be loaded here dynamically -->
                 </div>
                 <div class="dropdown-divider"></div>
                 <div class="d-flex justify-content-between px-3 py-2">
-                  <button type="button" class="btn btn-sm btn-primary mark-all-read-btn">Mark All as Read</button>
-                  <button type="button" class="btn btn-sm btn-secondary see-all-notifications-btn">See All</button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-primary mark-all-read-btn"
+                  >
+                    Mark All as Read
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-secondary see-all-notifications-btn"
+                  >
+                    See All
+                  </button>
                 </div>
               </div>
             </li>
@@ -88,16 +106,22 @@
                     alt="Admin image"
                   />
                   <p>
-                    Shop Name 
+                    Shop Name
                     <small>Founded In 2025</small>
                   </p>
                 </li>
 
                 <li class="user-footer">
-                  <a href="Settings.html" class="btn btn-default btn-flat">Settings </a>
-                  <a href="#" class="btn btn-default btn-flat float-end" onclick="handleLogout()">Sign out</a>
+                  <a href="Settings.html" class="btn btn-default btn-flat"
+                    >Settings
+                  </a>
+                  <a
+                    href="#"
+                    class="btn btn-default btn-flat float-end"
+                    onclick="handleLogout()"
+                    >Sign out</a
+                  >
                 </li>
-                
               </ul>
             </li>
           </ul>
@@ -124,7 +148,7 @@
               data-accordion="false"
             >
               <li class="nav-item">
-                <a href="index.html" class="nav-link  active">
+                <a href="index.html" class="nav-link active">
                   <i class="nav-icon bi bi-house"></i>
                   <p>
                     Home
@@ -133,10 +157,7 @@
                 </a>
               </li>
               <li class="nav-item" id="manageModerators" style="display: none">
-                <a
-                  href="moderators.html"
-                  class="nav-link"
-                >
+                <a href="moderators.html" class="nav-link">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
                     Moderators
@@ -145,10 +166,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="products.html"
-                  class="nav-link"
-                >
+                <a href="products.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Products
@@ -160,10 +178,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="orders.html"
-                  class="nav-link"
-                >
+                <a href="orders.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Orders
@@ -184,10 +199,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="invoice.html"
-                  class="nav-link"
-                >
+                <a href="invoice.html" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Invoice
@@ -199,10 +211,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  href="reports.html"
-                  class="nav-link"
-                >
+                <a href="reports.html" class="nav-link">
                   <i class="nav-icon bi bi-tree-fill"></i>
                   <p>
                     Reports
@@ -356,7 +365,10 @@
                     <div class="row">
                       <div class="col-md-8">
                         <p class="text-center">
-                          <strong>Évolution des ventes dans le temps: Jan 2023 - Jul 2023</strong>
+                          <strong
+                            >Évolution des ventes dans le temps: Jan 2023 - Jul
+                            2023</strong
+                          >
                         </p>
                         <div id="sales-chart"></div>
                       </div>
@@ -414,53 +426,6 @@
                     </div>
                     <!--end::Row-->
                   </div>
-                  <!-- ./card-body -->
-                  <div class="card-footer">
-                    <!--begin::Row-->
-                    <div class="row">
-                      <div class="col-md-3 col-6">
-                        <div class="text-center border-end">
-                          <span class="text-success">
-                            <i class="bi bi-caret-up-fill"></i> 17%
-                          </span>
-                          <h5 class="fw-bold mb-0">$35,210.43</h5>
-                          <span class="text-uppercase">CHIFFRE D'AFFAIRES</span>
-                        </div>
-                      </div>
-                      <!-- /.col -->
-                      <div class="col-md-3 col-6">
-                        <div class="text-center border-end">
-                          <span class="text-info">
-                            <i class="bi bi-caret-left-fill"></i> 0%
-                          </span>
-                          <h5 class="fw-bold mb-0">$10,390.90</h5>
-                          <span class="text-uppercase">COÛT TOTAL</span>
-                        </div>
-                      </div>
-                      <!-- /.col -->
-                      <div class="col-md-3 col-6">
-                        <div class="text-center border-end">
-                          <span class="text-success">
-                            <i class="bi bi-caret-up-fill"></i> 20%
-                          </span>
-                          <h5 class="fw-bold mb-0">$24,813.53</h5>
-                          <span class="text-uppercase">BÉNÉFICE TOTAL</span>
-                        </div>
-                      </div>
-                      <!-- /.col -->
-                      <div class="col-md-3 col-6">
-                        <div class="text-center">
-                          <span class="text-danger">
-                            <i class="bi bi-caret-down-fill"></i> 18%
-                          </span>
-                          <h5 class="fw-bold mb-0">1200</h5>
-                          <span class="text-uppercase">COMMANDES</span>
-                        </div>
-                      </div>
-                    </div>
-                    <!--end::Row-->
-                  </div>
-                  <!-- /.card-footer -->
                 </div>
                 <!-- /.card -->
               </div>
@@ -472,7 +437,9 @@
               <div class="col-md-12">
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h5 class="card-title">Répartition des ventes par catégorie</h5>
+                    <h5 class="card-title">
+                      Répartition des ventes par catégorie
+                    </h5>
                     <div class="card-tools">
                       <button
                         type="button"
@@ -511,27 +478,37 @@
                               <tr>
                                 <td>Smartphones</td>
                                 <td>$12,430</td>
-                                <td><span class="badge text-bg-primary">35%</span></td>
+                                <td>
+                                  <span class="badge text-bg-primary">35%</span>
+                                </td>
                               </tr>
                               <tr>
                                 <td>Laptops</td>
                                 <td>$8,750</td>
-                                <td><span class="badge text-bg-success">25%</span></td>
+                                <td>
+                                  <span class="badge text-bg-success">25%</span>
+                                </td>
                               </tr>
                               <tr>
                                 <td>Accessories</td>
                                 <td>$6,320</td>
-                                <td><span class="badge text-bg-info">18%</span></td>
+                                <td>
+                                  <span class="badge text-bg-info">18%</span>
+                                </td>
                               </tr>
                               <tr>
                                 <td>Wearables</td>
                                 <td>$4,890</td>
-                                <td><span class="badge text-bg-warning">14%</span></td>
+                                <td>
+                                  <span class="badge text-bg-warning">14%</span>
+                                </td>
                               </tr>
                               <tr>
                                 <td>Other</td>
                                 <td>$2,820</td>
-                                <td><span class="badge text-bg-danger">8%</span></td>
+                                <td>
+                                  <span class="badge text-bg-danger">8%</span>
+                                </td>
                               </tr>
                             </tbody>
                           </table>
@@ -712,7 +689,7 @@
                 <!-- /.info-box -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h3 class="card-title">Browser Usage</h3>
+                    <h3 class="card-title">Sales by Category</h3>
                     <div class="card-tools">
                       <button
                         type="button"
@@ -742,29 +719,13 @@
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer p-0">
-                    <ul class="nav nav-pills flex-column">
+                    <ul class="nav nav-pills flex-column" id="category-trends">
+                      <!-- Category trends will be added dynamically based on actual data -->
                       <li class="nav-item">
-                        <a href="#" class="nav-link">
-                          United States of America
-                          <span class="float-end text-danger">
-                            <i class="bi bi-arrow-down fs-7"></i>
-                            12%
-                          </span>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="#" class="nav-link">
-                          India
-                          <span class="float-end text-success">
-                            <i class="bi bi-arrow-up fs-7"></i> 4%
-                          </span>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="#" class="nav-link">
-                          China
-                          <span class="float-end text-info">
-                            <i class="bi bi-arrow-left fs-7"></i> 0%
+                        <a href="products.html" class="nav-link">
+                          View all product categories
+                          <span class="float-end">
+                            <i class="bi bi-arrow-right-circle fs-7"></i>
                           </span>
                         </a>
                       </li>
@@ -775,7 +736,7 @@
                 <!-- /.card -->
               </div>
               <div class="mt-4 mb-4">
-              <!-- PRODUCT LIST -->
+                <!-- PRODUCT LIST -->
                 <div class="card col-md-12">
                   <div class="card-header">
                     <h3 class="card-title">Recently Added Products</h3>
