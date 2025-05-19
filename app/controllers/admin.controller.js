@@ -75,9 +75,7 @@ exports.login = async (req, res) => {
             },
             process.env.JWT_SECRET,
             { expiresIn: "2h" }
-        );
-
-        res.send({
+        );        res.send({
         message: "Login successful",
         token,
         admin: {
@@ -86,6 +84,7 @@ exports.login = async (req, res) => {
             lastname: admin.lastname,
             email: admin.email,
             role: admin.role,
+            adminImage: admin.adminImage,
         },
     });
     } catch (err) {

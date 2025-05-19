@@ -441,12 +441,17 @@ try {
 } catch (e) {
   localStorage.setItem("userBirthday", data.dateOfBirth)
 }
-}
-
-
-      localStorage.removeItem("userProfilePicture")
+}      localStorage.removeItem("userProfilePicture")
       localStorage.removeItem("shopLogo")
       localStorage.removeItem("adminImage")
+
+      // Store specific user data based on user type
+      if (userType === "admin") {
+        localStorage.setItem("admin", JSON.stringify(data))
+        if (data.adminImage) {
+          localStorage.setItem("adminImage", data.adminImage)
+        }
+      }
 
       localStorage.setItem("userData", JSON.stringify(data))
     }

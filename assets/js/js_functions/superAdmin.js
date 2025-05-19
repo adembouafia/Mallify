@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize user menu as early as possible
+    updateUserMenuInfo();
+    
     const CLASS_NAME_SIDEBAR_COLLAPSE = 'sidebar-collapse';
     const CLASS_NAME_SIDEBAR_OPEN = 'sidebar-open';
     const SELECTOR_SIDEBAR_TOGGLE = '[data-lte-toggle="sidebar"]';
@@ -582,6 +585,7 @@ function getAdmins() {
 
 document.addEventListener("DOMContentLoaded", function() {
   getAdmins();
+  updateUserMenuInfo();
 });
 
 
@@ -670,12 +674,89 @@ function showAlert(options) {
 
 
 
+// Function to update the user menu with the current admin information
+function updateUserMenuInfo() {
+  try {
+    // Get admin info from localStorage
+    const adminDataStr = localStorage.getItem("admin");
+    const userDataStr = localStorage.getItem("userData");
+    const token = localStorage.getItem("token");
+    const userType = localStorage.getItem("userType");
+    
+    // If no data or token exists, don't update the menu
+    if ((!adminDataStr && !userDataStr) || !token) {
+      console.log("No admin data found in localStorage");
+      return;
+    }
+    
+    // Try to get admin data from either admin or userData storage
+    let admin;
+    if (adminDataStr) {
+      admin = JSON.parse(adminDataStr);
+    } else if (userDataStr && userType === "admin") {
+      admin = JSON.parse(userDataStr);
+    } else {
+      return; // Not an admin user
+    }
+    
+    console.log("Admin data:", admin);
+    
+    if (!admin) return;
+    
+    // Get all user menu elements that need to be updated
+    const userImages = document.querySelectorAll(".user-menu .user-image, .user-header img");
+    const userNameSpan = document.querySelector(".user-menu .d-none.d-md-inline");
+    const userHeaderText = document.querySelector(".user-header p");
+    
+    // Update user name
+    if (userNameSpan) {
+      userNameSpan.textContent = `${admin.firstname || admin.firstName || ''} ${admin.lastname || admin.lastName || ''}`;
+    }
+    
+    // Update header text with name and role
+    if (userHeaderText) {
+      const firstName = admin.firstname || admin.firstName || '';
+      const lastName = admin.lastname || admin.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim();
+      const role = admin.role === 'superAdmin' ? 'Super Admin' : 'Admin';
+      
+      userHeaderText.innerHTML = `
+        ${fullName}
+        <small>${role}</small>
+      `;
+    }
+    
+    // Update user image if available
+    if (admin.adminImage && userImages.length > 0) {
+      const imagePath = admin.adminImage.startsWith('http') 
+        ? admin.adminImage 
+        : `http://localhost:3000/${admin.adminImage}`;
+        
+      userImages.forEach(img => {
+        img.src = imagePath;
+        img.alt = `${admin.firstname || admin.firstName || ''} ${admin.lastname || admin.lastName || ''}`;
+      });
+    }
+    
+    // Set up logout button using event delegation
+    document.addEventListener("click", function(e) {
+      // Find the logout button by its class and position in the user menu
+      if (e.target && (e.target.matches(".user-footer .btn") || 
+          e.target.closest(".user-footer .btn"))) {
+        e.preventDefault();
+        handleLogout();
+      }
+    });
+  } catch (error) {
+    console.error("Error updating user menu:", error);
+  }
+}
+
 function handleLogout() {
   localStorage.clear()
 
   showToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success")
   setTimeout(() => {
-    // Redirect to home page
     window.location.href = "../index.html"
   }, 1000)
 }

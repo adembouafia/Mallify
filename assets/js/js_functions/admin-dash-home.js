@@ -1,3 +1,65 @@
+ window.addEventListener('load', function() {
+        console.log('Window loaded - checking chart library...');
+        
+        // Verify ApexCharts availability
+        if (typeof ApexCharts === 'undefined') {
+          console.error('ApexCharts not available after window load. Attempting to load from alternate CDN...');
+          
+          // Show loading message on charts
+          document.querySelectorAll('#ordersChart, #shopCategoriesChart, #bestSellersChart').forEach(el => {
+            el.innerHTML = '<div class="d-flex justify-content-center align-items-center h-100"><span class="spinner-border text-primary" role="status"></span><span class="ms-2">Loading chart library...</span></div>';
+          });
+          
+          // Try multiple CDNs in sequence for better reliability
+          const loadApexChartsFromCDN = function(cdnUrls, index = 0) {
+            if (index >= cdnUrls.length) {
+              console.error('Failed to load ApexCharts from all CDNs');
+              document.querySelectorAll('#ordersChart, #shopCategoriesChart, #bestSellersChart').forEach(el => {
+                el.innerHTML = '<div class="alert alert-danger text-center">Failed to load chart library. Please check your internet connection and refresh the page.</div>';
+              });
+              return;
+            }
+            
+            // Create and append a new script element
+            const apexScript = document.createElement('script');
+            apexScript.src = cdnUrls[index];
+            
+            apexScript.onload = function() {
+              console.log('ApexCharts successfully loaded from CDN:', cdnUrls[index]);
+              if (window.initDashboard && !window.dashboardInitialized) {
+                console.log('Initializing dashboard after successful CDN load');
+                window.dashboardInitialized = true;
+                window.initDashboard();
+              }
+            };
+            
+            apexScript.onerror = function() {
+              console.error('Failed to load ApexCharts from CDN:', cdnUrls[index]);
+              // Try the next CDN
+              loadApexChartsFromCDN(cdnUrls, index + 1);
+            };
+            
+            document.head.appendChild(apexScript);
+          };
+          
+          // List of CDNs to try in order
+          const cdnUrls = [
+            'https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js',
+            'https://unpkg.com/apexcharts@3.45.1/dist/apexcharts.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.1/apexcharts.min.js'
+          ];
+          
+          // Start the loading process
+          loadApexChartsFromCDN(cdnUrls);
+        } else {
+          console.log('ApexCharts already available from primary source');
+          if (window.initDashboard && !window.dashboardInitialized) {
+            console.log('Initializing dashboard directly');
+            window.dashboardInitialized = true; 
+            window.initDashboard();
+          }
+        }
+      });
 window.initDashboard = function () {
   console.log("Initializing dashboard via initDashboard function...");
 
