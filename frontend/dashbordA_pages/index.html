@@ -15,13 +15,98 @@
       href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
       integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
       crossorigin="anonymous"
-    />
-    <link
+    />    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
     />    <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+      <!-- Custom styles for infobox cards -->
+    <style>      /* Enhanced infoBox card styles */
+      .card.h-100 {
+        transition: all 0.3s ease;
+        min-height: 120px;
+      }
+      
+      .card.h-100:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06) !important;
+      }
+      
+      .card .flex-shrink-0.bg-white {
+        transition: all 0.3s ease;
+      }
+      
+      .card:hover .flex-shrink-0.bg-white {
+        transform: scale(1.1);
+      }
+      
+      .card:hover .bi {
+        animation: pulse 1s infinite;
+      }
+      
+      .card .d-flex.align-items-center {
+        padding: 1.5rem !important;
+      }
+      
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+        /* Enhanced stats for wider cards */
+      .card-body .d-flex .flex-grow-1 h3 {
+        font-size: 2.8rem;
+        margin-bottom: 0.5rem !important;
+      }
+      
+      .card-body .d-flex .flex-grow-1 p {
+        font-size: 1.25rem;
+        font-weight: 500;
+        opacity: 0.9;
+      }
+      
+      .card-body .d-flex .flex-shrink-0 {
+        height: 80px;
+        width: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.5rem !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+      }
+      
+      .card-body .d-flex .flex-shrink-0 i {
+        font-size: 2.5rem;
+      }
+      
+      /* Make cards a bit deeper */
+      .row.mb-4 .card {
+        border-radius: 0.75rem !important;
+      }
+      
+      .row.mb-4 .card-body {
+        border-radius: 0.75rem !important;
+      }
+      
+      /* Improved spacing for small devices */
+      @media (max-width: 767px) {
+        .card-body .d-flex .flex-grow-1 h3 {
+          font-size: 2.2rem;
+        }
+        
+        .card-body .d-flex .flex-shrink-0 {
+          height: 70px;
+          width: 70px;
+        }
+      }
+    </style>
     
     <!-- ApexCharts with integrity check -->
     <script 
@@ -298,51 +383,50 @@
           <!--end::Container-->
         </div>        <div class="app-content">
           <!--begin::Container-->
-          <div class="container-fluid">
-            <!-- Stats Cards -->
-            <div class="row">
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-primary">
-                  <div class="inner">
-                    <h3 id="totalShops">0</h3>
-                    <p>Total Shops</p>
+          <div class="container-fluid">            <!-- Stats Cards -->
+            <div class="row mb-4">
+              <div class="col-lg-4 col-md-4 col-sm-12 mb-3">                <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                  <div class="card-body bg-primary bg-gradient p-0">
+                    <div class="d-flex align-items-center p-3">
+                      <div class="flex-shrink-0 bg-white rounded-circle p-3 me-3 shadow">
+                        <i class="bi bi-shop fs-3 text-primary"></i>
+                      </div>
+                      <div class="flex-grow-1 text-white">
+                        <h3 id="totalShops" class="mb-0 fw-bold">0</h3>
+                        <p class="mb-0">Total Shops</p>
+                      </div>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="bi bi-shop"></i>
-                  </div>
-                  <a href="shops.html" class="small-box-footer">
-                    More info <i class="bi bi-arrow-right-circle"></i>
-                  </a>
                 </div>
               </div>
               
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                  <div class="inner">
-                    <h3 id="totalClients">0</h3>
-                    <p>Registered Clients</p>
+              <div class="col-lg-4 col-md-4 col-sm-12 mb-3">                <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                  <div class="card-body bg-success bg-gradient p-0">
+                    <div class="d-flex align-items-center p-3">
+                      <div class="flex-shrink-0 bg-white rounded-circle p-3 me-3 shadow">
+                        <i class="bi bi-people fs-3 text-success"></i>
+                      </div>
+                      <div class="flex-grow-1 text-white">
+                        <h3 id="totalClients" class="mb-0 fw-bold">0</h3>
+                        <p class="mb-0">Registered Clients</p>
+                      </div>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="bi bi-people"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">
-                    More info <i class="bi bi-arrow-right-circle"></i>
-                  </a>
                 </div>
               </div>
               
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                  <div class="inner text-light">
-                    <h3 id="totalOrders">0</h3>
-                    <p>Total Orders</p>
+              <div class="col-lg-4 col-md-4 col-sm-12 mb-3">                <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                  <div class="card-body bg-warning bg-gradient p-0">
+                    <div class="d-flex align-items-center p-3">
+                      <div class="flex-shrink-0 bg-white rounded-circle p-3 me-3 shadow">
+                        <i class="bi bi-cart fs-3 text-warning"></i>
+                      </div>
+                      <div class="flex-grow-1 text-dark">
+                        <h3 id="totalOrders" class="mb-0 fw-bold">0</h3>
+                        <p class="mb-0">Total Orders</p>
+                      </div>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="bi bi-cart"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">
-                    <span class="text-light">More info</span> <i class="bi bi-arrow-right-circle text-light"></i>
-                  </a>
                 </div>
               </div>
          </div>
