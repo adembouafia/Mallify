@@ -976,7 +976,7 @@ style.textContent = `
     .password-icon-visible {
         color: #28a745;
     }
-    
+     
     .password-toggle-wrapper input[type="password"],
     .password-toggle-wrapper input[type="text"] {
         padding-right: 40px;
