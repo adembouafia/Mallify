@@ -999,12 +999,12 @@ function initializePieChart(categories) {
       '<div class="text-center p-4">No category data available</div>';
     return;
   }
-
   const options = {
     series: series,
     chart: {
-      width: 380,
       type: "pie",
+      height: 320,
+      width: "100%",
     },
     labels: labels,
     tooltip: {
@@ -1014,27 +1014,61 @@ function initializePieChart(categories) {
         },
       },
     },
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+    },
     responsive: [
       {
-        breakpoint: 480,
+        breakpoint: 992,
         options: {
           chart: {
-            width: 200,
+            height: 300,
+          },
+        },
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            height: 260,
           },
           legend: {
             position: "bottom",
+            fontSize: "12px",
           },
         },
       },
     ],
     colors: ["#0d6efd", "#dc3545", "#ffc107", "#20c997"],
+    dataLabels: {
+      enabled: true,
+      formatter: function (val) {
+        return val.toFixed(1) + "%";
+      },
+    },
   };
-
   // Clear previous chart if exists
   pieChartElement.innerHTML = "";
 
-  const chart = new window.ApexCharts(pieChartElement, options);
-  chart.render();
+  // Store chart reference globally to access it for window resize
+  if (window.pieChart) {
+    window.pieChart.destroy();
+  }
+
+  window.pieChart = new window.ApexCharts(pieChartElement, options);
+  window.pieChart.render();
+
+  // Make sure chart resizes when window is resized
+  window.addEventListener("resize", function () {
+    if (window.pieChart) {
+      window.pieChart.updateOptions({
+        chart: {
+          width: "100%",
+        },
+      });
+    }
+  });
 }
 // Function to create sparkline charts
 function createSparklineChart(selector, data) {
