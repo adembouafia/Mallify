@@ -19,14 +19,18 @@ module.exports = (app) => {
     order.deleteOrder
   );
   app.get("/client/:id/orders", auth, order.getOrdersByClientId);
-  // Route pour mettre à jour le statut d'une commande
   app.put("/order/:id/status", auth, order.updateStatusOrder);
 
-  // Route pour passer une commande en expédition
   app.put(
     "/order/:id/ship",
     auth,
     authorize("vendor", "moderator"),
     order.makeToShip
   );
+  
+  // Admin dashboard API endpoints
+  app.get("/api/order/count", order.getOrderCount);
+  app.get("/api/order/total-revenue", order.getTotalRevenue);
+  app.get("/api/order/monthly-stats", order.getMonthlyStats);
+  app.get("/api/order/by-shop", order.getOrdersByShopCount);
 };
