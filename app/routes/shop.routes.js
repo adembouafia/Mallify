@@ -14,4 +14,9 @@ module.exports = (app) => {
   app.put("/shop/ban/:id", auth, authorize("superAdmin", "admin"), shop.banShop)
   app.put("/shop/unban/:id", auth, authorize("superAdmin", "admin"), shop.unbanShop)
   app.put("/shop/update-phone/:id", auth, shop.updateShopPhone)
+  
+  // Admin dashboard API endpoints
+  app.get("/api/shop/count", shop.getShopCount)
+  app.get("/api/shop/categories", shop.getShopCategories)
+  app.get("/api/shop/best-sellers", shop.getBestSellers)
 }

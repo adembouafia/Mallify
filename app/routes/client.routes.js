@@ -13,6 +13,7 @@ module.exports = (app) => {
     app.post('/client/change-password/:id', auth, client.changePassword);
     app.get('/client/get', auth, authorize('admin', 'superAdmin','vendor','moderator'), client.getAll);
     app.get('/client/:id', auth, client.getById);
+    app.get('/api/client/count', client.getClientCount);
     
     // New shipping address routes
     app.post('/client/:id/shipping-address', auth, client.addShippingAddress);

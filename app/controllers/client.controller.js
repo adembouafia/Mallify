@@ -645,3 +645,13 @@ exports.setDefaultShippingAddress = async (req, res) => {
     });
   }
 };
+
+// Get client count for admin dashboard
+exports.getClientCount = async (req, res) => {
+  try {
+    const count = await Client.countDocuments();
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error fetching client count" });
+  }
+};

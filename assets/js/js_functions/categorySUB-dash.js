@@ -1,13 +1,6 @@
 
-/**
- * Category and Subcategory Management System
- * This script handles category and subcategory operations for the Mallify admin dashboard
- */
+const API_BASE_URL = ''; 
 
-// Base API URL - adjust based on your environment
-const API_BASE_URL = ''; // No prefix needed as routes are defined at root level
-
-// Show alert helper function for use before DOMContentLoaded
 const showAlertEarly = (title, message, icon) => {
     if (window.Swal) {
         window.Swal.fire({
@@ -57,8 +50,7 @@ const addAuthHeader = (xhr) => {
         if (isTokenExpired(token)) {
             // Token is expired, redirect to login page or show message
             showAlertEarly('Session Expired', 'Your session has expired. Please log in again.', 'warning');
-            // Optional: redirect to login page
-            // window.location.href = '/login.html';
+
             return false;
         }
         
@@ -130,7 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayCategories(response.categories);                displaySubcategories(response.categories);
                 updateCategoryDropdown(response.categories);
                 updateStatistics(response.categories);
-            } else if (xhr.status === 401) {                showAlert('Authentication Error', 'You are not authorized to access this resource. Please log in again.', 'error');
+            } else if (xhr.status === 401) {
+                showAlert('Authentication Error', 'You are not authorized to access this resource. Please log in again.', 'error');
             } else {
                 showAlert('Error', 'Unable to load categories.', 'error');
             }
@@ -148,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function displayCategories(categories) {
         categoryTableBody.innerHTML = '';
-          if (categories.length === 0) {
+        
+        if (categories.length === 0) {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td colspan="4" class="text-center">No categories found</td>`;
             categoryTableBody.appendChild(tr);
@@ -164,7 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${index + 1}</td>
                 <td class="category-name-cell" style="cursor: pointer;">${category.categoryName}</td>
                 <td class="text-center"><span class="badge bg-info">${category.subCategories.length}</span></td>
-                <td class="text-center">                    <button class="btn btn-sm btn-outline-primary edit-category-btn" data-id="${category._id}" title="Edit">
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary edit-category-btn" data-id="${category._id}" title="Edit">
                         <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn btn-sm btn-outline-danger delete-category-btn" data-id="${category._id}" data-name="${category.categoryName}" title="Delete">
@@ -216,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         });
-          if (subcategories.length === 0) {
+        
+        if (subcategories.length === 0) {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td colspan="4" class="text-center">No subcategories found</td>`;
             subcategoryTableBody.appendChild(tr);
@@ -228,7 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${index + 1}</td>
                 <td>${subcategory.name}</td>
                 <td>${subcategory.categoryName}</td>
-                <td class="text-center">                    <button class="btn btn-sm btn-outline-primary edit-subcategory-btn" data-id="${subcategory._id}" title="Edit">
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary edit-subcategory-btn" data-id="${subcategory._id}" title="Edit">
                         <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn btn-sm btn-outline-danger delete-subcategory-btn" data-id="${subcategory._id}" data-name="${subcategory.name}" title="Delete">
@@ -251,7 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Update the category dropdown in subcategory modal
      * @param {Array} categories - Array of category objects
      */
-    function updateCategoryDropdown(categories) {        subcategoryParent.innerHTML = '<option value="">Select a category</option>';
+    function updateCategoryDropdown(categories) {
+        subcategoryParent.innerHTML = '<option value="">Select a category</option>';
         
         categories.forEach(category => {
             const option = document.createElement('option');
@@ -291,7 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedRow) {
             selectedRow.classList.add('table-active');
         }
-          // Update subcategory card title
+        
+        // Update subcategory card title
         const subcategoryCardHeader = document.querySelector('.subcategory-table').closest('.card').querySelector('.card-header h5');
         if (subcategoryCardHeader) {
             subcategoryCardHeader.textContent = `Subcategories for "${categoryName}"`;
@@ -309,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = JSON.parse(xhr.responseText);
                 displaySubcategories(response.categories, categoryId);
             } else if (xhr.status === 401) {
-                showAlert('Erreur d\'authentification', 'Vous n\'êtes pas autorisé à accéder à cette ressource. Veuillez vous reconnecter.', 'error');
+                showAlert('Authentication Error', 'You are not authorized to access this resource. Please log in again.', 'error');
             }
         };
         
@@ -325,7 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
         allCategoryRows.forEach(row => {
             row.classList.remove('table-active');
         });
-          // Reset subcategory card title
+        
+        // Reset subcategory card title
         const subcategoryCardHeader = document.querySelector('.subcategory-table').closest('.card').querySelector('.card-header h5');
         if (subcategoryCardHeader) {
             subcategoryCardHeader.textContent = 'Subcategories List';
@@ -359,7 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset form
         categoryForm.reset();
-          if (category) {
+        
+        if (category) {
             // Edit mode
             modalTitle.textContent = 'Edit Category';
             categoryId.value = category._id;
@@ -384,7 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset form
         subcategoryForm.reset();
-          if (subcategory) {
+        
+        if (subcategory) {
             // Edit mode
             modalTitle.textContent = 'Edit Subcategory';
             subcategoryId.value = subcategory._id;
@@ -417,7 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 subcategoryParent.value = subcategory.categoryId || subcategory.category;
             }
         } else {
-            // Create mode            modalTitle.textContent = 'Add Subcategory';
+            // Create mode
+            modalTitle.textContent = 'Add Subcategory';
             subcategoryId.value = '';
         }
         
@@ -428,7 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveCategory() {
         const categoryId = document.getElementById('categoryId').value;
         const categoryName = document.getElementById('categoryName').value;
-          if (!categoryName.trim()) {
+        
+        if (!categoryName.trim()) {
             showAlert('Error', 'Category name is required.', 'error');
             return;
         }
@@ -447,19 +451,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAlert('Success', categoryId ? 'Category updated successfully.' : 'Category created successfully.', 'success');
                 loadCategoriesWithSubcategories();
             } else if (xhr.status === 401) {
-                showAlert('Erreur d\'authentification', 'Vous n\'êtes pas autorisé à effectuer cette action.', 'error');
+                showAlert('Authentication Error', 'You are not authorized to perform this action.', 'error');
             } else {
                 try {
                     const response = JSON.parse(xhr.responseText);
-                    showAlert('Erreur', response.message || 'Une erreur est survenue.', 'error');
+                    showAlert('Error', response.message || 'An error occurred.', 'error');
                 } catch (e) {
-                    showAlert('Erreur', 'Une erreur est survenue lors du traitement de la requête.', 'error');
+                    showAlert('Error', 'An error occurred while processing the request.', 'error');
                 }
             }
         };
         
         xhr.onerror = function() {
-            showAlert('Erreur', 'Problème de connexion au serveur.', 'error');
+            showAlert('Error', 'Server connection problem.', 'error');
         };
         
         const data = JSON.stringify({ categoryName });
@@ -471,7 +475,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const subcategoryId = document.getElementById('subcategoryId').value;
         const name = document.getElementById('subcategoryName').value;
         const category = document.getElementById('subcategoryParent').value;
-          if (!name.trim()) {
+        
+        if (!name.trim()) {
             showAlert('Error', 'Subcategory name is required.', 'error');
             return;
         }
@@ -488,10 +493,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Add authentication header
         if (!addAuthHeader(xhr)) {
-            showAlert('Erreur d\'authentification', 'Vous n\'êtes pas autorisé à effectuer cette action.', 'error');
+            showAlert('Authentication Error', 'You are not authorized to perform this action.', 'error');
             return;
         }
-          xhr.onload = function() {
+        
+        xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
                 subcategoryModal.hide();
                 showAlert('Success', subcategoryId ? 'Subcategory updated successfully.' : 'Subcategory created successfully.', 'success');
@@ -501,15 +507,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 try {
                     const response = JSON.parse(xhr.responseText);
-                    showAlert('Erreur', response.message || 'Une erreur est survenue.', 'error');
+                    showAlert('Error', response.message || 'An error occurred.', 'error');
                 } catch (e) {
-                    showAlert('Erreur', 'Une erreur est survenue lors du traitement de la requête.', 'error');
+                    showAlert('Error', 'An error occurred while processing the request.', 'error');
                 }
             }
         };
         
         xhr.onerror = function() {
-            showAlert('Erreur', 'Problème de connexion au serveur.', 'error');
+            showAlert('Error', 'Server connection problem.', 'error');
         };
         
         const data = JSON.stringify({ name, category });
@@ -520,7 +526,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Confirm category deletion
      * @param {string} id - Category ID
      * @param {string} name - Category name for confirmation message
-     */    function confirmDeleteCategory(id, name) {
+     */
+    function confirmDeleteCategory(id, name) {
         Swal.fire({
             title: 'Are you sure?',
             html: `You are about to delete the category <strong>${name}</strong>.<br>This action will also delete all associated subcategories.<br>This action cannot be undone!`,
@@ -535,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 deleteCategory(id);
             }
         });
-    }/**
+    }    /**
      * Delete a category
      * @param {string} id - Category ID
      */
@@ -546,7 +553,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add authentication header
         addAuthHeader(xhr);
         
-        xhr.onload = function() {            if (xhr.status >= 200 && xhr.status < 300) {
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
                 showAlert('Success', 'Category deleted successfully.', 'success');
                 loadCategoriesWithSubcategories();
             } else if (xhr.status === 401) {
@@ -557,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         xhr.onerror = function() {
-            showAlert('Erreur', 'Problème de connexion au serveur.', 'error');
+            showAlert('Error', 'Server connection problem.', 'error');
         };
         
         xhr.send();
@@ -567,7 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Confirm subcategory deletion
      * @param {string} id - Subcategory ID
      * @param {string} name - Subcategory name for confirmation message
-     */    function confirmDeleteSubcategory(id, name) {
+     */
+    function confirmDeleteSubcategory(id, name) {
         Swal.fire({
             title: 'Are you sure?',
             html: `You are about to delete the subcategory <strong>${name}</strong>.<br>This action cannot be undone!`,
@@ -590,29 +599,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const xhr = new XMLHttpRequest();
         xhr.open('DELETE', `${API_BASE_URL}/subcategory/delete/${id}`, true);
         
-        // Add authentication header        if (!addAuthHeader(xhr)) {
+        // Add authentication header
+        if (!addAuthHeader(xhr)) {
             showAlert('Authentication Error', 'You are not authorized to delete this subcategory.', 'error');
             return;
         }
         
         xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
-                showAlert('Succès', 'Sous-catégorie supprimée avec succès.', 'success');
+                showAlert('Success', 'Subcategory deleted successfully.', 'success');
                 loadCategoriesWithSubcategories();
             } else if (xhr.status === 401) {
-                showAlert('Erreur d\'authentification', 'Vous n\'êtes pas autorisé à supprimer cette sous-catégorie.', 'error');
+                showAlert('Authentication Error', 'You are not authorized to delete this subcategory.', 'error');
             } else {
                 try {
                     const response = JSON.parse(xhr.responseText);
-                    showAlert('Erreur', response.message || 'Impossible de supprimer la sous-catégorie.', 'error');
+                    showAlert('Error', response.message || 'Unable to delete the subcategory.', 'error');
                 } catch (e) {
-                    showAlert('Erreur', 'Impossible de supprimer la sous-catégorie.', 'error');
+                    showAlert('Error', 'Unable to delete the subcategory.', 'error');
                 }
             }
         };
         
         xhr.onerror = function() {
-            showAlert('Erreur', 'Problème de connexion au serveur.', 'error');
+            showAlert('Error', 'Server connection problem.', 'error');
         };
         
         xhr.send();
