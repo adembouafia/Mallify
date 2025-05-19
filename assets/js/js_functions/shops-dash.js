@@ -286,7 +286,7 @@ function renderPendingShops() {
           </div>
         </div>
         <div class="shop-card-owner">
-          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-card-owner-avatar" onerror="this.src='/assets/images/dashboard/admin.jpg'">
+          <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-card-owner-avatar">
           <span class="shop-card-owner-name">${shop.owner.name}</span>
         </div>
       </div>
@@ -340,7 +340,6 @@ function renderApprovedShops() {
     </td>
     <td>
       <div class="d-flex align-items-center">
-        <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2" onerror="this.src='/assets/images/dashboard/admin.jpg'">
         <span>${shop.owner.name}</span>
       </div>
     </td>
@@ -411,7 +410,6 @@ function renderRejectedShops() {
     </td>
     <td>
       <div class="d-flex align-items-center">
-        <img src="${shop.owner.avatar}" alt="${shop.owner.name}" class="shop-owner-avatar me-2" onerror="this.src='/assets/images/dashboard/admin.jpg'">
         <span>${shop.owner.name}</span>
       </div>
     </td>

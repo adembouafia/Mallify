@@ -767,8 +767,15 @@
                   Password Reset
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
+          </div>          <div class="modal-body">
+              <div class="mb-3">
+                  <select id="userTypeSelect" class="form-select mb-3">
+                      <option value="client" selected>Client</option>
+                      <option value="vendor">Vendor</option>
+                      <option value="moderator">Moderator</option>
+                      <option value="admin">Admin</option>
+                  </select>
+              </div>
               <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email">
               <div class="invalid-feedback">
                   <i class="ph ph-warning"></i>
