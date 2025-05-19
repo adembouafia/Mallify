@@ -28,6 +28,11 @@ const VendorSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "shop"
     },
+
+    resetPasswordToken: {
+        type: String,
+    },
+
     resetPasswordCode: {
         type: String,
     },
