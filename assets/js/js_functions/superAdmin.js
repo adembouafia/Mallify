@@ -1,66 +1,64 @@
-// Wrap everything in an IIFE (Immediately Invoked Function Expression) to avoid global scope pollution
-(function() {
-    // Import Bootstrap library
-    const bootstrap = window.bootstrap;
+// Use a renamed variable for bootstrap and toast functionality
+const superAdminBootstrap = window.bootstrap;
 
-    // Toast notification function - renamed to avoid conflicts
-    function showSuperAdminToast(title, message, type) {
-        // Create toast container if it doesn't exist
-        let toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'toast-container';
-            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-            toastContainer.style.zIndex = '1050';
-            document.body.appendChild(toastContainer);
-        }
+// Renamed toast function specific for superadmin
+function showSuperAdminToast(title, message, type) {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+        toastContainer.style.zIndex = '1050';
+        document.body.appendChild(toastContainer);
+    }
 
-        // Create toast element
-        const toastId = 'toast-' + Date.now();
-        const toastElement = document.createElement('div');
-        toastElement.id = toastId;
-        toastElement.className = `toast align-items-center text-bg-${type} border-0`;
-        toastElement.role = 'alert';
-        toastElement.setAttribute('aria-live', 'assertive');
-        toastElement.setAttribute('aria-atomic', 'true');
-        
-        // Create toast content
-        toastElement.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    <strong>${title}</strong>: ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    // Create toast element
+    const toastId = 'toast-' + Date.now();
+    const toastElement = document.createElement('div');
+    toastElement.id = toastId;
+    toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+    toastElement.role = 'alert';
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+    
+    // Create toast content
+    toastElement.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <strong>${title}</strong>: ${message}
             </div>
-        `;
-        
-        // Add toast to container
-        toastContainer.appendChild(toastElement);
-        
-        // Initialize and show toast
-        const toastInstance = new bootstrap.Toast(toastElement, {
-            autohide: true,
-            delay: 5000
-        });
-        toastInstance.show();
-        
-        // Remove toast after it's hidden
-        toastElement.addEventListener('hidden.bs.toast', function() {
-            toastElement.remove();
-        });
-    }
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Add toast to container
+    toastContainer.appendChild(toastElement);
+    
+    // Initialize and show toast
+    const toastInstance = new superAdminBootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 5000
+    });
+    toastInstance.show();
+    
+    // Remove toast after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', function() {
+        toastElement.remove();
+    });
+}
 
-    // Expose the toast function to the global scope so it can be used by other scripts
-    window.showToast = showSuperAdminToast;
+// Make the toast function available globally with a unique name
+window.showSuperAdminToast = showSuperAdminToast;
 
-    // Handle logout function
-    function handleLogout() {
-        localStorage.clear();
-        showSuperAdminToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success");
-        setTimeout(() => {
-            window.location.href = "../index.html";
-        }, 1000);
-    }
+// Handle logout function
+function handleLogout() {
+    localStorage.clear();
+    showSuperAdminToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success");
+    setTimeout(() => {
+        window.location.href = "../index.html";
+    }, 1000);
+}
 
 // Function to update the user menu with the current admin information
 function updateUserMenuInfo() {
@@ -77,11 +75,11 @@ function updateUserMenuInfo() {
             console.log("No admin data found in localStorage");
             return;
         }
-          let manage = document.getElementById("manageAdmins")
+        let manage = document.getElementById("manageAdmins")
 
-          if(userRole == "superAdmin"){
+        if(userRole == "superAdmin"){
             manage.style.display = "block"
-          }
+        }
 
         // Try to get admin data from either admin or userData storage
         let admin;
@@ -556,7 +554,7 @@ function initAddAdminForm() {
                         adminForm.reset();
                         avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
 
-                        const modal = bootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
+                        const modal = superAdminBootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
                         modal.hide();
                         showSuperAdminToast("Succès", "Admin ajouté avec succès", "success");
                     } catch (error) {
@@ -736,7 +734,7 @@ function initEditAdminForm() {
                         applyFiltersAndSearch();
                         
                         // Close the modal
-                        const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
+                        const editModal = superAdminBootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
                         editModal.hide();
                         
                         showSuperAdminToast("Succès", "Admin modifié avec succès", "success");
@@ -985,4 +983,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-})();
