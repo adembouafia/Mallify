@@ -1,52 +1,66 @@
-// Import Bootstrap library
-const bootstrap = window.bootstrap;
+// Wrap everything in an IIFE (Immediately Invoked Function Expression) to avoid global scope pollution
+(function() {
+    // Import Bootstrap library
+    const bootstrap = window.bootstrap;
 
-// Toast notification function
-function showToast(title, message, type) {
-    // Create toast container if it doesn't exist
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container';
-        toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-        toastContainer.style.zIndex = '1050';
-        document.body.appendChild(toastContainer);
+    // Toast notification function - renamed to avoid conflicts
+    function showSuperAdminToast(title, message, type) {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+            toastContainer.style.zIndex = '1050';
+            document.body.appendChild(toastContainer);
+        }
+
+        // Create toast element
+        const toastId = 'toast-' + Date.now();
+        const toastElement = document.createElement('div');
+        toastElement.id = toastId;
+        toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+        toastElement.role = 'alert';
+        toastElement.setAttribute('aria-live', 'assertive');
+        toastElement.setAttribute('aria-atomic', 'true');
+        
+        // Create toast content
+        toastElement.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}</strong>: ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Add toast to container
+        toastContainer.appendChild(toastElement);
+        
+        // Initialize and show toast
+        const toastInstance = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 5000
+        });
+        toastInstance.show();
+        
+        // Remove toast after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            toastElement.remove();
+        });
     }
 
-    // Create toast element
-    const toastId = 'toast-' + Date.now();
-    const toastElement = document.createElement('div');
-    toastElement.id = toastId;
-    toastElement.className = `toast align-items-center text-bg-${type} border-0`;
-    toastElement.role = 'alert';
-    toastElement.setAttribute('aria-live', 'assertive');
-    toastElement.setAttribute('aria-atomic', 'true');
-    
-    // Create toast content
-    toastElement.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">
-                <strong>${title}</strong>: ${message}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    `;
-    
-    // Add toast to container
-    toastContainer.appendChild(toastElement);
-    
-    // Initialize and show toast
-    const toastInstance = new bootstrap.Toast(toastElement, {
-        autohide: true,
-        delay: 5000
-    });
-    toastInstance.show();
-    
-    // Remove toast after it's hidden
-    toastElement.addEventListener('hidden.bs.toast', function() {
-        toastElement.remove();
-    });
-}
+    // Expose the toast function to the global scope so it can be used by other scripts
+    window.showToast = showSuperAdminToast;
+
+    // Handle logout function
+    function handleLogout() {
+        localStorage.clear();
+        showSuperAdminToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success");
+        setTimeout(() => {
+            window.location.href = "../index.html";
+        }, 1000);
+    }
 
 // Function to update the user menu with the current admin information
 function updateUserMenuInfo() {
@@ -136,15 +150,6 @@ function updateUserMenuInfo() {
     }
 }
 
-// Handle logout function
-function handleLogout() {
-    localStorage.clear();
-    showToast("Déconnexion réussie", "Vous avez été déconnecté avec succès.", "success");
-    setTimeout(() => {
-        window.location.href = "../index.html";
-    }, 1000);
-}
-
 // Global variables for pagination and filtering
 let currentPage = 1;
 let itemsPerPage = 10;
@@ -156,27 +161,38 @@ let currentSearchTerm = '';
 
 // Initialize admin forms and event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM fully loaded");
-    
+    console.log("SuperAdmin JS loaded");
+        
     // Call updateUserMenuInfo to set up the user menu
     updateUserMenuInfo();
     
-    // Initialize admin table if it exists
-    if (document.querySelector(".table tbody")) {
+    // Check if we're on the admin management page
+    if (document.querySelector(".table tbody") && document.getElementById('adminTable')) {
         getAdmins();
+        
+        // Initialize add admin form
+        initAddAdminForm();
+        
+        // Initialize edit admin form
+        initEditAdminForm();
+        
+        // Initialize delete admin functionality
+        initDeleteAdmin();
+        
+        // Initialize pagination and filtering
+        initPaginationAndFiltering();
     }
     
-    // Initialize add admin form
-    initAddAdminForm();
+    // Initialize password toggles
+    initPasswordToggles();
     
-    // Initialize edit admin form
-    initEditAdminForm();
-    
-    // Initialize delete admin functionality
-    initDeleteAdmin();
-    
-    // Initialize pagination and filtering
-    initPaginationAndFiltering();
+    // Also initialize password toggles when modals are shown
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            initPasswordToggles();
+        });
+    });
 });
 
 // Initialize pagination and filtering
@@ -474,25 +490,25 @@ function initAddAdminForm() {
             
             // Basic validation
             if (!adminFirstName.value.trim()) {
-                showToast("Erreur", "Le prénom est requis", "danger");
+                showSuperAdminToast("Erreur", "Le prénom est requis", "danger");
                 adminFirstName.focus();
                 return;
             }
             
             if (!adminLastName.value.trim()) {
-                showToast("Erreur", "Le nom est requis", "danger");
+                showSuperAdminToast("Erreur", "Le nom est requis", "danger");
                 adminLastName.focus();
                 return;
             }
             
             if (!adminEmail.value.trim()) {
-                showToast("Erreur", "L'email est requis", "danger");
+                showSuperAdminToast("Erreur", "L'email est requis", "danger");
                 adminEmail.focus();
                 return;
             }
             
             if (!adminPassword.value) {
-                showToast("Erreur", "Le mot de passe est requis", "danger");
+                showSuperAdminToast("Erreur", "Le mot de passe est requis", "danger");
                 adminPassword.focus();
                 return;
             }
@@ -542,24 +558,24 @@ function initAddAdminForm() {
 
                         const modal = bootstrap.Modal.getInstance(document.getElementById("addAdminModal"));
                         modal.hide();
-                        showToast("Succès", "Admin ajouté avec succès", "success");
+                        showSuperAdminToast("Succès", "Admin ajouté avec succès", "success");
                     } catch (error) {
                         console.error("Error parsing response:", error);
-                        showToast("Erreur", "Erreur lors de l'ajout de l'admin: " + error.message, "danger");
+                        showSuperAdminToast("Erreur", "Erreur lors de l'ajout de l'admin: " + error.message, "danger");
                     }
                 } else {
                     try {
                         const errorResponse = JSON.parse(xhr.responseText);
-                        showToast("Erreur", errorResponse.message || "Erreur lors de l'ajout de l'admin", "danger");
+                        showSuperAdminToast("Erreur", errorResponse.message || "Erreur lors de l'ajout de l'admin", "danger");
                     } catch (e) {
-                        showToast("Erreur", "Erreur lors de l'ajout de l'admin", "danger");
+                        showSuperAdminToast("Erreur", "Erreur lors de l'ajout de l'admin", "danger");
                     }
                     console.log(xhr.responseText);
                 }
             };
 
             xhr.onerror = function() {
-                showToast("Erreur de connexion", "Erreur réseau lors de la requête", "danger");
+                showSuperAdminToast("Erreur de connexion", "Erreur réseau lors de la requête", "danger");
             };
 
             xhr.send(formData);
@@ -644,14 +660,14 @@ function initEditAdminForm() {
             e.preventDefault();
             
             if (!window.editingRow) {
-                showToast("Erreur", "Aucun admin sélectionné pour modification", "danger");
+                showSuperAdminToast("Erreur", "Aucun admin sélectionné pour modification", "danger");
                 return;
             }
             
             const adminId = window.editingRow.dataset.adminId;
             if (!adminId) {
                 console.error("Admin ID is missing or null");
-                showToast("Erreur", "ID Admin manquant. Impossible de mettre à jour.", "danger");
+                showSuperAdminToast("Erreur", "ID Admin manquant. Impossible de mettre à jour.", "danger");
                 return;
             }
             
@@ -662,17 +678,17 @@ function initEditAdminForm() {
             
             // Basic validation
             if (!updatedFirstName.trim()) {
-                showToast("Erreur", "Le prénom est requis", "danger");
+                showSuperAdminToast("Erreur", "Le prénom est requis", "danger");
                 return;
             }
             
             if (!updatedLastName.trim()) {
-                showToast("Erreur", "Le nom est requis", "danger");
+                showSuperAdminToast("Erreur", "Le nom est requis", "danger");
                 return;
             }
             
             if (!updatedEmail.trim()) {
-                showToast("Erreur", "L'email est requis", "danger");
+                showSuperAdminToast("Erreur", "L'email est requis", "danger");
                 return;
             }
             
@@ -723,25 +739,25 @@ function initEditAdminForm() {
                         const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
                         editModal.hide();
                         
-                        showToast("Succès", "Admin modifié avec succès", "success");
+                        showSuperAdminToast("Succès", "Admin modifié avec succès", "success");
                     } catch (error) {
                         console.error("Error parsing response:", error);
-                        showToast("Erreur", "Erreur de mise à jour: " + error.message, "danger");
+                        showSuperAdminToast("Erreur", "Erreur de mise à jour: " + error.message, "danger");
                     }
                 } else {
                     console.error("Error updating admin:", xhr.status, xhr.responseText);
                     try {
                         const errorResponse = JSON.parse(xhr.responseText);
-                        showToast("Erreur", errorResponse.message || "Erreur de mise à jour", "danger");
+                        showSuperAdminToast("Erreur", errorResponse.message || "Erreur de mise à jour", "danger");
                     } catch (e) {
-                        showToast("Erreur", "Erreur de mise à jour. Statut: " + xhr.status, "danger");
+                        showSuperAdminToast("Erreur", "Erreur de mise à jour. Statut: " + xhr.status, "danger");
                     }
                 }
             };
             
             xhr.onerror = function() {
                 console.error("Network error during update");
-                showToast("Erreur réseau", "Erreur de connexion lors de la mise à jour! Vérifiez votre connexion internet.", "danger");
+                showSuperAdminToast("Erreur réseau", "Erreur de connexion lors de la mise à jour! Vérifiez votre connexion internet.", "danger");
             };
             
             xhr.send(formData);
@@ -759,7 +775,7 @@ function initDeleteAdmin() {
             const adminName = row.cells[1].textContent;
             
             if (!adminId) {
-                showToast("Erreur", "ID Admin manquant. Impossible de supprimer.", "danger");
+                showSuperAdminToast("Erreur", "ID Admin manquant. Impossible de supprimer.", "danger");
                 return;
             }
             
@@ -790,25 +806,25 @@ function deleteAdmin(adminId, row) {
                 // Re-apply filters and search
                 applyFiltersAndSearch();
                 
-                showToast("Succès", "Admin supprimé avec succès", "success");
+                showSuperAdminToast("Succès", "Admin supprimé avec succès", "success");
             } catch (error) {
                 console.error("Error parsing response:", error);
-                showToast("Erreur", "Erreur lors de la suppression: " + error.message, "danger");
+                showSuperAdminToast("Erreur", "Erreur lors de la suppression: " + error.message, "danger");
             }
         } else {
             console.error("Error deleting admin:", xhr.status, xhr.responseText);
             try {
                 const errorResponse = JSON.parse(xhr.responseText);
-                showToast("Erreur", errorResponse.message || "Erreur lors de la suppression", "danger");
+                showSuperAdminToast("Erreur", errorResponse.message || "Erreur lors de la suppression", "danger");
             } catch (e) {
-                showToast("Erreur", "Erreur lors de la suppression. Statut: " + xhr.status, "danger");
+                showSuperAdminToast("Erreur", "Erreur lors de la suppression. Statut: " + xhr.status, "danger");
             }
         }
     };
     
     xhr.onerror = function() {
         console.error("Network error during delete");
-        showToast("Erreur réseau", "Erreur de connexion lors de la suppression! Vérifiez votre connexion internet.", "danger");
+        showSuperAdminToast("Erreur réseau", "Erreur de connexion lors de la suppression! Vérifiez votre connexion internet.", "danger");
     };
     
     xhr.send();
@@ -884,7 +900,7 @@ function getAdmins() {
         adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error. Please check your connection and try again.</td></tr>';
         
         // Show an error toast
-        showToast("Connection Error", "Failed to connect to the server. Please check your connection.", "danger");
+        showSuperAdminToast("Connection Error", "Failed to connect to the server. Please check your connection.", "danger");
     };
 
     xhr.send();
@@ -912,24 +928,61 @@ function elementExists(selector) {
     return document.querySelector(selector) !== null;
 }
 
-// Initialize the page when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded - initializing page");
-        updateUserMenuInfo();
-        
-        // Initialize admin table if it exists
-        if (elementExists(".table tbody")) {
-            getAdmins();
-        }
+// Function to initialize password toggles
+function initPasswordToggles() {
+    const passwordInputs = document.querySelectorAll('.password-toggle-wrapper input[type="password"]');
+    passwordInputs.forEach(input => {
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'password-toggle-btn';
+        toggleButton.innerHTML = '<i class="bi bi-eye-slash password-icon-hidden"></i>';
+        input.parentNode.appendChild(toggleButton);
+
+        toggleButton.addEventListener('click', function() {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            const icon = toggleButton.querySelector('i');
+            icon.className = isPassword ? 'bi bi-eye password-icon-visible' : 'bi bi-eye-slash password-icon-hidden';
+        });
     });
-} else {
-    // DOM already loaded
-    console.log("DOM already loaded - initializing page");
-    updateUserMenuInfo();
-    
-    // Initialize admin table if it exists
-    if (elementExists(".table tbody")) {
-        getAdmins();
-    }
 }
+
+// Add CSS for password toggle
+const style = document.createElement('style');
+style.textContent = `
+    .password-toggle-wrapper {
+        position: relative;
+    }
+    
+    .password-toggle-btn {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.375rem;
+        z-index: 5;
+    }
+    
+    .password-toggle-btn:hover,
+    .password-toggle-btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    
+    .password-icon-hidden {
+        color: #dc3545;
+    }
+    
+    .password-icon-visible {
+        color: #28a745;
+    }
+    
+    .password-toggle-wrapper input[type="password"],
+    .password-toggle-wrapper input[type="text"] {
+        padding-right: 40px;
+    }
+`;
+document.head.appendChild(style);
+})();
