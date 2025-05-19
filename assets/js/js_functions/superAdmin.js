@@ -139,6 +139,7 @@ function handleLogout() {
     }, 1000);
 }
 
+// Global variables for pagination and filtering
 let currentPage = 1;
 let itemsPerPage = 10;
 let totalItems = 0;
