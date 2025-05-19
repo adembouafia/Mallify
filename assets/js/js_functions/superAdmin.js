@@ -139,6 +139,14 @@ function handleLogout() {
     }, 1000);
 }
 
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalItems = 0;
+let allAdmins = [];
+let filteredAdmins = [];
+let currentFilter = '';
+let currentSearchTerm = '';
+
 // Initialize admin forms and event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded");
@@ -159,7 +167,249 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize delete admin functionality
     initDeleteAdmin();
+    
+    // Initialize pagination and filtering
+    initPaginationAndFiltering();
 });
+
+// Initialize pagination and filtering
+function initPaginationAndFiltering() {
+    // Entries per page selector
+    const entriesSelect = document.getElementById('entriesSelect');
+    if (entriesSelect) {
+        entriesSelect.addEventListener('change', function() {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            renderAdmins();
+            updatePaginationInfo();
+            updatePaginationControls();
+        });
+    }
+    
+    // Filter selector
+    const filterSelect = document.getElementById('filterSelect');
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+            currentFilter = this.value;
+            currentPage = 1;
+            applyFiltersAndSearch();
+        });
+    }
+    
+    // Search functionality
+    const searchInput = document.getElementById('searchAdminInput');
+    const searchBtn = document.getElementById('searchAdminBtn');
+    
+    if (searchInput && searchBtn) {
+        // Search on button click
+        searchBtn.addEventListener('click', function() {
+            currentSearchTerm = searchInput.value.trim().toLowerCase();
+            currentPage = 1;
+            applyFiltersAndSearch();
+        });
+        
+        // Search on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                currentSearchTerm = this.value.trim().toLowerCase();
+                currentPage = 1;
+                applyFiltersAndSearch();
+            }
+        });
+    }
+    
+    // Pagination controls
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('page-link')) {
+            e.preventDefault();
+            
+            const pageText = e.target.textContent.trim();
+            
+            if (pageText === 'Previous') {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderAdmins();
+                    updatePaginationControls();
+                }
+            } else if (pageText === 'Next') {
+                const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderAdmins();
+                    updatePaginationControls();
+                }
+            } else {
+                // Numeric page
+                const newPage = parseInt(pageText);
+                if (!isNaN(newPage) && newPage !== currentPage) {
+                    currentPage = newPage;
+                    renderAdmins();
+                    updatePaginationControls();
+                }
+            }
+        }
+    });
+}
+
+// Apply filters and search
+function applyFiltersAndSearch() {
+    // First, filter by search term
+    if (currentSearchTerm) {
+        filteredAdmins = allAdmins.filter(admin => {
+            const fullName = `${admin.firstname || ''} ${admin.lastname || ''}`.trim().toLowerCase();
+            const email = (admin.email || '').toLowerCase();
+            
+            return fullName.includes(currentSearchTerm) || email.includes(currentSearchTerm);
+        });
+    } else {
+        filteredAdmins = [...allAdmins];
+    }
+    
+    // Then apply sorting based on filter
+    if (currentFilter) {
+        switch (currentFilter) {
+            case 'name-asc':
+                filteredAdmins.sort((a, b) => {
+                    const nameA = `${a.firstname || ''} ${a.lastname || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstname || ''} ${b.lastname || ''}`.trim().toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+                break;
+            case 'name-desc':
+                filteredAdmins.sort((a, b) => {
+                    const nameA = `${a.firstname || ''} ${a.lastname || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstname || ''} ${b.lastname || ''}`.trim().toLowerCase();
+                    return nameB.localeCompare(nameA);
+                });
+                break;
+            case 'email-asc':
+                filteredAdmins.sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+                break;
+            case 'email-desc':
+                filteredAdmins.sort((a, b) => (b.email || '').localeCompare(a.email || ''));
+                break;
+            case 'date-asc':
+                filteredAdmins.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+                break;
+            case 'date-desc':
+                filteredAdmins.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                break;
+        }
+    }
+    
+    // Update the display
+    renderAdmins();
+    updatePaginationInfo();
+    updatePaginationControls();
+}
+
+// Render admins based on current page and filters
+function renderAdmins() {
+    const adminTableBody = document.querySelector(".table tbody");
+    if (!adminTableBody) return;
+    
+    // Clear the table
+    adminTableBody.innerHTML = '';
+    
+    // Calculate start and end indices for current page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredAdmins.length);
+    
+    // If no admins to display
+    if (filteredAdmins.length === 0) {
+        adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No admins found</td></tr>';
+        return;
+    }
+    
+    // Display admins for current page
+    for (let i = startIndex; i < endIndex; i++) {
+        const admin = filteredAdmins[i];
+        
+        const row = document.createElement("tr");
+        const adminId = admin._id;
+        row.dataset.adminId = adminId;
+        
+        // Determine image path
+        let imagePath = "../../assets/images/dashboard/superadmin.jpg"; // Default image
+        if (admin.adminImage) {
+            if (admin.adminImage.startsWith('http')) {
+                imagePath = admin.adminImage;
+            } else {
+                imagePath = `http://localhost:3000/${admin.adminImage.replace(/^\//, '')}`;
+            }
+        }
+        
+        const createdAt = new Date(admin.createdAt || Date.now()).toLocaleString();
+        const fullName = `${admin.firstname || ''} ${admin.lastname || ''}`.trim();
+
+        row.innerHTML = `
+            <td><img src="${imagePath}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
+            <td>${fullName || 'Unknown'}</td>
+            <td>${admin.email || 'No email'}</td>
+            <td>${createdAt}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger btn-delete">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        adminTableBody.appendChild(row);
+    }
+}
+
+// Update pagination info text
+function updatePaginationInfo() {
+    const paginationInfo = document.getElementById('paginationInfo');
+    if (!paginationInfo) return;
+    
+    const startIndex = filteredAdmins.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, filteredAdmins.length);
+    
+    paginationInfo.textContent = `Showing ${startIndex} to ${endIndex} of ${filteredAdmins.length} entries`;
+}
+
+// Update pagination controls
+function updatePaginationControls() {
+    const paginationUl = document.querySelector('.pagination');
+    if (!paginationUl) return;
+    
+    const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
+    
+    // Clear existing pagination
+    paginationUl.innerHTML = '';
+    
+    // Previous button
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = '<a class="page-link" href="#">Previous</a>';
+    paginationUl.appendChild(prevLi);
+    
+    // Page numbers
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    
+    // Adjust if we're near the end
+    if (endPage - startPage + 1 < maxPagesToShow && startPage > 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageLi = document.createElement('li');
+        pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        paginationUl.appendChild(pageLi);
+    }
+    
+    // Next button
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}`;
+    nextLi.innerHTML = '<a class="page-link" href="#">Next</a>';
+    paginationUl.appendChild(nextLi);
+}
 
 // Initialize add admin form
 function initAddAdminForm() {
@@ -273,37 +523,13 @@ function initAddAdminForm() {
                     try {
                         const response = JSON.parse(xhr.responseText);
                         const savedAdmin = response.admin;
-                        let imageUrl;
                         
-                        if (avatarFile) {
-                            imageUrl = URL.createObjectURL(avatarFile);
-                        } else if (savedAdmin.adminImage) {
-                            if (savedAdmin.adminImage.startsWith('http')) {
-                                imageUrl = savedAdmin.adminImage;
-                            } else {
-                                imageUrl = `http://localhost:3000/${savedAdmin.adminImage}`;
-                            }
-                        } else {
-                            imageUrl = "../../assets/images/dashboard/superadmin.jpg";
-                        }
-
-                        const newRow = document.createElement("tr");
-                        // Make sure to set the admin ID as a data attribute
-                        newRow.dataset.adminId = savedAdmin._id;
-                        newRow.innerHTML = `<td><img src="${imageUrl}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-                            <td>${savedAdmin.firstname} ${savedAdmin.lastname}</td>
-                            <td>${savedAdmin.email}</td>
-                            <td>${new Date().toLocaleString()}</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger btn-delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>`;
-                        adminTableBody.insertBefore(newRow, adminTableBody.firstChild);
-
+                        // Add the new admin to our array
+                        allAdmins.unshift(savedAdmin);
+                        
+                        // Re-apply filters and search
+                        applyFiltersAndSearch();
+                        
                         adminForm.reset();
                         avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg";
 
@@ -356,26 +582,51 @@ function initEditAdminForm() {
         if (e.target.closest(".btn-edit")) {
             const editingRow = e.target.closest("tr");
             window.editingRow = editingRow; // Store in global variable for form submission
-
-            const fullName = editingRow.cells[1].textContent.trim();
-            // Split the full name into first and last name
-            const nameParts = fullName.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
+            const adminId = editingRow.dataset.adminId;
             
-            const email = editingRow.cells[2].textContent.trim();
-            const avatarImg = editingRow.querySelector("img").src;
-
-            document.getElementById("editFirstName").value = firstName;
-            document.getElementById("editLastName").value = lastName;
-            document.getElementById("editEmail").value = email;
-            document.getElementById("editAvatarPreview").src = avatarImg;
-
-            // Reset file input
-            document.getElementById("editAvatar").value = "";
+            // Find the admin in our array
+            const admin = allAdmins.find(a => a._id === adminId);
             
-            // Log the admin ID for debugging
-            console.log("Editing admin with ID:", editingRow.dataset.adminId);
+            if (admin) {
+                document.getElementById("editFirstName").value = admin.firstname || '';
+                document.getElementById("editLastName").value = admin.lastname || '';
+                document.getElementById("editEmail").value = admin.email || '';
+                
+                // Set avatar preview
+                let avatarSrc = "../../assets/images/dashboard/superadmin.jpg";
+                if (admin.adminImage) {
+                    if (admin.adminImage.startsWith('http')) {
+                        avatarSrc = admin.adminImage;
+                    } else {
+                        avatarSrc = `http://localhost:3000/${admin.adminImage.replace(/^\//, '')}`;
+                    }
+                }
+                document.getElementById("editAvatarPreview").src = avatarSrc;
+                
+                // Reset file input
+                document.getElementById("editAvatar").value = "";
+                
+                console.log("Editing admin:", admin);
+            } else {
+                // Fallback to getting data from the row if admin not found in array
+                const fullName = editingRow.cells[1].textContent.trim();
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+                
+                const email = editingRow.cells[2].textContent.trim();
+                const avatarImg = editingRow.querySelector("img").src;
+
+                document.getElementById("editFirstName").value = firstName;
+                document.getElementById("editLastName").value = lastName;
+                document.getElementById("editEmail").value = email;
+                document.getElementById("editAvatarPreview").src = avatarImg;
+                
+                // Reset file input
+                document.getElementById("editAvatar").value = "";
+            }
+            
+            console.log("Editing admin with ID:", adminId);
         }
     });
 
@@ -441,14 +692,25 @@ function initEditAdminForm() {
                     try {
                         const response = JSON.parse(xhr.responseText);
                         
-                        // Update the row in the table
-                        window.editingRow.cells[1].textContent = `${updatedFirstName} ${updatedLastName}`;
-                        window.editingRow.cells[2].textContent = updatedEmail;
-                        
-                        // Update the avatar if we have a new one
-                        if (editAvatar.files.length > 0) {
-                            window.editingRow.querySelector("img").src = URL.createObjectURL(editAvatar.files[0]);
+                        // Update the admin in our array
+                        const adminIndex = allAdmins.findIndex(a => a._id === adminId);
+                        if (adminIndex !== -1) {
+                            allAdmins[adminIndex] = {
+                                ...allAdmins[adminIndex],
+                                firstname: updatedFirstName,
+                                lastname: updatedLastName,
+                                email: updatedEmail
+                            };
+                            
+                            // If a new avatar was uploaded, update it in memory
+                            if (editAvatar.files.length > 0) {
+                                const newImageUrl = URL.createObjectURL(editAvatar.files[0]);
+                                allAdmins[adminIndex].adminImage = newImageUrl;
+                            }
                         }
+                        
+                        // Re-apply filters and search
+                        applyFiltersAndSearch();
                         
                         // Close the modal
                         const editModal = bootstrap.Modal.getInstance(document.getElementById("editAdminModal"));
@@ -515,10 +777,11 @@ function deleteAdmin(adminId, row) {
     xhr.onload = function() {
         if (xhr.status === 200) {
             try {
-                const response = JSON.parse(xhr.responseText);
+                // Remove the admin from our array
+                allAdmins = allAdmins.filter(admin => admin._id !== adminId);
                 
-                // Remove the row from the table
-                row.remove();
+                // Re-apply filters and search
+                applyFiltersAndSearch();
                 
                 showToast("Succès", "Admin supprimé avec succès", "success");
             } catch (error) {
@@ -579,51 +842,17 @@ function getAdmins() {
             try {
                 const response = JSON.parse(xhr.responseText);
                 console.log("Response received:", response); // Debug: Response data
-                const admins = response.admins || response;
-
-                adminTableBody.innerHTML = '';
-
-                if (Array.isArray(admins) && admins.length > 0) {
-                    admins.forEach(admin => {
-                        const row = document.createElement("tr");
-                        const adminId = admin._id;
-                        // Make sure to set the admin ID as a data attribute
-                        row.dataset.adminId = adminId;
-                        
-                        // Determine image path
-                        let imagePath = "../../assets/images/dashboard/superadmin.jpg"; // Default image
-                        if (admin.adminImage) {
-                            if (admin.adminImage.startsWith('http')) {
-                                imagePath = admin.adminImage;
-                            } else {
-                                imagePath = `http://localhost:3000/${admin.adminImage.replace(/^\//, '')}`;
-                            }
-                        }
-                        
-                        const createdAt = new Date(admin.createdAt || Date.now()).toLocaleString();
-                        
-                        // Combine first and last name for display
-                        const fullName = `${admin.firstname || ''} ${admin.lastname || ''}`.trim();
-
-                        row.innerHTML = `
-                            <td><img src="${imagePath}" alt="avatar" class="rounded-circle object-fit-cover" width="32" height="32"></td>
-                            <td>${fullName || 'Unknown'}</td>
-                            <td>${admin.email || 'No email'}</td>
-                            <td>${createdAt}</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-bs-toggle="modal" data-bs-target="#editAdminModal">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger btn-delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        `;
-                        adminTableBody.appendChild(row);
-                    });
-                } else {
-                    adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No admins found</td></tr>';
-                }
+                
+                // Store all admins
+                allAdmins = response.admins || response;
+                
+                // Initialize filtered admins
+                filteredAdmins = [...allAdmins];
+                
+                // Set default sorting to date descending
+                currentFilter = 'date-desc';
+                applyFiltersAndSearch();
+                
             } catch (error) {
                 console.error("Error parsing response:", error);
                 adminTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error parsing server response</td></tr>';
