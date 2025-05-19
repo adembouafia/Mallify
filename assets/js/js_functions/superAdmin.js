@@ -926,3 +926,71 @@ if (document.readyState === 'loading') {
         getAdmins();
     }
 }
+// Function to add colorful password toggle functionality to all password fields
+function initPasswordToggles() {
+    // Find all password input fields
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+    
+    // Process each password field
+    passwordFields.forEach(passwordField => {
+        // Create a wrapper div if the field isn't already wrapped
+        let wrapper = passwordField.parentElement;
+        if (!wrapper.classList.contains('password-toggle-wrapper')) {
+            wrapper = document.createElement('div');
+            wrapper.className = 'password-toggle-wrapper position-relative';
+            passwordField.parentNode.insertBefore(wrapper, passwordField);
+            wrapper.appendChild(passwordField);
+        }
+        
+        // Add necessary styles to the password field
+        passwordField.style.paddingRight = '40px';
+        
+        // Create the toggle button
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = 'password-toggle-btn btn btn-link position-absolute end-0 top-50 translate-middle-y';
+        toggleButton.style.border = 'none';
+        toggleButton.style.background = 'none';
+        toggleButton.style.outline = 'none';
+        toggleButton.style.padding = '0.375rem';
+        toggleButton.innerHTML = '<i class="bi bi-eye-slash-fill password-icon-hidden"></i>';
+        toggleButton.setAttribute('aria-label', 'Toggle password visibility');
+        
+        // Add the toggle button to the wrapper
+        wrapper.appendChild(toggleButton);
+        
+        // Add click event to toggle password visibility
+        toggleButton.addEventListener('click', function() {
+            // Toggle the password field type
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            // Toggle the icon
+            const icon = toggleButton.querySelector('i');
+            if (type === 'password') {
+                icon.className = 'bi bi-eye-slash-fill password-icon-hidden';
+            } else {
+                icon.className = 'bi bi-eye-fill password-icon-visible';
+            }
+        });
+    });
+}
+
+// Call this function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize password toggles
+    initPasswordToggles();
+    
+    // Also initialize password toggles when modals are shown
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            initPasswordToggles();
+        });
+    });
+});
+
+// Add this to your existing code to handle dynamically added password fields
+function refreshPasswordToggles() {
+    initPasswordToggles();
+}
