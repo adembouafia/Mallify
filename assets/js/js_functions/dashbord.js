@@ -249,14 +249,14 @@ function updateBestSellingProducts(products) {
 
 // Fix the updateSalesMetrics function to use actual data
 function updateSalesMetrics(metrics) {
-  // Update revenue (CHIFFRE D'AFFAIRES)
+  // Update revenue (TOTAL REVENUE)
   const revenueElement = document.querySelector(
     ".card-footer .col-md-3:nth-child(1) h5"
   );
   if (revenueElement) {
     revenueElement.textContent = `${(metrics.totalRevenue || 0).toLocaleString()} TND`;
   }
-  // Update cost (COÛT TOTAL) - assuming 40% of revenue for demo
+  // Update cost (TOTAL COST) - assuming 40% of revenue for demo
   const costElement = document.querySelector(
     ".card-footer .col-md-3:nth-child(2) h5"
   );
@@ -264,7 +264,7 @@ function updateSalesMetrics(metrics) {
     const cost = Math.round((metrics.totalRevenue || 0) * 0.4);
     costElement.textContent = `${cost.toLocaleString()} TND`;
   }
-  // Update profit (BÉNÉFICE TOTAL) - revenue minus cost
+  // Update profit (TOTAL PROFIT) - revenue minus cost
   const profitElement = document.querySelector(
     ".card-footer .col-md-3:nth-child(3) h5"
   );
@@ -272,8 +272,7 @@ function updateSalesMetrics(metrics) {
     const profit = Math.round((metrics.totalRevenue || 0) * 0.6); // 60% profit margin
     profitElement.textContent = `${profit.toLocaleString()} TND`;
   }
-
-  // Update orders count (COMMANDES)
+  // Update orders count (ORDERS)
   const ordersElement = document.querySelector(
     ".card-footer .col-md-3:nth-child(4) h5"
   );
@@ -284,9 +283,6 @@ function updateSalesMetrics(metrics) {
 
 // Function to update percentage indicators
 function updatePercentageIndicators(metrics) {
-  // These would normally be calculated based on previous period data
-  // For demo purposes, we'll use random values between -20% and +30%
-
   const indicators = [
     document.querySelector(
       ".card-footer .col-md-3:nth-child(1) .text-success, .card-footer .col-md-3:nth-child(1) .text-danger"
@@ -324,9 +320,7 @@ function updateCategoryTable(categories) {
   let tableBody = null;
   const salesDistributionCard = Array.from(
     document.querySelectorAll(".card-title")
-  ).find((el) =>
-    el.textContent.includes("Répartition des ventes par catégorie")
-  );
+  ).find((el) => el.textContent.includes("Sales Distribution by Category"));
 
   if (salesDistributionCard) {
     const card = salesDistributionCard.closest(".card");
@@ -433,16 +427,10 @@ function updateRecentOrders(orders) {
           ${statusText}
         </span>
       </td>
-      <td><div id="table-sparkline-${index + 1}"></div></td>
     `;
 
     tableBody.appendChild(row);
   });
-
-  // Initialize sparklines after adding rows
-  setTimeout(() => {
-    initializeOrderSparklines(orders.length);
-  }, 100);
 }
 
 // Fix the updateRecentProducts function to handle empty or limited product data
@@ -534,80 +522,348 @@ function initializeCharts(dashboardData) {
     salesByCategory: dashboardData.salesByCategory,
   });
 
-  // Initialize sales chart
-  initializeSalesChart(dashboardData.monthlySales);
+  // Store orders data globally for filter usage
+  window.ordersData = dashboardData.orders;
+
+  // Initialize sales chart with monthly view as default
+  initializeSalesChart(dashboardData.monthlySales, "monthly");
+
+  // Set up filter buttons event listeners
+  setupSalesChartFilters();
 
   // Initialize category chart
   initializeCategoryChart(dashboardData.salesByCategory);
+
   // Initialize pie chart for sales by category
   initializePieChart(dashboardData.salesByCategory);
 }
-// Fix the initializeSalesChart function to handle empty or single month data
-function initializeSalesChart(monthlySales) {
-  if (!monthlySales || monthlySales.length === 0) return;
+
+// Function to set up sales chart filter buttons
+function setupSalesChartFilters() {
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  if (!filterButtons.length) return;
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      // Remove active class from all buttons
+      filterButtons.forEach((btn) => {
+        btn.classList.remove("active");
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-outline-secondary");
+      });
+
+      // Add active class to clicked button
+      this.classList.add("active");
+      this.classList.remove("btn-outline-secondary");
+      this.classList.add("btn-primary");
+
+      const filterType = this.getAttribute("data-filter");
+      updateSalesChart(filterType);
+    });
+  });
+}
+
+// Function to update sales chart based on selected filter
+function updateSalesChart(filterType) {
+  if (!window.ordersData) return;
+
+  let salesData;
+  switch (filterType) {
+    case "daily":
+      salesData = calculateDailySales(window.ordersData);
+      break;
+    case "yearly":
+      salesData = calculateYearlySales(window.ordersData);
+      break;
+    case "monthly":
+    default:
+      salesData = calculateMonthlySales(window.ordersData);
+  }
+
+  // Re-initialize chart with the new data and view type
+  initializeSalesChart(salesData, filterType);
+}
+// Fix the initializeSalesChart function to handle different time period views (daily, monthly, yearly)
+function initializeSalesChart(salesData, viewType = "monthly") {
+  if (!salesData || salesData.length === 0) return;
 
   const salesChartElement = document.getElementById("sales-chart");
   if (!salesChartElement) return;
 
-  // If we only have one month of data, add a dummy month to make the chart look better
-  const chartData = [...monthlySales];
+  // If we only have one data point, add a dummy point to make the chart look better
+  const chartData = [...salesData];
   if (chartData.length === 1) {
-    const [month, year] = chartData[0].month.split("/");
-    const prevMonth = Number.parseInt(month) - 1 || 12;
-    const prevYear = prevMonth === 12 ? Number.parseInt(year) - 1 : year;
-    chartData.unshift({
-      month: `${prevMonth}/${prevYear}`,
-      amount: 0,
-    });
+    // Handle single data point based on view type
+    if (viewType === "monthly") {
+      const [month, year] = chartData[0].day.split("/");
+      const prevMonth = Number.parseInt(month) - 1 || 12;
+      const prevYear = prevMonth === 12 ? Number.parseInt(year) - 1 : year;
+      chartData.unshift({
+        day: `${prevMonth}/${prevYear}`,
+        amount: 0,
+      });
+    } else if (viewType === "daily") {
+      const [day, month, year] = chartData[0].day.split("/");
+      const prevDate = new Date(`${year}-${month}-${day}`);
+      prevDate.setDate(prevDate.getDate() - 1);
+      chartData.unshift({
+        day: `${prevDate.getDate()}/${prevDate.getMonth() + 1}/${prevDate.getFullYear()}`,
+        amount: 0,
+      });
+    } else if (viewType === "yearly") {
+      // Use current year from the system
+      const currentYear = new Date().getFullYear();
+      const year = Number.parseInt(chartData[0].day);
+      // If the year in the data is the current year, use previous year
+      // Otherwise use the appropriate adjacent year
+      const prevYear =
+        year === currentYear
+          ? year - 1
+          : year < currentYear
+            ? year + 1
+            : year - 1;
+      chartData.unshift({
+        day: prevYear.toString(),
+        amount: 0,
+      });
+    }
   }
 
-  // Format dates for x-axis
-  const dateCategories = chartData.map((item) => {
-    const [month, year] = item.month.split("/");
-    return `${year}-${month.padStart(2, "0")}-01`; // Format as YYYY-MM-DD
-  });
+  let sortedDates, sortedAmounts, formattedLabels;
 
-  // Sort dates chronologically
-  const sortedIndices = dateCategories
-    .map((date, index) => ({ date, index }))
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .map((item) => item.index);
+  if (viewType === "daily") {
+    // Format dates for daily view
+    const dateCategories = chartData.map((item) => {
+      const [day, month, year] = item.day.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    });
 
-  const sortedDates = sortedIndices.map((i) => dateCategories[i]);
-  const sortedAmounts = sortedIndices.map((i) => chartData[i].amount);
+    // Sort dates chronologically
+    const sortedIndices = dateCategories
+      .map((date, index) => ({ date, index }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map((item) => item.index);
 
-  // Use real data directly from the database
+    sortedDates = sortedIndices.map((i) => dateCategories[i]);
+    sortedAmounts = sortedIndices.map((i) => chartData[i].amount);
+
+    // Format labels as "DD Mon" (e.g., "15 Jan")
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    formattedLabels = sortedDates.map((date) => {
+      const dateObj = new Date(date);
+      return `${dateObj.getDate()} ${monthNames[dateObj.getMonth()]}`;
+    });
+  } else if (viewType === "monthly") {
+    // Format dates for monthly view
+    const dateCategories = chartData.map((item) => {
+      const [month, year] = item.day.split("/");
+      return `${year}-${month.padStart(2, "0")}-01`;
+    });
+
+    // Sort dates chronologically
+    const sortedIndices = dateCategories
+      .map((date, index) => ({ date, index }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map((item) => item.index);
+
+    sortedDates = sortedIndices.map((i) => dateCategories[i]);
+    sortedAmounts = sortedIndices.map((i) => chartData[i].amount);
+
+    // Format labels as month names (e.g., "Jan")
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    formattedLabels = sortedDates.map((date) => {
+      const dateObj = new Date(date);
+      return monthNames[dateObj.getMonth()];
+    });
+  } else if (viewType === "yearly") {
+    // For yearly view, no need to convert dates
+    sortedDates = chartData.map((item) => item.day).sort();
+    const sortedIndices = chartData
+      .map((item, index) => ({ year: item.day, index }))
+      .sort((a, b) => a.year - b.year)
+      .map((item) => item.index);
+
+    sortedAmounts = sortedIndices.map((i) => chartData[i].amount);
+    formattedLabels = sortedDates;
+  }
+
+  // Create chart title and series name based on view type
+  let chartTitle, seriesName; // Get current year for dynamic titles
+  const currentYear = new Date().getFullYear();
+
+  switch (viewType) {
+    case "daily":
+      chartTitle = "Daily Sales (Last 30 Days)";
+      seriesName = "Daily Sales";
+      break;
+    case "monthly":
+      chartTitle = `Monthly Sales (${currentYear})`;
+      seriesName = "Monthly Sales";
+      break;
+    case "yearly":
+      chartTitle = `Yearly Sales (${currentYear - 4} - ${currentYear})`;
+      seriesName = "Annual Sales";
+      break;
+  }
+
+  // Create chart configuration
   const sales_chart_options = {
     series: [
       {
-        name: "Total Sales",
+        name: seriesName,
         data: sortedAmounts,
       },
     ],
     chart: {
-      height: 180,
+      height: 300,
       type: "area",
       toolbar: {
-        show: false,
+        show: true,
+        tools: {
+          download: true,
+          selection: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+          pan: true,
+          reset: true,
+        },
+      },
+      background: "#fff",
+      animations: {
+        enabled: true,
+        easing: "smooth",
+        speed: 800,
       },
     },
     legend: {
       show: false,
     },
-    colors: ["#0d6efd", "#20c997"],
+    colors: ["#36A2EB"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.4,
+        opacityFrom: 0.8,
+        opacityTo: 0.2,
+        stops: [0, 90, 100],
+      },
+    },
+    stroke: {
+      width: 3,
+      curve: "smooth",
+    },
+    markers: {
+      size: 0,
+    },
     dataLabels: {
       enabled: false,
     },
-    stroke: {
-      curve: "smooth",
-    },
     xaxis: {
-      type: "datetime",
-      categories: sortedDates,
+      categories: formattedLabels,
+      tickAmount: viewType === "daily" ? 7 : viewType === "monthly" ? 12 : 5,
+      labels: {
+        rotate: viewType === "daily" ? -45 : 0,
+        style: {
+          colors: "#777",
+          fontSize: "12px",
+          fontFamily: "Source Sans 3, sans-serif",
+        },
+      },
+      axisBorder: {
+        show: true,
+        color: "#e0e0e0",
+      },
+      axisTicks: {
+        show: false,
+      },
+      title: {
+        text: "",
+      },
+    },
+    yaxis: {
+      labels: {
+        formatter: function (val) {
+          return val;
+        },
+        style: {
+          fontSize: "12px",
+          fontFamily: "Source Sans 3, sans-serif",
+        },
+      },
+      title: {
+        text: "",
+      },
+      min: 0,
+      forceNiceScale: true,
     },
     tooltip: {
+      enabled: true,
+      shared: false,
+      intersect: false,
+      y: {
+        formatter: function (val) {
+          return val.toLocaleString() + " TND";
+        },
+      },
       x: {
-        format: "MMMM yyyy",
+        show: true,
+      },
+      marker: {
+        show: false,
+      },
+      theme: "light",
+    },
+    grid: {
+      borderColor: "#e0e0e0",
+      strokeDashArray: 5,
+      row: {
+        colors: ["transparent", "transparent"],
+      },
+      xaxis: {
+        lines: {
+          show: false,
+        },
+      },
+      yaxis: {
+        lines: {
+          show: true,
+          opacity: 0.5,
+        },
+      },
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
       },
     },
   };
@@ -615,11 +871,27 @@ function initializeSalesChart(monthlySales) {
   // Clear previous chart if exists
   salesChartElement.innerHTML = "";
 
-  const sales_chart = new window.ApexCharts(
+  // Create chart title element
+  const titleElement = document.createElement("div");
+  titleElement.className = "chart-title";
+  titleElement.style.cssText =
+    "font-size: 16px; font-weight: bold; padding-left: 10px; margin-bottom: 10px;";
+  titleElement.textContent = chartTitle;
+
+  // Add the title before rendering chart
+  salesChartElement.appendChild(titleElement);
+  // Create and render the chart
+  // First, destroy any existing chart instance to prevent memory leaks
+  if (window.salesChart) {
+    window.salesChart.destroy();
+  }
+
+  // Create new chart instance and store it globally
+  window.salesChart = new window.ApexCharts(
     salesChartElement,
     sales_chart_options
   );
-  sales_chart.render();
+  window.salesChart.render();
 }
 // Fix the initializeCategoryChart function to handle empty or single category data
 function initializeCategoryChart(categories) {
@@ -1127,9 +1399,7 @@ function fetchDashboardData() {
                     "products with ratings"
                   );
                 }
-              }
-
-              // Combine all dashboard data - use EXACTLY the data from API with no modifications
+              } // Combine all dashboard data - use EXACTLY the data from API with no modifications
               const dashboardData = {
                 metrics: {
                   totalProducts: productsData.results,
@@ -1147,6 +1417,7 @@ function fetchDashboardData() {
                 categoryCounts: categoryCountsData.categoryCounts,
                 recentOrders,
                 recentProducts,
+                orders, // Add the raw orders data for filtering
               };
 
               // Log the complete dashboard data
@@ -1171,6 +1442,29 @@ function fetchDashboardData() {
 function calculateMonthlySales(orders) {
   const monthlySales = {};
 
+  // Define all months to ensure we have entries for each month
+  const allMonths = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Always use current system year for consistency
+  const currentYear = new Date().getFullYear();
+  allMonths.forEach((_, monthIndex) => {
+    const monthKey = `${monthIndex + 1}/${currentYear}`;
+    monthlySales[monthKey] = 0;
+  });
+
   orders.forEach((order) => {
     if (!order.dateCommande) return;
 
@@ -1187,14 +1481,14 @@ function calculateMonthlySales(orders) {
   // Convert to array format for chart
   return (
     Object.entries(monthlySales)
-      .map(([month, amount]) => ({
-        month,
+      .map(([day, amount]) => ({
+        day,
         amount,
       }))
       // Sort by date to ensure chronological order
       .sort((a, b) => {
-        const [aMonth, aYear] = a.month.split("/");
-        const [bMonth, bYear] = b.month.split("/");
+        const [aMonth, aYear] = a.day.split("/");
+        const [bMonth, bYear] = b.day.split("/");
         return (
           new Date(`${aYear}-${aMonth}-01`) - new Date(`${bYear}-${bMonth}-01`)
         );
@@ -1297,6 +1591,101 @@ function calculateSalesByCategory(orders, products) {
       }))
       // Sort by amount descending to prioritize most important categories
       .sort((a, b) => b.amount - a.amount)
+  );
+}
+
+// Helper function to calculate daily sales
+function calculateDailySales(orders) {
+  const dailySales = {};
+
+  // Get date range for the past 30 days - always use current system date
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
+  // Initialize each day with zero sales
+  for (
+    let d = new Date(thirtyDaysAgo);
+    d <= today;
+    d.setDate(d.getDate() + 1)
+  ) {
+    const dateKey = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+    dailySales[dateKey] = 0;
+  }
+
+  orders.forEach((order) => {
+    if (!order.dateCommande) return;
+
+    const date = new Date(order.dateCommande);
+    // Skip if order is older than 30 days
+    if (date < thirtyDaysAgo) return;
+
+    const dateKey = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
+    if (!dailySales[dateKey]) {
+      dailySales[dateKey] = 0;
+    }
+
+    dailySales[dateKey] += order.orderTotal || 0;
+  });
+
+  // Convert to array format for chart
+  return (
+    Object.entries(dailySales)
+      .map(([day, amount]) => ({
+        day,
+        amount,
+      }))
+      // Sort by date to ensure chronological order
+      .sort((a, b) => {
+        const [aDay, aMonth, aYear] = a.day.split("/");
+        const [bDay, bMonth, bYear] = b.day.split("/");
+        return (
+          new Date(`${aYear}-${aMonth}-${aDay}`) -
+          new Date(`${bYear}-${bMonth}-${bDay}`)
+        );
+      })
+  );
+}
+
+// Helper function to calculate yearly sales
+function calculateYearlySales(orders) {
+  const yearlySales = {};
+
+  // Define years to include (past 5 years) - always use current system year
+  const currentYear = new Date().getFullYear();
+  const startYear = currentYear - 4; // Include 5 years including current
+
+  // Initialize all years with zero sales
+  for (let year = startYear; year <= currentYear; year++) {
+    yearlySales[year.toString()] = 0;
+  }
+
+  orders.forEach((order) => {
+    if (!order.dateCommande) return;
+
+    const date = new Date(order.dateCommande);
+    const year = date.getFullYear().toString();
+
+    // Skip if order is from earlier than our start year
+    if (date.getFullYear() < startYear) return;
+
+    if (!yearlySales[year]) {
+      yearlySales[year] = 0;
+    }
+
+    yearlySales[year] += order.orderTotal || 0;
+  });
+
+  // Convert to array format for chart
+  return (
+    Object.entries(yearlySales)
+      .map(([year, amount]) => ({
+        day: year, // Using 'day' as the key to maintain consistency with other functions
+        amount,
+      }))
+      // Sort by date to ensure chronological order
+      .sort((a, b) => a.day - b.day)
   );
 }
 

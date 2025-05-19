@@ -331,25 +331,6 @@
                         <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
                         <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
                       </button>
-                      <div class="btn-group">
-                        <button
-                          type="button"
-                          class="btn btn-tool dropdown-toggle"
-                          data-bs-toggle="dropdown"
-                        >
-                          <i class="bi bi-wrench"></i>
-                        </button>
-                        <div
-                          class="dropdown-menu dropdown-menu-end"
-                          role="menu"
-                        >
-                          <a href="#" class="dropdown-item">Export Data</a>
-                          <a href="#" class="dropdown-item">Print Report</a>
-                          <a href="#" class="dropdown-item">Refresh Data</a>
-                          <a class="dropdown-divider"></a>
-                          <a href="#" class="dropdown-item">Settings</a>
-                        </div>
-                      </div>
                       <button
                         type="button"
                         class="btn btn-tool"
@@ -364,18 +345,40 @@
                     <!--begin::Row-->
                     <div class="row">
                       <div class="col-md-8">
-                        <p class="text-center">
-                          <strong
-                            >Évolution des ventes dans le temps: Jan 2023 - Jul
-                            2023</strong
-                          >
-                        </p>
+                        <div
+                          class="d-flex justify-content-between align-items-center mb-3"
+                        >
+                          <strong>Sales Evolution Over Time</strong>
+                          <div class="btn-group">
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-secondary filter-btn"
+                              data-filter="daily"
+                            >
+                              Daily
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-primary filter-btn active"
+                              data-filter="monthly"
+                            >
+                              Monthly
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-secondary filter-btn"
+                              data-filter="yearly"
+                            >
+                              Yearly
+                            </button>
+                          </div>
+                        </div>
                         <div id="sales-chart"></div>
                       </div>
                       <!-- /.col -->
                       <div class="col-md-4">
                         <p class="text-center">
-                          <strong>Produits les plus vendus</strong>
+                          <strong>Best Selling Products</strong>
                         </p>
                         <div class="progress-group">
                           Smartphone XYZ
@@ -437,9 +440,7 @@
               <div class="col-md-12">
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h5 class="card-title">
-                      Répartition des ventes par catégorie
-                    </h5>
+                    <h5 class="card-title">Sales Distribution by Category</h5>
                     <div class="card-tools">
                       <button
                         type="button"
@@ -469,8 +470,8 @@
                           <table class="table">
                             <thead>
                               <tr>
-                                <th>Catégorie</th>
-                                <th>Ventes</th>
+                                <th>Category</th>
+                                <th>Sales</th>
                                 <th>%</th>
                               </tr>
                             </thead>
@@ -558,7 +559,6 @@
                             <th>Order ID</th>
                             <th>Item</th>
                             <th>Status</th>
-                            <th>Popularity</th>
                           </tr>
                         </thead>
                         <tbody>
