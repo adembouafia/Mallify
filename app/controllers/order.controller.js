@@ -135,7 +135,8 @@ exports.getOrdersByShop = async (req, res) => {
       return res.status(400).json({
         message: "Shop ID manquant. Assurez-vous d'être authentifié(e) et que le token contient bien shopId.",
       })
-    } // No need to populate idPanier since we have cartData
+    }
+
     // Récupérer toutes les commandes sans filtrer par statut
     const orders = await Order.find({
       shop: shopId,
@@ -190,11 +191,19 @@ exports.getOrderHistoriesByShop = async (req, res) => {
 // Get order by id
 exports.getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("idClient")
+    const order = await Order.findById(req.params.id).populate("idClient").populate("shop")
 
     if (!order) {
       return res.status(404).json({
         message: "Commande non trouvée",
+      })
+    }
+
+    // Vérifier que la commande appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (order.shop && order.shop._id && order.shop._id.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à accéder à cette commande",
       })
     }
 
@@ -213,7 +222,23 @@ exports.getOrderById = async (req, res) => {
 // Delete order
 exports.deleteOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.id)
+    const order = await Order.findById(req.params.id)
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Commande non trouvée",
+      })
+    }
+
+    // Vérifier que la commande appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (order.shop && order.shop.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à supprimer cette commande",
+      })
+    }
+
+    await Order.findByIdAndDelete(req.params.id)
     const delivery = await Delivery.findOneAndDelete({
       idCommande: req.params.id,
     })
@@ -230,11 +255,6 @@ exports.deleteOrder = async (req, res) => {
       console.log("Facture supprimée avec succès")
     } else {
       console.log("Aucune facture trouvée pour cette commande")
-    }
-    if (!order && !delivery && !invoice) {
-      return res.status(404).json({
-        message: "Aucune commande, livraison ou facture trouvée",
-      })
     }
 
     res.status(200).json({
@@ -275,6 +295,14 @@ exports.updateStatusOrder = async (req, res) => {
       })
     }
 
+    // Vérifier que la commande appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (order.shop.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à modifier cette commande",
+      })
+    }
+
     // Si la commande est annulée, enregistrer la raison et restaurer le stock
     if (status === "cancelled") {
       order.refusalReason = refusalReason
@@ -303,13 +331,6 @@ exports.updateStatusOrder = async (req, res) => {
           message: notificationMessage,
         })
       }
-    }
-
-    // Vérifier les autorisations (seul le vendeur de la boutique ou un modérateur/admin peut modifier)
-    if (req.user.role === "vendor" && order.shop.toString() !== req.user.shopId) {
-      return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à modifier cette commande",
-      })
     }
 
     // Si la commande passe de 'pending' à 'accepted', mettre à jour le stock des produits
@@ -524,6 +545,14 @@ exports.makeToShip = async (req, res) => {
       return res.status(404).json({ message: "Commande non trouvée" })
     }
 
+    // Vérifier que la commande appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (order.shop.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à modifier cette commande",
+      })
+    }
+
     // Check if order is in accepted status
     if (order.orderStatus !== "accepted") {
       return res.status(400).json({
@@ -613,21 +642,20 @@ exports.makeToShip = async (req, res) => {
 // Get order count for admin dashboard
 exports.getOrderCount = async (req, res) => {
   try {
-    const count = await Order.countDocuments();
-    res.status(200).json({ count });
+    const count = await Order.countDocuments()
+    res.status(200).json({ count })
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error fetching order count" });
+    res.status(500).json({ message: err.message || "Error fetching order count" })
   }
-};
-
+}
 
 // Get monthly order statistics
 exports.getMonthlyStats = async (req, res) => {
   try {
-    const currentMonth = new Date().getMonth() + 1; // 1-12
-    
+    const currentMonth = new Date().getMonth() + 1 // 1-12
+
     // Query database for real data
-    let monthlyStats;
+    let monthlyStats
     try {
       // Try first query approach - more robust date handling
       monthlyStats = await Order.aggregate([
@@ -641,79 +669,81 @@ exports.getMonthlyStats = async (req, res) => {
                 {
                   $cond: [
                     { $eq: [{ $type: "$createdAt" }, "string"] },
-                    { 
+                    {
                       $let: {
                         vars: {
-                          parsedDate: { 
-                            $dateFromString: { 
-                              dateString: "$createdAt", 
-                              onError: new Date() 
-                            } 
-                          }
+                          parsedDate: {
+                            $dateFromString: {
+                              dateString: "$createdAt",
+                              onError: new Date(),
+                            },
+                          },
                         },
-                        in: { $month: "$$parsedDate" }
-                      }
+                        in: { $month: "$$parsedDate" },
+                      },
                     },
                     // If no valid date format, try to extract from updatedAt or use a default
                     {
                       $cond: [
-                        { $or: [
-                          { $eq: [{ $type: "$updatedAt" }, "date"] },
-                          { $eq: [{ $type: "$updatedAt" }, "string"] }
-                        ]},
-                        { 
+                        {
+                          $or: [
+                            { $eq: [{ $type: "$updatedAt" }, "date"] },
+                            { $eq: [{ $type: "$updatedAt" }, "string"] },
+                          ],
+                        },
+                        {
                           $let: {
                             vars: {
-                              parsedDate: { 
+                              parsedDate: {
                                 $cond: [
                                   { $eq: [{ $type: "$updatedAt" }, "date"] },
                                   "$updatedAt",
-                                  { 
-                                    $dateFromString: { 
-                                      dateString: "$updatedAt", 
-                                      onError: new Date() 
-                                    } 
-                                  }
-                                ]
-                              }
+                                  {
+                                    $dateFromString: {
+                                      dateString: "$updatedAt",
+                                      onError: new Date(),
+                                    },
+                                  },
+                                ],
+                              },
                             },
-                            in: { $month: "$$parsedDate" }
-                          }
+                            in: { $month: "$$parsedDate" },
+                          },
                         },
                         // Last resort - randomly distribute between 1-12
-                        { $add: [{ $mod: [{ $toInt: { $substr: [{ $toString: "$_id" }, 0, 2] } }, 12] }, 1] }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          }
+                        { $add: [{ $mod: [{ $toInt: { $substr: [{ $toString: "$_id" }, 0, 2] } }, 12] }, 1] },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
         },
         {
           $group: {
             _id: "$extractedMonth",
-            count: { $sum: 1 }
-          }
+            count: { $sum: 1 },
+          },
         },
         {
           $project: {
             _id: 0,
             month: "$_id",
-            count: 1
-          }
+            count: 1,
+          },
         },
         {
-          $sort: { month: 1 }
-        }
-      ]);
-      
-      console.log(`Found ${monthlyStats.length} months with order data using primary approach`);
-      
+          $sort: { month: 1 },
+        },
+      ])
+
+      console.log(`Found ${monthlyStats.length} months with order data using primary approach`)
+
       // If primary approach doesn't work well, try a simpler approach
       if (monthlyStats.length < 3) {
-        console.log("Few months found, trying alternative approach");
-        
+        console.log("Few months found, trying alternative approach")
+
         // Try a second approach with simpler date handling
         monthlyStats = await Order.aggregate([
           {
@@ -723,207 +753,208 @@ exports.getMonthlyStats = async (req, res) => {
                   { $eq: [{ $type: "$createdAt" }, "date"] },
                   { $month: "$createdAt" },
                   // Use Object ID timestamp as fallback for date
-                  { $add: [{ $mod: [{ $toInt: { $substr: [{ $toString: "$_id" }, 0, 2] } }, 12] }, 1] }
-                ]
-              }
-            }
+                  { $add: [{ $mod: [{ $toInt: { $substr: [{ $toString: "$_id" }, 0, 2] } }, 12] }, 1] },
+                ],
+              },
+            },
           },
           {
             $group: {
               _id: "$month",
-              count: { $sum: 1 }
-            }
+              count: { $sum: 1 },
+            },
           },
           {
             $project: {
               _id: 0,
-              month: "$_id",              count: 1
-            }
+              month: "$_id",
+              count: 1,
+            },
           },
           {
-            $sort: { month: 1 }
-          }
-        ]);
-        
-        console.log(`Found ${monthlyStats.length} months with order data using alternative approach`);
+            $sort: { month: 1 },
+          },
+        ])
+
+        console.log(`Found ${monthlyStats.length} months with order data using alternative approach`)
       }
     } catch (err) {
-      console.error("Error in Order aggregate:", err);
-      monthlyStats = [];
+      console.error("Error in Order aggregate:", err)
+      monthlyStats = []
     }
-    
+
     // If the above methods didn't work, try to get a simple order count and distribute
     if (!monthlyStats || monthlyStats.length < 3) {
       try {
-        console.log("Insufficient month data, using order distribution approach");
-        
+        console.log("Insufficient month data, using order distribution approach")
+
         // Get total orders and distribute them realistically across months
-        const totalOrderCount = await Order.countDocuments();
-        
+        const totalOrderCount = await Order.countDocuments()
+
         // Create a realistic distribution pattern
-        const distribution = [0.06, 0.05, 0.07, 0.08, 0.09, 0.1, 0.08, 0.07, 0.09, 0.11, 0.12, 0.08];
-        
+        const distribution = [0.06, 0.05, 0.07, 0.08, 0.09, 0.1, 0.08, 0.07, 0.09, 0.11, 0.12, 0.08]
+
         // Adjust the distribution to give more weight to recent months
         for (let i = 0; i < currentMonth; i++) {
-          distribution[i] *= 1.2; // Increase weight for past months
+          distribution[i] *= 1.2 // Increase weight for past months
         }
-        
+
         // Normalize the distribution
-        const sum = distribution.reduce((a, b) => a + b, 0);
-        const normalizedDist = distribution.map(v => v / sum);
-        
+        const sum = distribution.reduce((a, b) => a + b, 0)
+        const normalizedDist = distribution.map((v) => v / sum)
+
         // Generate monthly stats based on distribution
-        monthlyStats = [];
-        let remainingCount = totalOrderCount;
-        
+        monthlyStats = []
+        let remainingCount = totalOrderCount
+
         for (let m = 1; m <= 12; m++) {
-          const share = Math.floor(totalOrderCount * normalizedDist[m-1]);
-          const count = Math.min(share, remainingCount);
-          remainingCount -= count;
-          
+          const share = Math.floor(totalOrderCount * normalizedDist[m - 1])
+          const count = Math.min(share, remainingCount)
+          remainingCount -= count
+
           monthlyStats.push({
             month: m,
-            count: count
-          });
+            count: count,
+          })
         }
-        
+
         // Handle any remaining count due to rounding
         if (remainingCount > 0) {
-          monthlyStats[currentMonth-1].count += remainingCount;
+          monthlyStats[currentMonth - 1].count += remainingCount
         }
       } catch (countErr) {
-        console.error("Error in order distribution:", countErr);
-        monthlyStats = [];
+        console.error("Error in order distribution:", countErr)
+        monthlyStats = []
       }
     }
-    
+
     // Convert to the format expected by the client
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const formattedData = {};
-    
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const formattedData = {}
+
     // Initialize all months with zero to ensure complete data
-    monthNames.forEach(month => {
-      formattedData[month] = 0;
-    });
-    
+    monthNames.forEach((month) => {
+      formattedData[month] = 0
+    })
+
     // Update with actual data where available
-    monthlyStats.forEach(stat => {
+    monthlyStats.forEach((stat) => {
       if (stat.month >= 1 && stat.month <= 12) {
-        const monthIndex = stat.month - 1;
-        formattedData[monthNames[monthIndex]] = stat.count;
+        const monthIndex = stat.month - 1
+        formattedData[monthNames[monthIndex]] = stat.count
       }
-    });
-    
+    })
+
     // If no data is found, provide sample data for visualization
-    const hasData = Object.values(formattedData).some(count => count > 0);
+    const hasData = Object.values(formattedData).some((count) => count > 0)
     if (!hasData) {
-      console.log("No monthly data available, generating realistic sample data");
-      
+      console.log("No monthly data available, generating realistic sample data")
+
       // Generate realistic pattern with increasing trend and seasonal variations
-      const baseValue = 20;  // Base number of orders
-      const seasonalPeak = 40; // Peak seasonal additional orders
-      const trend = 5; // Upward trend per month
-      
-      formattedData['Jan'] = baseValue + Math.floor(Math.random() * 15);
-      formattedData['Feb'] = formattedData['Jan'] + trend - Math.floor(Math.random() * 10);
-      formattedData['Mar'] = formattedData['Feb'] + trend + Math.floor(Math.random() * 15);
-      formattedData['Apr'] = formattedData['Mar'] + trend + Math.floor(Math.random() * 10);
-      formattedData['May'] = formattedData['Apr'] + trend - Math.floor(Math.random() * 15);
-      formattedData['Jun'] = formattedData['May'] + trend + seasonalPeak - Math.floor(Math.random() * 10);
-      formattedData['Jul'] = formattedData['Jun'] - Math.floor(Math.random() * 20);
-      formattedData['Aug'] = formattedData['Jul'] + Math.floor(Math.random() * 15);
-      formattedData['Sep'] = formattedData['Aug'] + trend - Math.floor(Math.random() * 10);
-      formattedData['Oct'] = formattedData['Sep'] + trend + Math.floor(Math.random() * 15);
-      formattedData['Nov'] = formattedData['Oct'] + trend + seasonalPeak - Math.floor(Math.random() * 10);
-      formattedData['Dec'] = formattedData['Nov'] + seasonalPeak - Math.floor(Math.random() * 15);
-      
+      const baseValue = 20 // Base number of orders
+      const seasonalPeak = 40 // Peak seasonal additional orders
+      const trend = 5 // Upward trend per month
+
+      formattedData["Jan"] = baseValue + Math.floor(Math.random() * 15)
+      formattedData["Feb"] = formattedData["Jan"] + trend - Math.floor(Math.random() * 10)
+      formattedData["Mar"] = formattedData["Feb"] + trend + Math.floor(Math.random() * 15)
+      formattedData["Apr"] = formattedData["Mar"] + trend + Math.floor(Math.random() * 10)
+      formattedData["May"] = formattedData["Apr"] + trend - Math.floor(Math.random() * 15)
+      formattedData["Jun"] = formattedData["May"] + trend + seasonalPeak - Math.floor(Math.random() * 10)
+      formattedData["Jul"] = formattedData["Jun"] - Math.floor(Math.random() * 20)
+      formattedData["Aug"] = formattedData["Jul"] + Math.floor(Math.random() * 15)
+      formattedData["Sep"] = formattedData["Aug"] + trend - Math.floor(Math.random() * 10)
+      formattedData["Oct"] = formattedData["Sep"] + trend + Math.floor(Math.random() * 15)
+      formattedData["Nov"] = formattedData["Oct"] + trend + seasonalPeak - Math.floor(Math.random() * 10)
+      formattedData["Dec"] = formattedData["Nov"] + seasonalPeak - Math.floor(Math.random() * 15)
+
       // Ensure current month has the highest value for realism
-      const currentMonthName = monthNames[currentMonth - 1];
-      const maxValue = Math.max(...Object.values(formattedData));
-      formattedData[currentMonthName] = maxValue + Math.floor(Math.random() * 20) + 10;
+      const currentMonthName = monthNames[currentMonth - 1]
+      const maxValue = Math.max(...Object.values(formattedData))
+      formattedData[currentMonthName] = maxValue + Math.floor(Math.random() * 20) + 10
     }
-    
-    res.status(200).json(formattedData);
+
+    res.status(200).json(formattedData)
   } catch (err) {
-    console.error("Error in getMonthlyStats:", err);
-    
+    console.error("Error in getMonthlyStats:", err)
+
     // On error, still return sample data to keep dashboard functional
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const formattedData = {};
-    
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const formattedData = {}
+
     monthNames.forEach((month, index) => {
-      formattedData[month] = 25 + index * 5 + Math.floor(Math.random() * 20);
-    });
-    
-    res.status(200).json(formattedData);
+      formattedData[month] = 25 + index * 5 + Math.floor(Math.random() * 20)
+    })
+
+    res.status(200).json(formattedData)
   }
-};
+}
 
 // Get orders by shop with counts
 exports.getOrdersByShopCount = async (req, res) => {
   try {
     // First get all shops to ensure we have complete data even for shops with no orders
-    const shops = await Shop.find({}, { name: 1, shopName: 1 }).lean();
-    
+    const shops = await Shop.find({}, { name: 1, shopName: 1 }).lean()
+
     // More comprehensive aggregation to get accurate revenue data
     const ordersData = await Order.aggregate([
       // Only include orders with shop reference and orderTotal
-      { $match: { 
-        shop: { $exists: true, $ne: null }
-      }},
+      {
+        $match: {
+          shop: { $exists: true, $ne: null },
+        },
+      },
       // Look up shop details
       {
         $lookup: {
-          from: 'shops',
-          localField: 'shop',
-          foreignField: '_id',
-          as: 'shopData'
-        }
+          from: "shops",
+          localField: "shop",
+          foreignField: "_id",
+          as: "shopData",
+        },
       },
       // Unwind the shopData array
       {
         $unwind: {
-          path: '$shopData',
-          preserveNullAndEmptyArrays: true
-        }
+          path: "$shopData",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       // Group by shop to get order count and total revenue
       {
         $group: {
-          _id: '$shop',
-          name: { 
-            $first: { 
+          _id: "$shop",
+          name: {
+            $first: {
               $cond: [
-                { $ifNull: ['$shopData.name', false] },
-                '$shopData.name',
-                { $ifNull: ['$shopData.shopName', 'Unknown Shop'] }
-              ]
-            }
+                { $ifNull: ["$shopData.name", false] },
+                "$shopData.name",
+                { $ifNull: ["$shopData.shopName", "Unknown Shop"] },
+              ],
+            },
           },
           orderCount: { $sum: 1 },
           // Try multiple possible fields for revenue
-          revenue: { 
-            $sum: { 
+          revenue: {
+            $sum: {
               $cond: [
-                { $gt: ['$orderTotal', 0] },
-                '$orderTotal',
-                { $cond: [
-                  { $gt: ['$totalPrice', 0] },
-                  '$totalPrice',
-                  { $cond: [
-                    { $ifNull: ['$cartData.totalPrice', false] },
-                    '$cartData.totalPrice',
-                    0
-                  ]}
-                ]}
-              ]
-            }
-          }
-        }
+                { $gt: ["$orderTotal", 0] },
+                "$orderTotal",
+                {
+                  $cond: [
+                    { $gt: ["$totalPrice", 0] },
+                    "$totalPrice",
+                    { $cond: [{ $ifNull: ["$cartData.totalPrice", false] }, "$cartData.totalPrice", 0] },
+                  ],
+                },
+              ],
+            },
+          },
+        },
       },
       // Sort by order count (descending)
       {
-        $sort: { orderCount: -1 }
+        $sort: { orderCount: -1 },
       },
       // Ensure we have all needed fields
       {
@@ -931,47 +962,46 @@ exports.getOrdersByShopCount = async (req, res) => {
           _id: 1,
           name: 1,
           orderCount: 1,
-          revenue: 1
-        }
-      }
-    ]);
-    
-    console.log(`Found ${ordersData.length} shops with order data`);
-    
+          revenue: 1,
+        },
+      },
+    ])
+
+    console.log(`Found ${ordersData.length} shops with order data`)
+
     // Combine both datasets to include all shops
-    let shopOrders = [...ordersData];
-    
+    let shopOrders = [...ordersData]
+
     // Add shops that don't have any orders
     for (const shop of shops) {
-      const shopName = shop.name || shop.shopName || 'Unknown Shop';
-      const exists = shopOrders.some(item => 
-        (item._id && shop._id && item._id.toString() === shop._id.toString()) || 
-        item.name === shopName
-      );
-      
+      const shopName = shop.name || shop.shopName || "Unknown Shop"
+      const exists = shopOrders.some(
+        (item) => (item._id && shop._id && item._id.toString() === shop._id.toString()) || item.name === shopName,
+      )
+
       if (!exists) {
         shopOrders.push({
           _id: shop._id,
           name: shopName,
           orderCount: 0,
-          revenue: 0
-        });
+          revenue: 0,
+        })
       }
     }
-    
+
     // Sort by order count (descending)
-    shopOrders.sort((a, b) => b.orderCount - a.orderCount);
-    
+    shopOrders.sort((a, b) => b.orderCount - a.orderCount)
+
     // Make sure revenue values are properly formatted numbers
-    shopOrders = shopOrders.map(shop => ({
+    shopOrders = shopOrders.map((shop) => ({
       ...shop,
       // Ensure revenue is a valid number with at most 2 decimal places
-      revenue: Math.round((parseFloat(shop.revenue) || 0) * 100) / 100
-    }));
-    
-    console.log("Returning orders per shop with revenue data");
-    res.status(200).json(shopOrders);
+      revenue: Math.round((Number.parseFloat(shop.revenue) || 0) * 100) / 100,
+    }))
+
+    console.log("Returning orders per shop with revenue data")
+    res.status(200).json(shopOrders)
   } catch (err) {
-    console.error("Error in getOrdersByShopCount:", err);
+    console.error("Error in getOrdersByShopCount:", err)
   }
-};
+}

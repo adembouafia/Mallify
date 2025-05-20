@@ -1,7 +1,7 @@
 const config = {
   baseItemSize: 50,
   panelHeight: 68,
-  dockHeight: 256
+  dockHeight: 256,
 }
 
 const adminDockItems = [
@@ -60,61 +60,61 @@ function getUserData() {
 
 function extractShopId(userData) {
   console.log("Extracting shop ID from user data:", userData)
-  
+
   if (!userData) return null
-  
+
   if (userData.shopId) {
     console.log("Found shopId directly in userData:", userData.shopId)
     return userData.shopId
   }
-  
+
   if (userData.shop) {
-    if (typeof userData.shop === 'string') {
+    if (typeof userData.shop === "string") {
       console.log("Found shop as string in userData:", userData.shop)
       return userData.shop
     }
-    
+
     if (userData.shop._id) {
       console.log("Found shop._id in userData:", userData.shop._id)
       return userData.shop._id
     }
   }
-  
+
   if (userData.vendor && userData.vendor.shop) {
-    if (typeof userData.vendor.shop === 'string') {
+    if (typeof userData.vendor.shop === "string") {
       console.log("Found vendor.shop as string:", userData.vendor.shop)
       return userData.vendor.shop
     }
-    
+
     if (userData.vendor.shop._id) {
       console.log("Found vendor.shop._id:", userData.vendor.shop._id)
       return userData.vendor.shop._id
     }
   }
-  
+
   if (userData.shopDetails) {
-    if (typeof userData.shopDetails === 'string') {
+    if (typeof userData.shopDetails === "string") {
       console.log("Found shopDetails as string:", userData.shopDetails)
       return userData.shopDetails
     }
-    
+
     if (userData.shopDetails._id) {
       console.log("Found shopDetails._id:", userData.shopDetails._id)
       return userData.shopDetails._id
     }
   }
-  
+
   console.warn("Could not find shop ID in user data")
   return null
 }
 
 // ==================== ADMIN FUNCTIONS ====================
 
-// Ban shop 
+// Ban shop
 function banShop() {
   const productId = getUrlParameter("id")
   if (!productId) {
-    Swal.fire({
+    window.Swal.fire({
       title: "Error!",
       text: "Product ID not found in URL",
       icon: "error",
@@ -122,12 +122,12 @@ function banShop() {
     return
   }
 
-  Swal.fire({
+  window.Swal.fire({
     title: "Loading...",
     text: "Fetching product details",
     allowOutsideClick: false,
     didOpen: () => {
-      Swal.showLoading()
+      window.Swal.showLoading()
     },
   })
 
@@ -149,7 +149,7 @@ function banShop() {
           const shopId = typeof product.shop === "string" ? product.shop : product.shop._id
 
           if (!shopId) {
-            Swal.fire({
+            window.Swal.fire({
               title: "Error!",
               text: "Shop ID not found",
               icon: "error",
@@ -159,21 +159,21 @@ function banShop() {
 
           banShopById(shopId)
         } else {
-          Swal.fire({
+          window.Swal.fire({
             title: "Error!",
             text: "Shop information not found in product data",
             icon: "error",
           })
         }
       } catch (e) {
-        Swal.fire({
+        window.Swal.fire({
           title: "Error!",
           text: "Error parsing product data",
           icon: "error",
         })
       }
     } else {
-      Swal.fire({
+      window.Swal.fire({
         title: "Error!",
         text: `Failed to get product details. Status: ${xhr.status}`,
         icon: "error",
@@ -182,7 +182,7 @@ function banShop() {
   }
 
   xhr.onerror = () => {
-    Swal.fire({
+    window.Swal.fire({
       title: "Error!",
       text: "Network error occurred",
       icon: "error",
@@ -193,7 +193,7 @@ function banShop() {
 }
 
 function banShopById(shopId) {
-  Swal.fire({
+  window.Swal.fire({
     title: "Confirm Ban",
     text: `Are you sure you want to ban this shop ?`,
     input: "text",
@@ -217,7 +217,7 @@ function banShopById(shopId) {
 
       xhr.onload = () => {
         if (xhr.status === 200) {
-          Swal.fire({
+          window.Swal.fire({
             title: "Success!",
             text: "Shop has been banned successfully",
             icon: "success",
@@ -231,7 +231,7 @@ function banShopById(shopId) {
             }
           } catch (e) {}
 
-          Swal.fire({
+          window.Swal.fire({
             title: "Error!",
             text: errorMessage,
             icon: "error",
@@ -240,7 +240,7 @@ function banShopById(shopId) {
       }
 
       xhr.onerror = () => {
-        Swal.fire({
+        window.Swal.fire({
           title: "Error!",
           text: "Network error occurred",
           icon: "error",
@@ -260,7 +260,7 @@ function banShopById(shopId) {
 function banProduct() {
   const productId = getUrlParameter("id")
   if (!productId) {
-    Swal.fire({
+    window.Swal.fire({
       title: "Error!",
       text: "Product ID not found in URL",
       icon: "error",
@@ -268,7 +268,7 @@ function banProduct() {
     return
   }
 
-  Swal.fire({
+  window.Swal.fire({
     title: "Confirm Ban",
     text: `Are you sure you want to ban this product ?`,
     input: "text",
@@ -292,7 +292,7 @@ function banProduct() {
 
       xhr.onload = () => {
         if (xhr.status === 200) {
-          Swal.fire({
+          window.Swal.fire({
             title: "Success!",
             text: "Product has been banned successfully",
             icon: "success",
@@ -310,7 +310,7 @@ function banProduct() {
             errorMessage = "Error parsing response"
           }
 
-          Swal.fire({
+          window.Swal.fire({
             title: "Error!",
             text: errorMessage,
             icon: "error",
@@ -319,7 +319,7 @@ function banProduct() {
       }
 
       xhr.onerror = () => {
-        Swal.fire({
+        window.Swal.fire({
           title: "Error!",
           text: "Network error occurred",
           icon: "error",
@@ -347,10 +347,10 @@ function checkProductAccess(callback) {
 
   const userRole = getUserRole()
   const userData = getUserData()
-  
+
   console.log("Checking product access with role:", userRole)
   console.log("User data:", userData)
-  
+
   if (!userRole || !userData) {
     console.error("User data or role not found")
     callback(false)
@@ -389,26 +389,35 @@ function checkProductAccess(callback) {
 
         console.log("Product data:", product)
 
-        if (userRole === "vendor") {
-          const vendorShopId = extractShopId(userData)
-
-          if (!vendorShopId) {
-            console.error("Vendor shop ID not found")
-            callback(false)
-            return
-          }
-
-          const productShopId = typeof product.shop === "string" ? product.shop : product.shop._id
-
-          console.log("Vendor shop ID:", vendorShopId)
-          console.log("Product shop ID:", productShopId)
-
-          if (vendorShopId !== productShopId) {
-            console.error("Product does not belong to vendor's shop")
-            callback(false)
-            return
-          }
+        // Vérifier que le produit appartient au shop de l'utilisateur
+        const userShopId = extractShopId(userData)
+        if (!userShopId) {
+          console.error("User shop ID not found")
+          callback(false)
+          return
         }
+
+        const productShopId =
+          typeof product.shop === "string" ? product.shop : product.shop && product.shop._id ? product.shop._id : null
+
+        if (!productShopId) {
+          console.error("Product shop ID not found")
+          callback(false)
+          return
+        }
+
+        console.log("User shop ID:", userShopId)
+        console.log("Product shop ID:", productShopId)
+
+        // Comparer les IDs en tant que chaînes pour éviter les problèmes de type
+        const hasAccess = userShopId.toString() === productShopId.toString()
+
+        if (!hasAccess) {
+          console.error("Product does not belong to user's shop")
+          callback(false)
+          return
+        }
+
         window.currentProduct = product
         callback(true)
       } catch (error) {
@@ -429,54 +438,11 @@ function checkProductAccess(callback) {
   xhr.send()
 }
 
-// Edit product 
+// Edit product
 function editProduct() {
-  const productId = getUrlParameter("id");
-  if (!productId) {
-    Swal.fire({
-      title: "Error!",
-      text: "Product ID not found in URL",
-      icon: "error",
-    });
-    return;
-  }
-
-  const dashboardUrl = `http://localhost:3000/dashbordBout_pages/detailsProduct.html?id=${productId}`;
-  
-  console.log("Preparing to redirect to dashboard product details:", dashboardUrl);
-  
-  Swal.fire({
-    title: "Edit Product",
-    text: "You will be redirected to the product edit page in the dashboard. Continue?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Yes, edit product",
-    cancelButtonText: "Cancel",
-    confirmButtonColor: "#3085d6",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Redirecting...",
-        text: "You are being redirected to the product edit page",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-        timer: 1000, 
-      }).then(() => {
-        window.location.href = dashboardUrl;
-      });
-    }
-  });
-}
-
-// Delete product function
-function deleteProduct() {
   const productId = getUrlParameter("id")
   if (!productId) {
-    Swal.fire({
+    window.Swal.fire({
       title: "Error!",
       text: "Product ID not found in URL",
       icon: "error",
@@ -484,67 +450,134 @@ function deleteProduct() {
     return
   }
 
-  Swal.fire({
-    title: "Confirm Deletion",
-    text: "Are you sure you want to delete this product? This action cannot be undone.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, delete it!",
-    confirmButtonColor: "#d33",
-    cancelButtonText: "Cancel",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const token = localStorage.getItem("token")
-      if (!token) {
-        Swal.fire({
-          title: "Error!",
-          text: "Authentication token not found",
-          icon: "error",
+  // Vérifier d'abord que l'utilisateur a le droit de modifier ce produit
+  checkProductAccess((hasAccess) => {
+    if (!hasAccess) {
+      window.Swal.fire({
+        title: "Access Denied",
+        text: "You do not have permission to edit this product. You can only edit products from your own shop.",
+        icon: "error",
+      })
+      return
+    }
+
+    const dashboardUrl = `http://localhost:3000/dashbordBout_pages/detailsProduct.html?id=${productId}`
+
+    console.log("Preparing to redirect to dashboard product details:", dashboardUrl)
+
+    window.Swal.fire({
+      title: "Edit Product",
+      text: "You will be redirected to the product edit page in the dashboard. Continue?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, edit product",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.Swal.fire({
+          title: "Redirecting...",
+          text: "You are being redirected to the product edit page",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          willOpen: () => {
+            window.Swal.showLoading()
+          },
+          timer: 1000,
+        }).then(() => {
+          window.location.href = dashboardUrl
         })
-        return
       }
+    })
+  })
+}
 
-      const xhr = new XMLHttpRequest()
-      xhr.open("DELETE", `http://localhost:3000/product/delete/${productId}`, true)
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
-      xhr.setRequestHeader("Content-Type", "application/json")
+// Delete product function
+function deleteProduct() {
+  const productId = getUrlParameter("id")
+  if (!productId) {
+    window.Swal.fire({
+      title: "Error!",
+      text: "Product ID not found in URL",
+      icon: "error",
+    })
+    return
+  }
 
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          Swal.fire({
-            title: "Success!",
-            text: "Product deleted successfully",
-            icon: "success",
-          }).then(() => {
-            window.location.href = "/index.html"
-          })
-        } else {
-          let errorMessage = "Failed to delete product"
-          try {
-            const errorResponse = JSON.parse(xhr.responseText)
-            errorMessage = errorResponse.message || errorMessage
-          } catch (e) {
-            errorMessage = "Error parsing response"
-          }
+  // Vérifier d'abord que l'utilisateur a le droit de supprimer ce produit
+  checkProductAccess((hasAccess) => {
+    if (!hasAccess) {
+      window.Swal.fire({
+        title: "Access Denied",
+        text: "You do not have permission to delete this product. You can only delete products from your own shop.",
+        icon: "error",
+      })
+      return
+    }
 
-          Swal.fire({
+    window.Swal.fire({
+      title: "Confirm Deletion",
+      text: "Are you sure you want to delete this product? This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#d33",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem("token")
+        if (!token) {
+          window.Swal.fire({
             title: "Error!",
-            text: errorMessage,
+            text: "Authentication token not found",
+            icon: "error",
+          })
+          return
+        }
+
+        const xhr = new XMLHttpRequest()
+        xhr.open("DELETE", `http://localhost:3000/product/delete/${productId}`, true)
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+        xhr.setRequestHeader("Content-Type", "application/json")
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            window.Swal.fire({
+              title: "Success!",
+              text: "Product deleted successfully",
+              icon: "success",
+            }).then(() => {
+              window.location.href = "/index.html"
+            })
+          } else {
+            let errorMessage = "Failed to delete product"
+            try {
+              const errorResponse = JSON.parse(xhr.responseText)
+              errorMessage = errorResponse.message || errorMessage
+            } catch (e) {
+              errorMessage = "Error parsing response"
+            }
+
+            window.Swal.fire({
+              title: "Error!",
+              text: errorMessage,
+              icon: "error",
+            })
+          }
+        }
+
+        xhr.onerror = () => {
+          window.Swal.fire({
+            title: "Error!",
+            text: "Network error occurred",
             icon: "error",
           })
         }
-      }
 
-      xhr.onerror = () => {
-        Swal.fire({
-          title: "Error!",
-          text: "Network error occurred",
-          icon: "error",
-        })
+        xhr.send()
       }
-
-      xhr.send()
-    }
+    })
   })
 }
 
@@ -558,15 +591,30 @@ function createDockItems() {
 
   const userRole = getUserRole()
   console.log("Creating dock items for role:", userRole)
-  
+
   let itemsToShow = []
-  
+
   if (userRole === "admin" || userRole === "superAdmin") {
     itemsToShow = adminDockItems
   } else if (userRole === "vendor" || userRole === "moderator") {
-    itemsToShow = vendorDockItems
+    // Pour les vendeurs et modérateurs, vérifier d'abord qu'ils ont accès au produit
+    checkProductAccess((hasAccess) => {
+      if (hasAccess) {
+        itemsToShow = vendorDockItems
+        renderDockItems(itemsToShow)
+      } else {
+        console.log("User does not have access to this product, hiding vendor dock items")
+        dockOuter.style.display = "none"
+      }
+    })
+    return
   }
 
+  renderDockItems(itemsToShow)
+}
+
+// Render dock items
+function renderDockItems(itemsToShow) {
   // Create dock items
   itemsToShow.forEach((item) => {
     const dockItem = document.createElement("div")
@@ -672,7 +720,7 @@ function initDock() {
 // Load SweetAlert2 from an approved CDN
 function loadSweetAlert() {
   return new Promise((resolve, reject) => {
-    if (typeof Swal !== "undefined") {
+    if (typeof window.Swal !== "undefined") {
       console.log("SweetAlert2 already loaded")
       resolve()
       return
@@ -696,7 +744,7 @@ function loadSweetAlert() {
 // Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   console.log("UserPower script loaded, checking role:", getUserRole())
-  
+
   loadSweetAlert()
     .then(() => {
       console.log("SweetAlert2 loaded, initializing dock")

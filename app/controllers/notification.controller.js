@@ -3,7 +3,15 @@ const Notification = require("../models/notification.model")
 // Get all notifications for a shop
 exports.getNotificationsByShop = async (req, res) => {
   try {
-    const { shopId } = req.params
+    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    const shopId = req.user.shopId
+
+    if (!shopId) {
+      return res.status(400).json({
+        message: "Shop ID non trouvé dans le token d'authentification",
+      })
+    }
+
     const notifications = await Notification.find({ shopId })
       .populate("productId", "productName")
       .populate("orderId", "orderTotal orderStatus")
@@ -20,7 +28,15 @@ exports.getNotificationsByShop = async (req, res) => {
 // Count unread notifications for a shop
 exports.countUnreadNotifications = async (req, res) => {
   try {
-    const { shopId } = req.params
+    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    const shopId = req.user.shopId
+
+    if (!shopId) {
+      return res.status(400).json({
+        message: "Shop ID non trouvé dans le token d'authentification",
+      })
+    }
+
     const count = await Notification.countDocuments({ shopId, status: "unread" })
     res.status(200).json({ status: "success", count })
   } catch (err) {
@@ -31,7 +47,24 @@ exports.countUnreadNotifications = async (req, res) => {
 // Mark a notification as read
 exports.markAsRead = async (req, res) => {
   try {
-    const notification = await Notification.findByIdAndUpdate(req.params.id, { status: "read" }, { new: true })
+    const notification = await Notification.findById(req.params.id)
+
+    if (!notification) {
+      return res.status(404).json({ status: "fail", message: "Notification not found" })
+    }
+
+    // Vérifier que la notification appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (notification.shopId.toString() !== shopId) {
+      return res.status(403).json({
+        status: "fail",
+        message: "Vous n'êtes pas autorisé à modifier cette notification",
+      })
+    }
+
+    notification.status = "read"
+    await notification.save()
+
     console.log(`Notification ${req.params.id} marquée comme lue`)
     res.status(200).json({ status: "success", data: notification })
   } catch (err) {
@@ -43,7 +76,15 @@ exports.markAsRead = async (req, res) => {
 // Mark all notifications as read for a shop
 exports.markAllAsRead = async (req, res) => {
   try {
-    const { shopId } = req.params
+    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    const shopId = req.user.shopId
+
+    if (!shopId) {
+      return res.status(400).json({
+        message: "Shop ID non trouvé dans le token d'authentification",
+      })
+    }
+
     await Notification.updateMany({ shopId, status: "unread" }, { status: "read" })
     res.status(200).json({ status: "success", message: "All notifications marked as read" })
   } catch (err) {
@@ -54,6 +95,21 @@ exports.markAllAsRead = async (req, res) => {
 // Delete a notification
 exports.deleteNotification = async (req, res) => {
   try {
+    const notification = await Notification.findById(req.params.id)
+
+    if (!notification) {
+      return res.status(404).json({ status: "fail", message: "Notification not found" })
+    }
+
+    // Vérifier que la notification appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (notification.shopId.toString() !== shopId) {
+      return res.status(403).json({
+        status: "fail",
+        message: "Vous n'êtes pas autorisé à supprimer cette notification",
+      })
+    }
+
     await Notification.findByIdAndDelete(req.params.id)
     res.status(200).json({ status: "success", message: "Notification deleted" })
   } catch (err) {

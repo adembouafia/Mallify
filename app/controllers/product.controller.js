@@ -143,7 +143,7 @@ exports.getProduct = async (req, res) => {
         },
         select: "name",
       })
-      .populate("shop", "shopName") 
+      .populate("shop", "shopName")
 
     if (!product) {
       return res.status(404).json({
@@ -183,8 +183,15 @@ exports.getMyProducts = async (req, res) => {
         }
         shopId = vendor.shop
       }
-    } else if (req.user.role === "moderator" && req.query.shopId) {
-      shopId = req.query.shopId
+    } else if (req.user.role === "moderator") {
+      // Pour les modérateurs, utiliser leur shopId du token
+      shopId = req.user.shopId
+      if (!shopId) {
+        return res.status(400).json({
+          status: "fail",
+          message: "Shop ID non trouvé dans le token d'authentification",
+        })
+      }
     } else if (req.user.role === "admin" && req.query.shopId) {
       shopId = req.query.shopId
     } else if (req.user.role === "admin" || req.user.role === "moderator") {
@@ -239,27 +246,16 @@ exports.updateProduct = async (req, res) => {
           message: "Product not found",
         })
       }
-      if (req.user.role === "vendor") {
-        let vendorShopId
-        if (req.user.shopId) {
-          vendorShopId = req.user.shopId
-        } else {
-          const vendor = await Vendor.findById(req.user.id)
-          if (!vendor || !vendor.shop) {
-            return res.status(403).json({
-              status: "fail",
-              message: "Vendor does not have a shop",
-            })
-          }
-          vendorShopId = vendor.shop
-        }
-        if (product.shop.toString() !== vendorShopId.toString()) {
-          return res.status(403).json({
-            status: "fail",
-            message: "You don't have permission to update this product",
-          })
-        }
+
+      // Vérifier que le produit appartient au shop de l'utilisateur
+      const shopId = req.user.shopId
+      if (product.shop.toString() !== shopId) {
+        return res.status(403).json({
+          status: "fail",
+          message: "You don't have permission to update this product",
+        })
       }
+
       const { subCategory } = req.body
       if (subCategory) {
         const existingSubCategory = await SubCategory.findById(subCategory)
@@ -306,27 +302,16 @@ exports.deleteProduct = async (req, res) => {
         message: "Product not found",
       })
     }
-    if (req.user.role === "vendor") {
-      let vendorShopId
-      if (req.user.shopId) {
-        vendorShopId = req.user.shopId
-      } else {
-        const vendor = await Vendor.findById(req.user.id)
-        if (!vendor || !vendor.shop) {
-          return res.status(403).json({
-            status: "fail",
-            message: "Vendor does not have a shop",
-          })
-        }
-        vendorShopId = vendor.shop
-      }
-      if (product.shop.toString() !== vendorShopId.toString()) {
-        return res.status(403).json({
-          status: "fail",
-          message: "You don't have permission to delete this product",
-        })
-      }
+
+    // Vérifier que le produit appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (product.shop.toString() !== shopId) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You don't have permission to delete this product",
+      })
     }
+
     await Product.findByIdAndDelete(req.params.id)
 
     res.status(200).json({
@@ -676,58 +661,45 @@ exports.getCategoryCounts = async (req, res) => {
           select: "categoryName",
         },
       })
-      .populate("shop", "shopName status");
-    const validProducts = products.filter(product => !(product.shop && product.shop.status === "Banned"));
-    const categoryCounts = {};
-    validProducts.forEach(product => {
-      let categoryId = null;
+      .populate("shop", "shopName status")
+    const validProducts = products.filter((product) => !(product.shop && product.shop.status === "Banned"))
+    const categoryCounts = {}
+    validProducts.forEach((product) => {
+      let categoryId = null
       if (product.category) {
-        categoryId = typeof product.category === 'object' ? product.category._id : product.category;
-      }
-      else if (product.subCategory && product.subCategory.category) {
-        if (typeof product.subCategory.category === 'string') {
-          categoryId = product.subCategory.category;
+        categoryId = typeof product.category === "object" ? product.category._id : product.category
+      } else if (product.subCategory && product.subCategory.category) {
+        if (typeof product.subCategory.category === "string") {
+          categoryId = product.subCategory.category
         } else if (product.subCategory.category && product.subCategory.category._id) {
-          categoryId = product.subCategory.category._id;
+          categoryId = product.subCategory.category._id
         }
+      } else if (product.parentCategory) {
+        categoryId = product.parentCategory
       }
-      else if (product.parentCategory) {
-        categoryId = product.parentCategory;
-      }
-      
+
       if (categoryId) {
-        const categoryIdStr = categoryId.toString();
-        categoryCounts[categoryIdStr] = (categoryCounts[categoryIdStr] || 0) + 1;
+        const categoryIdStr = categoryId.toString()
+        categoryCounts[categoryIdStr] = (categoryCounts[categoryIdStr] || 0) + 1
       }
-    });
-    
+    })
+
     res.status(200).json({
       status: "success",
-      categoryCounts
-    });
+      categoryCounts,
+    })
   } catch (err) {
-    console.error("Error getting category counts:", err);
+    console.error("Error getting category counts:", err)
     res.status(400).json({
       status: "fail",
-      message: err.message
-    });
+      message: err.message,
+    })
   }
-};
-
+}
 
 exports.getFilteredProducts = async (req, res) => {
   try {
-    const { 
-      category, 
-      subcategory, 
-      name, 
-      minRating, 
-      maxRating, 
-      minPrice, 
-      maxPrice, 
-      search,
-      shop 
-    } = req.query
+    const { category, subcategory, name, minRating, maxRating, minPrice, maxPrice, search, shop } = req.query
     const filter = {}
     if (shop) {
       filter.shop = shop
@@ -768,10 +740,7 @@ exports.getFilteredProducts = async (req, res) => {
       const subCategories = await SubCategory.find({ category: category }).select("_id")
       const subCategoryIds = subCategories.map((sc) => sc._id)
       products = await Product.find({
-        $or: [
-          { category: category }, 
-          { subCategory: { $in: subCategoryIds } }, 
-        ],
+        $or: [{ category: category }, { subCategory: { $in: subCategoryIds } }],
         ...filter,
       })
         .populate({

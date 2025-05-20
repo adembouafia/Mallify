@@ -142,12 +142,12 @@ exports.getAllDeliveries = async (req, res) => {
     // Vérifier d'abord les livraisons reportées
     await exports.checkPostponedDeliveries()
 
-    // Récupérer le shopId depuis la requête
-    const shopId = req.query.shopId
+    // Récupérer le shopId depuis l'utilisateur authentifié
+    const shopId = req.user.shopId
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Le paramètre shopId est requis",
+        message: "Shop ID non trouvé dans le token d'authentification",
       })
     }
 
@@ -189,11 +189,30 @@ exports.getAllDeliveries = async (req, res) => {
 // Obtenir une livraison par ID
 exports.getDeliveryById = async (req, res) => {
   try {
-    const delivery = await Delivery.findById(req.params.id).populate("idClient").populate("idCommande")
-    if (!delivery)
+    const delivery = await Delivery.findById(req.params.id)
+      .populate("idClient")
+      .populate({
+        path: "idCommande",
+        populate: {
+          path: "shop",
+          select: "name _id",
+        },
+      })
+
+    if (!delivery) {
       return res.status(404).json({
         message: "Livraison non trouvée",
       })
+    }
+
+    // Vérifier que la livraison appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à accéder à cette livraison",
+      })
+    }
+
     res.status(200).json(delivery)
   } catch (err) {
     res.status(500).json({
@@ -207,21 +226,38 @@ exports.getDeliveryById = async (req, res) => {
 exports.updateDeliveryStatut = async (req, res) => {
   try {
     const { newStatut, postponedDate } = req.body
-    const delivery = await Delivery.findById(req.params.id)
-    if (!delivery)
+    const delivery = await Delivery.findById(req.params.id).populate({
+      path: "idCommande",
+      populate: {
+        path: "shop",
+        select: "_id",
+      },
+    })
+
+    if (!delivery) {
       return res.status(404).json({
         message: "Livraison non trouvée",
       })
+    }
+
+    // Vérifier que la livraison appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à modifier cette livraison",
+      })
+    }
 
     // Mettre à jour le statut de la livraison
     await delivery.editStatut(newStatut)
 
     // Récupérer la commande associée
     const order = await Order.findById(delivery.idCommande)
-    if (!order)
+    if (!order) {
       return res.status(404).json({
         message: "Commande associée non trouvée",
       })
+    }
 
     // Récupérer la facture associée
     const invoice = await Invoice.findOne({ idCommande: delivery.idCommande })
@@ -314,11 +350,29 @@ exports.updateDeliveryStatut = async (req, res) => {
 // Supprimer une livraison
 exports.deleteDelivery = async (req, res) => {
   try {
-    const deletedDelivery = await Delivery.findByIdAndDelete(req.params.id)
-    if (!deletedDelivery)
+    const delivery = await Delivery.findById(req.params.id).populate({
+      path: "idCommande",
+      populate: {
+        path: "shop",
+        select: "_id",
+      },
+    })
+
+    if (!delivery) {
       return res.status(404).json({
         message: "Livraison non trouvée",
       })
+    }
+
+    // Vérifier que la livraison appartient au shop de l'utilisateur
+    const shopId = req.user.shopId
+    if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à supprimer cette livraison",
+      })
+    }
+
+    const deletedDelivery = await Delivery.findByIdAndDelete(req.params.id)
     res.status(200).json({
       message: "Livraison supprimée avec succès",
     })
