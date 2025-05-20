@@ -652,7 +652,7 @@ exports.getOrderCount = async (req, res) => {
 // Get monthly order statistics
 exports.getMonthlyStats = async (req, res) => {
   try {
-    const currentMonth = new Date().getMonth() + 1 // 1-12
+    const currentMonth = new Date().getMonth() + 1 
 
     // Query database for real data
     let monthlyStats

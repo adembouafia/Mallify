@@ -2,6 +2,7 @@ let categories = [];
 const subcategories = {};
 var editor1 = new RichTextEditor("#richTextEditor");
 const token = localStorage.getItem("token");
+let productSoldCounts = {}; // Add this global variable to store sold counts
 
 function loadSubcategories(categoryId, categoryName) {
   console.log("Loading subcategories for:", categoryId, categoryName);
@@ -411,11 +412,10 @@ function addProductToTable(product) {
         </div>
       </div>
     </td>
-    <td>$${Number.parseFloat(product.productPrice).toFixed(2)}</td>
-    <td>
+    <td>$${Number.parseFloat(product.productPrice).toFixed(2)}</td>    <td>
       <div class="text-muted">
         <span class="fw-semibold text-dark">${product.stock}</span><br> Item Left<br>
-        <span>0 Sold</span>
+        <span>${productSoldCounts[product._id] || 0} Sold</span>
       </div>
     </td>
     <td>
@@ -760,6 +760,130 @@ function getCategoryNameById(categoryId) {
   return category ? category.categoryName : null;
 }
 
+function loadProductStats() {
+  console.log("Loading product stats...");
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://localhost:3000/product/stats", true);
+  
+  if (token) {
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  }
+  
+  xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        console.log("Product stats loaded:", response);
+        
+        if (response.status === "success" && response.data) {
+          const stats = response.data;
+          
+          // Log the stats for debugging
+          console.log("Total Products:", stats.totalProducts);
+          console.log("Out of Stock Products:", stats.outOfStockProducts);
+          console.log("Categories:", stats.categories);
+          console.log("Sold Products Count:", stats.soldProductsCount);
+          console.log("Product Sold Counts:", stats.productSoldCounts);
+          
+          // Update the dashboard cards
+          updateDashboardStats(stats);
+          
+          // Store the sold counts for individual products
+          productSoldCounts = stats.productSoldCounts || {};
+          console.log("Product sold counts updated:", productSoldCounts);
+          
+          // Update products table if it exists
+          const tbody = document.getElementById("productTableBody");
+          if (tbody) {
+            updateProductSoldCounts();
+          }
+        } else {
+          console.warn("Invalid product stats response:", response);
+        }
+      } catch (e) {
+        console.error("Error parsing product stats:", e);
+      }
+    } else {
+      console.error("Failed to load product stats:", xhr.status, xhr.responseText);
+    }
+  };
+  
+  xhr.onerror = () => {
+    console.error("Network error loading product stats");
+  };
+  
+  xhr.send();
+}
+
+function updateDashboardStats(stats) {
+  console.log("Updating dashboard stats with:", stats);
+
+  // Find all info-box elements for better targeting
+  const infoBoxes = document.querySelectorAll(".info-box");
+  
+  if (infoBoxes.length >= 4) {
+    // Update total products card - first info box
+    const totalProductsElement = infoBoxes[0].querySelector(".info-box-number");
+    if (totalProductsElement) {
+      totalProductsElement.textContent = stats.totalProducts || 0;
+      console.log("Updated total products:", totalProductsElement.textContent);
+    } else {
+      console.error("Total products element not found");
+    }
+    
+    // Update categories card - second info box
+    const categoriesElement = infoBoxes[1].querySelector(".info-box-number");
+    if (categoriesElement) {
+      categoriesElement.textContent = stats.categories || 0;
+      console.log("Updated categories:", categoriesElement.textContent);
+    } else {
+      console.error("Categories element not found");
+    }
+    
+    // Update out of stock card - third info box
+    const outOfStockElement = infoBoxes[2].querySelector(".info-box-number");
+    if (outOfStockElement) {
+      outOfStockElement.textContent = stats.outOfStockProducts || 0;
+      console.log("Updated out of stock:", outOfStockElement.textContent);
+    } else {
+      console.error("Out of stock element not found");
+    }
+    
+    // Update sold products card - fourth info box
+    const soldProductsElement = infoBoxes[3].querySelector(".info-box-number");
+    if (soldProductsElement) {
+      soldProductsElement.textContent = stats.soldProductsCount || 0;
+      console.log("Updated sold products:", soldProductsElement.textContent);
+    } else {
+      console.error("Sold products element not found");
+    }
+  } else {
+    console.error("Could not find all info boxes. Found:", infoBoxes.length);
+    
+    // Fallback to direct class selectors
+    const allBoxes = document.querySelectorAll(".info-box-number");
+    console.log("Found info boxes by class:", allBoxes.length);
+    
+    // Try to update them in order
+    if (allBoxes.length >= 1) allBoxes[0].textContent = stats.totalProducts || 0;
+    if (allBoxes.length >= 2) allBoxes[1].textContent = stats.categories || 0;
+    if (allBoxes.length >= 3) allBoxes[2].textContent = stats.outOfStockProducts || 0;
+    if (allBoxes.length >= 4) allBoxes[3].textContent = stats.soldProductsCount || 0;
+  }
+}
+
+function updateProductSoldCounts() {
+  const productRows = document.querySelectorAll("#productTableBody tr");
+  productRows.forEach(row => {
+    const productId = row.querySelector(".deleteProductBtn, .editProductBtn")?.dataset?.id;
+    if (productId && productSoldCounts[productId]) {
+      const soldCountSpan = row.querySelector("td:nth-child(4) span:last-child");
+      if (soldCountSpan) {
+        soldCountSpan.textContent = `${productSoldCounts[productId] || 0} Sold`;
+      }
+    }
+  });
+}
 
 function showToast(title, message, type) {
   // Check if SweetAlert2 is available
@@ -847,6 +971,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadProducts();
   loadCategories();
+  
+  // Add a slight delay to ensure DOM is fully rendered before loading stats
+  setTimeout(() => {
+    loadProductStats(); // Load product statistics on page load with a slight delay
+  }, 500);
 
   const productCategoryDropdown = document.getElementById("productCategory");
   if (productCategoryDropdown) {

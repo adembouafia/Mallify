@@ -2,6 +2,7 @@ const Product = require("../models/product.model")
 const SubCategory = require("../models/subCategory.model")
 const Shop = require("../models/shop.model")
 const Vendor = require("../models/vendor.model")
+const Order = require("../models/order.model") // Added this import
 const dotenv = require("dotenv")
 const multer = require("multer")
 dotenv.config()
@@ -787,5 +788,134 @@ exports.getFilteredProducts = async (req, res) => {
       status: "fail",
       message: err.message,
     })
+  }
+}
+
+// Get product statistics
+exports.getProductStats = async (req, res) => {
+  try {
+    const shopId = req.user?.shopId;
+    
+    // Build the query based on user role
+    let query = { banned: { $ne: true } };
+    if (shopId) {
+      query.shop = shopId;
+    }
+    
+    // Count total products
+    const totalProducts = await Product.countDocuments(query);    // Count out of stock products
+    const outOfStockProducts = await Product.countDocuments({ 
+      ...query,
+      $or: [
+        { stock: 0 },
+        { availability: "Out of stock" }
+      ]
+    });
+    
+    // Count only categories used by this shop's products
+    let categories = 0;
+    if (shopId) {
+      // Find all subCategories used by this shop's products
+      const shopProducts = await Product.find({ shop: shopId, banned: { $ne: true } });
+      const usedSubcategoryIds = [...new Set(shopProducts
+        .filter(product => product.subCategory)
+        .map(product => product.subCategory.toString()))];
+      
+      if (usedSubcategoryIds.length > 0) {
+        // Find distinct parent categories of these subcategories
+        const usedSubcategories = await SubCategory.find({ 
+          _id: { $in: usedSubcategoryIds } 
+        }).distinct('category');
+        
+        categories = usedSubcategories.length;
+      }
+    } else {
+      // For admin, still show all categories
+      const categoryIds = await SubCategory.distinct('category');
+      categories = categoryIds.length;
+    }
+    
+    // Get order data for sold products calculation
+    const orders = await Order.find({ 
+      shop: shopId, 
+      orderStatus: { $in: ["completed"] } 
+    });
+    
+    // Calculate total products sold
+    let soldProductsCount = 0;
+    const productSoldCounts = {};
+    
+    // Log order count for debugging
+    console.log(`Found ${orders.length} completed orders for shop ${shopId}`);
+    
+    // Process each order
+    orders.forEach(order => {
+      // Log order info for debugging
+      console.log(`Processing order: ${order._id}, cartData: ${order.cartData ? 'exists' : 'missing'}`);
+      
+      if (order.cartData && order.cartData.items && Array.isArray(order.cartData.items)) {
+        // Log items count for debugging
+        console.log(`Order ${order._id} has ${order.cartData.items.length} items`);
+        
+        order.cartData.items.forEach(item => {
+          // Increase total sold count
+          const quantity = item.quantity || 1;
+          soldProductsCount += quantity;
+          
+          // Handle different possible structures of productId
+          let productId = null;
+          
+          if (item.productId) {
+            if (typeof item.productId === 'string') {
+              // If productId is a string
+              productId = item.productId;
+            } else if (typeof item.productId === 'object') {
+              // If productId is an object with _id
+              if (item.productId._id) {
+                productId = typeof item.productId._id === 'string' 
+                  ? item.productId._id 
+                  : item.productId._id.toString();
+              } else if (item.productId.id) {
+                // Alternative property name
+                productId = typeof item.productId.id === 'string'
+                  ? item.productId.id
+                  : item.productId.id.toString();
+              }
+            }
+          }
+          
+          // Log the extracted productId for debugging
+          if (productId) {
+            console.log(`Found product ID: ${productId}, quantity: ${quantity}`);
+            
+            // Add to the counts
+            if (!productSoldCounts[productId]) {
+              productSoldCounts[productId] = 0;
+            }
+            productSoldCounts[productId] += quantity;
+          } else {
+            console.log("Could not extract product ID from item:", JSON.stringify(item));
+          }
+        });
+      }
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        totalProducts,
+        outOfStockProducts,
+        categories,
+        soldProductsCount,
+        productSoldCounts
+      }
+    });
+    
+  } catch (err) {
+    console.error("Error getting product statistics:", err);
+    res.status(400).json({
+      status: "fail",
+      message: err.message
+    });
   }
 }

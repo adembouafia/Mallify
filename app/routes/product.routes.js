@@ -18,9 +18,9 @@ module.exports = (app) => {
   app.get("/product/:id/reviews", product.getProductReviews)
   app.get("/product/:id/user-review", auth, product.getUserReview)
   app.delete("/product/:productId/review/:reviewId", auth, product.deleteReview)
-
   app.get("/product/category/:categoryName", product.getProductsByCategory);
   app.get("/product/filter", product.getFilteredProducts)
   app.get("/product/category-counts", product.getCategoryCounts);
+  app.get("/product/stats", auth, product.getProductStats);
 
 }
