@@ -10803,11 +10803,6 @@ input[type=number] {
 .w-300 {
     width: 300px;
   }
-/* ============================== blog details Details Css End =============================== */
-#blog_details_image{
-    width: 100%;
-    height: 100%;
-}
 
 /*--------------------------------toast  ----------------------------------------*/
 .cool-toast-popup {

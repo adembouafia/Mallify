@@ -1,11 +1,21 @@
 // Global variables
 let bannedProducts = []
 let totalProducts = 0
+let currentPage = 1
+let itemsPerPage = 5
+let filteredProducts = []
+let searchTerm = ""
 
 // DOM elements
 const tableBody = document.querySelector("table tbody")
 const emptyState = document.querySelector(".empty-state")
 const entriesInfo = document.querySelector(".text-muted.small")
+const searchInput = document.querySelector(".input-group input")
+const searchButton = document.querySelector(".input-group button")
+const pagination = document.querySelector(".pagination")
+
+// Import Bootstrap
+const bootstrap = window.bootstrap;
 
 // Check if user has admin privileges
 function checkAdminPrivileges() {
@@ -43,9 +53,68 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   fetchBannedProducts()
-
   setupModalListeners()
+  setupSearchAndPagination()
 })
+
+function setupSearchAndPagination() {
+  // Setup search functionality
+  if (searchInput && searchButton) {
+    // Search on button click
+    searchButton.addEventListener("click", () => {
+      searchTerm = searchInput.value.trim().toLowerCase()
+      currentPage = 1
+      applyFiltersAndRender()
+    })
+    
+    // Search on Enter key
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        searchTerm = searchInput.value.trim().toLowerCase()
+        currentPage = 1
+        applyFiltersAndRender()
+      }
+    })
+  }
+
+  // Setup pagination
+  if (pagination) {
+    pagination.addEventListener("click", (e) => {
+      e.preventDefault()
+      
+      if (e.target.tagName === "A" || e.target.parentElement.tagName === "A") {
+        const pageItem = e.target.closest(".page-item")
+        
+        if (pageItem && !pageItem.classList.contains("active") && !pageItem.classList.contains("disabled")) {
+          const pageLink = pageItem.querySelector(".page-link")
+          const pageText = pageLink.textContent.trim()
+          
+          if (pageText === "«") {
+            // Previous page
+            if (currentPage > 1) {
+              currentPage--
+              applyFiltersAndRender()
+            }
+          } else if (pageText === "»") {
+            // Next page
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+            if (currentPage < totalPages) {
+              currentPage++
+              applyFiltersAndRender()
+            }
+          } else {
+            // Specific page number
+            const newPage = parseInt(pageText)
+            if (!isNaN(newPage) && newPage !== currentPage) {
+              currentPage = newPage
+              applyFiltersAndRender()
+            }
+          }
+        }
+      }
+    })
+  }
+}
 
 function fetchBannedProducts() {
   try {
@@ -72,8 +141,11 @@ function fetchBannedProducts() {
         if (data.status === "success") {
           bannedProducts = data.data.products
           totalProducts = data.results || bannedProducts.length
-
-          renderProductsTable()
+          
+          // Initialize filtered products
+          filteredProducts = [...bannedProducts]
+          
+          applyFiltersAndRender()
         } else {
           showError("Failed to fetch banned products")
         }
@@ -105,19 +177,72 @@ function fetchBannedProducts() {
   }
 }
 
+function applyFiltersAndRender() {
+  // Apply search filter
+  if (searchTerm) {
+    filteredProducts = bannedProducts.filter(product => {
+      return (
+        (product.productName && product.productName.toLowerCase().includes(searchTerm)) ||
+        (product.shop?.shopName && product.shop.shopName.toLowerCase().includes(searchTerm)) ||
+        (product.subCategory?.category?.categoryName && 
+         product.subCategory.category.categoryName.toLowerCase().includes(searchTerm)) ||
+        (product.bannedReason && product.bannedReason.toLowerCase().includes(searchTerm))
+      )
+    })
+  } else {
+    filteredProducts = [...bannedProducts]
+  }
+  
+  // Render the table with current filters and pagination
+  renderProductsTable()
+  updatePagination()
+}
+
 function renderProductsTable() {
   tableBody.innerHTML = ""
 
-  if (bannedProducts.length === 0) {
+  if (filteredProducts.length === 0) {
     tableBody.parentElement.style.display = "none"
     emptyState.style.display = "block"
+    
+    // Update empty state message for search results
+    if (searchTerm) {
+      emptyState.innerHTML = `
+        <i class="bi bi-search"></i>
+        <h5>No results found</h5>
+        <p>No banned products match your search criteria "${searchTerm}".</p>
+      `
+    } else {
+      emptyState.innerHTML = `
+        <i class="bi bi-inbox"></i>
+        <h5>No banned products found</h5>
+        <p>There are currently no banned products in the system.</p>
+      `
+    }
+    
+    // Update entries info
+    if (entriesInfo) {
+      entriesInfo.textContent = `Showing 0 to 0 of 0 entries`
+    }
+    
     return
   }
 
   tableBody.parentElement.style.display = "table"
   emptyState.style.display = "none"
 
-  bannedProducts.forEach((product) => {
+  // Calculate pagination
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length)
+  const displayedProducts = filteredProducts.slice(startIndex, endIndex)
+
+  // Update entries info
+  if (entriesInfo) {
+    entriesInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${filteredProducts.length} entries`
+  }
+
+  // Render the products for current page
+  displayedProducts.forEach((product) => {
     const row = document.createElement("tr")
 
     const banDate = new Date(product.updatedAt).toLocaleDateString("en-US", {
@@ -127,7 +252,6 @@ function renderProductsTable() {
     })
 
     const categoryName = product.subCategory?.category?.categoryName;
-
 
     const bannedReason = product.bannedReason || "Counterfeit"
 
@@ -163,6 +287,44 @@ function renderProductsTable() {
   })
 
   addActionButtonListeners()
+}
+
+function updatePagination() {
+  if (!pagination) return
+  
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  
+  // Clear existing pagination
+  pagination.innerHTML = ""
+  
+  // Previous button
+  const prevLi = document.createElement("li")
+  prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`
+  prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`
+  pagination.appendChild(prevLi)
+  
+  // Page numbers
+  const maxPagesToShow = 3
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2))
+  let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1)
+  
+  // Adjust if we're near the end
+  if (endPage - startPage + 1 < maxPagesToShow && startPage > 1) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1)
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    const pageLi = document.createElement("li")
+    pageLi.className = `page-item ${i === currentPage ? "active" : ""}`
+    pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`
+    pagination.appendChild(pageLi)
+  }
+  
+  // Next button
+  const nextLi = document.createElement("li")
+  nextLi.className = `page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`
+  nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`
+  pagination.appendChild(nextLi)
 }
 
 function addActionButtonListeners() {
