@@ -1358,8 +1358,8 @@ function fetchCartCount(clientId, token) {
       try {
         const response = JSON.parse(this.responseText);
         if (response.cart && response.cart.items) {
-          // Calculate total quantity across all items
-          const count = response.cart.items.reduce((total, item) => total + item.quantity, 0);
+          // Count unique products instead of total quantity
+          const count = response.cart.items.length;
           localStorage.setItem('cartCount', count);
           updateCartCounters(count);
         } else {
@@ -1506,8 +1506,8 @@ function fetchCartCount(clientId, token) {
       try {
         const response = JSON.parse(this.responseText);
         if (response.cart && response.cart.items) {
-          // Calculate total quantity across all items
-          const count = response.cart.items.reduce((total, item) => total + item.quantity, 0);
+          // Count unique products instead of total quantity
+          const count = response.cart.items.length;
           localStorage.setItem('cartCount', count);
           updateCartCounters(count);
         } else {
