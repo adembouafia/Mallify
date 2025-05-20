@@ -9,7 +9,7 @@ const notificationSchema = new mongoose.Schema({
   shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "shop",
-    required: true,
+    required: false,
   },
   orderId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +28,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["stock", "order", "delivery", "admin"],
+    enum: ["stock", "order", "delivery", "admin", "product"],
     default: "stock",
   },
   status: {
