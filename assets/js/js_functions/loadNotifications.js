@@ -200,6 +200,8 @@ function showNotifications(notifications) {
       icon = "bi-cart";
     } else if (n.type === "delivery") {
       icon = "bi-truck";
+    }else if (n.type === "product") {
+      icon = "bi-box-seam";
     }
 
     // Ajouter -fill si non lu
@@ -216,6 +218,8 @@ function showNotifications(notifications) {
         iconColorClass = "text-primary";
       } else if (n.type === "delivery") {
         iconColorClass = "text-success";
+      } else if (n.type === "product") {
+        iconColorClass = "text-info";
       }
     }
 
