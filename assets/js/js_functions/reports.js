@@ -1289,6 +1289,8 @@ function showReportsToast(title, message, type) {
   }
 }
 
+
+
 // Debounces a function
 function debounce(fn, wait) {
   let timer
