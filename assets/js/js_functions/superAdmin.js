@@ -75,10 +75,10 @@ function updateUserMenuInfo() {
             console.log("No admin data found in localStorage");
             return;
         }
-        let manage = document.getElementById("manageAdmins")
+        let manage = document.getElementById("manageAdmins");
 
-        if(userRole == "superAdmin"){
-            manage.style.display = "block"
+        if(manage && userRole == "superAdmin"){
+            manage.style.display = "block";
         }
 
         // Try to get admin data from either admin or userData storage
@@ -157,10 +157,130 @@ let filteredAdmins = [];
 let currentFilter = '';
 let currentSearchTerm = '';
 
+// Initialize sidebar toggle functionality
+function initSidebarToggle() {
+    // Find the sidebar toggle button
+    const sidebarToggleBtn = document.querySelector('.sidebar-toggle, [data-lte-toggle="sidebar-mini"], [data-bs-toggle="sidebar"]');
+    const appSidebar = document.querySelector('.app-sidebar');
+    const mainContent = document.querySelector('.content-wrapper, main');
+    
+    if (sidebarToggleBtn && appSidebar) {
+        sidebarToggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Check if we're on mobile
+            const isMobile = window.innerWidth < 992;
+            
+            if (isMobile) {
+                // On mobile, we use a different approach - show/hide with overlay
+                document.body.classList.toggle('sidebar-open');
+                
+                // If sidebar is now open on mobile, add overlay
+                if (document.body.classList.contains('sidebar-open')) {
+                    // Create overlay if it doesn't exist
+                    let overlay = document.querySelector('.sidebar-overlay');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = 'sidebar-overlay';
+                        document.body.appendChild(overlay);
+                        
+                        // Close sidebar when overlay is clicked
+                        overlay.addEventListener('click', function() {
+                            document.body.classList.remove('sidebar-open');
+                            this.remove();
+                        });
+                    }
+                } else {
+                    // Remove overlay when sidebar is closed
+                    const overlay = document.querySelector('.sidebar-overlay');
+                    if (overlay) overlay.remove();
+                }
+            } else {
+                // On desktop, use the collapse behavior
+                document.body.classList.toggle('sidebar-collapse');
+                document.body.classList.toggle('sidebar-closed');
+                
+                // If sidebar is now collapsed, add mini class
+                if (document.body.classList.contains('sidebar-collapse')) {
+                    appSidebar.classList.add('sidebar-mini');
+                    if (mainContent) {
+                        mainContent.style.marginLeft = '4.6rem';
+                    }
+                } else {
+                    appSidebar.classList.remove('sidebar-mini');
+                    if (mainContent) {
+                        mainContent.style.marginLeft = '';
+                    }
+                }
+                
+                // Store sidebar state in localStorage
+                localStorage.setItem('sidebar-collapsed', document.body.classList.contains('sidebar-collapse'));
+            }
+        });
+        
+        // Check if sidebar was collapsed in previous session (desktop only)
+        if (window.innerWidth >= 992) {
+            const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+            if (sidebarCollapsed) {
+                document.body.classList.add('sidebar-collapse');
+                document.body.classList.add('sidebar-closed');
+                appSidebar.classList.add('sidebar-mini');
+                if (mainContent) {
+                    mainContent.style.marginLeft = '4.6rem';
+                }
+            }
+        }
+    }
+    
+    // Add active class to current page in sidebar
+    const currentPath = window.location.pathname;
+    const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+    
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu .nav-link');
+    sidebarLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === filename || (filename === '' && href === 'index.html')) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    // Handle window resize to adjust sidebar behavior
+    window.addEventListener('resize', function() {
+        const isMobile = window.innerWidth < 992;
+        
+        if (isMobile) {
+            // On mobile, remove desktop classes
+            document.body.classList.remove('sidebar-collapse', 'sidebar-closed');
+            if (appSidebar) appSidebar.classList.remove('sidebar-mini');
+            if (mainContent) mainContent.style.marginLeft = '';
+        } else {
+            // On desktop, remove mobile classes
+            document.body.classList.remove('sidebar-open');
+            
+            // Remove overlay if it exists
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (overlay) overlay.remove();
+            
+            // Restore desktop collapsed state if needed
+            const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+            if (sidebarCollapsed) {
+                document.body.classList.add('sidebar-collapse', 'sidebar-closed');
+                if (appSidebar) appSidebar.classList.add('sidebar-mini');
+                if (mainContent) mainContent.style.marginLeft = '4.6rem';
+            }
+        }
+    });
+}
+
 // Initialize admin forms and event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log("SuperAdmin JS loaded");
-        
+    
+    // Initialize sidebar toggle
+    initSidebarToggle();
+    
     // Call updateUserMenuInfo to set up the user menu
     updateUserMenuInfo();
     
@@ -926,16 +1046,89 @@ function elementExists(selector) {
     return document.querySelector(selector) !== null;
 }
 
-// Function to initialize password toggles
+// FIXED: Function to initialize password toggles
 function initPasswordToggles() {
-    const passwordInputs = document.querySelectorAll('.password-toggle-wrapper input[type="password"]');
-    passwordInputs.forEach(input => {
+    // Add CSS for password toggle if not already added
+    if (!document.getElementById('password-toggle-styles')) {
+        const style = document.createElement('style');
+        style.id = 'password-toggle-styles';
+        style.textContent = `
+            .password-toggle-wrapper {
+                position: relative;
+            }
+            
+            .password-toggle-btn {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.375rem;
+                z-index: 5;
+            }
+            
+            .password-toggle-btn:hover,
+            .password-toggle-btn:focus {
+                outline: none;
+                box-shadow: none;
+            }
+            
+            .password-icon-hidden {
+                color: #dc3545;
+            }
+            
+            .password-icon-visible {
+                color: #28a745;
+            }
+            
+            .password-toggle-wrapper input[type="password"],
+            .password-toggle-wrapper input[type="text"] {
+                padding-right: 40px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Find all password fields
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+    
+    passwordFields.forEach(input => {
+        // Skip if already processed
+        if (input.classList.contains('has-toggle')) return;
+        
+        // Mark this input as processed
+        input.classList.add('has-toggle');
+        
+        // Create a wrapper if needed
+        let wrapper = input.parentElement;
+        if (!wrapper.classList.contains('password-toggle-wrapper')) {
+            wrapper = document.createElement('div');
+            wrapper.className = 'password-toggle-wrapper position-relative';
+            input.parentNode.insertBefore(wrapper, input);
+            wrapper.appendChild(input);
+        }
+        
+        // Remove any existing toggle buttons
+        const existingToggle = wrapper.querySelector('.password-toggle-btn');
+        if (existingToggle) {
+            existingToggle.remove();
+        }
+        
+        // Create the toggle button
         const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
         toggleButton.className = 'password-toggle-btn';
         toggleButton.innerHTML = '<i class="bi bi-eye-slash password-icon-hidden"></i>';
-        input.parentNode.appendChild(toggleButton);
-
-        toggleButton.addEventListener('click', function() {
+        toggleButton.setAttribute('aria-label', 'Toggle password visibility');
+        
+        // Add the toggle button to the wrapper
+        wrapper.appendChild(toggleButton);
+        
+        // Add click event to toggle password visibility
+        toggleButton.addEventListener('click', function(e) {
+            e.preventDefault();
             const isPassword = input.type === 'password';
             input.type = isPassword ? 'text' : 'password';
             const icon = toggleButton.querySelector('i');
@@ -944,42 +1137,116 @@ function initPasswordToggles() {
     });
 }
 
-// Add CSS for password toggle
-const style = document.createElement('style');
-style.textContent = `
-    .password-toggle-wrapper {
-        position: relative;
+// Add sidebar toggle button if it doesn't exist
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if sidebar toggle button exists
+    let sidebarToggleBtn = document.querySelector('.sidebar-toggle, [data-lte-toggle="sidebar-mini"], [data-bs-toggle="sidebar"]');
+    
+    if (!sidebarToggleBtn) {
+        // Create sidebar toggle button
+        const navbarNav = document.querySelector('.navbar-nav');
+        if (navbarNav) {
+            sidebarToggleBtn = document.createElement('button');
+            sidebarToggleBtn.className = 'btn sidebar-toggle';
+            sidebarToggleBtn.setAttribute('data-bs-toggle', 'sidebar');
+            sidebarToggleBtn.innerHTML = '<i class="bi bi-list"></i>';
+            
+            // Insert at the beginning of navbar
+            navbarNav.insertBefore(sidebarToggleBtn, navbarNav.firstChild);
+            
+            // Initialize sidebar toggle
+            initSidebarToggle();
+        }
+    } else {
+        // Initialize sidebar toggle if button already exists
+        initSidebarToggle();
     }
     
-    .password-toggle-btn {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0.375rem;
-        z-index: 5;
+    // Add CSS for sidebar toggle
+    if (!document.getElementById('sidebar-toggle-styles')) {
+        const style = document.createElement('style');
+        style.id = 'sidebar-toggle-styles';
+        style.textContent = `
+            /* Desktop sidebar styles */
+            .sidebar-collapse .app-sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar-mini.app-sidebar {
+                width: 4.6rem;
+                overflow: visible;
+                z-index: 1039;
+            }
+            
+            .sidebar-mini.app-sidebar .sidebar-brand .brand-text,
+            .sidebar-mini.app-sidebar .nav-item p,
+            .sidebar-mini.app-sidebar .sidebar-brand .brand-image {
+                margin-left: -10px;
+                animation: fadeOut 0.3s;
+                visibility: hidden;
+                opacity: 0;
+            }
+            
+            .sidebar-mini.app-sidebar .sidebar-brand .brand-image {
+                margin-left: 0.8rem;
+                margin-right: 0.5rem;
+            }
+            
+            .sidebar-mini.app-sidebar:hover {
+                width: 250px;
+            }
+            
+            .sidebar-mini.app-sidebar:hover .sidebar-brand .brand-text,
+            .sidebar-mini.app-sidebar:hover .nav-item p,
+            .sidebar-mini.app-sidebar:hover .sidebar-brand .brand-image {
+                margin-left: 0;
+                animation: fadeIn 0.3s;
+                visibility: visible;
+                opacity: 1;
+            }
+            
+            /* Mobile sidebar styles */
+            @media (max-width: 991.98px) {
+                .app-sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: -250px;
+                    width: 250px;
+                    height: 100%;
+                    z-index: 1040;
+                    transition: left 0.3s ease;
+                }
+                
+                .sidebar-open .app-sidebar {
+                    left: 0;
+                }
+                
+                .sidebar-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 1039;
+                    display: block;
+                }
+                
+                .content-wrapper, main {
+                    margin-left: 0 !important;
+                }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     }
-    
-    .password-toggle-btn:hover,
-    .password-toggle-btn:focus {
-        outline: none;
-        box-shadow: none;
-    }
-    
-    .password-icon-hidden {
-        color: #dc3545;
-    }
-    
-    .password-icon-visible {
-        color: #28a745;
-    }
-     
-    .password-toggle-wrapper input[type="password"],
-    .password-toggle-wrapper input[type="text"] {
-        padding-right: 40px;
-    }
-`;
-document.head.appendChild(style);
+});
