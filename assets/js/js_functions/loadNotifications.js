@@ -1,8 +1,10 @@
 const API_BASE_URL = ""; // à configurer selon ton environnement
 let currentShopId = null;
 let allNotifications = []; // Variable pour stocker toutes les notifications
+let allAdminNotifications = []; // Variable pour stocker les notifications admin
 const selectedNotifications = new Set(); // Pour stocker les IDs des notifications sélectionnées
 let currentFilterType = "all"; // Pour suivre le filtre actuel
+let isAdminDashboard = false; // Pour suivre si on est dans le dashboard admin ou shop
 
 // Références DOM
 const notificationCounter = document.querySelector(".notification-counter");
@@ -17,20 +19,47 @@ const seeAllNotificationsBtn = document.querySelector(
 
 document.addEventListener("DOMContentLoaded", () => {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-  // Check for both shop and shopId properties to support both vendor and moderator roles
-  if (userData.shop) {
-    currentShopId = userData.shop;
-    initNotifications();
-    createNotificationsModal();
-  } else {
-    console.error("No shop ID found in userData");
+  
+  // Déterminer si l'utilisateur est sur le dashboard admin en vérifiant l'URL spécifique
+  isAdminDashboard = window.location.pathname.includes("/dashbordA_pages/");
+  
+  // Vérifier si l'utilisateur a le rôle admin ou superAdmin
+  const userRole = userData.role || "";
+  const isAdmin = userRole === "admin" || userRole === "superAdmin";
+  
+  if (isAdminDashboard && !isAdmin) {
+    console.error("Accès non autorisé au dashboard admin");
+    // Rediriger vers la page d'accueil ou afficher un message d'erreur
+    window.location.href = "/"; // ou afficher un message d'erreur
+    return;
   }
+  
+  // Pour le dashboard shop, vérifier si shopId existe
+  if (!isAdminDashboard) {
+    if (userData.shop) {
+      currentShopId = userData.shop;
+      initShopNotifications();
+    } else {
+      console.error("No shop ID found in userData");
+    }
+  } else {
+    // Pour le dashboard admin, pas besoin de shopId
+    initAdminNotifications();
+  }
+  
+  createNotificationsModal();
 });
 
-function initNotifications() {
-  loadNotifications();
-  setInterval(loadNotifications, 60000);
-  setupListeners();
+function initShopNotifications() {
+  loadShopNotifications();
+  setInterval(loadShopNotifications, 60000);
+  setupShopListeners();
+}
+
+function initAdminNotifications() {
+  loadAdminNotifications();
+  setInterval(loadAdminNotifications, 60000);
+  setupAdminListeners();
 }
 
 // Helper function to get valid shop ID string
@@ -76,7 +105,8 @@ function makeRequest(method, url, data, onSuccess, onError) {
   xhr.send(data ? JSON.stringify(data) : null);
 }
 
-function loadNotifications() {
+// Fonctions pour les notifications de shop
+function loadShopNotifications() {
   const shopIdParam = getValidShopId();
   if (!shopIdParam) {
     console.error("Cannot load notifications: Invalid shop ID");
@@ -107,6 +137,37 @@ function loadNotifications() {
           .classList.contains("show")
       ) {
         updateModalNotifications(currentFilterType);
+      }
+    }
+  );
+}
+
+// Fonctions pour les notifications admin
+function loadAdminNotifications() {
+  makeRequest(
+    "GET",
+    `${API_BASE_URL}/notifications/admin/count`,
+    null,
+    (data) => {
+      updateCounter(data.count);
+    }
+  );
+
+  makeRequest(
+    "GET",
+    `${API_BASE_URL}/notifications/admin`,
+    null,
+    (data) => {
+      allAdminNotifications = data.data || []; // Stocker toutes les notifications admin
+      showAdminNotifications(allAdminNotifications);
+
+      // Si le modal est ouvert, mettre à jour son contenu
+      if (
+        document
+          .getElementById("allNotificationsModal")
+          .classList.contains("show")
+      ) {
+        updateModalAdminNotifications(currentFilterType);
       }
     }
   );
@@ -180,6 +241,67 @@ function showNotifications(notifications) {
   });
 }
 
+// Fonction pour afficher les notifications admin
+function showAdminNotifications(notifications) {
+  notificationList.innerHTML = "";
+  if (!notifications || notifications.length === 0) {
+    notificationList.innerHTML =
+      '<div class="dropdown-item">No notifications</div>';
+    return;
+  }
+
+  notifications.slice(0, 5).forEach((n) => {
+    const item = document.createElement("div");
+    item.className = "dropdown-item d-flex align-items-center";
+    if (n.status === "unread") item.classList.add("unread-notification");
+
+    // Pour les notifications admin, on utilise une icône spécifique
+    let icon = "bi-shield";
+    
+    // Ajouter -fill si non lu
+    if (n.status === "unread") {
+      icon += "-fill";
+    }
+
+    // Couleur pour les notifications admin
+    let iconColorClass = "text-muted";
+    if (n.status === "unread") {
+      iconColorClass = "text-danger"; // Rouge pour les notifications admin non lues
+    }
+
+    const date = new Date(n.createdAt);
+    
+    // Récupérer les informations de la boutique si disponible
+    const shopName = n.shopId && n.shopId.shopName ? n.shopId.shopName : "N/A";
+    const vendorName = n.vendorId && n.vendorId.vendorName ? n.vendorId.vendorName : "";
+    
+    // Ajouter des informations supplémentaires pour les notifications admin
+    const shopInfo = shopName !== "N/A" ? `<div><strong>Shop:</strong> ${shopName}</div>` : "";
+    const vendorInfo = vendorName ? `<div><strong>Vendor:</strong> ${vendorName}</div>` : "";
+    
+    item.innerHTML = `
+      <div class="me-3">
+        <i class="bi ${icon} ${iconColorClass}"></i>
+      </div>
+      <div class="notification-content flex-grow-1">
+        <div class="notification-message">${n.message}</div>
+        ${shopInfo}
+        ${vendorInfo}
+        <small class="text-muted">${relativeDate(date)}</small>
+      </div>
+      <div class="notification-actions">
+        <button class="btn btn-sm btn-link admin-mark-read-btn" data-id="${n._id}" title="Mark as read">
+          <i class="bi bi-check-circle"></i>
+        </button>
+        <button class="btn btn-sm btn-link admin-delete-notification-btn" data-id="${n._id}" title="Delete">
+          <i class="bi bi-trash text-danger"></i>
+        </button>
+      </div>
+    `;
+    notificationList.appendChild(item);
+  });
+}
+
 // Fonction pour créer le modal des notifications
 function createNotificationsModal() {
   // Créer l'élément modal
@@ -195,9 +317,13 @@ function createNotificationsModal() {
             <div class="d-flex justify-content-between mb-3">
               <div class="btn-group" role="group" aria-label="Notification filters">
                 <button type="button" class="btn btn-outline-secondary filter-btn active" data-filter="all">All</button>
+                ${!isAdminDashboard ? `
                 <button type="button" class="btn btn-outline-warning filter-btn" data-filter="stock">Stock</button>
                 <button type="button" class="btn btn-outline-primary filter-btn" data-filter="order">Orders</button>
                 <button type="button" class="btn btn-outline-success filter-btn" data-filter="delivery">Deliveries</button>
+                ` : `
+                <button type="button" class="btn btn-outline-danger filter-btn" data-filter="admin">Admin</button>
+                `}
               </div>
               <div class="selection-controls">
                 <div class="form-check d-inline-block me-2">
@@ -230,31 +356,55 @@ function createNotificationsModal() {
   document
     .getElementById("markAllReadModalBtn")
     .addEventListener("click", () => {
-      const shopIdParam = getValidShopId();
-      if (!shopIdParam) {
-        console.error("Cannot mark all as read: Invalid shop ID");
-        return;
+      if (isAdminDashboard) {
+        // Pour le dashboard admin
+        makeRequest(
+          "PUT",
+          `${API_BASE_URL}/notifications/admin/read-all`,
+          null,
+          () => {
+            // Mettre à jour localement toutes les notifications
+            allAdminNotifications.forEach((notification) => {
+              notification.status = "read";
+            });
+
+            // Mettre à jour l'interface
+            updateModalAdminNotifications(currentFilterType);
+            showAdminNotifications(allAdminNotifications);
+            updateCounter(0); // Toutes les notifications sont lues
+
+            toast("All notifications have been marked as read", "success");
+          },
+          () => toast("Error during operation", "error")
+        );
+      } else {
+        // Pour le dashboard shop
+        const shopIdParam = getValidShopId();
+        if (!shopIdParam) {
+          console.error("Cannot mark all as read: Invalid shop ID");
+          return;
+        }
+
+        makeRequest(
+          "PUT",
+          `${API_BASE_URL}/notifications/shop/${shopIdParam}/read-all`,
+          null,
+          () => {
+            // Mettre à jour localement toutes les notifications
+            allNotifications.forEach((notification) => {
+              notification.status = "read";
+            });
+
+            // Mettre à jour l'interface
+            updateModalNotifications(currentFilterType);
+            showNotifications(allNotifications);
+            updateCounter(0); // Toutes les notifications sont lues
+
+            toast("All notifications have been marked as read", "success");
+          },
+          () => toast("Error during operation", "error")
+        );
       }
-
-      makeRequest(
-        "PUT",
-        `${API_BASE_URL}/notifications/shop/${shopIdParam}/read-all`,
-        null,
-        () => {
-          // Mettre à jour localement toutes les notifications
-          allNotifications.forEach((notification) => {
-            notification.status = "read";
-          });
-
-          // Mettre à jour l'interface
-          updateModalNotifications(currentFilterType);
-          showNotifications(allNotifications);
-          updateCounter(0); // Toutes les notifications sont lues
-
-          toast("All notifications have been marked as read", "success");
-        },
-        () => toast("Error during operation", "error")
-      );
     });
 
   // Gestionnaire pour la case à cocher "Select All"
@@ -299,22 +449,40 @@ function createNotificationsModal() {
       const totalToDelete = selectedIds.length;
 
       // Mettre à jour l'interface immédiatement
-      allNotifications = allNotifications.filter(
-        (notification) => !selectedNotifications.has(notification._id)
-      );
-      updateModalNotifications(currentFilterType);
-      showNotifications(allNotifications);
+      if (isAdminDashboard) {
+        allAdminNotifications = allAdminNotifications.filter(
+          (notification) => !selectedNotifications.has(notification._id)
+        );
+        updateModalAdminNotifications(currentFilterType);
+        showAdminNotifications(allAdminNotifications);
+      } else {
+        allNotifications = allNotifications.filter(
+          (notification) => !selectedNotifications.has(notification._id)
+        );
+        updateModalNotifications(currentFilterType);
+        showNotifications(allNotifications);
+      }
 
       // Mettre à jour le compteur
-      updateCounter(
-        allNotifications.filter((n) => n.status === "unread").length
-      );
+      if (isAdminDashboard) {
+        updateCounter(
+          allAdminNotifications.filter((n) => n.status === "unread").length
+        );
+      } else {
+        updateCounter(
+          allNotifications.filter((n) => n.status === "unread").length
+        );
+      }
 
       // Fonction pour supprimer une notification
       const deleteNotification = (id, index) => {
+        const endpoint = isAdminDashboard 
+          ? `${API_BASE_URL}/notifications/admin/${id}`
+          : `${API_BASE_URL}/notifications/${id}`;
+          
         makeRequest(
           "DELETE",
-          `${API_BASE_URL}/notifications/${id}`,
+          endpoint,
           null,
           () => {
             successCount++;
@@ -376,7 +544,12 @@ function createNotificationsModal() {
 
       // Filtrer les notifications
       currentFilterType = e.target.dataset.filter;
-      updateModalNotifications(currentFilterType);
+      
+      if (isAdminDashboard) {
+        updateModalAdminNotifications(currentFilterType);
+      } else {
+        updateModalNotifications(currentFilterType);
+      }
 
       // Réinitialiser les sélections
       selectedNotifications.clear();
@@ -476,6 +649,87 @@ function updateModalNotifications(filterType = "all") {
 
   // Ajouter les gestionnaires d'événements pour les boutons dans le modal
   setupModalButtonListeners();
+}
+
+// Fonction pour mettre à jour les notifications admin dans le modal
+function updateModalAdminNotifications(filterType = "all") {
+  const notificationsList = document.querySelector(".all-notifications-list");
+  notificationsList.innerHTML = "";
+
+  let filteredNotifications = [...allAdminNotifications];
+
+  // Pour les notifications admin, on ne filtre que par type "admin"
+  if (filterType !== "all" && filterType !== "admin") {
+    filteredNotifications = [];
+  }
+
+  if (filteredNotifications.length === 0) {
+    notificationsList.innerHTML =
+      '<div class="list-group-item">No notifications</div>';
+    return;
+  }
+
+  filteredNotifications.forEach((n) => {
+    const item = document.createElement("div");
+    item.className =
+      "list-group-item list-group-item-action d-flex align-items-center notification-item";
+    if (n.status === "unread") item.classList.add("unread-notification");
+
+    // Pour les notifications admin, on utilise une icône spécifique
+    let icon = "bi-shield";
+    
+    // Ajouter -fill si non lu
+    if (n.status === "unread") {
+      icon += "-fill";
+    }
+
+    // Couleur pour les notifications admin
+    let iconColorClass = "text-muted";
+    if (n.status === "unread") {
+      iconColorClass = "text-danger"; // Rouge pour les notifications admin non lues
+    }
+
+    const date = new Date(n.createdAt);
+    
+    // Récupérer les informations de la boutique si disponible
+    const shopName = n.shopId && n.shopId.shopName ? n.shopId.shopName : "N/A";
+    const shopStatus = n.shopId && n.shopId.status ? n.shopId.status : "";
+    const vendorName = n.vendorId && n.vendorId.vendorName ? n.vendorId.vendorName : "";
+    
+    // Ajouter des informations supplémentaires pour les notifications admin
+    const shopInfo = shopName !== "N/A" ? `<div><strong>Shop:</strong> ${shopName} ${shopStatus ? `(${shopStatus})` : ''}</div>` : "";
+    const vendorInfo = vendorName ? `<div><strong>Vendor:</strong> ${vendorName}</div>` : "";
+
+    // Vérifier si cette notification est déjà sélectionnée
+    const isChecked = selectedNotifications.has(n._id) ? "checked" : "";
+
+    item.innerHTML = `
+      <div class="form-check me-2">
+        <input class="form-check-input notification-checkbox" type="checkbox" data-id="${n._id}" ${isChecked}>
+      </div>
+      <div class="me-3">
+        <i class="bi ${icon} ${iconColorClass}"></i>
+      </div>
+      <div class="notification-content flex-grow-1">
+        <div class="notification-message">${n.message}</div>
+        ${shopInfo}
+        ${vendorInfo}
+        <small class="text-muted">${relativeDate(date)}</small>
+      </div>
+      <div class="notification-actions">
+        <button class="btn btn-md modal-admin-mark-read-btn" data-id="${n._id}" title="Mark as read" ${n.status === "read" ? "disabled" : ""}>
+          <i class="bi bi-check-circle"></i>
+        </button>
+        <button class="btn btn-md modal-admin-delete-notification-btn" data-id="${n._id}" title="Delete">
+          <i class="bi bi-trash text-danger"></i>
+        </button>
+      </div>
+    `;
+    notificationsList.appendChild(item);
+  });
+
+  // Ajouter les gestionnaires d'événements pour les boutons dans le modal
+  setupModalAdminButtonListeners();
 }
 
 // Fonction pour configurer les gestionnaires d'événements pour les boutons dans le modal
@@ -607,7 +861,136 @@ function setupModalButtonListeners() {
   });
 }
 
-function setupListeners() {
+// Fonction pour configurer les gestionnaires d'événements pour les boutons admin dans le modal
+function setupModalAdminButtonListeners() {
+  // Gestionnaire pour les cases à cocher
+  document.querySelectorAll(".notification-checkbox").forEach((checkbox) => {
+    checkbox.addEventListener("change", (e) => {
+      const notificationId = e.target.dataset.id;
+
+      if (e.target.checked) {
+        selectedNotifications.add(notificationId);
+      } else {
+        selectedNotifications.delete(notificationId);
+
+        // Désélectionner "Select All" si une case est décochée
+        document.getElementById("selectAllCheckbox").checked = false;
+      }
+
+      updateSelectedCount();
+    });
+  });
+
+  // Gestionnaire pour le bouton "marquer comme lu" pour admin
+  document.querySelectorAll(".modal-admin-mark-read-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+
+      // Mettre à jour l'interface immédiatement
+      const notification = allAdminNotifications.find((n) => n._id === id);
+      if (notification) {
+        notification.status = "read";
+      }
+
+      // Mettre à jour l'affichage
+      updateModalAdminNotifications(currentFilterType);
+      showAdminNotifications(allAdminNotifications);
+
+      // Mettre à jour le compteur
+      updateCounter(
+        allAdminNotifications.filter((n) => n.status === "unread").length
+      );
+
+      // Envoyer la requête à l'API
+      makeRequest(
+        "PUT",
+        `${API_BASE_URL}/notifications/admin/read/${id}`,
+        null,
+        () => {
+          // Succès silencieux - l'interface est déjà mise à jour
+        },
+        () => {
+          // En cas d'erreur, revenir à l'état précédent
+          if (notification) {
+            notification.status = "unread";
+            updateModalAdminNotifications(currentFilterType);
+            showAdminNotifications(allAdminNotifications);
+            updateCounter(
+              allAdminNotifications.filter((n) => n.status === "unread").length
+            );
+          }
+          toast("Error during marking", "error");
+        }
+      );
+    });
+  });
+
+  // Gestionnaire pour le bouton "supprimer" pour admin
+  document.querySelectorAll(".modal-admin-delete-notification-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      if (confirm("Are you sure you want to delete this notification?")) {
+        // Stocker une copie de la notification avant de la supprimer
+        const notificationIndex = allAdminNotifications.findIndex(
+          (n) => n._id === id
+        );
+        const deletedNotification =
+          notificationIndex !== -1
+            ? { ...allAdminNotifications[notificationIndex] }
+            : null;
+
+        // Mettre à jour l'interface immédiatement
+        allAdminNotifications = allAdminNotifications.filter((n) => n._id !== id);
+
+        // Supprimer de la sélection si elle était sélectionnée
+        selectedNotifications.delete(id);
+        updateSelectedCount();
+
+        // Mettre à jour l'affichage
+        updateModalAdminNotifications(currentFilterType);
+        showAdminNotifications(allAdminNotifications);
+
+        // Mettre à jour le compteur
+        updateCounter(
+          allAdminNotifications.filter((n) => n.status === "unread").length
+        );
+
+        // Envoyer la requête à l'API
+        makeRequest(
+          "DELETE",
+          `${API_BASE_URL}/notifications/admin/${id}`,
+          null,
+          () => {
+            // Succès silencieux - l'interface est déjà mise à jour
+            toast("Notification successfully deleted", "success");
+          },
+          () => {
+            // En cas d'erreur, restaurer la notification
+            if (deletedNotification) {
+              if (notificationIndex !== -1) {
+                allAdminNotifications.splice(
+                  notificationIndex,
+                  0,
+                  deletedNotification
+                );
+              } else {
+                allAdminNotifications.push(deletedNotification);
+              }
+              updateModalAdminNotifications(currentFilterType);
+              showAdminNotifications(allAdminNotifications);
+              updateCounter(
+                allAdminNotifications.filter((n) => n.status === "unread").length
+              );
+            }
+            toast("Error during deletion", "error");
+          }
+        );
+      }
+    });
+  });
+}
+
+function setupShopListeners() {
   markAllReadBtn.addEventListener("click", () => {
     makeRequest(
       "PUT",
@@ -748,6 +1131,148 @@ function setupListeners() {
   });
 }
 
+// Fonction pour configurer les gestionnaires d'événements pour le dashboard admin
+function setupAdminListeners() {
+  markAllReadBtn.addEventListener("click", () => {
+    makeRequest(
+      "PUT",
+      `${API_BASE_URL}/notifications/admin/read-all`,
+      null,
+      () => {
+        // Mettre à jour localement toutes les notifications
+        allAdminNotifications.forEach((notification) => {
+          notification.status = "read";
+        });
+
+        // Mettre à jour l'interface
+        showAdminNotifications(allAdminNotifications);
+        updateCounter(0); // Toutes les notifications sont lues
+
+        toast("All notifications have been marked as read", "success");
+      },
+      () => toast("Error during operation", "error")
+    );
+  });
+
+  seeAllNotificationsBtn.addEventListener("click", () => {
+    // Réinitialiser les sélections
+    selectedNotifications.clear();
+    updateSelectedCount();
+
+    // Mettre à jour les notifications dans le modal et l'afficher
+    updateModalAdminNotifications(currentFilterType);
+
+    // Afficher le modal
+    const modalElement = document.getElementById("allNotificationsModal");
+    if (modalElement) {
+      const modal = new window.bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  });
+
+  notificationList.addEventListener("click", (e) => {
+    // Gestion du bouton "marquer comme lu" pour admin
+    const readBtn = e.target.closest(".admin-mark-read-btn");
+    if (readBtn) {
+      const id = readBtn.dataset.id;
+
+      // Mettre à jour l'interface immédiatement
+      const notification = allAdminNotifications.find((n) => n._id === id);
+      if (notification) {
+        notification.status = "read";
+      }
+
+      // Mettre à jour l'affichage
+      showAdminNotifications(allAdminNotifications);
+
+      // Mettre à jour le compteur
+      updateCounter(
+        allAdminNotifications.filter((n) => n.status === "unread").length
+      );
+
+      // Envoyer la requête à l'API
+      makeRequest(
+        "PUT",
+        `${API_BASE_URL}/notifications/admin/read/${id}`,
+        null,
+        () => {
+          // Succès silencieux - l'interface est déjà mise à jour
+        },
+        () => {
+          // En cas d'erreur, revenir à l'état précédent
+          if (notification) {
+            notification.status = "unread";
+            showAdminNotifications(allAdminNotifications);
+            updateCounter(
+              allAdminNotifications.filter((n) => n.status === "unread").length
+            );
+          }
+          toast("Error during marking", "error");
+        }
+      );
+    }
+
+    // Gestion du bouton "supprimer" pour admin
+    const deleteBtn = e.target.closest(".admin-delete-notification-btn");
+    if (deleteBtn) {
+      const id = deleteBtn.dataset.id;
+
+      // Confirmation avant suppression
+      if (confirm("Are you sure you want to delete this notification?")) {
+        // Stocker une copie de la notification avant de la supprimer
+        const notificationIndex = allAdminNotifications.findIndex(
+          (n) => n._id === id
+        );
+        const deletedNotification =
+          notificationIndex !== -1
+            ? { ...allAdminNotifications[notificationIndex] }
+            : null;
+
+        // Mettre à jour l'interface immédiatement
+        allAdminNotifications = allAdminNotifications.filter((n) => n._id !== id);
+
+        // Mettre à jour l'affichage
+        showAdminNotifications(allAdminNotifications);
+
+        // Mettre à jour le compteur
+        updateCounter(
+          allAdminNotifications.filter((n) => n.status === "unread").length
+        );
+
+        // Envoyer la requête à l'API
+        makeRequest(
+          "DELETE",
+          `${API_BASE_URL}/notifications/admin/${id}`,
+          null,
+          () => {
+            // Succès silencieux - l'interface est déjà mise à jour
+            toast("Notification successfully deleted", "success");
+          },
+          () => {
+            // En cas d'erreur, restaurer la notification
+            if (deletedNotification) {
+              if (notificationIndex !== -1) {
+                allAdminNotifications.splice(
+                  notificationIndex,
+                  0,
+                  deletedNotification
+                );
+              } else {
+                allAdminNotifications.push(deletedNotification);
+              }
+              showAdminNotifications(allAdminNotifications);
+              updateCounter(
+                allAdminNotifications.filter((n) => n.status === "unread").length
+              );
+            }
+            toast("Error during deletion", "error");
+          }
+        );
+      }
+    }
+  });
+}
+
 function relativeDate(date) {
   const now = new Date();
   const seconds = Math.floor((now - date) / 1000);
@@ -804,6 +1329,9 @@ css.textContent = `
   .bi-box-fill.text-warning {
     color: #ffc107 !important;
   }
+  .bi-shield-fill.text-danger {
+    color: #dc3545 !important;
+  }
   .notification-actions {
     display: flex;
     align-items: center;
@@ -813,7 +1341,9 @@ css.textContent = `
     padding: 0.25rem 0.5rem;
   }
   .delete-notification-btn:hover .bi-trash,
-  .modal-delete-notification-btn:hover .bi-trash {
+  .modal-delete-notification-btn:hover .bi-trash,
+  .admin-delete-notification-btn:hover .bi-trash,
+  .modal-admin-delete-notification-btn:hover .bi-trash {
     color: #dc3545 !important;
   }
   .all-notifications-list {
@@ -892,7 +1422,8 @@ css.textContent = `
   }
   
   /* Disabled mark as read button */
-  .modal-mark-read-btn:disabled {
+  .modal-mark-read-btn:disabled,
+  .modal-admin-mark-read-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
@@ -926,3 +1457,6 @@ function loadScripts() {
 }
 
 loadScripts();
+
+// Exécuter ce code pour tester
+console.log("Notifications system initialized");
