@@ -12,7 +12,7 @@ function createshopCard(shop) {
     colDiv.className = 'col-lg-3 col-md-6 col-sm-12 mb-4';
 
     const shopCard = document.createElement('div');    
-    shopCard.className = 'vendors-two-item rounded-12 overflow-hidden bg-color-three border border-neutral-50 hover-border-main-two-600 transition-2 justify-content-between h-100';
+    shopCard.className = 'vendors-two-item rounded-12 overflow-hidden bg-color-three border border-neutral-50 hover-border-main-two-600 transition-2 justify-content-between max-h';
     
     shopCard.innerHTML = `
         <div class="vendors-two-item__top bg-overlay style-two position-relative">
@@ -52,13 +52,17 @@ function createshopCard(shop) {
                         <i class="ph ph-phone"></i>
                     </span>
                     <a href="tel:${shopPhone || '#'}" class="text-md text-gray-900 hover-text-main-60">${shopPhone || 'Phone not available'}</a>
-                </div>
-                ${shopDescription ? `
+                </div>                ${shopDescription ? `
                 <div class="flex-align gap-8 mt-2">
                     <span class="flex-center text-main-two-600 text-2xl flex-shrink-0">
                         <i class="ph ph-info"></i>
                     </span>
-                    <p class="text-md text-gray-900">${shopDescription}</p>
+                    <div class="w-100">
+                        <p class="text-md text-gray-900 shop-description">${shopDescription.length > 60 ? shopDescription.substring(0, 60) + '...' : shopDescription}</p>
+                        <button type="button" class="btn btn-sm text-main-two-600 p-0 mt-1 load-more-btn" data-shop-id="${shopId}" data-shop-description="${shopDescription.replace(/"/g, '&quot;')}">
+                            Load More
+                        </button>
+                    </div>
                 </div>` : ''}
             </div>
             <a href="vendor-details.html?id=${shopId}" class="btn bg-neutral-600 hover-bg-neutral-700 text-white py-12 px-24 rounded-8 flex-center gap-8 fw-medium mt-24">
@@ -394,9 +398,32 @@ function setupViewToggle() {
     });
 }
 
+// Function to handle "Load More" button click and show modal
+function setupShopDescriptionModals() {
+    // Using event delegation to handle dynamically created buttons
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('load-more-btn')) {
+            const shopDescription = e.target.getAttribute('data-shop-description');
+            const shopId = e.target.getAttribute('data-shop-id');
+            
+            // Get shop info for the modal
+            const shop = allApprovedShops.find(s => s._id === shopId) || {};
+            
+            // Set the modal title and content
+            document.getElementById('shopDescriptionModalLabel').textContent = shop.shopName || 'Shop Description';
+            document.getElementById('shopDescriptionModalContent').textContent = shopDescription;
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('shopDescriptionModal'));
+            modal.show();
+        }
+    });
+}
+
 // Initialize everything on page load
 document.addEventListener('DOMContentLoaded', function() {
     fetchAndPopulateshops();
     setupSearch();
     setupViewToggle();
+    setupShopDescriptionModals();
 });
