@@ -20,6 +20,12 @@ const bootstrap = window.bootstrap;
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
+  // Create toast container if it doesn't exist
+  createToastContainer();
+  
+  // Initialize password toggles
+  initPasswordToggles();
+  
   // Fetch moderators
   getModerators();
   
@@ -29,6 +35,156 @@ document.addEventListener("DOMContentLoaded", () => {
   // Setup other functionality
   setupModeratorForms();
 });
+
+// Initialize password toggles
+function initPasswordToggles() {
+  // Add CSS for password toggle if not already added
+  if (!document.getElementById('password-toggle-styles')) {
+    const style = document.createElement('style');
+    style.id = 'password-toggle-styles';
+    style.textContent = `
+      .password-toggle-wrapper {
+        position: relative;
+      }
+      
+      .password-toggle-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.375rem;
+        z-index: 5;
+      }
+      
+      .password-toggle-btn:hover,
+      .password-toggle-btn:focus {
+        outline: none;
+        box-shadow: none;
+      }
+      
+      .password-icon-hidden {
+        color: #dc3545;
+      }
+      
+      .password-icon-visible {
+        color: #28a745;
+      }
+      
+      .password-toggle-wrapper input[type="password"],
+      .password-toggle-wrapper input[type="text"] {
+        padding-right: 40px;
+      }
+      
+      /* Fix for validation message positioning */
+      .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        position: relative;
+        z-index: 4;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Find all password fields
+  const passwordFields = document.querySelectorAll('input[type="password"]');
+
+  passwordFields.forEach(input => {
+    // Skip if already processed
+    if (input.classList.contains('has-toggle')) return;
+    
+    // Mark this input as processed
+    input.classList.add('has-toggle');
+    
+    // Create a wrapper if needed
+    let wrapper = input.parentElement;
+    if (!wrapper.classList.contains('password-toggle-wrapper')) {
+      wrapper = document.createElement('div');
+      wrapper.className = 'password-toggle-wrapper position-relative';
+      input.parentNode.insertBefore(wrapper, input);
+      wrapper.appendChild(input);
+    }
+    
+    // Remove any existing toggle buttons
+    const existingToggle = wrapper.querySelector('.password-toggle-btn');
+    if (existingToggle) {
+      existingToggle.remove();
+    }
+    
+    // Create the toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.className = 'password-toggle-btn';
+    toggleButton.innerHTML = '<i class="bi bi-eye-slash password-icon-hidden"></i>';
+    toggleButton.setAttribute('aria-label', 'Toggle password visibility');
+    
+    // Add the toggle button to the wrapper
+    wrapper.appendChild(toggleButton);
+    
+    // Add click event to toggle password visibility
+    toggleButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      const icon = toggleButton.querySelector('i');
+      icon.className = isPassword ? 'bi bi-eye password-icon-visible' : 'bi bi-eye-slash password-icon-hidden';
+    });
+  });
+}
+
+// Create toast container
+function createToastContainer() {
+  if (!document.getElementById("toastContainer")) {
+    const toastContainer = document.createElement("div");
+    toastContainer.id = "toastContainer";
+    toastContainer.className = "toast-container position-fixed bottom-0 end-0 p-3";
+    toastContainer.style.zIndex = "1050";
+    document.body.appendChild(toastContainer);
+  }
+}
+
+// Show toast notification
+function showToast(title, message, type = "success") {
+  const toastContainer = document.getElementById("toastContainer");
+  if (!toastContainer) {
+    createToastContainer();
+  }
+  
+  const toastId = `toast-${Date.now()}`;
+  const toast = document.createElement("div");
+  toast.id = toastId;
+  toast.className = `toast align-items-center text-white bg-${type} border-0`;
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "assertive");
+  toast.setAttribute("aria-atomic", "true");
+  
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        <strong>${title}</strong>: ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  const toastInstance = new bootstrap.Toast(toast, {
+    autohide: true,
+    delay: 5000
+  });
+  
+  toastInstance.show();
+  
+  // Remove toast after it's hidden
+  toast.addEventListener("hidden.bs.toast", function() {
+    toast.remove();
+  });
+}
 
 // Setup all event listeners
 function setupEventListeners() {
@@ -125,6 +281,7 @@ function getModerators() {
   const token = localStorage.getItem("token");
   if (!token) {
     moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Authentication token not found. Please log in again.</td></tr>';
+    showToast("Authentication Error", "Please log in again to access this page.", "danger");
     return;
   }
 
@@ -142,19 +299,24 @@ function getModerators() {
         
         // Apply default sorting (date descending)
         applyFiltersAndRender();
+        
+        showToast("Success", "Moderators loaded successfully", "success");
       } catch (error) {
         console.error("Error parsing moderators response:", error);
         moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error parsing server response</td></tr>';
+        showToast("Error", "Failed to parse server response", "danger");
       }
     } else {
       console.error("Error fetching moderators:", xhr.responseText);
       moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Error loading moderators</td></tr>';
+      showToast("Error", "Failed to load moderators", "danger");
     }
   };
 
   xhr.onerror = function () {
     console.error("Network error while fetching moderators");
     moderatorTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Network error</td></tr>';
+    showToast("Network Error", "Failed to connect to the server", "danger");
   };
 
   xhr.send();
@@ -334,15 +496,50 @@ function setupAddModeratorForm() {
     });
   }
 
+  // Password validation - Updated to match admin form
+  const moderatorPassword = document.getElementById("moderatorPassword");
+  const confirmModeratorPassword = document.getElementById("confirmModeratorPassword");
+  const passwordMismatch = document.getElementById("passwordMismatch");
+
+  if (confirmModeratorPassword && moderatorPassword && passwordMismatch) {
+    confirmModeratorPassword.addEventListener("input", function() {
+      if (this.value !== moderatorPassword.value) {
+        passwordMismatch.style.display = "block";
+      } else {
+        passwordMismatch.style.display = "none";
+      }
+    });
+    
+    moderatorPassword.addEventListener("input", function() {
+      if (confirmModeratorPassword.value && this.value !== confirmModeratorPassword.value) {
+        passwordMismatch.style.display = "block";
+      } else if (confirmModeratorPassword.value && this.value === confirmModeratorPassword.value) {
+        passwordMismatch.style.display = "none";
+      }
+    });
+  }
+
   const moderatorForm = document.getElementById("moderatorForm");
   if (moderatorForm) {
     moderatorForm.addEventListener("submit", function (e) {
       e.preventDefault();
+      
+      // Validate passwords match
+      const password = document.getElementById("moderatorPassword").value;
+      const confirmPassword = document.getElementById("confirmModeratorPassword").value;
+      
+      if (password !== confirmPassword) {
+        if (passwordMismatch) {
+          passwordMismatch.style.display = "block";
+        }
+        showToast("Error", "Passwords do not match", "danger");
+        return;
+      }
+      
       const avatarPreview = document.getElementById("avatarPreview");
       const avatarInput = document.getElementById("moderatorAvatar");
       const name = document.getElementById("moderatorName").value;
       const email = document.getElementById("moderatorEmail").value;
-      const password = document.getElementById("moderatorPassword").value;
       const avatarFile = avatarInput.files[0];
 
       const formData = new FormData();
@@ -359,30 +556,40 @@ function setupAddModeratorForm() {
 
       xhr.onload = function () {
         if (xhr.status === 201 || xhr.status === 200) {
-          const response = JSON.parse(xhr.responseText);
-          const savedModerator = response.moderator;
-          
-          // Add the new moderator to our array
-          allModerators.unshift(savedModerator);
-          
-          // Re-apply filters and render
-          applyFiltersAndRender();
-          
-          moderatorForm.reset(); 
-          avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg"; // Reset to default image
+          try {
+            const response = JSON.parse(xhr.responseText);
+            const savedModerator = response.moderator;
+            
+            // Add the new moderator to our array
+            allModerators.unshift(savedModerator);
+            
+            // Re-apply filters and render
+            applyFiltersAndRender();
+            
+            moderatorForm.reset(); 
+            avatarPreview.src = "../../assets/images/dashboard/superadmin.jpg"; // Reset to default image
 
-          const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
-          modal.hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById("addModeratorModal"));
+            modal.hide();
 
-          console.log("Moderator added successfully");
+            showToast("Success", "Moderator added successfully", "success");
+          } catch (error) {
+            console.error("Error parsing response:", error);
+            showToast("Error", "Failed to add moderator: " + error.message, "danger");
+          }
         } else {
-          alert("Error adding moderator.");
+          try {
+            const errorResponse = JSON.parse(xhr.responseText);
+            showToast("Error", errorResponse.message || "Failed to add moderator", "danger");
+          } catch (e) {
+            showToast("Error", "Failed to add moderator. Status: " + xhr.status, "danger");
+          }
           console.log(xhr.responseText);
         }
       };
 
       xhr.onerror = function () {
-        alert("Network error during request.");
+        showToast("Network Error", "Failed to connect to the server", "danger");
       };
 
       xhr.send(formData);
@@ -419,6 +626,7 @@ function setupEditModeratorForm() {
       
       if (!moderatorId) {
         console.error("Moderator ID not found");
+        showToast("Error", "Moderator ID not found", "danger");
         return;
       }
   
@@ -449,7 +657,7 @@ function setupEditModeratorForm() {
         
         if (!moderatorId) {
           console.error("Moderator ID is missing or null");
-          alert("Error: Moderator ID is missing. Cannot update.");
+          showToast("Error", "Moderator ID is missing. Cannot update.", "danger");
           return;
         }
         
@@ -498,20 +706,20 @@ function setupEditModeratorForm() {
                 const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
                 editModal.hide();
                 
-                console.log("Moderator updated successfully:", response);
+                showToast("Success", "Moderator updated successfully", "success");
               } catch (error) {
                 console.error("Error parsing response:", error);
-                alert("Error updating moderator: " + error.message);
+                showToast("Error", "Error updating moderator: " + error.message, "danger");
               }
             } else {
               console.error("Error updating moderator:", xhr.status, xhr.responseText);
-              alert("Error updating moderator. Status: " + xhr.status);
+              showToast("Error", "Error updating moderator. Status: " + xhr.status, "danger");
             }
           };
           
           xhr.onerror = function () {
             console.error("Network error during update");
-            alert("Network error during update!");
+            showToast("Network Error", "Failed to connect to the server", "danger");
           };
           
           xhr.send(formData);
@@ -550,20 +758,20 @@ function setupEditModeratorForm() {
                 const editModal = bootstrap.Modal.getInstance(document.getElementById("editModeratorModal"));
                 editModal.hide();
                 
-                console.log("Moderator updated successfully:", response);
+                showToast("Success", "Moderator updated successfully", "success");
               } catch (error) {
                 console.error("Error parsing response:", error);
-                alert("Error updating moderator: " + error.message);
+                showToast("Error", "Error updating moderator: " + error.message, "danger");
               }
             } else {
               console.error("Error updating moderator:", xhr.status, xhr.responseText);
-              alert("Error updating moderator. Status: " + xhr.status);
+              showToast("Error", "Error updating moderator. Status: " + xhr.status, "danger");
             }
           };
           
           xhr.onerror = function () {
             console.error("Network error during update");
-            alert("Network error during update!");
+            showToast("Network Error", "Failed to connect to the server", "danger");
           };
           
           xhr.send(updateData);
@@ -582,6 +790,7 @@ function setupDeleteModeratorHandler() {
       
       if (!moderatorId) {
         console.error("Moderator ID not found");
+        showToast("Error", "Moderator ID not found", "danger");
         return;
       }
       
@@ -601,15 +810,20 @@ function setupDeleteModeratorHandler() {
             // Re-apply filters and render
             applyFiltersAndRender();
             
-            console.log("Moderator deleted successfully");
+            showToast("Success", "Moderator deleted successfully", "success");
           } else {
-            alert("Error deleting moderator.");
+            try {
+              const errorResponse = JSON.parse(xhr.responseText);
+              showToast("Error", errorResponse.message || "Failed to delete moderator", "danger");
+            } catch (e) {
+              showToast("Error", "Failed to delete moderator. Status: " + xhr.status, "danger");
+            }
             console.log(xhr.responseText);
           }
         };
         
         xhr.onerror = function () {
-          alert("Network error during request.");
+          showToast("Network Error", "Failed to connect to the server", "danger");
         };
         
         xhr.send();
