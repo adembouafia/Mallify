@@ -44,7 +44,7 @@ exports.createProduct = async (req, res) => {
       }
 
       let shopId
-      if (req.user.role === "vendor") {
+      if (req.user.role === "vendor" || req.user.role === "moderator") {
         if (req.user.shopId) {
           shopId = req.user.shopId
         } else {
@@ -56,22 +56,6 @@ exports.createProduct = async (req, res) => {
             })
           }
           shopId = vendor.shop
-        }
-      } else if (req.user.role === "moderator") {
-        if (req.body.shopId) {
-          const shopExists = await Shop.findById(req.body.shopId)
-          if (!shopExists) {
-            return res.status(404).json({
-              status: "fail",
-              message: "Shop not found",
-            })
-          }
-          shopId = req.body.shopId
-        } else {
-          return res.status(400).json({
-            status: "fail",
-            message: "Shop ID is required for moderators and admins",
-          })
         }
       } else {
         return res.status(403).json({
