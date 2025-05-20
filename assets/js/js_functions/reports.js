@@ -222,7 +222,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token")
     if (!token) {
       console.log("User not logged in")
-      if (typeof Swal !== "undefined") {
+      const Swal = window.Swal; // Declare Swal variable here
+      if (Swal) {
         Swal.fire({
           icon: "error",
           title: "Authentication Required",
@@ -245,7 +246,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const productId = getProductIdFromUrl()
     if (!productId) {
       console.error("Could not determine product ID")
-      if (typeof Swal !== "undefined") {
+      const Swal = window.Swal; // Declare Swal variable here
+      if (Swal) {
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -292,7 +294,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Report submitted successfully:", data)
             closeProductReportModal()
 
-            if (typeof Swal !== "undefined") {
+            const Swal = window.Swal; // Declare Swal variable here
+            if (Swal) {
               Swal.fire({
                 icon: "success",
                 title: "Report Submitted",
@@ -305,7 +308,8 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch (e) {
             closeProductReportModal()
 
-            if (typeof Swal !== "undefined") {
+            const Swal = window.Swal; // Declare Swal variable here
+            if (Swal) {
               Swal.fire({
                 icon: "success",
                 title: "Report Submitted",
@@ -321,7 +325,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const errorData = JSON.parse(xhr.responseText)
             console.error("Error submitting product report:", errorData)
 
-            if (typeof Swal !== "undefined") {
+            const Swal = window.Swal; // Declare Swal variable here
+            if (Swal) {
               Swal.fire({
                 icon: "error",
                 title: "Submission Error",
@@ -334,7 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch (e) {
             console.error("Error parsing error response:", e)
 
-            if (typeof Swal !== "undefined") {
+            const Swal = window.Swal; // Declare Swal variable here
+            if (Swal) {
               Swal.fire({
                 icon: "error",
                 title: "Submission Error",
@@ -354,7 +360,8 @@ document.addEventListener("DOMContentLoaded", () => {
       xhr.onerror = () => {
         console.error("Network error while submitting product report")
 
-        if (typeof Swal !== "undefined") {
+        const Swal = window.Swal; // Declare Swal variable here
+        if (Swal) {
           Swal.fire({
             icon: "error",
             title: "Connection Error",
@@ -409,12 +416,15 @@ const respondModalEl = document.getElementById("respondModal")
 const deleteModalEl = document.getElementById("deleteConfirmModal")
 
 let reportModalInstance, respondModalInstance, deleteModalInstance
+// Use a renamed variable for bootstrap to avoid conflicts
+const reportsBootstrap = window.bootstrap
 
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.bootstrap !== "undefined") {
-    reportModalInstance = new window.bootstrap.Modal(reportModalEl)
-    respondModalInstance = new window.bootstrap.Modal(respondModalEl)
-    deleteModalInstance = new window.bootstrap.Modal(deleteModalEl)
+    // Use the renamed bootstrap variable
+    reportModalInstance = new reportsBootstrap.Modal(reportModalEl)
+    respondModalInstance = new reportsBootstrap.Modal(respondModalEl)
+    deleteModalInstance = new reportsBootstrap.Modal(deleteModalEl)
   }
 
   setupEventListeners()
@@ -1052,7 +1062,7 @@ function resolveReport(id) {
           applyFilters()
           renderTable()
           renderPagination()
-          showToast("Success", "Report has been resolved", "success")
+          showReportsToast("Success", "Report has been resolved", "success")
         } else {
           console.warn(`Report with ID ${id} was not found in local data`)
           loadReports()
@@ -1063,7 +1073,7 @@ function resolveReport(id) {
         }
       } catch (e) {
         console.warn("Could not parse response, but request was successful:", e)
-        showToast("Success", "Report has been resolved", "success")
+        showReportsToast("Success", "Report has been resolved", "success")
         loadReports()
 
         if (respondModalInstance) {
@@ -1074,17 +1084,17 @@ function resolveReport(id) {
       try {
         const errorData = JSON.parse(xhr.responseText)
         console.error("Error resolving report:", errorData)
-        showToast("Error", errorData.message || `Failed to resolve report. Status: ${xhr.status}`, "error")
+        showReportsToast("Error", errorData.message || `Failed to resolve report. Status: ${xhr.status}`, "error")
       } catch (e) {
         console.error("Error parsing error response:", e)
         if (xhr.status === 404) {
-          showToast(
+          showReportsToast(
             "Error",
             `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`,
             "error",
           )
         } else {
-          showToast("Error", `Failed to resolve report. Status: ${xhr.status}`, "error")
+          showReportsToast("Error", `Failed to resolve report. Status: ${xhr.status}`, "error")
         }
       }
     }
@@ -1097,7 +1107,7 @@ function resolveReport(id) {
 
   xhr.onerror = () => {
     console.error("Network error occurred while resolving report")
-    showToast("Error", "Network error. Please check your connection.", "error")
+    showReportsToast("Error", "Network error. Please check your connection.", "error")
 
     if (resolveBtn) {
       resolveBtn.disabled = false
@@ -1144,10 +1154,10 @@ function deleteReport(id) {
         applyFilters()
         renderTable()
         renderPagination()
-        showToast("Success", "Report deleted successfully", "success")
+        showReportsToast("Success", "Report deleted successfully", "success")
       } else {
         console.warn(`Report with ID ${id} was not found in local data`)
-        showToast("Success", "Report deleted successfully. Refreshing data...", "success")
+        showReportsToast("Success", "Report deleted successfully. Refreshing data...", "success")
         loadReports()
       }
 
@@ -1161,17 +1171,17 @@ function deleteReport(id) {
       try {
         const errorData = JSON.parse(xhr.responseText)
         console.error("Error deleting report:", errorData)
-        showToast("Error", errorData.message || `Failed to delete report. Status: ${xhr.status}`, "error")
+        showReportsToast("Error", errorData.message || `Failed to delete report. Status: ${xhr.status}`, "error")
       } catch (e) {
         console.error("Error parsing error response:", e)
         if (xhr.status === 404) {
-          showToast(
+          showReportsToast(
             "Error",
             `Report with ID ${id} not found. The report may have been deleted or the ID is incorrect.`,
             "error",
           )
         } else {
-          showToast("Error", `Failed to delete report. Status: ${xhr.status}`, "error")
+          showReportsToast("Error", `Failed to delete report. Status: ${xhr.status}`, "error")
         }
       }
     }
@@ -1184,7 +1194,7 @@ function deleteReport(id) {
 
   xhr.onerror = () => {
     console.error("Network error occurred while deleting report")
-    showToast("Error", "Network error. Please check your connection.", "error")
+    showReportsToast("Error", "Network error. Please check your connection.", "error")
 
     if (deleteBtn) {
       deleteBtn.disabled = false
@@ -1195,10 +1205,18 @@ function deleteReport(id) {
   xhr.send()
 }
 
-// Displays toast notifications
-function showToast(title, message, type) {
-  if (typeof window.Swal !== "undefined") {
-    window.Swal.fire({
+// Displays toast notifications - renamed to avoid conflicts
+function showReportsToast(title, message, type) {
+  // First check if we can use the globally available toast function from superadmin.js
+  if (window.showSuperAdminToast) {
+    window.showSuperAdminToast(title, message, type);
+    return;
+  }
+  
+  // Otherwise use SweetAlert if available
+  const Swal = window.Swal; // Declare Swal variable here
+  if (Swal) {
+    Swal.fire({
       title: `<span style="font-weight:bold;">${title}</span>`,
       html: `<p style="margin:0;">${message}</p>`,
       icon: type,
@@ -1212,8 +1230,8 @@ function showToast(title, message, type) {
       iconColor:
         type === "success" ? "#00e676" : type === "warning" ? "#ff9100" : type === "error" ? "#ff1744" : "#40c4ff",
       didOpen: (toast) => {
-        toast.addEventListener("mouseenter", window.Swal.stopTimer)
-        toast.addEventListener("mouseleave", window.Swal.resumeTimer)
+        toast.addEventListener("mouseenter", Swal.stopTimer)
+        toast.addEventListener("mouseleave", Swal.resumeTimer)
       },
       customClass: {
         popup: "cool-toast-popup",
@@ -1221,7 +1239,53 @@ function showToast(title, message, type) {
       },
     })
   } else {
-    console.log(`${type.toUpperCase()}: ${title} - ${message}`)
+    // If no toast mechanism is available, create our own simple implementation
+    let toastContainer = document.getElementById("reports-toast-container");
+    if (!toastContainer) {
+      toastContainer = document.createElement("div");
+      toastContainer.id = "reports-toast-container";
+      toastContainer.className = "position-fixed bottom-0 end-0 p-3";
+      toastContainer.style.zIndex = "1050";
+      document.body.appendChild(toastContainer);
+    }
+
+    // Create toast element
+    const toastId = "toast-" + Date.now();
+    const toastElement = document.createElement("div");
+    toastElement.id = toastId;
+    toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+    toastElement.role = "alert";
+    toastElement.setAttribute("aria-live", "assertive");
+    toastElement.setAttribute("aria-atomic", "true");
+
+    // Create toast content
+    toastElement.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">
+          <strong>${title}</strong>: ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    // Add toast to container
+    toastContainer.appendChild(toastElement);
+
+    // Initialize and show toast
+    if (reportsBootstrap && reportsBootstrap.Toast) {
+      const toastInstance = new reportsBootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 5000
+      });
+      toastInstance.show();
+    } else {
+      console.log(`${type.toUpperCase()}: ${title} - ${message}`);
+    }
+
+    // Remove toast after it's hidden
+    toastElement.addEventListener("hidden.bs.toast", function() {
+      toastElement.remove();
+    });
   }
 }
 
