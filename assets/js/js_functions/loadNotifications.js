@@ -1,126 +1,164 @@
-const API_BASE_URL = "" // à configurer selon ton environnement
-let currentShopId = null
-let allNotifications = [] // Variable pour stocker toutes les notifications
-const selectedNotifications = new Set() // Pour stocker les IDs des notifications sélectionnées
-let currentFilterType = "all" // Pour suivre le filtre actuel
+const API_BASE_URL = ""; // à configurer selon ton environnement
+let currentShopId = null;
+let allNotifications = []; // Variable pour stocker toutes les notifications
+const selectedNotifications = new Set(); // Pour stocker les IDs des notifications sélectionnées
+let currentFilterType = "all"; // Pour suivre le filtre actuel
 
 // Références DOM
-const notificationCounter = document.querySelector(".notification-counter")
-const notificationCountHeader = document.querySelector(".notification-count-header")
-const notificationList = document.querySelector(".notification-list")
-const markAllReadBtn = document.querySelector(".mark-all-read-btn")
-const seeAllNotificationsBtn = document.querySelector(".see-all-notifications-btn")
+const notificationCounter = document.querySelector(".notification-counter");
+const notificationCountHeader = document.querySelector(
+  ".notification-count-header"
+);
+const notificationList = document.querySelector(".notification-list");
+const markAllReadBtn = document.querySelector(".mark-all-read-btn");
+const seeAllNotificationsBtn = document.querySelector(
+  ".see-all-notifications-btn"
+);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const userData = JSON.parse(localStorage.getItem("userData") || "{}")
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+  // Check for both shop and shopId properties to support both vendor and moderator roles
   if (userData.shop) {
-    currentShopId = userData.shop
-    initNotifications()
-    createNotificationsModal()
+    currentShopId = userData.shop;
+    initNotifications();
+    createNotificationsModal();
   } else {
-    console.error("No shop ID found in userData")
+    console.error("No shop ID found in userData");
   }
-})
+});
 
 function initNotifications() {
-  loadNotifications()
-  setInterval(loadNotifications, 60000)
-  setupListeners()
+  loadNotifications();
+  setInterval(loadNotifications, 60000);
+  setupListeners();
+}
+
+// Helper function to get valid shop ID string
+function getValidShopId() {
+  // Make sure currentShopId is a valid string and not an object
+  if (currentShopId && typeof currentShopId === "object" && currentShopId._id) {
+    return currentShopId._id;
+  } else if (currentShopId && typeof currentShopId === "object") {
+    console.error("Invalid shop ID format:", currentShopId);
+    return null;
+  }
+  return currentShopId;
 }
 
 function makeRequest(method, url, data, onSuccess, onError) {
-  const xhr = new XMLHttpRequest()
-  xhr.open(method, url, true)
+  const xhr = new XMLHttpRequest();
+  xhr.open(method, url, true);
 
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   if (token) {
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   }
 
-  xhr.setRequestHeader("Content-Type", "application/json")
+  xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
-        const response = JSON.parse(xhr.responseText)
-        onSuccess(response)
+        const response = JSON.parse(xhr.responseText);
+        onSuccess(response);
       } catch {
-        onSuccess(xhr.responseText)
+        onSuccess(xhr.responseText);
       }
     } else {
-      if (onError) onError(xhr.statusText)
+      if (onError) onError(xhr.statusText);
     }
-  }
+  };
 
   xhr.onerror = () => {
-    if (onError) onError("Network error")
-  }
+    if (onError) onError("Network error");
+  };
 
-  xhr.send(data ? JSON.stringify(data) : null)
+  xhr.send(data ? JSON.stringify(data) : null);
 }
 
 function loadNotifications() {
-  makeRequest("GET", `${API_BASE_URL}/notifications/shop/${currentShopId}/count`, null, (data) => {
-    updateCounter(data.count)
-  })
+  const shopIdParam = getValidShopId();
+  if (!shopIdParam) {
+    console.error("Cannot load notifications: Invalid shop ID");
+    return;
+  }
 
-  makeRequest("GET", `${API_BASE_URL}/notifications/shop/${currentShopId}`, null, (data) => {
-    allNotifications = data.data || [] // Stocker toutes les notifications
-    showNotifications(allNotifications)
-
-    // Si le modal est ouvert, mettre à jour son contenu
-    if (document.getElementById("allNotificationsModal").classList.contains("show")) {
-      updateModalNotifications(currentFilterType)
+  makeRequest(
+    "GET",
+    `${API_BASE_URL}/notifications/shop/${shopIdParam}/count`,
+    null,
+    (data) => {
+      updateCounter(data.count);
     }
-  })
+  );
+
+  makeRequest(
+    "GET",
+    `${API_BASE_URL}/notifications/shop/${shopIdParam}`,
+    null,
+    (data) => {
+      allNotifications = data.data || []; // Stocker toutes les notifications
+      showNotifications(allNotifications);
+
+      // Si le modal est ouvert, mettre à jour son contenu
+      if (
+        document
+          .getElementById("allNotificationsModal")
+          .classList.contains("show")
+      ) {
+        updateModalNotifications(currentFilterType);
+      }
+    }
+  );
 }
 
 function updateCounter(count) {
-  notificationCounter.textContent = count
-  notificationCountHeader.textContent = `${count} Notifications`
-  notificationCounter.style.display = count > 0 ? "inline-block" : "none"
+  notificationCounter.textContent = count;
+  notificationCountHeader.textContent = `${count} Notifications`;
+  notificationCounter.style.display = count > 0 ? "inline-block" : "none";
 }
 
 function showNotifications(notifications) {
-  notificationList.innerHTML = ""
+  notificationList.innerHTML = "";
   if (!notifications || notifications.length === 0) {
-    notificationList.innerHTML = '<div class="dropdown-item">No notifications</div>'
-    return
+    notificationList.innerHTML =
+      '<div class="dropdown-item">No notifications</div>';
+    return;
   }
 
   notifications.slice(0, 5).forEach((n) => {
-    const item = document.createElement("div")
-    item.className = "dropdown-item d-flex align-items-center"
-    if (n.status === "unread") item.classList.add("unread-notification")
+    const item = document.createElement("div");
+    item.className = "dropdown-item d-flex align-items-center";
+    if (n.status === "unread") item.classList.add("unread-notification");
 
     // Déterminer l'icône en fonction du type de notification
-    let icon = "bi-bell"
+    let icon = "bi-bell";
     if (n.type === "stock") {
-      icon = "bi-box"
+      icon = "bi-box";
     } else if (n.type === "order") {
-      icon = "bi-cart"
+      icon = "bi-cart";
     } else if (n.type === "delivery") {
-      icon = "bi-truck"
+      icon = "bi-truck";
     }
 
     // Ajouter -fill si non lu
     if (n.status === "unread") {
-      icon += "-fill"
+      icon += "-fill";
     }
 
     // Déterminer la couleur en fonction du type
-    let iconColorClass = "text-muted"
+    let iconColorClass = "text-muted";
     if (n.status === "unread") {
       if (n.type === "stock") {
-        iconColorClass = "text-warning"
+        iconColorClass = "text-warning";
       } else if (n.type === "order") {
-        iconColorClass = "text-primary"
+        iconColorClass = "text-primary";
       } else if (n.type === "delivery") {
-        iconColorClass = "text-success"
+        iconColorClass = "text-success";
       }
     }
 
-    const date = new Date(n.createdAt)
+    const date = new Date(n.createdAt);
     item.innerHTML = `
       <div class="me-3">
         <i class="bi ${icon} ${iconColorClass}"></i>
@@ -137,9 +175,9 @@ function showNotifications(notifications) {
           <i class="bi bi-trash text-danger"></i>
         </button>
       </div>
-    `
-    notificationList.appendChild(item)
-  })
+    `;
+    notificationList.appendChild(item);
+  });
 }
 
 // Fonction pour créer le modal des notifications
@@ -182,76 +220,95 @@ function createNotificationsModal() {
         </div>
       </div>
     </div>
-  `
-
+  `;
   // Ajouter le modal au body
-  const modalContainer = document.createElement("div")
-  modalContainer.innerHTML = modalHTML
-  document.body.appendChild(modalContainer)
+  const modalContainer = document.createElement("div");
+  modalContainer.innerHTML = modalHTML;
+  document.body.appendChild(modalContainer);
 
   // Ajouter les gestionnaires d'événements pour le modal
-  document.getElementById("markAllReadModalBtn").addEventListener("click", () => {
-    makeRequest(
-      "PUT",
-      `${API_BASE_URL}/notifications/shop/${currentShopId}/read-all`,
-      null,
-      () => {
-        // Mettre à jour localement toutes les notifications
-        allNotifications.forEach((notification) => {
-          notification.status = "read"
-        })
+  document
+    .getElementById("markAllReadModalBtn")
+    .addEventListener("click", () => {
+      const shopIdParam = getValidShopId();
+      if (!shopIdParam) {
+        console.error("Cannot mark all as read: Invalid shop ID");
+        return;
+      }
 
-        // Mettre à jour l'interface
-        updateModalNotifications(currentFilterType)
-        showNotifications(allNotifications)
-        updateCounter(0) // Toutes les notifications sont lues
+      makeRequest(
+        "PUT",
+        `${API_BASE_URL}/notifications/shop/${shopIdParam}/read-all`,
+        null,
+        () => {
+          // Mettre à jour localement toutes les notifications
+          allNotifications.forEach((notification) => {
+            notification.status = "read";
+          });
 
-        toast("All notifications have been marked as read", "success")
-      },
-      () => toast("Error during operation", "error"),
-    )
-  })
+          // Mettre à jour l'interface
+          updateModalNotifications(currentFilterType);
+          showNotifications(allNotifications);
+          updateCounter(0); // Toutes les notifications sont lues
+
+          toast("All notifications have been marked as read", "success");
+        },
+        () => toast("Error during operation", "error")
+      );
+    });
 
   // Gestionnaire pour la case à cocher "Select All"
-  document.getElementById("selectAllCheckbox").addEventListener("change", (e) => {
-    const isChecked = e.target.checked
+  document
+    .getElementById("selectAllCheckbox")
+    .addEventListener("change", (e) => {
+      const isChecked = e.target.checked;
 
-    // Sélectionner ou désélectionner toutes les cases à cocher
-    document.querySelectorAll(".notification-checkbox").forEach((checkbox) => {
-      checkbox.checked = isChecked
+      // Sélectionner ou désélectionner toutes les cases à cocher
+      document
+        .querySelectorAll(".notification-checkbox")
+        .forEach((checkbox) => {
+          checkbox.checked = isChecked;
 
-      const notificationId = checkbox.dataset.id
-      if (isChecked) {
-        selectedNotifications.add(notificationId)
-      } else {
-        selectedNotifications.delete(notificationId)
-      }
-    })
+          const notificationId = checkbox.dataset.id;
+          if (isChecked) {
+            selectedNotifications.add(notificationId);
+          } else {
+            selectedNotifications.delete(notificationId);
+          }
+        });
 
-    // Mettre à jour le compteur et l'état du bouton
-    updateSelectedCount()
-  })
+      // Mettre à jour le compteur et l'état du bouton
+      updateSelectedCount();
+    });
 
   // Gestionnaire pour le bouton "Delete Selected"
   document.getElementById("deleteSelectedBtn").addEventListener("click", () => {
-    if (selectedNotifications.size === 0) return
+    if (selectedNotifications.size === 0) return;
 
-    if (confirm(`Are you sure you want to delete ${selectedNotifications.size} selected notification(s)?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete ${selectedNotifications.size} selected notification(s)?`
+      )
+    ) {
       // Convertir le Set en Array pour itération
-      const selectedIds = Array.from(selectedNotifications)
+      const selectedIds = Array.from(selectedNotifications);
 
       // Compteur pour suivre les suppressions réussies
-      let successCount = 0
-      let errorCount = 0
-      const totalToDelete = selectedIds.length
+      let successCount = 0;
+      let errorCount = 0;
+      const totalToDelete = selectedIds.length;
 
       // Mettre à jour l'interface immédiatement
-      allNotifications = allNotifications.filter((notification) => !selectedNotifications.has(notification._id))
-      updateModalNotifications(currentFilterType)
-      showNotifications(allNotifications)
+      allNotifications = allNotifications.filter(
+        (notification) => !selectedNotifications.has(notification._id)
+      );
+      updateModalNotifications(currentFilterType);
+      showNotifications(allNotifications);
 
       // Mettre à jour le compteur
-      updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+      updateCounter(
+        allNotifications.filter((n) => n.status === "unread").length
+      );
 
       // Fonction pour supprimer une notification
       const deleteNotification = (id, index) => {
@@ -260,124 +317,139 @@ function createNotificationsModal() {
           `${API_BASE_URL}/notifications/${id}`,
           null,
           () => {
-            successCount++
+            successCount++;
 
             // Si toutes les requêtes sont terminées
             if (successCount + errorCount === totalToDelete) {
               // Notification de succès
               if (errorCount === 0) {
-                toast(`${successCount} notification(s) successfully deleted`, "success")
+                toast(
+                  `${successCount} notification(s) successfully deleted`,
+                  "success"
+                );
               } else {
-                toast(`${successCount} deleted, ${errorCount} failed`, "warning")
+                toast(
+                  `${successCount} deleted, ${errorCount} failed`,
+                  "warning"
+                );
               }
             }
           },
           () => {
-            errorCount++
+            errorCount++;
 
             // Si toutes les requêtes sont terminées
             if (successCount + errorCount === totalToDelete) {
               // Notification d'erreur ou mixte
               if (successCount === 0) {
-                toast("Error during deletion", "error")
+                toast("Error during deletion", "error");
               } else {
-                toast(`${successCount} deleted, ${errorCount} failed`, "warning")
+                toast(
+                  `${successCount} deleted, ${errorCount} failed`,
+                  "warning"
+                );
               }
             }
-          },
-        )
-      }
+          }
+        );
+      };
 
       // Supprimer chaque notification sélectionnée
       selectedIds.forEach((id, index) => {
-        deleteNotification(id, index)
-      })
+        deleteNotification(id, index);
+      });
 
       // Réinitialiser les sélections
-      selectedNotifications.clear()
-      updateSelectedCount()
+      selectedNotifications.clear();
+      updateSelectedCount();
     }
-  })
+  });
 
   // Gestionnaire pour les filtres
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       // Mettre à jour l'état actif des boutons
-      document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"))
-      e.target.classList.add("active")
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach((b) => b.classList.remove("active"));
+      e.target.classList.add("active");
 
       // Filtrer les notifications
-      currentFilterType = e.target.dataset.filter
-      updateModalNotifications(currentFilterType)
+      currentFilterType = e.target.dataset.filter;
+      updateModalNotifications(currentFilterType);
 
       // Réinitialiser les sélections
-      selectedNotifications.clear()
-      updateSelectedCount()
-      document.getElementById("selectAllCheckbox").checked = false
-    })
-  })
+      selectedNotifications.clear();
+      updateSelectedCount();
+      document.getElementById("selectAllCheckbox").checked = false;
+    });
+  });
 }
 
 // Fonction pour mettre à jour le compteur de notifications sélectionnées
 function updateSelectedCount() {
-  const count = selectedNotifications.size
-  document.getElementById("selectedCount").textContent = count
-  document.getElementById("deleteSelectedBtn").disabled = count === 0
+  const count = selectedNotifications.size;
+  document.getElementById("selectedCount").textContent = count;
+  document.getElementById("deleteSelectedBtn").disabled = count === 0;
 }
 
 // Fonction pour mettre à jour les notifications dans le modal
 function updateModalNotifications(filterType = "all") {
-  const notificationsList = document.querySelector(".all-notifications-list")
-  notificationsList.innerHTML = ""
+  const notificationsList = document.querySelector(".all-notifications-list");
+  notificationsList.innerHTML = "";
 
-  let filteredNotifications = [...allNotifications]
+  let filteredNotifications = [...allNotifications];
 
   // Appliquer le filtre si nécessaire
   if (filterType !== "all") {
-    filteredNotifications = allNotifications.filter((n) => n.type === filterType)
+    filteredNotifications = allNotifications.filter(
+      (n) => n.type === filterType
+    );
   }
 
   if (filteredNotifications.length === 0) {
-    notificationsList.innerHTML = '<div class="list-group-item">No notifications</div>'
-    return
+    notificationsList.innerHTML =
+      '<div class="list-group-item">No notifications</div>';
+    return;
   }
 
   filteredNotifications.forEach((n) => {
-    const item = document.createElement("div")
-    item.className = "list-group-item list-group-item-action d-flex align-items-center notification-item"
-    if (n.status === "unread") item.classList.add("unread-notification")
+    const item = document.createElement("div");
+    item.className =
+      "list-group-item list-group-item-action d-flex align-items-center notification-item";
+    if (n.status === "unread") item.classList.add("unread-notification");
 
     // Déterminer l'icône en fonction du type de notification
-    let icon = "bi-bell"
+    let icon = "bi-bell";
     if (n.type === "stock") {
-      icon = "bi-box"
+      icon = "bi-box";
     } else if (n.type === "order") {
-      icon = "bi-cart"
+      icon = "bi-cart";
     } else if (n.type === "delivery") {
-      icon = "bi-truck"
+      icon = "bi-truck";
     }
 
     // Ajouter -fill si non lu
     if (n.status === "unread") {
-      icon += "-fill"
+      icon += "-fill";
     }
 
     // Déterminer la couleur en fonction du type
-    let iconColorClass = "text-muted"
+    let iconColorClass = "text-muted";
     if (n.status === "unread") {
       if (n.type === "stock") {
-        iconColorClass = "text-warning"
+        iconColorClass = "text-warning";
       } else if (n.type === "order") {
-        iconColorClass = "text-primary"
+        iconColorClass = "text-primary";
       } else if (n.type === "delivery") {
-        iconColorClass = "text-success"
+        iconColorClass = "text-success";
       }
     }
 
-    const date = new Date(n.createdAt)
+    const date = new Date(n.createdAt);
 
     // Vérifier si cette notification est déjà sélectionnée
-    const isChecked = selectedNotifications.has(n._id) ? "checked" : ""
+    const isChecked = selectedNotifications.has(n._id) ? "checked" : "";
 
     item.innerHTML = `
       <div class="form-check me-2">
@@ -398,12 +470,12 @@ function updateModalNotifications(filterType = "all") {
           <i class="bi bi-trash text-danger"></i>
         </button>
       </div>
-    `
-    notificationsList.appendChild(item)
-  })
+    `;
+    notificationsList.appendChild(item);
+  });
 
   // Ajouter les gestionnaires d'événements pour les boutons dans le modal
-  setupModalButtonListeners()
+  setupModalButtonListeners();
 }
 
 // Fonction pour configurer les gestionnaires d'événements pour les boutons dans le modal
@@ -411,38 +483,40 @@ function setupModalButtonListeners() {
   // Gestionnaire pour les cases à cocher
   document.querySelectorAll(".notification-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", (e) => {
-      const notificationId = e.target.dataset.id
+      const notificationId = e.target.dataset.id;
 
       if (e.target.checked) {
-        selectedNotifications.add(notificationId)
+        selectedNotifications.add(notificationId);
       } else {
-        selectedNotifications.delete(notificationId)
+        selectedNotifications.delete(notificationId);
 
         // Désélectionner "Select All" si une case est décochée
-        document.getElementById("selectAllCheckbox").checked = false
+        document.getElementById("selectAllCheckbox").checked = false;
       }
 
-      updateSelectedCount()
-    })
-  })
+      updateSelectedCount();
+    });
+  });
 
   // Gestionnaire pour le bouton "marquer comme lu"
   document.querySelectorAll(".modal-mark-read-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.id
+      const id = e.currentTarget.dataset.id;
 
       // Mettre à jour l'interface immédiatement
-      const notification = allNotifications.find((n) => n._id === id)
+      const notification = allNotifications.find((n) => n._id === id);
       if (notification) {
-        notification.status = "read"
+        notification.status = "read";
       }
 
       // Mettre à jour l'affichage
-      updateModalNotifications(currentFilterType)
-      showNotifications(allNotifications)
+      updateModalNotifications(currentFilterType);
+      showNotifications(allNotifications);
 
       // Mettre à jour le compteur
-      updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+      updateCounter(
+        allNotifications.filter((n) => n.status === "unread").length
+      );
 
       // Envoyer la requête à l'API
       makeRequest(
@@ -455,39 +529,48 @@ function setupModalButtonListeners() {
         () => {
           // En cas d'erreur, revenir à l'état précédent
           if (notification) {
-            notification.status = "unread"
-            updateModalNotifications(currentFilterType)
-            showNotifications(allNotifications)
-            updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+            notification.status = "unread";
+            updateModalNotifications(currentFilterType);
+            showNotifications(allNotifications);
+            updateCounter(
+              allNotifications.filter((n) => n.status === "unread").length
+            );
           }
-          toast("Error during marking", "error")
-        },
-      )
-    })
-  })
+          toast("Error during marking", "error");
+        }
+      );
+    });
+  });
 
   // Gestionnaire pour le bouton "supprimer"
   document.querySelectorAll(".modal-delete-notification-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.id
+      const id = e.currentTarget.dataset.id;
       if (confirm("Are you sure you want to delete this notification?")) {
         // Stocker une copie de la notification avant de la supprimer
-        const notificationIndex = allNotifications.findIndex((n) => n._id === id)
-        const deletedNotification = notificationIndex !== -1 ? { ...allNotifications[notificationIndex] } : null
+        const notificationIndex = allNotifications.findIndex(
+          (n) => n._id === id
+        );
+        const deletedNotification =
+          notificationIndex !== -1
+            ? { ...allNotifications[notificationIndex] }
+            : null;
 
         // Mettre à jour l'interface immédiatement
-        allNotifications = allNotifications.filter((n) => n._id !== id)
+        allNotifications = allNotifications.filter((n) => n._id !== id);
 
         // Supprimer de la sélection si elle était sélectionnée
-        selectedNotifications.delete(id)
-        updateSelectedCount()
+        selectedNotifications.delete(id);
+        updateSelectedCount();
 
         // Mettre à jour l'affichage
-        updateModalNotifications(currentFilterType)
-        showNotifications(allNotifications)
+        updateModalNotifications(currentFilterType);
+        showNotifications(allNotifications);
 
         // Mettre à jour le compteur
-        updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+        updateCounter(
+          allNotifications.filter((n) => n.status === "unread").length
+        );
 
         // Envoyer la requête à l'API
         makeRequest(
@@ -496,26 +579,32 @@ function setupModalButtonListeners() {
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
-            toast("Notification successfully deleted", "success")
+            toast("Notification successfully deleted", "success");
           },
           () => {
             // En cas d'erreur, restaurer la notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
-                allNotifications.splice(notificationIndex, 0, deletedNotification)
+                allNotifications.splice(
+                  notificationIndex,
+                  0,
+                  deletedNotification
+                );
               } else {
-                allNotifications.push(deletedNotification)
+                allNotifications.push(deletedNotification);
               }
-              updateModalNotifications(currentFilterType)
-              showNotifications(allNotifications)
-              updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+              updateModalNotifications(currentFilterType);
+              showNotifications(allNotifications);
+              updateCounter(
+                allNotifications.filter((n) => n.status === "unread").length
+              );
             }
-            toast("Error during deletion", "error")
-          },
-        )
+            toast("Error during deletion", "error");
+          }
+        );
       }
-    })
-  })
+    });
+  });
 }
 
 function setupListeners() {
@@ -527,52 +616,54 @@ function setupListeners() {
       () => {
         // Mettre à jour localement toutes les notifications
         allNotifications.forEach((notification) => {
-          notification.status = "read"
-        })
+          notification.status = "read";
+        });
 
         // Mettre à jour l'interface
-        showNotifications(allNotifications)
-        updateCounter(0) // Toutes les notifications sont lues
+        showNotifications(allNotifications);
+        updateCounter(0); // Toutes les notifications sont lues
 
-        toast("All notifications have been marked as read", "success")
+        toast("All notifications have been marked as read", "success");
       },
-      () => toast("Error during operation", "error"),
-    )
-  })
+      () => toast("Error during operation", "error")
+    );
+  });
 
   seeAllNotificationsBtn.addEventListener("click", () => {
     // Réinitialiser les sélections
-    selectedNotifications.clear()
-    updateSelectedCount()
+    selectedNotifications.clear();
+    updateSelectedCount();
 
     // Mettre à jour les notifications dans le modal et l'afficher
-    updateModalNotifications(currentFilterType)
+    updateModalNotifications(currentFilterType);
 
     // Afficher le modal
-    const modalElement = document.getElementById("allNotificationsModal")
+    const modalElement = document.getElementById("allNotificationsModal");
     if (modalElement) {
-      const modal = new window.bootstrap.Modal(modalElement)
-      modal.show()
+      const modal = new window.bootstrap.Modal(modalElement);
+      modal.show();
     }
-  })
+  });
 
   notificationList.addEventListener("click", (e) => {
     // Gestion du bouton "marquer comme lu"
-    const readBtn = e.target.closest(".mark-read-btn")
+    const readBtn = e.target.closest(".mark-read-btn");
     if (readBtn) {
-      const id = readBtn.dataset.id
+      const id = readBtn.dataset.id;
 
       // Mettre à jour l'interface immédiatement
-      const notification = allNotifications.find((n) => n._id === id)
+      const notification = allNotifications.find((n) => n._id === id);
       if (notification) {
-        notification.status = "read"
+        notification.status = "read";
       }
 
       // Mettre à jour l'affichage
-      showNotifications(allNotifications)
+      showNotifications(allNotifications);
 
       // Mettre à jour le compteur
-      updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+      updateCounter(
+        allNotifications.filter((n) => n.status === "unread").length
+      );
 
       // Envoyer la requête à l'API
       makeRequest(
@@ -585,34 +676,43 @@ function setupListeners() {
         () => {
           // En cas d'erreur, revenir à l'état précédent
           if (notification) {
-            notification.status = "unread"
-            showNotifications(allNotifications)
-            updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+            notification.status = "unread";
+            showNotifications(allNotifications);
+            updateCounter(
+              allNotifications.filter((n) => n.status === "unread").length
+            );
           }
-          toast("Error during marking", "error")
-        },
-      )
+          toast("Error during marking", "error");
+        }
+      );
     }
 
     // Gestion du bouton "supprimer"
-    const deleteBtn = e.target.closest(".delete-notification-btn")
+    const deleteBtn = e.target.closest(".delete-notification-btn");
     if (deleteBtn) {
-      const id = deleteBtn.dataset.id
+      const id = deleteBtn.dataset.id;
 
       // Confirmation avant suppression
       if (confirm("Are you sure you want to delete this notification?")) {
         // Stocker une copie de la notification avant de la supprimer
-        const notificationIndex = allNotifications.findIndex((n) => n._id === id)
-        const deletedNotification = notificationIndex !== -1 ? { ...allNotifications[notificationIndex] } : null
+        const notificationIndex = allNotifications.findIndex(
+          (n) => n._id === id
+        );
+        const deletedNotification =
+          notificationIndex !== -1
+            ? { ...allNotifications[notificationIndex] }
+            : null;
 
         // Mettre à jour l'interface immédiatement
-        allNotifications = allNotifications.filter((n) => n._id !== id)
+        allNotifications = allNotifications.filter((n) => n._id !== id);
 
         // Mettre à jour l'affichage
-        showNotifications(allNotifications)
+        showNotifications(allNotifications);
 
         // Mettre à jour le compteur
-        updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+        updateCounter(
+          allNotifications.filter((n) => n.status === "unread").length
+        );
 
         // Envoyer la requête à l'API
         makeRequest(
@@ -621,39 +721,45 @@ function setupListeners() {
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
-            toast("Notification successfully deleted", "success")
+            toast("Notification successfully deleted", "success");
           },
           () => {
             // En cas d'erreur, restaurer la notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
-                allNotifications.splice(notificationIndex, 0, deletedNotification)
+                allNotifications.splice(
+                  notificationIndex,
+                  0,
+                  deletedNotification
+                );
               } else {
-                allNotifications.push(deletedNotification)
+                allNotifications.push(deletedNotification);
               }
-              showNotifications(allNotifications)
-              updateCounter(allNotifications.filter((n) => n.status === "unread").length)
+              showNotifications(allNotifications);
+              updateCounter(
+                allNotifications.filter((n) => n.status === "unread").length
+              );
             }
-            toast("Error during deletion", "error")
-          },
-        )
+            toast("Error during deletion", "error");
+          }
+        );
       }
     }
-  })
+  });
 }
 
 function relativeDate(date) {
-  const now = new Date()
-  const seconds = Math.floor((now - date) / 1000)
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
 
-  if (seconds < 60) return "Just now"
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`
-  return date.toLocaleDateString()
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  return date.toLocaleDateString();
 }
 
 function toast(msg, type = "info") {
@@ -664,11 +770,11 @@ function toast(msg, type = "info") {
     timer: 1000,
     icon: type,
     title: msg,
-  })
+  });
 }
 
 // CSS style via JS
-const css = document.createElement("style")
+const css = document.createElement("style");
 css.textContent = `
   .unread-notification {
     background-color: rgba(255, 193, 7, 0.1);
@@ -800,22 +906,23 @@ css.textContent = `
     opacity: 0;
     transform: translateX(30px);
   }
-`
-document.head.appendChild(css)
+`;
+document.head.appendChild(css);
 
 // Import des bibliothèques nécessaires
 function loadScripts() {
   // Import Swal library
-  const swalScript = document.createElement("script")
-  swalScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"
-  document.head.appendChild(swalScript)
+  const swalScript = document.createElement("script");
+  swalScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+  document.head.appendChild(swalScript);
 
   // Import Bootstrap JS si ce n'est pas déjà fait
   if (typeof window.bootstrap === "undefined") {
-    const bootstrapScript = document.createElement("script")
-    bootstrapScript.src = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    document.head.appendChild(bootstrapScript)
+    const bootstrapScript = document.createElement("script");
+    bootstrapScript.src =
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js";
+    document.head.appendChild(bootstrapScript);
   }
 }
 
-loadScripts()
+loadScripts();
