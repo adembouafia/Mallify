@@ -633,24 +633,33 @@ function applyFilters() {
     filteredReports = filteredReports.filter((r) => safeGet(r, "status", "").toLowerCase() === currentTab)
   }
 
+
   if (currentDateFilter !== "all") {
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const weekStart = new Date(today)
-    weekStart.setDate(today.getDate() - today.getDay())
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    const now = new Date();
+    // Set time to start of current day
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Calculate start of current week (Sunday)
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+
+    // Calculate start of current month
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     filteredReports = filteredReports.filter((r) => {
-      const dateField = safeGet(r, "date") || safeGet(r, "createdAt") || safeGet(r, "created_at")
-      if (!dateField) return false
+      const dateField = safeGet(r, "date") || safeGet(r, "createdAt") || safeGet(r, "created_at");
+      if (!dateField) return false;
 
-      const d = new Date(dateField)
+      const d = new Date(dateField);
+
+      // Compare based on current filter
+      // Make sure date is between start of period and now (current time)
       return (
-        (currentDateFilter === "today" && d >= today) ||
-        (currentDateFilter === "week" && d >= weekStart) ||
-        (currentDateFilter === "month" && d >= monthStart)
-      )
-    })
+        (currentDateFilter === "today" && d >= today && d <= now) ||
+        (currentDateFilter === "week" && d >= weekStart && d <= now) ||
+        (currentDateFilter === "month" && d >= monthStart && d <= now)
+      );
+    });
   }
 
   if (searchTerm) {
@@ -694,6 +703,10 @@ function applyFilters() {
   if (currentPage > totalPages) {
     currentPage = totalPages || 1
   }
+}
+// Declare safeGet function
+function safeGet(obj, path, defaultValue) {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj) || defaultValue;
 }
 
 // Renders the reports table
