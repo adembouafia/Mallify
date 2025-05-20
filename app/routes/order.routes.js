@@ -30,7 +30,6 @@ module.exports = (app) => {
   
   // Admin dashboard API endpoints
   app.get("/api/order/count", order.getOrderCount);
-  app.get("/api/order/total-revenue", order.getTotalRevenue);
   app.get("/api/order/monthly-stats", order.getMonthlyStats);
   app.get("/api/order/by-shop", order.getOrdersByShopCount);
 };

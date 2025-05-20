@@ -1,5 +1,4 @@
 const auth = require("../middlewares/auth.middleware")
-const authorize = require("../middlewares/authorize.middleware")
   module.exports = (app) => {
     const notification = require("../controllers/notification.controller")
     

@@ -620,73 +620,10 @@ exports.getOrderCount = async (req, res) => {
   }
 };
 
-// Get total revenue from all orders
-exports.getTotalRevenue = async (req, res) => {
-  try {
-    // First check the order model to identify the correct field names
-    const orderSample = await Order.findOne();
-    let priceField = 'totalPrice'; // default field name
-    let statusField = 'status';   // default field name
-    
-    // Check if we need to use different field names based on the model
-    if (orderSample) {
-      if (orderSample.orderTotal !== undefined) {
-        priceField = 'orderTotal';
-      } else if (orderSample.total !== undefined) {
-        priceField = 'total';
-      }
-      
-      if (orderSample.orderStatus !== undefined) {
-        statusField = 'orderStatus';
-      }
-    }
-    
-    // Create match condition based on available fields
-    let matchCondition = {};
-    if (statusField) {
-      matchCondition[statusField] = { 
-        $in: ['completed', 'delivered', 'shipped', 'accepted'] 
-      };
-    }
-    
-    // Perform the aggregation with the correct field names
-    const result = await Order.aggregate([
-      { $match: matchCondition },
-      { $group: { 
-        _id: null, 
-        totalRevenue: { 
-          $sum: { 
-            $cond: [
-              { $ifNull: [`$${priceField}`, false] },
-              `$${priceField}`,
-              0
-            ]
-          } 
-        } 
-      }}
-    ]);
-    
-    const totalRevenue = result.length > 0 ? result[0].totalRevenue : 0;
-    
-    // If revenue is very low or zero, provide sample data for visualization
-    if (totalRevenue < 100) {
-      res.status(200).json({ totalRevenue: 149500 });
-    } else {
-      res.status(200).json({ totalRevenue });
-    }
-  } catch (err) {
-    console.error("Error in getTotalRevenue:", err);
-    res.status(500).json({ message: err.message || "Error calculating total revenue" });
-    
-    // On error, still return sample data for development purposes
-    res.status(200).json({ totalRevenue: 127850 });
-  }
-};
 
 // Get monthly order statistics
 exports.getMonthlyStats = async (req, res) => {
   try {
-    const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1; // 1-12
     
     // Query database for real data
@@ -1036,16 +973,5 @@ exports.getOrdersByShopCount = async (req, res) => {
     res.status(200).json(shopOrders);
   } catch (err) {
     console.error("Error in getOrdersByShopCount:", err);
-    
-    // Return sample data on error to avoid breaking the dashboard
-    const sampleData = [
-      { name: "Electronics Store", orderCount: 35, revenue: 3500.50 },
-      { name: "Fashion Boutique", orderCount: 28, revenue: 2100.75 },
-      { name: "Home Goods", orderCount: 22, revenue: 1850.25 },
-      { name: "Tech Gadgets", orderCount: 18, revenue: 1500.00 },
-      { name: "Beauty Shop", orderCount: 15, revenue: 950.50 }
-    ];
-    
-    res.status(200).json(sampleData);
   }
 };
