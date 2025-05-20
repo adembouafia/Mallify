@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema({
   },
   shopId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Shop",
+    ref: "shop",
     required: true,
   },
   orderId: {
@@ -19,6 +19,11 @@ const notificationSchema = new mongoose.Schema({
   clientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Client",
+    required: false,
+  },
+  vendorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "vendor",
     required: false,
   },
   type: {
