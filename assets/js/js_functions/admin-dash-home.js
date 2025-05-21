@@ -1658,7 +1658,7 @@ function createShopCategoriesChart(categoriesData) {
       backButtonHTML = `
                 <div id="categoryBackBtn" class="position-absolute" style="top: 10px; left: 10px; z-index: 100;">
                     <button class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-arrow-left"></i> Back to Categories
+                        <i class="bi bi-arrow-left"></i>
                     </button>
                 </div>
             `;
@@ -2190,7 +2190,7 @@ function createSubcategoriesChart(categoryData) {
                         <h5 class="text-center">${categoryData.categoryName} Subcategories</h5>
                         <div id="categoryBackBtn" class="position-absolute" style="top: 10px; left: 10px; z-index: 100;">
                             <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-arrow-left"></i> Back to Categories
+                                <i class="bi bi-arrow-left"></i>
                             </button>
                         </div>
                     </div>
@@ -2500,7 +2500,7 @@ function createSubcategoriesChart(categoryData) {
             <h5 class="text-center">${categoryData.categoryName} Subcategories</h5>
             <div id="categoryBackBtn" class="position-absolute" style="top: 10px; left: 10px; z-index: 100;">
                 <button class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-arrow-left"></i> Back to Categories
+                    <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
         `;
@@ -2552,7 +2552,7 @@ function createSubcategoriesChart(categoryData) {
                     <h5 class="text-center">${window.selectedCategory ? window.selectedCategory.name : ""} Subcategories</h5>
                     <div id="categoryBackBtn" class="position-absolute" style="top: 10px; left: 10px; z-index: 100;">
                         <button class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-arrow-left"></i> Back to Categories
+                            <i class="bi bi-arrow-left"></i>
                         </button>
                     </div>
                 </div>
