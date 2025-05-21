@@ -1806,7 +1806,7 @@
           >
             <div class="footer-item__logo">
               <a href="index.html">
-                <img src="../assets/images/logo-removebg.png" alt="logo" />
+                <img src="../assets/images/logo-horizontal.png" alt="logo" />
               </a>
             </div>
             <p class="mb-24">
@@ -1851,29 +1851,21 @@
                 >
               </li>
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
+                <a href="contact.html" class="text-gray-600 hover-text-main-600"
                   >Contact Us</a
                 >
               </li>
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Feedback</a
-                >
-              </li>
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Rules & Policy</a
-                >
-              </li>
+
+             
             </ul>
           </div>
 
           <div class="footer-item" data-aos="fade-up" data-aos-duration="600">
             <h6 class="footer-item__title">Customer Support</h6>
             <ul class="footer-menu">
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Help Center</a
+               <li class="mb-16">
+                <a href="#" class="text-gray-600 hover-text-main-600" id="rule_policy"
+                  >Rules & Policy</a
                 >
               </li>
               <li class="mb-16">
@@ -1882,36 +1874,32 @@
                 >
               </li>
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600">Report</a>
-              </li>
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Policies & Rules</a
+                <a href="faq.html" class="text-gray-600 hover-text-main-600"
+                  >FAQ</a
                 >
               </li>
             </ul>
           </div>
 
-          <div class="footer-item" data-aos="fade-up" data-aos-duration="800">
-            <h6 class="footer-item__title">My Account</h6>
+          <div class="footer-item" data-aos="fade-up" data-aos-duration="800">            <h6 class="footer-item__title">My Account</h6>
             <ul class="footer-menu">
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
+                <a href="#" class="text-gray-600 hover-text-main-600" id="footer-my-account"
                   >My Account</a
                 >
               </li>
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
+                <a href="#" class="text-gray-600 hover-text-main-600" id="footer-order-history"
                   >Order History</a
                 >
               </li>
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
+                <a href="cart.html" class="text-gray-600 hover-text-main-600"
                   >Shoping Cart</a
                 >
               </li>
               <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
+                <a href="wishlist.html" class="text-gray-600 hover-text-main-600"
                   >Wishlist</a
                 >
               </li>
@@ -1921,34 +1909,23 @@
           <div class="footer-item" data-aos="fade-up" data-aos-duration="1000">
             <h6 class="footer-item__title">Information</h6>
             <ul class="footer-menu">
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Become a Vendor</a
-                >
-              </li>
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Affiliate Program</a
-                >
-              </li>
-              <li class="mb-16">
-                <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Privacy Policy</a
-                >
-              </li>
-              <li class="mb-16">
+                <li class="mb-16">
                 <a href="#" class="text-gray-600 hover-text-main-600"
                   >Extended Plan</a
                 >
               </li>
               <li class="mb-16">
                 <a href="#" class="text-gray-600 hover-text-main-600"
-                  >Community</a
+                  >How Mallify Works</a
+                >
+              </li>
+               <li class="mb-16">
+                <a href="#" class="text-gray-600 hover-text-main-600"
+                  >Payment Methods</a
                 >
               </li>
             </ul>
           </div>
-
           <div class="footer-item" data-aos="fade-up" data-aos-duration="1200">
             <h6 class="">Shop on The Go</h6>
             <p class="mb-16">Mallify App is available. Get it now</p>
@@ -1999,6 +1976,24 @@
         </div>
       </div>
     </footer>
+        <!-- Rules & Policy Modal -->
+    <div class="modal fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-main-600">
+            <h5 class="modal-title text-white" id="rulesModalLabel">Rules & Privacy Policy</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="rulesContent"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 
     <div class="bottom-footer bg-color-three py-8">
       <div class="container container-lg">
@@ -2029,5 +2024,6 @@
     <script src="../assets/js/js_functions/categorisWithSubCategories.js"></script>
     <script src="../assets/js/js_functions/searchFiltred.js"></script>
     <script src="../assets/js/js_functions/shop.js"></script>
+    <script src="../assets/js/js_functions/footer.js"></script>
   </body>
 </html>

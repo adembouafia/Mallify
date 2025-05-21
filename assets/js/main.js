@@ -1586,3 +1586,97 @@ window.mallifyCounters = {
   fetchCartCount
 };
 
+// Rules & Policy Modal Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Rules and Policy content - statically declared
+  const rulesAndPolicyContent = `
+    <div class="rules-policy-container">
+      <h4 class="mb-4 ">Mallify Rules & Policies</h4>
+      
+      <section class="mb-4">
+        <h5 class="text-main-600">1. General Rules</h5>
+        <p>Welcome to Mallify! By using our platform, you agree to comply with and be bound by the following rules and policies:</p>
+        <ul class="ps-4">
+          <li>Users must be at least 18 years old or have parental consent to use our services.</li>
+          <li>All personal information provided must be accurate and up-to-date.</li>
+          <li>Users are responsible for maintaining the confidentiality of their account credentials.</li>
+          <li>Any abuse, harassment, or fraudulent activity is strictly prohibited and may result in account termination.</li>
+        </ul>
+      </section>
+      
+      <section class="mb-4">
+        <h5 class="text-main-600">2. Shopping Rules</h5>
+        <p>To ensure a positive shopping experience for everyone:</p>
+        <ul class="ps-4">
+          <li>Products must be returned within 14 days of delivery to be eligible for a refund.</li>
+          <li>Customers are responsible for return shipping costs unless the item is defective.</li>
+          <li>Payment information is processed securely through our trusted payment providers.</li>
+          <li>Orders may be canceled before shipping without penalty; cancellations after shipping may incur fees.</li>
+        </ul>
+      </section>
+      
+      <section class="mb-4">
+        <h5 class="text-main-600">3. Privacy Policy</h5>
+        <p>At Mallify, we value your privacy and are committed to protecting your personal data:</p>
+        <ul class="ps-4">
+          <li>We collect personal information solely for processing orders and improving your shopping experience.</li>
+          <li>Your data is never sold to third parties for marketing purposes.</li>
+          <li>We employ industry-standard security measures to protect your information.</li>
+          <li>Cookies are used to enhance site functionality and personalize your experience.</li>
+          <li>You have the right to access, modify, or delete your personal information at any time.</li>
+        </ul>
+      </section>
+      
+      <section class="mb-4">
+        <h5 class="text-main-600">4. Seller Rules</h5>
+        <p>For vendors using our platform to sell products:</p>
+        <ul class="ps-4">
+          <li>All product descriptions must be accurate and not misleading.</li>
+          <li>Prices must include all necessary taxes and fees.</li>
+          <li>Prohibited items include illegal goods, counterfeit products, and hazardous materials.</li>
+          <li>Sellers must respond to customer inquiries within 48 hours.</li>
+          <li>Commission fees are automatically deducted from sales as per the seller agreement.</li>
+        </ul>
+      </section>
+      
+      <section class="mb-4">
+        <h5 class="text-main-600">5. Intellectual Property</h5>
+        <p>Regarding content and intellectual property:</p>
+        <ul class="ps-4">
+          <li>All content on Mallify, including logos, images, and text, is protected by copyright.</li>
+          <li>Users may not reproduce, distribute, or create derivative works without permission.</li>
+          <li>Sellers must have rights to all product images and descriptions they upload.</li>
+          <li>Reporting copyright infringement can be done through our designated channels.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h5 class="text-main-600">6. Changes to Rules & Policies</h5>
+        <p>Mallify reserves the right to modify these rules and policies at any time. Significant changes will be notified to users via email or site notifications. Continued use of the platform after changes constitutes acceptance of the updated terms.</p>
+        <p>Last Updated: May 15, 2025</p>
+      </section>
+    </div>
+  `;
+
+  // Function to initialize the modal
+  function initRulesModal() {
+    const rulesPolicyLink = document.getElementById('rule_policy');
+    const rulesContent = document.getElementById('rulesContent');
+    
+    if (rulesPolicyLink && rulesContent) {
+      // Set modal content
+      rulesContent.innerHTML = rulesAndPolicyContent;
+      
+      // Add click event listener
+      rulesPolicyLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        const rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
+        rulesModal.show();
+      });
+    }
+  }
+
+  // Initialize modal
+  initRulesModal();
+});
+
