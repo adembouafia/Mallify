@@ -502,7 +502,7 @@ function updateRecentProducts(products) {
 function updateSidebarBadges(metrics) {
   // Update Products badge
   const productsBadge = document.querySelector(
-    '.nav-item a[href="products.html"] .nav-badge'
+    '.nav-item a[href="products.html"] '
   );
   if (productsBadge) {
     productsBadge.textContent = metrics.totalProducts;
@@ -510,7 +510,7 @@ function updateSidebarBadges(metrics) {
 
   // Update Orders badge
   const ordersBadge = document.querySelector(
-    '.nav-item a[href="orders.html"] .nav-badge'
+    '.nav-item a[href="orders.html"] '
   );
   if (ordersBadge) {
     ordersBadge.textContent = metrics.totalOrders;
@@ -518,7 +518,7 @@ function updateSidebarBadges(metrics) {
 
   // Update Invoice badge
   const invoiceBadge = document.querySelector(
-    '.nav-item a[href="invoice.html"] .nav-badge'
+    '.nav-item a[href="invoice.html"] '
   );
   if (invoiceBadge) {
     invoiceBadge.textContent = metrics.totalInvoices || metrics.totalOrders; // Assuming all orders have invoices
