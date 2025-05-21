@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
 const fs = require('fs');
+const https = require('https');
 
 dotenv.config();
 const app = express();
@@ -45,7 +46,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   }
 }));
 
-// Helmet configuration
+// Helmet configuration with updated CSP for Google Translate
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -64,7 +65,11 @@ app.use(
           "*.jsdelivr.net",
           "ajax.googleapis.com",
           "unpkg.com",
-          "*.unpkg.com"
+          "*.unpkg.com",
+          "translate.google.com",
+          "*.translate.goog",
+          "translate.googleapis.com",
+          "*.google.com"  // Added for Google Translate
         ],
         scriptSrcAttr: ["'unsafe-inline'"], 
         scriptSrcElem: [
@@ -80,7 +85,11 @@ app.use(
           "*.jsdelivr.net",
           "ajax.googleapis.com",
           "unpkg.com",
-          "*.unpkg.com"
+          "*.unpkg.com",
+          "translate.google.com",
+          "*.translate.goog",
+          "translate.googleapis.com",
+          "*.google.com"  // Added for Google Translate
         ],
         styleSrc: [
           "'self'", 
@@ -92,7 +101,9 @@ app.use(
           "cdn.jsdelivr.net",
           "*.jsdelivr.net",
           "unpkg.com",
-          "*.unpkg.com"
+          "*.unpkg.com",
+          "translate.google.com",
+          "*.translate.goog"  // Added for Google Translate
         ],
         styleSrcElem: [
           "'self'", 
@@ -104,7 +115,9 @@ app.use(
           "cdn.jsdelivr.net",
           "*.jsdelivr.net",
           "unpkg.com",
-          "*.unpkg.com"
+          "*.unpkg.com",
+          "translate.google.com",
+          "*.translate.goog"  // Added for Google Translate
         ],
         fontSrc: [
           "'self'", 
@@ -116,11 +129,38 @@ app.use(
           "*.jsdelivr.net",
           "unpkg.com",
           "*.unpkg.com",
+          "translate.google.com",
+          "*.translate.goog",
           "data:"
         ],
-        imgSrc: ["'self'", "http://localhost:3000", "data:", "blob:", "*"],
-        connectSrc: ["'self'", "ws:", "wss:", "*"],
-        frameSrc: ["'self'", ".youtube.com", ".google.com"],
+        imgSrc: [
+          "'self'", 
+          "http://localhost:3000", 
+          "data:", 
+          "blob:", 
+          "*", 
+          "translate.google.com", 
+          "*.translate.goog", 
+          "*.gstatic.com", 
+          "*.google.com"
+        ],
+        connectSrc: [
+          "'self'", 
+          "ws:", 
+          "wss:", 
+          "*", 
+          "translate.google.com", 
+          "*.translate.goog", 
+          "translate.googleapis.com",
+          "*.google.com"
+        ],
+        frameSrc: [
+          "'self'", 
+          ".youtube.com", 
+          ".google.com", 
+          "translate.google.com", 
+          "*.translate.goog"
+        ],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'", "data:", "blob:"],
         workerSrc: ["'self'", "blob:"]
@@ -131,8 +171,53 @@ app.use(
   })
 );
 
+// Google Translate proxy route
+app.get("/google-translate-proxy", (req, res) => {
+  https.get("https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", (response) => {
+    let data = '';
+    
+    response.on('data', (chunk) => {
+      data += chunk;
+    });
+    
+    response.on('end', () => {
+      // Modify the script to redirect analytics requests to our proxy
+      const modifiedScript = data.replace(
+        /translate\.google\.com\/gen204/g, 
+        '/translate-analytics'
+      );
+      
+      res.setHeader('Content-Type', 'application/javascript');
+      res.send(modifiedScript);
+    });
+  }).on('error', (err) => {
+    console.error('Error fetching Google Translate script:', err);
+    // Send a fallback script that does nothing but defines the required function
+    res.setHeader('Content-Type', 'application/javascript');
+    res.send(`
+      function googleTranslateElementInit() {
+        console.log('Google Translate fallback initialized');
+      }
+    `);
+  });
+});
+
+// Proxy route for Google Translate analytics
+app.get('/translate-analytics', (req, res) => {
+  // Just return a 200 OK response
+  res.status(200).send('OK');
+});
+
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, "frontend")));
+app.use(express.static(path.join(__dirname, "frontend"), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
 
 // Connect to MongoDB
 mongoose

@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     </head> 
 <body>
+  <div id="google_translate_element" style="display:none;"></div>   
   <div class="preloader">
     <img src="../assets/preloader/preloader.svg  " alt="Loading ..." class="logo-spinner">
   </div>
@@ -913,6 +914,16 @@
 <script src="../assets/js/js_functions/categorisWithSubCategories.js"></script>
 <script src="../assets/js/js_functions/searchFiltred.js"></script>
 <script src="../assets/js/js_functions/footer.js"></script>
+        <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+            {pageLanguage: 'en'},
+            'google_translate_element'
+            );
+        } 
+    </script>
+    <script type="text/javascript" src="/google-translate-proxy"></script>
+    <script src="../assets/js/js_functions/lang.js"></script>
 
     </body>
 </html>

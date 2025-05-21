@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
   </head>
+  <div id="google_translate_element" style="display:none;"></div>   
   <body>
     <div class="preloader">
       <img src="../assets/preloader/preloader.svg  " alt="Loading ..." class="logo-spinner">
@@ -2025,5 +2026,15 @@
     <script src="../assets/js/js_functions/searchFiltred.js"></script>
     <script src="../assets/js/js_functions/shop.js"></script>
     <script src="../assets/js/js_functions/footer.js"></script>
+            <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+            {pageLanguage: 'en'},
+            'google_translate_element'
+            );
+        } 
+    </script>
+    <script type="text/javascript" src="/google-translate-proxy"></script>
+    <script src="../assets/js/js_functions/lang.js"></script>
   </body>
 </html>

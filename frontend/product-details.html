@@ -56,6 +56,7 @@
     </style>
   </head>
   <body>
+    <div id="google_translate_element" style="display:none;"></div>   
     <div class="preloader">
       <img
         src="../assets/preloader/preloader.svg  "
@@ -1479,5 +1480,15 @@
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="../assets/js/js_functions/searchFiltred.js"></script>
     <script src="../assets/js/js_functions/footer.js"></script>
+            <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+            {pageLanguage: 'en'},
+            'google_translate_element'
+            );
+        } 
+    </script>
+    <script type="text/javascript" src="/google-translate-proxy"></script>
+    <script src="../assets/js/js_functions/lang.js"></script>
   </body>
 </html>
