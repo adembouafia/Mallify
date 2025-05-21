@@ -277,7 +277,7 @@ function updateSalesMetrics(metrics) {
     ".card-footer .col-md-3:nth-child(3) h5"
   );
   if (profitElement) {
-    const profit = Math.round((metrics.totalRevenue || 0) * 0.6); // 60% profit margin
+    const profit = Math.round((metrics.totalRevenue || 0) * 0.6); 
     profitElement.textContent = `${profit.toLocaleString()} TND`;
   }
   // Update orders count (ORDERS)
@@ -502,7 +502,7 @@ function updateRecentProducts(products) {
 function updateSidebarBadges(metrics) {
   // Update Products badge
   const productsBadge = document.querySelector(
-    '.nav-item a[href="products.html"] '
+    '.nav-item a[href="products.html"] .nav-badge'
   );
   if (productsBadge) {
     productsBadge.textContent = metrics.totalProducts;
@@ -510,7 +510,7 @@ function updateSidebarBadges(metrics) {
 
   // Update Orders badge
   const ordersBadge = document.querySelector(
-    '.nav-item a[href="orders.html"] '
+    '.nav-item a[href="orders.html"] .nav-badge'
   );
   if (ordersBadge) {
     ordersBadge.textContent = metrics.totalOrders;
@@ -518,7 +518,7 @@ function updateSidebarBadges(metrics) {
 
   // Update Invoice badge
   const invoiceBadge = document.querySelector(
-    '.nav-item a[href="invoice.html"] '
+    '.nav-item a[href="invoice.html"] .nav-badge'
   );
   if (invoiceBadge) {
     invoiceBadge.textContent = metrics.totalInvoices || metrics.totalOrders; // Assuming all orders have invoices
