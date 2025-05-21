@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     list.innerHTML = categories.map(cat => `
                         <li class="has-submenus-submenu">
                             <a href="shop.html?category=${cat._id}" class="category-link text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0" data-category-id="${cat._id}">
-                                <span class="text-xl d-flex"><i class="ph ph-dot-outline"></i></span>
+                                <span class="text-xl d-flex"><i class="ph ph-dice-five"></i></span>
                                 <span>${cat.categoryName}</span>
                                 <span class="icon text-md d-flex ms-auto"><i class="ph ph-caret-right"></i></span>
                             </a>
