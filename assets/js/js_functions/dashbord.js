@@ -277,7 +277,7 @@ function updateSalesMetrics(metrics) {
     ".card-footer .col-md-3:nth-child(3) h5"
   );
   if (profitElement) {
-    const profit = Math.round((metrics.totalRevenue || 0) * 0.6); // 60% profit margin
+    const profit = Math.round((metrics.totalRevenue || 0) * 0.6); 
     profitElement.textContent = `${profit.toLocaleString()} TND`;
   }
   // Update orders count (ORDERS)
