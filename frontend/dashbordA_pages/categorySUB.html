@@ -22,8 +22,6 @@
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
     />    <link rel="stylesheet" href="../../assets/css/dashboard.css" />
-    <link rel="stylesheet" href="../../assets/css/category-management.css" />
-    <link rel="stylesheet" href="../../assets/css/sidebar-fix.css" />
     
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -246,8 +244,9 @@
           </div>
 
           <div class="row">            <!-- Left column: Categories -->
-            <div class="col-lg-6 mb-4 mb-lg-0">
-              <div class="card shadow-sm h-100">                <div class="card-header bg-light">
+            <div class="col-lg-6 mb-4 mb-lg-0 max-h-15200">
+              <div class="card shadow-sm h-100">             
+                 <div class="card-header bg-light">
                   <h5 class="mb-0">Categories List</h5>
                 </div>
                 <div class="card-body">
@@ -269,7 +268,9 @@
               </div>
             </div>
             <!-- Right column: Subcategories -->
-            <div class="col-lg-6">              <div class="card shadow-sm h-100">                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div class="col-lg-6 max-h-15200">            
+                <div class="card shadow-sm  ">    
+                  <div class="card-header bg-light d-flex justify-content-between align-items-center">
                   <h5 class="mb-0">Subcategories List</h5>
                   <button id="resetFilterBtn" class="btn btn-sm btn-outline-secondary">
                     <i class="bi bi-funnel me-1"></i>Show All

@@ -16207,3 +16207,8 @@ html.maximized-card {
 .filter-item {
   flex: 1;
 }
+
+.max-h-15200{
+  max-height: 500px !important; 
+  overflow-y: auto !important;
+}
