@@ -16211,4 +16211,5 @@ html.maximized-card {
 .max-h-15200{
   max-height: 500px !important; 
   overflow-y: auto !important;
+  scrollbar-width: thin !important;
 }
