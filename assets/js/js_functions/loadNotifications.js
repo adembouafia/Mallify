@@ -1,4 +1,4 @@
-const API_BASE_URL = ""; // à configurer selon ton environnement
+const API_BASE_URL_1 = ""; // à configurer selon ton environnement
 let currentShopId = null;
 let allNotifications = []; // Variable pour stocker toutes les notifications
 let allAdminNotifications = []; // Variable pour stocker les notifications admin
@@ -115,7 +115,7 @@ function loadShopNotifications() {
 
   makeRequest(
     "GET",
-    `${API_BASE_URL}/notifications/shop/${shopIdParam}/count`,
+    `${API_BASE_URL_1}/notifications/shop/${shopIdParam}/count`,
     null,
     (data) => {
       updateCounter(data.count);
@@ -124,7 +124,7 @@ function loadShopNotifications() {
 
   makeRequest(
     "GET",
-    `${API_BASE_URL}/notifications/shop/${shopIdParam}`,
+    `${API_BASE_URL_1}/notifications/shop/${shopIdParam}`,
     null,
     (data) => {
       allNotifications = data.data || []; // Stocker toutes les notifications
@@ -146,7 +146,7 @@ function loadShopNotifications() {
 function loadAdminNotifications() {
   makeRequest(
     "GET",
-    `${API_BASE_URL}/notifications/admin/count`,
+    `${API_BASE_URL_1}/notifications/admin/count`,
     null,
     (data) => {
       updateCounter(data.count);
@@ -155,7 +155,7 @@ function loadAdminNotifications() {
 
   makeRequest(
     "GET",
-    `${API_BASE_URL}/notifications/admin`,
+    `${API_BASE_URL_1}/notifications/admin`,
     null,
     (data) => {
       allAdminNotifications = data.data || []; // Stocker toutes les notifications admin
@@ -364,7 +364,7 @@ function createNotificationsModal() {
         // Pour le dashboard admin
         makeRequest(
           "PUT",
-          `${API_BASE_URL}/notifications/admin/read-all`,
+          `${API_BASE_URL_1}/notifications/admin/read-all`,
           null,
           () => {
             // Mettre à jour localement toutes les notifications
@@ -391,7 +391,7 @@ function createNotificationsModal() {
 
         makeRequest(
           "PUT",
-          `${API_BASE_URL}/notifications/shop/${shopIdParam}/read-all`,
+          `${API_BASE_URL_1}/notifications/shop/${shopIdParam}/read-all`,
           null,
           () => {
             // Mettre à jour localement toutes les notifications
@@ -481,8 +481,8 @@ function createNotificationsModal() {
       // Fonction pour supprimer une notification
       const deleteNotification = (id, index) => {
         const endpoint = isAdminDashboard 
-          ? `${API_BASE_URL}/notifications/admin/${id}`
-          : `${API_BASE_URL}/notifications/${id}`;
+          ? `${API_BASE_URL_1}/notifications/admin/${id}`
+          : `${API_BASE_URL_1}/notifications/${id}`;
           
         makeRequest(
           "DELETE",
@@ -779,7 +779,7 @@ function setupModalButtonListeners() {
       // Envoyer la requête à l'API
       makeRequest(
         "PUT",
-        `${API_BASE_URL}/notifications/read/${id}`,
+        `${API_BASE_URL_1}/notifications/read/${id}`,
         null,
         () => {
           // Succès silencieux - l'interface est déjà mise à jour
@@ -833,7 +833,7 @@ function setupModalButtonListeners() {
         // Envoyer la requête à l'API
         makeRequest(
           "DELETE",
-          `${API_BASE_URL}/notifications/${id}`,
+          `${API_BASE_URL_1}/notifications/${id}`,
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
@@ -908,7 +908,7 @@ function setupModalAdminButtonListeners() {
       // Envoyer la requête à l'API
       makeRequest(
         "PUT",
-        `${API_BASE_URL}/notifications/admin/read/${id}`,
+        `${API_BASE_URL_1}/notifications/admin/read/${id}`,
         null,
         () => {
           // Succès silencieux - l'interface est déjà mise à jour
@@ -962,7 +962,7 @@ function setupModalAdminButtonListeners() {
         // Envoyer la requête à l'API
         makeRequest(
           "DELETE",
-          `${API_BASE_URL}/notifications/admin/${id}`,
+          `${API_BASE_URL_1}/notifications/admin/${id}`,
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
@@ -998,7 +998,7 @@ function setupShopListeners() {
   markAllReadBtn.addEventListener("click", () => {
     makeRequest(
       "PUT",
-      `${API_BASE_URL}/notifications/shop/${currentShopId}/read-all`,
+      `${API_BASE_URL_1}/notifications/shop/${currentShopId}/read-all`,
       null,
       () => {
         // Mettre à jour localement toutes les notifications
@@ -1055,7 +1055,7 @@ function setupShopListeners() {
       // Envoyer la requête à l'API
       makeRequest(
         "PUT",
-        `${API_BASE_URL}/notifications/read/${id}`,
+        `${API_BASE_URL_1}/notifications/read/${id}`,
         null,
         () => {
           // Succès silencieux - l'interface est déjà mise à jour
@@ -1104,7 +1104,7 @@ function setupShopListeners() {
         // Envoyer la requête à l'API
         makeRequest(
           "DELETE",
-          `${API_BASE_URL}/notifications/${id}`,
+          `${API_BASE_URL_1}/notifications/${id}`,
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
@@ -1140,7 +1140,7 @@ function setupAdminListeners() {
   markAllReadBtn.addEventListener("click", () => {
     makeRequest(
       "PUT",
-      `${API_BASE_URL}/notifications/admin/read-all`,
+      `${API_BASE_URL_1}/notifications/admin/read-all`,
       null,
       () => {
         // Mettre à jour localement toutes les notifications
@@ -1197,7 +1197,7 @@ function setupAdminListeners() {
       // Envoyer la requête à l'API
       makeRequest(
         "PUT",
-        `${API_BASE_URL}/notifications/admin/read/${id}`,
+        `${API_BASE_URL_1}/notifications/admin/read/${id}`,
         null,
         () => {
           // Succès silencieux - l'interface est déjà mise à jour
@@ -1246,7 +1246,7 @@ function setupAdminListeners() {
         // Envoyer la requête à l'API
         makeRequest(
           "DELETE",
-          `${API_BASE_URL}/notifications/admin/${id}`,
+          `${API_BASE_URL_1}/notifications/admin/${id}`,
           null,
           () => {
             // Succès silencieux - l'interface est déjà mise à jour
