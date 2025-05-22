@@ -1,94 +1,142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pro Dashboard</title>
-  <link rel="stylesheet" href="../../assets/css/settings.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pro Dashboard</title>
+    <link rel="stylesheet" href="../../assets/css/settings.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+      <button class="mobile-menu-btn" id="menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
 
-</head>
-<body>
-  <div class="container">
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-    <button class="mobile-menu-btn" id="menu-btn" onclick="toggleSidebar()">
-      <i class="fas fa-bars"></i>
-    </button>
-
-    <aside class="sidebar" id="sidebar">
-      <div class="logo-container">
-        <img id="shop-logo" src="../../assets/images/dashboard/shop-logo.jpg" alt="Shop Logo">
-        <div class="shop-info">
-          <h2 class="shop-name" id="sidebar-shop-name">Pro Shop</h2>
-          <p class="shop-description" id="sidebar-shop-description">Premium products store</p>
-          <p class="shop-role" id="sidebar-role">Shop Owner</p>
+      <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+          <img
+            id="shop-logo"
+            src="../../assets/images/dashboard/shop-logo.jpg"
+            alt="Shop Logo"
+          />
+          <div class="shop-info">
+            <h2 class="shop-name" id="sidebar-shop-name">Pro Shop</h2>
+            <p class="shop-description" id="sidebar-shop-description">
+              Premium products store
+            </p>
+            <p class="shop-role" id="sidebar-role">Shop Owner</p>
+          </div>
+          <div class="sidebar-footer" style="margin-top: 30px">
+            <p id="sidebar-address">📍 Sousse , Tunisie</p>
+            <p id="sidebar-phone">📞 +216 26 788 694</p>
+          </div>
         </div>
-        <div class="sidebar-footer" style="margin-top: 30px;">
-        <p id="sidebar-stock-limit">📦 Stock Limit: 5</p>
-        <p id="sidebar-address">📍 Sousse , Tunisie</p>
-        <p id="sidebar-phone">📞 +216 26 788 694</p>
-      </div>
-      </div>
-      <ul class="sidebar-menu">
-        <li><a href="index.html" >🏠 Dashboard</a></li>
-        <li><a href="#" onclick="showSection(event, 'stock-limiter')">📊 Stock Limiter</a></li>
-        <li><a href="#" class="active" onclick="showSection(event, 'shop-info')">🏪 Shop Info</a></li>
-        <li><a href="#" onclick="showSection(event, 'vendor-info')">👤 Vendor Info</a></li>
-        <li><a href="#" onclick="showSection(event, 'moderator-info')">👥 Moderator Info</a></li>
-      </ul>
-      
-    </aside>
+        <ul class="sidebar-menu">
+          <li><a href="index.html">🏠 Dashboard</a></li>
+          <li>
+            <a href="#" class="active" onclick="showSection(event, 'shop-info')"
+              >🏪 Shop Info</a
+            >
+          </li>
+          <li>
+            <a href="#" onclick="showSection(event, 'vendor-info')"
+              >👤 Vendor Info</a
+            >
+          </li>
+          <li>
+            <a href="#" onclick="showSection(event, 'moderator-info')"
+              >👥 Moderator Info</a
+            >
+          </li>
+        </ul>
+      </aside>
 
-    <main class="main-content">
-      <section id="shop-info" class="settings-section">
-        <h2>Shop Information</h2>
-        <div class="form-group"><input type="text" id="shop-name" placeholder="Shop Name"></div>
-        <div class="form-group"><textarea id="shop-description" placeholder="Shop Description"></textarea></div>
-        <div class="form-group"><input type="text" id="shop-address" placeholder="Address"></div>
-        <div class="form-group"><input type="text" id="shop-phone" placeholder="Phone Number"></div>
-        <div class="form-group">
-          <label>Update Logo:</label>
-          <input type="file" id="logo-upload" accept="image/*">
-        </div>
-        <button id="save-shop-info-btn" onclick="saveShopInfo()">Save Changes</button>
-      </section>
+      <main class="main-content">
+        <section id="shop-info" class="settings-section">
+          <h2>Shop Information</h2>
+          <div class="form-group">
+            <input type="text" id="shop-name" placeholder="Shop Name" />
+          </div>
+          <div class="form-group">
+            <textarea
+              id="shop-description"
+              placeholder="Shop Description"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <input type="text" id="shop-address" placeholder="Address" />
+          </div>
+          <div class="form-group">
+            <input type="text" id="shop-phone" placeholder="Phone Number" />
+          </div>
+          <div class="form-group">
+            <label>Update Logo:</label>
+            <input type="file" id="logo-upload" accept="image/*" />
+          </div>
+          <button id="save-shop-info-btn" onclick="saveShopInfo()">
+            Save Changes
+          </button>
+        </section>
+        <!-- Stock limit has been moved to the product level -->
 
-      <section id="stock-limiter" class="settings-section hidden">
-        <h2>Stock Limiter Settings</h2>
-        <div class="form-group"><input type="number" id="stock-limit" placeholder="Set stock limit"></div>
-        <button id="save-stock-limit-btn" onclick="setStockLimit()">Save Limit</button>
-      </section>
+        <section id="vendor-info" class="settings-section hidden">
+          <h2>Vendor Information</h2>
+          <div class="form-group">
+            <input type="text" id="vendor-name" placeholder="Vendor Name" />
+          </div>
+          <div class="form-group">
+            <input type="email" id="vendor-email" placeholder="Email" />
+          </div>
+          <div class="form-group">
+            <input type="tel" id="vendor-phone" placeholder="Phone Number" />
+          </div>
+          <div class="form-group">
+            <label>Change Password:</label>
+            <input
+              type="password"
+              id="vendor-password"
+              placeholder="New Password"
+            />
+          </div>
+          <button onclick="saveVendorInfo()">Save Changes</button>
+        </section>
 
-      <section id="vendor-info" class="settings-section hidden">
-        <h2>Vendor Information</h2>
-        <div class="form-group"><input type="text" id="vendor-name" placeholder="Vendor Name"></div>
-        <div class="form-group"><input type="email" id="vendor-email" placeholder="Email"></div>
-        <div class="form-group"><input type="tel" id="vendor-phone" placeholder="Phone Number"></div>
-        <div class="form-group">
-          <label>Change Password:</label>
-          <input type="password" id="vendor-password" placeholder="New Password">
-        </div>
-        <button onclick="saveVendorInfo()">Save Changes</button>
-      </section>
-
-      <section id="moderator-info" class="settings-section hidden">
-        <h2>Moderator Information</h2>
-        <div class="form-group"><input type="text" id="moderator-name" placeholder="Moderator Name"></div>
-        <div class="form-group"><input type="email" id="moderator-email" placeholder="Email"></div>
-        <div class="form-group">
-          <label>Change Password:</label>
-          <input type="password" id="moderator-password" placeholder="New Password">
-        </div>
-        <div class="form-group">
-          <label>Update Profile Image:</label>
-          <input type="file" id="moderator-image-upload" accept="image/*">
-        </div>
-        <button onclick="saveModeratorInfo()">Save Changes</button>
-      </section>
-    </main>
-  </div>
-<script src="../../assets/js/js_functions/settings.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-</body>
+        <section id="moderator-info" class="settings-section hidden">
+          <h2>Moderator Information</h2>
+          <div class="form-group">
+            <input
+              type="text"
+              id="moderator-name"
+              placeholder="Moderator Name"
+            />
+          </div>
+          <div class="form-group">
+            <input type="email" id="moderator-email" placeholder="Email" />
+          </div>
+          <div class="form-group">
+            <label>Change Password:</label>
+            <input
+              type="password"
+              id="moderator-password"
+              placeholder="New Password"
+            />
+          </div>
+          <div class="form-group">
+            <label>Update Profile Image:</label>
+            <input type="file" id="moderator-image-upload" accept="image/*" />
+          </div>
+          <button onclick="saveModeratorInfo()">Save Changes</button>
+        </section>
+      </main>
+    </div>
+    <script src="../../assets/js/js_functions/settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
 </html>

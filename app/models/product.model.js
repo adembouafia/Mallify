@@ -71,6 +71,12 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+    stockLimit: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     description: {
       type: String,
       required: true,

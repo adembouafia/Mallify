@@ -119,7 +119,10 @@
                   <a href="Settings.html" class="btn btn-default btn-flat"
                     >Settings
                   </a>
-                  <a href="#" class="btn btn-default btn-flat float-end" onclick="handleLogout()"
+                  <a
+                    href="#"
+                    class="btn btn-default btn-flat float-end"
+                    onclick="handleLogout()"
                     >Sign out</a
                   >
                 </li>
@@ -171,7 +174,7 @@
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Products
-                    
+
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
@@ -181,7 +184,7 @@
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Orders
-                    
+
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
@@ -200,7 +203,7 @@
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Invoice
-                    
+
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
@@ -286,7 +289,6 @@
               <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">All Product List</h4>
                 <div>
-
                   <button
                     class="btn btn-sm btn-warning"
                     data-bs-toggle="modal"
@@ -299,7 +301,6 @@
               <div
                 class="d-flex justify-content-between align-items-center mt-3"
               >
-               
                 <div class="input-group input-group-sm" style="width: 250px">
                   <input
                     type="text"
@@ -477,6 +478,19 @@
                     class="form-control"
                     name="Stock"
                     required
+                  />
+                </div>
+
+                <!-- Stock Limit -->
+                <div class="col-md-6">
+                  <label class="form-label"
+                    >Stock Limit (for notifications)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="stockLimit"
+                    placeholder="Set a limit to receive low stock alerts"
                   />
                 </div>
 
@@ -726,6 +740,20 @@
                     />
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="editStockLimit" class="form-label"
+                      >Stock Limit</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="editStockLimit"
+                      name="editStockLimit"
+                      placeholder="Set a limit to receive low stock alerts"
+                    />
+                  </div>
+                </div>
                 <div class="mb-3">
                   <label for="editAvailability" class="form-label"
                     >Availability</label
@@ -753,7 +781,9 @@
                   ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="editRichTextEditor" class="form-label">Product Details</label>
+                  <label for="editRichTextEditor" class="form-label"
+                    >Product Details</label
+                  >
                   <div id="editRichTextEditor"></div>
                 </div>
                 <div class="mb-3">
@@ -851,8 +881,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../assets/js/js_functions/vendor-dash-home.js"></script>
     <script src="../../assets/js/js_functions/loadNotifications.js"></script>
-
-
 
     <!--end::Script-->
   </body>
