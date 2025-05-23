@@ -1,3 +1,322 @@
+// Add receipt modal styles
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .receipt-modal-content {
+      border: none;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .receipt-modal-content .modal-header {
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      border-bottom: none;
+      padding: 20px 25px;
+      position: relative;
+    }
+    .receipt-container {
+      background-color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .receipt-header-section {
+      background: #f8f9fa;
+      padding: 30px 20px 20px;
+      text-align: center;
+      border-bottom: 1px dashed #dee2e6;
+      position: relative;
+    }
+    .store-logo {
+      background: #0d6efd;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      font-size: 24px;
+      box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+    }
+    .store-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+      color: #212529;
+    }
+    .store-tagline {
+      font-size: 14px;
+      color: #6c757d;
+      margin: 5px 0 0;
+    }
+    .receipt-order-info {
+      padding: 20px;
+      background: #fff;
+      border-bottom: 1px dashed #dee2e6;
+    }
+    .order-info-box {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .order-info-item {
+      padding: 10px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .info-label {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212529;
+    }    .info-value.shop-name {
+      color: #0d6efd;
+    }    .shop-name-with-date {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .shop-name-with-date span:first-child {
+      color: #0d6efd;
+      font-weight: 600;
+    }.shop-date {
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .shop-info-combined {
+      flex-grow: 1.5;
+    }
+    /* Products section styles */    .products-section {
+      padding: 20px;
+      background: #fff;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title i {
+      color: #0d6efd;
+    }
+    .product-list {
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 5px;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      background: #fff;
+      padding: 10px;
+    }.product-item {
+      padding: 12px 15px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .product-item.simplified {
+      border-left: 3px solid #0d6efd;
+    }
+    .product-details-simplified {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .product-name {
+      font-size: 15px;
+      margin: 0;
+      font-weight: 600;
+      color: #212529;
+      max-width: 50%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .product-meta-simplified {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .product-meta-simplified .quantity {
+      font-size: 14px;
+      font-weight: 500;
+      color: #495057;
+    }
+    .product-meta-simplified .price {
+      font-size: 14px;
+      color: #6c757d;
+    }    .item-total {
+      font-weight: 600;
+      color: #0d6efd;
+      text-align: right;
+      min-width: 85px;
+    }
+    /* Summary section styles */
+    .receipt-summary {
+      padding: 20px;
+      background: #f8f9fa;
+      border-top: 1px dashed #dee2e6;
+      border-bottom: 1px dashed #dee2e6;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+    .summary-row:not(:last-child) {
+      border-bottom: 1px solid #eee;
+    }
+    .summary-label {
+      font-size: 15px;
+      color: #6c757d;
+    }
+    .summary-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #212529;
+    }
+    .summary-row.total {
+      margin-top: 5px;
+      padding-top: 10px;
+      border-top: 2px solid #dee2e6;
+    }
+    .summary-row.total .summary-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+    }
+    .summary-row.total .summary-value {
+      font-size: 18px;
+      color: #0d6efd;
+    }
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-badge.delivered, .status-badge.completed {
+      background-color: #e7f5ea;
+      color: #28a745;
+    }
+    .status-badge.shipped {
+      background-color: #e7f0fd;
+      color: #0d6efd;
+    }
+    .status-badge.pending, .status-badge.accepted {
+      background-color: #fff3cd;
+      color: #ffc107;
+    }
+    .status-badge.cancelled {
+      background-color: #f8d7da;
+      color: #dc3545;
+    }
+    .receipt-footer {
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+    }
+    .receipt-barcode {
+      margin: 0 auto 15px;
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 40px;
+    }
+    .barcode-line {
+      width: 2px;
+      background: #333;
+      height: 100%;
+      display: inline-block;
+    }
+    .barcode-line:nth-child(odd) {
+      height: 70%;
+    }
+    .barcode-number {
+      font-size: 12px;
+      color: #6c757d;
+      letter-spacing: 2px;
+      margin-top: 5px;
+      text-align: center;
+      width: 100%;
+    }
+    .thank-you-message {
+      font-size: 16px;
+      color: #212529;
+      margin: 15px 0 5px;
+    }
+    .receipt-date {
+      font-size: 12px;
+      color: #6c757d;
+      margin: 0;
+    }
+    .modal-footer {
+      border-top: none;
+      justify-content: center;
+      padding: 15px 20px 20px;
+    }
+    .modal-footer .btn-primary {
+      min-width: 120px;
+      border-radius: 50px;
+      font-weight: 500;
+    }
+    /* Scrollbar styling */
+    .product-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .product-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .product-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+    .product-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .info-value {
+        font-size: 14px;
+      }
+      .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .product-image {
+        margin-bottom: 10px;
+      }
+      .product-details {
+        padding-left: 0;
+      }
+      .item-total {
+        position: static;
+        margin-top: 10px;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
   getUserDataFromToken();
 
@@ -1703,7 +2022,6 @@ function initializeOrdersSection() {
     // Implement your tracking logic here
     alert(`Tracking information for order #${orderId} will be displayed here.`);
   }
-
   // Function to view a receipt
   function viewReceipt(orderId) {
     console.log(`Viewing receipt for order: ${orderId}`);
@@ -1715,17 +2033,225 @@ function initializeOrdersSection() {
       return;
     }
 
-    // You could open a modal or navigate to a receipt page
-    // For now, we'll just show an alert with some order details
-    const orderDate = new Date(
+    // Create modal elements dynamically
+    const modalId = 'receiptModal';
+    let receiptModal = document.getElementById(modalId);
+    
+    // If modal doesn't exist, create it
+    if (!receiptModal) {
+      receiptModal = document.createElement('div');
+      receiptModal.className = 'modal fade';
+      receiptModal.id = modalId;
+      receiptModal.setAttribute('tabindex', '-1');
+      receiptModal.setAttribute('aria-labelledby', 'receiptModalLabel');
+      receiptModal.setAttribute('aria-hidden', 'true');
+      
+      document.body.appendChild(receiptModal);
+    }
+      const orderDate = new Date(
       order.createdAt || order.date || new Date()
-    ).toLocaleDateString("en-US");
+    ).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+    
+    // Get shop information
+    let shopName = "Unknown Shop";
+    let shopId = "";
+    
+    try {
+      if (typeof order.shop === "object" && order.shop !== null) {
+        if (order.shop.shopName) {
+          shopName = order.shop.shopName;
+          shopId = order.shop._id || "";
+        }
+      }
+      
+      if (shopName === "Unknown Shop" && order.shopName) {
+        shopName = order.shopName;
+      }
+    } catch (error) {
+      console.error("Error extracting shop name:", error);
+    }
+    
+    // Handle products list
+    let products = [];
+    if (order.products && Array.isArray(order.products)) {
+      products = order.products;
+    } else if (
+      order.cartData && 
+      order.cartData.items && 
+      Array.isArray(order.cartData.items)
+    ) {
+      products = order.cartData.items;
+    }
+    
+    // Create product items HTML
+    let productItemsHTML = '';
+    
+    products.forEach(product => {
+      // Get product details based on the API structure
+      let productName, productSku, productPrice, productQty, imagePath;
 
-    alert(`Receipt for Order #${orderId.substring(0, 5)}
-Date: ${orderDate}
-Total Amount: ${order.orderTotal || order.totalAmount || 0} DT
-Status: ${order.orderStatus || order.status || "N/A"}
-    `);
+      if (product.productId) {
+        // Format from the sample API response
+        productName = product.productId.productName || "Product";
+        productSku = product.productId._id
+          ? product.productId._id.substring(0, 8)
+          : "N/A";
+        productPrice = product.productId.productPrice || 0;
+        productQty = product.quantity || 1;
+        imagePath = product.productId.mainImage
+          ? `/uploads/${product.productId.mainImage}`
+          : "../assets/images/products/placeholder.png";
+      } else {
+        // Alternative format
+        productName =
+          product.name || (product.product ? product.product.name : "Product");
+        productSku =
+          product.sku || (product.product ? product.product.sku : "N/A");
+        productPrice =
+          product.price || (product.product ? product.product.price : 0);
+        productQty = product.quantity || 1;
+        imagePath =
+          product.image ||
+          (product.product
+            ? product.product.image
+            : "../assets/images/products/placeholder.png");
+      }
+      
+      const itemTotal = productPrice * productQty;
+        productItemsHTML += `
+        <div class="product-item simplified">
+          <div class="product-details-simplified">
+            <h4 class="product-name">${productName}</h4>
+            <div class="product-meta-simplified">
+              <span class="quantity">${productQty}×</span>
+              <span class="price">${productPrice.toFixed(2)} DT</span>
+            </div>
+            <div class="item-total">${itemTotal.toFixed(2)} DT</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    // Calculate totals
+    const subtotal = products.reduce((total, product) => {
+      const price = product.productId ? product.productId.productPrice : 
+                   (product.price || (product.product ? product.product.price : 0));
+      const quantity = product.quantity || 1;
+      return total + (price * quantity);
+    }, 0);
+    
+    const orderIdShort = orderId.substring(0, 5);
+    const totalAmount = order.orderTotal || order.totalAmount || subtotal || 0;
+    const status = order.orderStatus || order.status || "N/A";
+      
+    // Create the modal content with an enhanced receipt format including all order details
+    receiptModal.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content receipt-modal-content">
+          <div class="modal-header text-white">
+            <h5 class="modal-title" id="receiptModalLabel">
+              <i class="ph ph-receipt me-2"></i>Order Receipt
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0">
+            <div class="receipt-container">
+              <div class="receipt-header-section">
+                <div class="store-logo">
+                  <i class="ph ph-shopping-bag"></i>
+                </div>
+                <h3 class="store-name">Mallify</h3>
+                <p class="store-tagline">Your One-Stop Shop</p>
+              </div>
+                <div class="receipt-order-info">
+                <div class="order-info-box">
+                  <div class="order-info-item">
+                    <div class="info-label"><i class="ph ph-hash"></i> Order ID</div>
+                    <div class="info-value">#${orderIdShort}</div>
+                  </div>                  <div class="order-info-item shop-info-combined">
+                    <div class="info-label"><i class="ph ph-storefront"></i> Shop</div>
+                    <div class="info-value shop-name-with-date">
+                      <span>${shopName}</span>
+                      <span class="shop-date">${orderDate}</span>
+                    </div>
+                  </div>
+                  <div class="order-info-item">
+                    <div class="info-label"><i class="ph ph-check-circle"></i> Status</div>
+                    <div class="info-value">
+                      <span class="status-badge ${status.toLowerCase()}">${status}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="products-section">
+                <h4 class="section-title"><i class="ph ph-shopping-cart"></i> Products</h4>
+                <div class="product-list">
+                  ${productItemsHTML}
+                </div>
+              </div>
+              
+              <div class="receipt-summary">
+                <div class="summary-row">
+                  <div class="summary-label">Subtotal</div>
+                  <div class="summary-value">${subtotal.toFixed(2)} DT</div>
+                </div>
+                <div class="summary-row">
+                  <div class="summary-label">Shipping</div>
+                  <div class="summary-value">${((totalAmount - subtotal) > 0 ? (totalAmount - subtotal) : 0).toFixed(2)} DT</div>
+                </div>
+                <div class="summary-row total">
+                  <div class="summary-label">Total</div>
+                  <div class="summary-value">${totalAmount.toFixed(2)} DT</div>
+                </div>
+              </div>
+              
+              <div class="receipt-footer">
+                
+                <p class="thank-you-message">Thank you for shopping with Mallify!</p>
+                <p class="receipt-date">${new Date().toLocaleString()}</p>
+              </div>
+            </div>
+          </div><div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+              <i class="ph ph-check me-1"></i>OK
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+      // Initialize and show the modal
+    // Ensure Bootstrap is available
+    if (typeof bootstrap !== 'undefined') {
+      const bootstrapModal = new bootstrap.Modal(receiptModal);
+      bootstrapModal.show();
+    } else {
+      // Fallback if Bootstrap is not loaded
+      console.error('Bootstrap is not loaded. Make sure Bootstrap JS is included in your page.');
+      receiptModal.style.display = 'block';
+      receiptModal.classList.add('show');
+      document.body.classList.add('modal-open');
+      
+      // Add a backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      document.body.appendChild(backdrop);
+      
+      // Add event listener to close button
+      const closeButton = receiptModal.querySelector('[data-bs-dismiss="modal"]');
+      if (closeButton) {
+        closeButton.addEventListener('click', () => {
+          receiptModal.style.display = 'none';
+          receiptModal.classList.remove('show');
+          document.body.classList.remove('modal-open');
+          document.body.removeChild(backdrop);
+        });
+      }
+    }
   }
 
   // Function to cancel an order
