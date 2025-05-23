@@ -1,4 +1,4 @@
- window.addEventListener('load', function() {
+window.addEventListener('load', function() {
         console.log('Window loaded - checking chart library...');
         
         // Verify ApexCharts availability

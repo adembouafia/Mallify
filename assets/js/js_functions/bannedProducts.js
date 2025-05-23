@@ -184,8 +184,7 @@ function applyFiltersAndRender() {
       return (
         (product.productName && product.productName.toLowerCase().includes(searchTerm)) ||
         (product.shop?.shopName && product.shop.shopName.toLowerCase().includes(searchTerm)) ||
-        (product.subCategory?.category?.categoryName && 
-         product.subCategory.category.categoryName.toLowerCase().includes(searchTerm)) ||
+        (product.subCategory?.category?.categoryName && product.subCategory.category.categoryName.toLowerCase().includes(searchTerm)) ||
         (product.bannedReason && product.bannedReason.toLowerCase().includes(searchTerm))
       )
     })

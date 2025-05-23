@@ -71,6 +71,7 @@ function showToast(title, message, type) {
     console.log(`${type.toUpperCase()}: ${title} - ${message}`);
   }
 }
+
 // Helper function to use SweetAlert with fallback to standard alert
 function showAlert(options) {
   if (typeof Swal !== "undefined") {
@@ -106,7 +107,7 @@ function safeAddEventListener(elementId, eventType, handler) {
   }
 }
 
-//hide and show the card functions
+// Hide and show the card functions
 function showchooseAccountCard() {
   const loginCard = document.getElementById("loginCard");
   const chooseAccountCard = document.getElementById("chooseAccountCard");
@@ -152,7 +153,7 @@ function backtologin() {
   }
 }
 
-//Preview the logo
+// Preview the logo
 function previewImage(event) {
   const input = event.target;
   const preview = document.getElementById("preview");
@@ -198,8 +199,8 @@ function initializeLoginForm() {
 
     if (!email || !password) {
       showToast(
-        "Champs obligatoires",
-        "Tous les champs sont obligatoires !",
+        "Required Fields",
+        "All fields are required!",
         "warning"
       );
       return;
@@ -241,8 +242,8 @@ function initializeLoginForm() {
     function tryLogin(index = 0) {
       if (index >= loginEndpoints.length) {
         showToast(
-          "Échec de la connexion",
-          "Vérifiez vos identifiants ou votre type de compte.",
+          "Login Failed",
+          "Check your credentials or account type.",
           "error"
         );
         return;
@@ -350,14 +351,14 @@ function initializeLoginForm() {
             tryLogin(index + 1);
           }
         } else if (xhr.status === 403 && userType === "vendor") {
-          // Cas spécial pour les vendeurs: vérifier si c'est lié au statut du shop
+          // Special case for vendors: check if it's related to shop status
           try {
             const response = JSON.parse(xhr.responseText);
 
             if (response.status === "Pending") {
               showToast(
-                "Boutique en attente",
-                "Votre boutique est en cours d'étude par l'administration.",
+                "Shop Pending",
+                "Your shop is being reviewed by administration.",
                 "warning"
               );
               return;
@@ -365,8 +366,8 @@ function initializeLoginForm() {
 
             if (response.status === "Rejected") {
               showToast(
-                "Boutique rejetée",
-                `Votre boutique a été rejetée. Raison: ${response.reason || "Non spécifiée"}`,
+                "Shop Rejected",
+                `Your shop has been rejected. Reason: ${response.reason || "Not specified"}`,
                 "error"
               );
               return;
@@ -374,21 +375,21 @@ function initializeLoginForm() {
 
             if (response.status === "Banned") {
               showToast(
-                "Boutique Bannie",
-                `Votre boutique a été Bannie. Raison: ${response.reason || response.bannedReason || "Non spécifiée"}`,
+                "Shop Banned",
+                `Your shop has been banned. Reason: ${response.reason || response.bannedReason || "Not specified"}`,
                 "error"
               );
               return;
             }
 
-            // Si ce n'est pas lié au statut du shop, essayer le prochain endpoint
+            // If it's not related to shop status, try the next endpoint
             tryLogin(index + 1);
           } catch (error) {
             console.error("Error parsing response:", error);
             tryLogin(index + 1);
           }
         } else {
-          // Échec - essayer le prochain endpoint
+          // Failure - try the next endpoint
           console.error("Login failed with status:", xhr.status);
           tryLogin(index + 1);
         }
@@ -571,22 +572,22 @@ function initializeLoginForm() {
     // Function to show success message before redirecting
     function showLoginSuccess(userType, redirectUrl) {
       // Check if SweetAlert2 is available
-      const title = "Connexion réussie!";
+      const title = "Login Successful!";
       let text = "";
 
       // Customize message based on user type
       switch (userType) {
         case "admin":
-          text = "Bienvenue dans votre tableau de bord administrateur.";
+          text = "Welcome to your admin dashboard.";
           break;
         case "vendor":
-          text = "Bienvenue dans votre tableau de bord vendeur.";
+          text = "Welcome to your vendor dashboard.";
           break;
         case "client":
-          text = "Bienvenue sur notre site!";
+          text = "Welcome to our site!";
           break;
         case "moderator":
-          text = "Bienvenue dans votre tableau de bord modérateur.";
+          text = "Welcome to your moderator dashboard.";
           break;
       }
 
@@ -608,24 +609,24 @@ function initializeRegisterForms() {
   const registerForm = document.getElementById("registerForm");
   if (registerForm) {
     registerForm.addEventListener("submit", (e) => {
-      e.preventDefault(); // Empêche le rechargement de la page
+      e.preventDefault(); // Prevent page reload
 
       const email = document.getElementById("emailTwo").value.trim();
       const firstname = document.getElementById("firstname").value.trim();
       const lastname = document.getElementById("lastname").value.trim();
       const password = document.getElementById("enter_password").value.trim();
 
-      // Validation basique
+      // Basic validation
       if (!firstname || !lastname || !email || !password) {
         showToast(
-          "Champs obligatoires",
-          "Tous les champs sont obligatoires !",
+          "Required Fields",
+          "All fields are required!",
           "warning"
         );
         return;
       }
 
-      // Création de l'objet avec les données du formulaire
+      // Create object with form data
       const formData = {
         firstname: firstname,
         lastname: lastname,
@@ -641,8 +642,8 @@ function initializeRegisterForms() {
         if (xhr.status === 201) {
           const response = JSON.parse(xhr.responseText);
           showToast(
-            "Inscription réussie !",
-            "Client enregistré avec succès !",
+            "Registration Successful!",
+            "Client registered successfully!",
             "success"
           );
           setTimeout(() => {
@@ -650,14 +651,14 @@ function initializeRegisterForms() {
             showLogin();
           }, 2000);
           console.log(response);
-          // Redirige ou réinitialise le formulaire après inscription
+          // Redirect or reset form after registration
           window.location.reload();
           showLogin();
         } else {
           const error = JSON.parse(xhr.responseText);
           showToast(
-            "Erreur d'inscription",
-            error.message || "Échec de l'inscription",
+            "Registration Error",
+            error.message || "Registration failed",
             "error"
           );
           console.error(error);
@@ -666,8 +667,8 @@ function initializeRegisterForms() {
 
       xhr.onerror = () => {
         showToast(
-          "Erreur de connexion",
-          "Erreur de connexion avec le serveur.",
+          "Connection Error",
+          "Error connecting to the server.",
           "error"
         );
       };
@@ -691,8 +692,8 @@ function initializeRegisterForms() {
         if (xhr.status === 201) {
           const response = JSON.parse(xhr.responseText);
           showToast(
-            "Inscription réussie !",
-            "Vendor enregistré avec succès !",
+            "Registration Successful!",
+            "Vendor registered successfully!",
             "success"
           );
           setTimeout(() => {
@@ -705,8 +706,8 @@ function initializeRegisterForms() {
         } else {
           const error = JSON.parse(xhr.responseText);
           showToast(
-            "Erreur d'inscription",
-            error.message || "Échec de l'inscription",
+            "Registration Error",
+            error.message || "Registration failed",
             "error"
           );
           console.error(error);
@@ -715,8 +716,8 @@ function initializeRegisterForms() {
 
       xhr.onerror = () => {
         showToast(
-          "Erreur de connexion",
-          "Erreur de connexion avec le serveur.",
+          "Connection Error",
+          "Error connecting to the server.",
           "error"
         );
       };
@@ -829,7 +830,7 @@ function initializePasswordReset() {
 }
 
 // Password reset functions
-let verifiedCode = ""; // Variable pour stocker le code vérifié
+let verifiedCode = ""; // Variable to store the verified code
 let resetUserType = "client"; // Default to client
 
 function validateEmail() {
@@ -849,7 +850,7 @@ function validateEmail() {
   // Store the user type for later use
   localStorage.setItem("resetUserType", resetUserType);
 
-  // Validation simple
+  // Simple validation
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     emailInput.classList.add("is-invalid");
     return;
@@ -902,7 +903,7 @@ function validateEmail() {
         } else {
           Swal.fire({
             icon: "error",
-            title: "Erreur",
+            title: "Error",
             text: res.message || "Error sending reset code.",
             confirmButtonColor: "#3085d6",
           });
@@ -911,7 +912,7 @@ function validateEmail() {
         console.error("Error parsing response:", error);
         Swal.fire({
           icon: "error",
-          title: "Erreur",
+          title: "Error",
           text: "An unexpected error occurred. Please try again.",
           confirmButtonColor: "#3085d6",
         });
@@ -964,8 +965,8 @@ function validatePassword() {
     newPasswordValue.length < 6
   ) {
     showToast(
-      "Validation du mot de passe",
-      "Les mots de passe doivent correspondre et comporter au moins 6 caractères.",
+      "Password Validation",
+      "Passwords must match and be at least 6 characters long.",
       "warning"
     );
     return;
@@ -998,8 +999,8 @@ function validatePassword() {
         const res = JSON.parse(xhr.responseText);
         if (xhr.status === 200) {
           showToast(
-            "Réinitialisation réussie",
-            "Votre mot de passe a été réinitialisé avec succès !",
+            "Reset Successful",
+            "Your password has been reset successfully!",
             "success"
           );
 
@@ -1013,16 +1014,16 @@ function validatePassword() {
           }
         } else {
           showToast(
-            "Erreur de validation",
-            res.message || "Code invalide ou expiré.",
+            "Validation Error",
+            res.message || "Invalid or expired code.",
             "error"
           );
         }
       } catch (error) {
         console.error("Error parsing response:", error);
         showToast(
-          "Erreur",
-          "Une erreur inattendue s'est produite. Veuillez réessayer.",
+          "Error",
+          "An unexpected error occurred. Please try again.",
           "error"
         );
       }
@@ -1610,8 +1611,8 @@ function initializeAccountDropdowns() {
 function handleLogout() {
   localStorage.clear();
   showToast(
-    "Déconnexion réussie",
-    "Vous avez été déconnecté avec succès.",
+    "Logout Successful",
+    "You have been logged out successfully.",
     "success"
   );
   setTimeout(() => {

@@ -15,13 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let shopId;
 
   try {
-    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    // Try to parse user data if it's a JSON string
     if (userDataString) {
       const userData = JSON.parse(userDataString);
       shopId = userData.shop;
     }
   } catch (error) {
-    console.error("Erreur lors du parsing des données utilisateur:", error);
+    console.error("Error parsing user data:", error);
   }
 
   if (shopId) {
@@ -32,37 +32,37 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(loadNotifications, 5 * 60 * 1000);
   }
 
-  // Vérifier les livraisons reportées au chargement de la page
+  // Check postponed deliveries when page loads
   checkPostponedDeliveries();
 
-  // Vérifier les livraisons reportées toutes les 5 minutes
+  // Check postponed deliveries every 5 minutes
   setInterval(checkPostponedDeliveries, 5 * 60 * 1000);
 });
 
-// Fonction pour vérifier les livraisons reportées
+// Function to check postponed deliveries
 function checkPostponedDeliveries() {
-  // Récupérer le shopId depuis le localStorage
+  // Get shopId from localStorage
   const userDataString = localStorage.getItem("userData");
   let shopId;
 
   try {
-    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    // Try to parse user data if it's a JSON string
     if (userDataString) {
       const userData = JSON.parse(userDataString);
       shopId = userData.shop;
     }
   } catch (error) {
-    console.error("Erreur lors du parsing des données utilisateur:", error);
+    console.error("Error parsing user data:", error);
   }
 
-  // Si nous n'avons pas pu obtenir le shopId à partir de userData, essayer de l'obtenir directement
+  // If we couldn't get shopId from userData, try to get it directly
   if (!shopId) {
     shopId = localStorage.getItem("shopId");
   }
 
   if (!shopId) {
     console.error(
-      "Aucun shopId trouvé dans le localStorage pour la vérification des livraisons reportées"
+      "No shopId found in localStorage for checking postponed deliveries"
     );
     return;
   }
@@ -82,9 +82,9 @@ function checkPostponedDeliveries() {
   xhr.onload = () => {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.responseText);
-      console.log("Vérification des livraisons reportées:", response.message);
+      console.log("Checking postponed deliveries:", response.message);
 
-      // Si des livraisons ont été mises à jour, recharger les données
+      // If deliveries have been updated, reload data
       if (response.updated > 0) {
         loadDeliveries();
       }
@@ -92,7 +92,7 @@ function checkPostponedDeliveries() {
   };
 
   xhr.onerror = () => {
-    console.error("Erreur lors de la vérification des livraisons reportées");
+    console.error("Error checking postponed deliveries");
   };
 
   xhr.send();
@@ -119,7 +119,7 @@ function setupDeliveryEventListeners() {
       e.target.closest(".btn-delivered")
     ) {
       const deliveryId = e.target.closest(".btn-delivered").dataset.id;
-      confirmDeliveryAction(deliveryId, "Marquer comme livrée", "Delivered");
+      confirmDeliveryAction(deliveryId, "Mark as delivered", "Delivered");
     }
 
     if (
@@ -130,13 +130,13 @@ function setupDeliveryEventListeners() {
       const btn = e.target.closest(".btn-cancel");
       const deliveryStatus = btn.getAttribute("data-status");
 
-      // Vérifier si la livraison est en cours avant d'autoriser l'annulation
+      // Check if delivery is in progress before allowing cancellation
       if (deliveryStatus === "InProgress" || deliveryStatus === "Pending") {
-        confirmDeliveryAction(deliveryId, "Annuler la livraison", "Cancelled");
+        confirmDeliveryAction(deliveryId, "Cancel delivery", "Cancelled");
       } else {
         Swal.fire({
-          title: "Action non autorisée",
-          text: "Seules les livraisons en cours peuvent être annulées",
+          title: "Action not allowed",
+          text: "Only in-progress deliveries can be cancelled",
           icon: "warning",
           confirmButtonText: "OK",
         });
@@ -213,33 +213,33 @@ function setupDeliveryEventListeners() {
   });
 }
 
-// Fonction pour charger les livraisons
+// Function to load deliveries
 function loadDeliveries() {
   console.log("Loading deliveries...");
 
-  // Récupérer le shopId depuis le localStorage
+  // Get shopId from localStorage
   const userDataString = localStorage.getItem("userData");
   let shopId;
 
   try {
-    // Essayer de parser les données utilisateur si c'est une chaîne JSON
+    // Try to parse user data if it's a JSON string
     if (userDataString) {
       const userData = JSON.parse(userDataString);
       shopId = userData.shop;
     }
   } catch (error) {
-    console.error("Erreur lors du parsing des données utilisateur:", error);
+    console.error("Error parsing user data:", error);
   }
 
   if (!shopId) {
-    console.error("Aucun shopId trouvé dans le localStorage");
+    console.error("No shopId found in localStorage");
     showErrorMessage(
-      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+      "No shop selected. Please log in again."
     );
     return;
   }
 
-  console.log("Chargement des livraisons pour le shop:", shopId);
+  console.log("Loading deliveries for shop:", shopId);
 
   const xhr = new XMLHttpRequest();
   xhr.open("GET", `http://localhost:3000/delivery/all?shopId=${shopId}`, true);
@@ -251,18 +251,18 @@ function loadDeliveries() {
 
   xhr.onload = () => {
     if (xhr.status === 200) {
-      console.log("Réponse reçue:", xhr.responseText);
+      console.log("Response received:", xhr.responseText);
       try {
         const deliveries = JSON.parse(xhr.responseText);
-        console.log("Livraisons chargées:", deliveries);
+        console.log("Deliveries loaded:", deliveries);
 
-        // Mettre à jour les compteurs
+        // Update counters
         updateDeliveryCounts(deliveries);
 
-        // Afficher toutes les livraisons
+        // Display all deliveries
         displayDeliveries(deliveries, "all-deliveries-table");
 
-        // Filtrer et afficher les livraisons par statut
+        // Filter and display deliveries by status
         displayDeliveriesByStatus(
           deliveries,
           "InProgress",
@@ -284,32 +284,32 @@ function loadDeliveries() {
           "cancelled-deliveries-table"
         );
 
-        // Mettre à jour la pagination
+        // Update pagination
         updatePagination(deliveries.length);
       } catch (error) {
-        console.error("Erreur lors du parsing des livraisons:", error);
-        showErrorMessage("Erreur lors du traitement des données de livraison");
+        console.error("Error parsing deliveries:", error);
+        showErrorMessage("Error processing delivery data");
       }
     } else {
       console.error(
-        "Erreur lors du chargement des livraisons. Statut:",
+        "Error loading deliveries. Status:",
         xhr.status,
-        "Réponse:",
+        "Response:",
         xhr.responseText
       );
-      showErrorMessage("Erreur lors du chargement des livraisons");
+      showErrorMessage("Error loading deliveries");
     }
   };
 
   xhr.onerror = (e) => {
-    console.error("Erreur de connexion au serveur:", e);
-    showErrorMessage("Erreur de connexion au serveur");
+    console.error("Server connection error:", e);
+    showErrorMessage("Server connection error");
   };
 
   xhr.send();
 }
 
-// Fonction pour mettre à jour les compteurs de livraisons
+// Function to update delivery counters
 function updateDeliveryCounts(deliveries) {
   const totalCount = deliveries.length;
   const inProgressCount = deliveries.filter(
@@ -325,14 +325,14 @@ function updateDeliveryCounts(deliveries) {
     (d) => d.statut === "Cancelled"
   ).length;
 
-  // Mettre à jour les compteurs dans les cartes statistiques
+  // Update counters in statistics cards
   document.querySelector(".total-deliveries-count").textContent = totalCount;
   document.querySelector(".in-progress-count").textContent = inProgressCount;
   document.querySelector(".delivered-count").textContent = deliveredCount;
   document.querySelector(".postponed-count").textContent = postponedCount;
   document.querySelector(".cancelled-count").textContent = cancelledCount;
 
-  // Mettre à jour les badges des onglets
+  // Update tab badges
   document.querySelector(".all-deliveries-badge").textContent = totalCount;
   document.querySelector(".in-progress-badge").textContent = inProgressCount;
   document.querySelector(".delivered-badge").textContent = deliveredCount;
@@ -340,7 +340,7 @@ function updateDeliveryCounts(deliveries) {
   document.querySelector(".cancelled-badge").textContent = cancelledCount;
 }
 
-// Fonction pour afficher les livraisons filtrées par statut
+// Function to display deliveries filtered by status
 function displayDeliveriesByStatus(deliveries, status, tableId) {
   const filteredDeliveries = deliveries.filter((delivery) => {
     if (status === "InProgress") {
@@ -352,19 +352,19 @@ function displayDeliveriesByStatus(deliveries, status, tableId) {
   displayDeliveries(filteredDeliveries, tableId);
 }
 
-// Fonction pour afficher les livraisons dans un tableau
+// Function to display deliveries in a table
 function displayDeliveries(deliveries, tableId) {
-  console.log(`Affichage des livraisons dans ${tableId}:`, deliveries);
+  console.log(`Displaying deliveries in ${tableId}:`, deliveries);
 
-  // Sélectionner le tableau
+  // Select the table
   const deliveryTable = document.getElementById(tableId);
 
   if (!deliveryTable) {
-    console.error(`Tableau ${tableId} non trouvé dans le DOM`);
+    console.error(`Table ${tableId} not found in DOM`);
     return;
   }
 
-  // Vider le tableau existant
+  // Clear existing table
   deliveryTable.innerHTML = "";
 
   if (!deliveries || deliveries.length === 0) {
@@ -373,12 +373,12 @@ function displayDeliveries(deliveries, tableId) {
     return;
   }
 
-  // Afficher chaque livraison dans le tableau
+  // Display each delivery in the table
   deliveries.forEach((delivery) => {
-    // Formater la date
+    // Format date
     const formattedDate = new Date(delivery.deliveryDate).toLocaleDateString();
 
-    // Déterminer le statut et la classe CSS correspondante
+    // Determine status and corresponding CSS class
     let statusClass = "";
     let statusText = delivery.statut;
 
@@ -402,7 +402,7 @@ function displayDeliveries(deliveries, tableId) {
         break;
     }
 
-    // Déterminer les actions disponibles en fonction du statut
+    // Determine available actions based on status
     let actionButtons = `
       <a href="detailsDelivery.html?id=${delivery._id}" class="btn btn-sm btn-outline-secondary me-1 btn-view-details" data-id="${delivery._id}" title="View Details">
         <i class="bi bi-eye"></i>
@@ -423,17 +423,17 @@ function displayDeliveries(deliveries, tableId) {
       `;
     }
 
-    // Récupérer les informations de la commande associée
+    // Get associated order information
     const orderId = delivery.idCommande
       ? typeof delivery.idCommande === "object"
         ? delivery.idCommande._id.substring(0, 8)
         : delivery.idCommande
       : "N/A";
 
-    // Générer un numéro de livraison aléatoire si non disponible
+    // Generate a random delivery number if not available
     const deliveryNumber = `#D-${Math.floor(Math.random() * 10000000)}`;
 
-    // Déterminer le nombre d'articles (si disponible)
+    // Determine item count (if available)
     let itemCount = 0;
     if (
       delivery.idCommande &&
@@ -443,7 +443,7 @@ function displayDeliveries(deliveries, tableId) {
       itemCount = delivery.idCommande.cartData.items.length;
     }
 
-    // Construire le HTML de la ligne
+    // Build row HTML
     const row = document.createElement("tr");
     row.innerHTML = `
       <td><span class="delivery-number">${deliveryNumber}</span></td>
@@ -451,7 +451,7 @@ function displayDeliveries(deliveries, tableId) {
       <td><span class="customer-name">${delivery.clientInfo.prenom} ${delivery.clientInfo.nom}</span></td>
       <td><span class="items-count">${itemCount}</span></td>
       <td>${delivery.deliveryAdresse.split(",")[0]}</td>
-      <td><span class="price-amount">${delivery.idCommande && delivery.idCommande.orderTotal ? delivery.idCommande.orderTotal.toFixed(2) + " DT" : "N/A"}</span></td>
+      <td><span class="price-amount">${delivery.idCommande && delivery.idCommande.orderTotal ? delivery.idCommande.orderTotal.toFixed(2) + " TND" : "N/A"}</span></td>
       <td><span class="status-badge ${statusClass}">${statusText}</span></td>
       <td>
         <div class="d-flex">
@@ -483,12 +483,12 @@ function loadDeliveryDetails(deliveryId) {
       // Redirect to the details page
       window.location.href = "detailsDelivery.html?id=" + deliveryId;
     } else {
-      showErrorMessage("Erreur lors du chargement des détails de la livraison");
+      showErrorMessage("Error loading delivery details");
     }
   };
 
   xhr.onerror = () => {
-    showErrorMessage("Erreur de connexion au serveur");
+    showErrorMessage("Server connection error");
   };
 
   xhr.send();
@@ -497,13 +497,13 @@ function loadDeliveryDetails(deliveryId) {
 function confirmDeliveryAction(deliveryId, actionName, actionStatus) {
   Swal.fire({
     title: `${actionName}`,
-    text: `Êtes-vous sûr de vouloir ${actionName.toLowerCase()} cette livraison ?`,
+    text: `Are you sure you want to ${actionName.toLowerCase()} this delivery?`,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
       updateDeliveryStatus(deliveryId, actionStatus);
@@ -513,18 +513,18 @@ function confirmDeliveryAction(deliveryId, actionName, actionStatus) {
 
 function showPostponeDialog(deliveryId) {
   Swal.fire({
-    title: "Reporter la livraison",
+    title: "Postpone Delivery",
     html: `
-      <label for="postpone-date" class="swal2-label">Nouvelle date de livraison</label>
+      <label for="postpone-date" class="swal2-label">New delivery date</label>
       <input id="postpone-date" class="swal2-input" type="date" required>
     `,
     showCancelButton: true,
-    confirmButtonText: "Reporter",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Postpone",
+    cancelButtonText: "Cancel",
     preConfirm: () => {
       const date = document.getElementById("postpone-date").value;
       if (!date) {
-        Swal.showValidationMessage("Veuillez remplir tous les champs");
+        Swal.showValidationMessage("Please fill in all fields");
         return false;
       }
 
@@ -556,8 +556,8 @@ function updateDeliveryStatus(deliveryId, status, additionalData = {}) {
   xhr.onload = () => {
     if (xhr.status === 200) {
       Swal.fire({
-        title: "Succès!",
-        text: `Statut de livraison mis à jour avec succès`,
+        title: "Success!",
+        text: `Delivery status updated successfully`,
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
@@ -570,12 +570,12 @@ function updateDeliveryStatus(deliveryId, status, additionalData = {}) {
         }
       });
     } else {
-      showErrorMessage("Erreur lors de la mise à jour du statut de livraison");
+      showErrorMessage("Error updating delivery status");
     }
   };
 
   xhr.onerror = () => {
-    showErrorMessage("Erreur de connexion au serveur");
+    showErrorMessage("Server connection error");
   };
 
   xhr.send(JSON.stringify(requestData));
@@ -587,7 +587,7 @@ function searchDeliveries(searchTerm) {
     return;
   }
 
-  // Récupérer le shopId depuis le localStorage
+  // Get shopId from localStorage
   const userDataString = localStorage.getItem("userData");
   let shopId;
 
@@ -597,7 +597,7 @@ function searchDeliveries(searchTerm) {
       shopId = userData.shop;
     }
   } catch (error) {
-    console.error("Erreur lors du parsing des données utilisateur:", error);
+    console.error("Error parsing user data:", error);
   }
 
   if (!shopId) {
@@ -605,9 +605,9 @@ function searchDeliveries(searchTerm) {
   }
 
   if (!shopId) {
-    console.error("Aucun shopId trouvé dans le localStorage");
+    console.error("No shopId found in localStorage");
     showErrorMessage(
-      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+      "No shop selected. Please log in again."
     );
     return;
   }
@@ -638,13 +638,13 @@ function searchDeliveries(searchTerm) {
         );
       });
 
-      // Mettre à jour les compteurs
+      // Update counters
       updateDeliveryCounts(filteredDeliveries);
 
-      // Afficher les résultats de recherche
+      // Display search results
       displayDeliveries(filteredDeliveries, "all-deliveries-table");
 
-      // Filtrer et afficher les livraisons par statut
+      // Filter and display deliveries by status
       displayDeliveriesByStatus(
         filteredDeliveries,
         "InProgress",
@@ -666,15 +666,15 @@ function searchDeliveries(searchTerm) {
         "cancelled-deliveries-table"
       );
 
-      // Mettre à jour la pagination
+      // Update pagination
       updatePagination(filteredDeliveries.length);
     } else {
-      showErrorMessage("Erreur lors de la recherche des livraisons");
+      showErrorMessage("Error searching deliveries");
     }
   };
 
   xhr.onerror = () => {
-    showErrorMessage("Erreur de connexion au serveur");
+    showErrorMessage("Server connection error");
   };
 
   xhr.send();
@@ -709,7 +709,7 @@ function updatePagination(totalItems) {
     // Previous button
     const prevLi = document.createElement("li");
     prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-    prevLi.innerHTML = `<a class="page-link" href="#">Précédent</a>`;
+    prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
     paginationContainer.appendChild(prevLi);
 
     // Page numbers
@@ -723,7 +723,7 @@ function updatePagination(totalItems) {
     // Next button
     const nextLi = document.createElement("li");
     nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
-    nextLi.innerHTML = `<a class="page-link" href="#">Suivant</a>`;
+    nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
     paginationContainer.appendChild(nextLi);
 
     // Add event listeners to pagination links
@@ -737,11 +737,11 @@ function updatePagination(totalItems) {
           // Page number clicked
           localStorage.setItem("deliveriesCurrentPage", page);
           loadDeliveries();
-        } else if (this.textContent === "Précédent" && currentPage > 1) {
+        } else if (this.textContent === "Previous" && currentPage > 1) {
           // Previous button clicked
           localStorage.setItem("deliveriesCurrentPage", currentPage - 1);
           loadDeliveries();
-        } else if (this.textContent === "Suivant" && currentPage < totalPages) {
+        } else if (this.textContent === "Next" && currentPage < totalPages) {
           // Next button clicked
           localStorage.setItem("deliveriesCurrentPage", currentPage + 1);
           loadDeliveries();
@@ -753,13 +753,13 @@ function updatePagination(totalItems) {
   if (paginationInfo) {
     const start = (currentPage - 1) * entriesPerPage + 1;
     const end = Math.min(currentPage * entriesPerPage, totalItems);
-    paginationInfo.textContent = `Affichage de ${start} à ${end} sur ${totalItems} livraisons`;
+    paginationInfo.textContent = `Showing ${start} to ${end} of ${totalItems} deliveries`;
   }
 }
 
-// Fonction pour trier les livraisons
+// Function to sort deliveries
 function sortDeliveries(sortBy) {
-  // Récupérer le shopId depuis le localStorage
+  // Get shopId from localStorage
   const userDataString = localStorage.getItem("userData");
   let shopId;
 
@@ -769,14 +769,14 @@ function sortDeliveries(sortBy) {
       shopId = userData.shop;
     }
   } catch (error) {
-    console.error("Erreur lors du parsing des données utilisateur:", error);
+    console.error("Error parsing user data:", error);
   }
 
 
   if (!shopId) {
-    console.error("Aucun shopId trouvé dans le localStorage");
+    console.error("No shopId found in localStorage");
     showErrorMessage(
-      "Aucun magasin sélectionné. Veuillez vous connecter à nouveau."
+      "No shop selected. Please log in again."
     );
     return;
   }
@@ -793,7 +793,7 @@ function sortDeliveries(sortBy) {
     if (xhr.status === 200) {
       const deliveries = JSON.parse(xhr.responseText);
 
-      // Trier les livraisons selon l'option choisie
+      // Sort deliveries according to chosen option
       if (sortBy === "newest") {
         deliveries.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -804,7 +804,7 @@ function sortDeliveries(sortBy) {
         );
       }
 
-      // Mettre à jour l'affichage
+      // Update display
       updateDeliveryCounts(deliveries);
       displayDeliveries(deliveries, "all-deliveries-table");
       displayDeliveriesByStatus(
@@ -829,12 +829,12 @@ function sortDeliveries(sortBy) {
       );
       updatePagination(deliveries.length);
     } else {
-      showErrorMessage("Erreur lors du chargement des livraisons");
+      showErrorMessage("Error loading deliveries");
     }
   };
 
   xhr.onerror = () => {
-    showErrorMessage("Erreur de connexion au serveur");
+    showErrorMessage("Server connection error");
   };
 
   xhr.send();
@@ -843,7 +843,7 @@ function sortDeliveries(sortBy) {
 function showErrorMessage(message) {
   Swal.fire({
     icon: "error",
-    title: "Erreur",
+    title: "Error",
     text: message,
     confirmButtonText: "OK",
   });
@@ -852,14 +852,14 @@ function showErrorMessage(message) {
 // Function to handle the "Make to Ship" button click
 function makeToShip(orderId) {
   Swal.fire({
-    title: "Confirmer l'expédition",
-    text: "Êtes-vous sûr de vouloir expédier cette commande ? Une livraison sera créée et une facture générée.",
+    title: "Confirm Shipment",
+    text: "Are you sure you want to ship this order? A delivery will be created and an invoice generated.",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, expédier",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes, ship it",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
       const xhr = new XMLHttpRequest();
@@ -873,8 +873,8 @@ function makeToShip(orderId) {
       xhr.onload = () => {
         if (xhr.status === 200) {
           Swal.fire({
-            title: "Succès!",
-            text: "La commande a été expédiée, une livraison créée et une facture générée",
+            title: "Success!",
+            text: "The order has been shipped, a delivery created and an invoice generated",
             icon: "success",
             confirmButtonText: "OK",
           }).then(() => {
@@ -885,16 +885,16 @@ function makeToShip(orderId) {
           try {
             const response = JSON.parse(xhr.responseText);
             showErrorMessage(
-              response.message || "Erreur lors de l'expédition de la commande"
+              response.message || "Error shipping the order"
             );
           } catch (e) {
-            showErrorMessage("Erreur lors de l'expédition de la commande");
+            showErrorMessage("Error shipping the order");
           }
         }
       };
 
       xhr.onerror = () => {
-        showErrorMessage("Erreur de connexion au serveur");
+        showErrorMessage("Server connection error");
       };
 
       xhr.send();
@@ -1163,19 +1163,19 @@ function displayDeliveryDetails(delivery) {
       <div>
         <a href="#!" class="btn btn-success btn-responsive" id="btn-mark-delivered" data-id="${delivery._id}">
           <i class="bi bi-check-circle"></i>
-          <span>Make As Delivered</span>
+          <span>Mark As Delivered</span>
         </a>
       </div>
       <div>
         <a href="#!" class="btn btn-danger btn-responsive" id="btn-mark-cancelled" data-id="${delivery._id}">
           <i class="bi bi-x-circle"></i>
-          <span>Make as Cancelled</span>
+          <span>Mark as Cancelled</span>
         </a>
       </div>
       <div>
         <a href="#!" class="btn btn-warning btn-responsive" id="btn-mark-postponed" data-id="${delivery._id}">
           <i class="bi bi-clock"></i>
-          <span>Make As Postponed</span>
+          <span>Mark As Postponed</span>
         </a>
       </div>
     `;
@@ -1206,8 +1206,8 @@ function displayDeliveryDetails(delivery) {
           <td>${product.productId || "N/A"}</td>
           <td>${product.productName || "Product Name"}</td>
           <td>${quantity}</td>
-          <td>${price.toFixed(2)} DT</td>
-          <td>${itemTotal.toFixed(2)} DT</td>
+          <td>${price.toFixed(2)} TND</td>
+          <td>${itemTotal.toFixed(2)} TND</td>
         </tr>
       `;
     });
@@ -1224,7 +1224,7 @@ function displayDeliveryDetails(delivery) {
   orderItemsHtml += `
     <tr class="fw-bold border-top fs-5 text">
       <td colspan="4" class="text-end">Total Amount</td>
-      <td>${subtotal.toFixed(2)} DT</td>
+      <td>${subtotal.toFixed(2)} TND</td>
     </tr>
   `;
 
@@ -1342,7 +1342,7 @@ function displayDeliveryDetails(delivery) {
               <div class="card-footer d-flex align-items-center justify-content-around flex-wrap gap-2">
                 <p class="border rounded mb-0 px-2 py-1 bg-body">
                   <i class="bi bi-box-arrow-in-right fs-4 align-middle"></i>
-                  Estimated Delivery date :
+                  Estimated Delivery date:
                   <span class="text-dark fw-medium">${formattedEstimatedDate}</span>
                 </p>
                 ${actionButtons}
@@ -1401,7 +1401,7 @@ function setupActionButtons(deliveryId) {
   const deliveredBtn = document.getElementById("btn-mark-delivered");
   if (deliveredBtn) {
     deliveredBtn.addEventListener("click", () => {
-      confirmDeliveryAction(deliveryId, "Marquer comme livrée", "Delivered");
+      confirmDeliveryAction(deliveryId, "Mark as delivered", "Delivered");
     });
   }
 
@@ -1409,7 +1409,7 @@ function setupActionButtons(deliveryId) {
   const cancelledBtn = document.getElementById("btn-mark-cancelled");
   if (cancelledBtn) {
     cancelledBtn.addEventListener("click", () => {
-      confirmDeliveryAction(deliveryId, "Annuler la livraison", "Cancelled");
+      confirmDeliveryAction(deliveryId, "Cancel delivery", "Cancelled");
     });
   }
 
@@ -1442,7 +1442,7 @@ function showError(message) {
   console.error(message);
 }
 
-// Placeholder for loadNotifications function.  This should be defined elsewhere.
+// Placeholder for loadNotifications function. This should be defined elsewhere.
 function loadNotifications() {
   console.log("loadNotifications() called - placeholder function");
 }

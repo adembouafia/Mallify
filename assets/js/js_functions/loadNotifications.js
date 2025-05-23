@@ -1,12 +1,12 @@
-const API_BASE_URL_1 = ""; // à configurer selon ton environnement
+const API_BASE_URL_1 = ""; // configure according to your environment
 let currentShopId = null;
-let allNotifications = []; // Variable pour stocker toutes les notifications
-let allAdminNotifications = []; // Variable pour stocker les notifications admin
-const selectedNotifications = new Set(); // Pour stocker les IDs des notifications sélectionnées
-let currentFilterType = "all"; // Pour suivre le filtre actuel
-let isAdminDashboard = false; // Pour suivre si on est dans le dashboard admin ou shop
+let allNotifications = []; // Variable to store all notifications
+let allAdminNotifications = []; // Variable to store admin notifications
+const selectedNotifications = new Set(); // To store IDs of selected notifications
+let currentFilterType = "all"; // To track current filter
+let isAdminDashboard = false; // To track if we're in admin or shop dashboard
 
-// Références DOM
+// DOM References
 const notificationCounter = document.querySelector(".notification-counter");
 const notificationCountHeader = document.querySelector(
   ".notification-count-header"
@@ -20,21 +20,21 @@ const seeAllNotificationsBtn = document.querySelector(
 document.addEventListener("DOMContentLoaded", () => {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
   
-  // Déterminer si l'utilisateur est sur le dashboard admin en vérifiant l'URL spécifique
+  // Determine if user is on admin dashboard by checking specific URL
   isAdminDashboard = window.location.pathname.includes("/dashbordA_pages/");
   
-  // Vérifier si l'utilisateur a le rôle admin ou superAdmin
+  // Check if user has admin or superAdmin role
   const userRole = userData.role || "";
   const isAdmin = userRole === "admin" || userRole === "superAdmin";
   
   if (isAdminDashboard && !isAdmin) {
-    console.error("Accès non autorisé au dashboard admin");
-    // Rediriger vers la page d'accueil ou afficher un message d'erreur
-    window.location.href = "/"; // ou afficher un message d'erreur
+    console.error("Unauthorized access to admin dashboard");
+    // Redirect to home page or display error message
+    window.location.href = "/"; // or display error message
     return;
   }
   
-  // Pour le dashboard shop, vérifier si shopId existe
+  // For shop dashboard, check if shopId exists
   if (!isAdminDashboard) {
     if (userData.shop) {
       currentShopId = userData.shop;
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("No shop ID found in userData");
     }
   } else {
-    // Pour le dashboard admin, pas besoin de shopId
+    // For admin dashboard, no shopId needed
     initAdminNotifications();
   }
   
@@ -105,7 +105,7 @@ function makeRequest(method, url, data, onSuccess, onError) {
   xhr.send(data ? JSON.stringify(data) : null);
 }
 
-// Fonctions pour les notifications de shop
+// Functions for shop notifications
 function loadShopNotifications() {
   const shopIdParam = getValidShopId();
   if (!shopIdParam) {
@@ -127,10 +127,10 @@ function loadShopNotifications() {
     `${API_BASE_URL_1}/notifications/shop/${shopIdParam}`,
     null,
     (data) => {
-      allNotifications = data.data || []; // Stocker toutes les notifications
+      allNotifications = data.data || []; // Store all notifications
       showNotifications(allNotifications);
 
-      // Si le modal est ouvert, mettre à jour son contenu
+      // If modal is open, update its content
       if (
         document
           .getElementById("allNotificationsModal")
@@ -142,7 +142,7 @@ function loadShopNotifications() {
   );
 }
 
-// Fonctions pour les notifications admin
+// Functions for admin notifications
 function loadAdminNotifications() {
   makeRequest(
     "GET",
@@ -158,10 +158,10 @@ function loadAdminNotifications() {
     `${API_BASE_URL_1}/notifications/admin`,
     null,
     (data) => {
-      allAdminNotifications = data.data || []; // Stocker toutes les notifications admin
+      allAdminNotifications = data.data || []; // Store all admin notifications
       showAdminNotifications(allAdminNotifications);
 
-      // Si le modal est ouvert, mettre à jour son contenu
+      // If modal is open, update its content
       if (
         document
           .getElementById("allNotificationsModal")
@@ -192,7 +192,7 @@ function showNotifications(notifications) {
     item.className = "dropdown-item d-flex align-items-center";
     if (n.status === "unread") item.classList.add("unread-notification");
 
-    // Déterminer l'icône en fonction du type de notification
+    // Determine icon based on notification type
     let icon = "bi-bell";
     if (n.type === "stock") {
       icon = "bi-box";
@@ -204,12 +204,12 @@ function showNotifications(notifications) {
       icon = "bi-box-seam";
     }
 
-    // Ajouter -fill si non lu
+    // Add -fill if unread
     if (n.status === "unread") {
       icon += "-fill";
     }
 
-    // Déterminer la couleur en fonction du type
+    // Determine color based on type
     let iconColorClass = "text-muted";
     if (n.status === "unread") {
       if (n.type === "stock") {
@@ -245,7 +245,7 @@ function showNotifications(notifications) {
   });
 }
 
-// Fonction pour afficher les notifications admin
+// Function to display admin notifications
 function showAdminNotifications(notifications) {
   notificationList.innerHTML = "";
   if (!notifications || notifications.length === 0) {
@@ -259,27 +259,27 @@ function showAdminNotifications(notifications) {
     item.className = "dropdown-item d-flex align-items-center";
     if (n.status === "unread") item.classList.add("unread-notification");
 
-    // Pour les notifications admin, on utilise une icône spécifique
+    // For admin notifications, use a specific icon
     let icon = "bi-shield";
     
-    // Ajouter -fill si non lu
+    // Add -fill if unread
     if (n.status === "unread") {
       icon += "-fill";
     }
 
-    // Couleur pour les notifications admin
+    // Color for admin notifications
     let iconColorClass = "text-muted";
     if (n.status === "unread") {
-      iconColorClass = "text-danger"; // Rouge pour les notifications admin non lues
+      iconColorClass = "text-danger"; // Red for unread admin notifications
     }
 
     const date = new Date(n.createdAt);
     
-    // Récupérer les informations de la boutique si disponible
+    // Get shop information if available
     const shopName = n.shopId && n.shopId.shopName ? n.shopId.shopName : "N/A";
     const vendorName = n.vendorId && n.vendorId.vendorName ? n.vendorId.vendorName : "";
     
-    // Ajouter des informations supplémentaires pour les notifications admin
+    // Add additional information for admin notifications
     const shopInfo = shopName !== "N/A" ? `<div><strong>Shop:</strong> ${shopName}</div>` : "";
     const vendorInfo = vendorName ? `<div><strong>Vendor:</strong> ${vendorName}</div>` : "";
     
@@ -306,9 +306,9 @@ function showAdminNotifications(notifications) {
   });
 }
 
-// Fonction pour créer le modal des notifications
+// Function to create notifications modal
 function createNotificationsModal() {
-  // Créer l'élément modal
+  // Create modal element
   const modalHTML = `
     <div class="modal fade" id="allNotificationsModal" tabindex="-1" aria-labelledby="allNotificationsModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -340,7 +340,7 @@ function createNotificationsModal() {
               </div>
             </div>
             <div class="list-group all-notifications-list">
-              <!-- Les notifications seront chargées ici -->
+              <!-- Notifications will be loaded here -->
             </div>
           </div>
           <div class="modal-footer">
@@ -351,38 +351,38 @@ function createNotificationsModal() {
       </div>
     </div>
   `;
-  // Ajouter le modal au body
+  // Add modal to body
   const modalContainer = document.createElement("div");
   modalContainer.innerHTML = modalHTML;
   document.body.appendChild(modalContainer);
 
-  // Ajouter les gestionnaires d'événements pour le modal
+  // Add event handlers for the modal
   document
     .getElementById("markAllReadModalBtn")
     .addEventListener("click", () => {
       if (isAdminDashboard) {
-        // Pour le dashboard admin
+        // For admin dashboard
         makeRequest(
           "PUT",
           `${API_BASE_URL_1}/notifications/admin/read-all`,
           null,
           () => {
-            // Mettre à jour localement toutes les notifications
+            // Update all notifications locally
             allAdminNotifications.forEach((notification) => {
               notification.status = "read";
             });
 
-            // Mettre à jour l'interface
+            // Update UI
             updateModalAdminNotifications(currentFilterType);
             showAdminNotifications(allAdminNotifications);
-            updateCounter(0); // Toutes les notifications sont lues
+            updateCounter(0); // All notifications are read
 
             toast("All notifications have been marked as read", "success");
           },
           () => toast("Error during operation", "error")
         );
       } else {
-        // Pour le dashboard shop
+        // For shop dashboard
         const shopIdParam = getValidShopId();
         if (!shopIdParam) {
           console.error("Cannot mark all as read: Invalid shop ID");
@@ -394,15 +394,15 @@ function createNotificationsModal() {
           `${API_BASE_URL_1}/notifications/shop/${shopIdParam}/read-all`,
           null,
           () => {
-            // Mettre à jour localement toutes les notifications
+            // Update all notifications locally
             allNotifications.forEach((notification) => {
               notification.status = "read";
             });
 
-            // Mettre à jour l'interface
+            // Update UI
             updateModalNotifications(currentFilterType);
             showNotifications(allNotifications);
-            updateCounter(0); // Toutes les notifications sont lues
+            updateCounter(0); // All notifications are read
 
             toast("All notifications have been marked as read", "success");
           },
@@ -411,13 +411,13 @@ function createNotificationsModal() {
       }
     });
 
-  // Gestionnaire pour la case à cocher "Select All"
+  // Handler for "Select All" checkbox
   document
     .getElementById("selectAllCheckbox")
     .addEventListener("change", (e) => {
       const isChecked = e.target.checked;
 
-      // Sélectionner ou désélectionner toutes les cases à cocher
+      // Select or deselect all checkboxes
       document
         .querySelectorAll(".notification-checkbox")
         .forEach((checkbox) => {
@@ -431,11 +431,11 @@ function createNotificationsModal() {
           }
         });
 
-      // Mettre à jour le compteur et l'état du bouton
+      // Update counter and button state
       updateSelectedCount();
     });
 
-  // Gestionnaire pour le bouton "Delete Selected"
+  // Handler for "Delete Selected" button
   document.getElementById("deleteSelectedBtn").addEventListener("click", () => {
     if (selectedNotifications.size === 0) return;
 
@@ -444,15 +444,15 @@ function createNotificationsModal() {
         `Are you sure you want to delete ${selectedNotifications.size} selected notification(s)?`
       )
     ) {
-      // Convertir le Set en Array pour itération
+      // Convert Set to Array for iteration
       const selectedIds = Array.from(selectedNotifications);
 
-      // Compteur pour suivre les suppressions réussies
+      // Counter to track successful deletions
       let successCount = 0;
       let errorCount = 0;
       const totalToDelete = selectedIds.length;
 
-      // Mettre à jour l'interface immédiatement
+      // Update UI immediately
       if (isAdminDashboard) {
         allAdminNotifications = allAdminNotifications.filter(
           (notification) => !selectedNotifications.has(notification._id)
@@ -467,7 +467,7 @@ function createNotificationsModal() {
         showNotifications(allNotifications);
       }
 
-      // Mettre à jour le compteur
+      // Update counter
       if (isAdminDashboard) {
         updateCounter(
           allAdminNotifications.filter((n) => n.status === "unread").length
@@ -478,7 +478,7 @@ function createNotificationsModal() {
         );
       }
 
-      // Fonction pour supprimer une notification
+      // Function to delete a notification
       const deleteNotification = (id, index) => {
         const endpoint = isAdminDashboard 
           ? `${API_BASE_URL_1}/notifications/admin/${id}`
@@ -491,9 +491,9 @@ function createNotificationsModal() {
           () => {
             successCount++;
 
-            // Si toutes les requêtes sont terminées
+            // If all requests are completed
             if (successCount + errorCount === totalToDelete) {
-              // Notification de succès
+              // Success notification
               if (errorCount === 0) {
                 toast(
                   `${successCount} notification(s) successfully deleted`,
@@ -510,9 +510,9 @@ function createNotificationsModal() {
           () => {
             errorCount++;
 
-            // Si toutes les requêtes sont terminées
+            // If all requests are completed
             if (successCount + errorCount === totalToDelete) {
-              // Notification d'erreur ou mixte
+              // Error or mixed notification
               if (successCount === 0) {
                 toast("Error during deletion", "error");
               } else {
@@ -526,27 +526,27 @@ function createNotificationsModal() {
         );
       };
 
-      // Supprimer chaque notification sélectionnée
+      // Delete each selected notification
       selectedIds.forEach((id, index) => {
         deleteNotification(id, index);
       });
 
-      // Réinitialiser les sélections
+      // Reset selections
       selectedNotifications.clear();
       updateSelectedCount();
     }
   });
 
-  // Gestionnaire pour les filtres
+  // Handler for filters
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      // Mettre à jour l'état actif des boutons
+      // Update active state of buttons
       document
         .querySelectorAll(".filter-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
 
-      // Filtrer les notifications
+      // Filter notifications
       currentFilterType = e.target.dataset.filter;
       
       if (isAdminDashboard) {
@@ -555,7 +555,7 @@ function createNotificationsModal() {
         updateModalNotifications(currentFilterType);
       }
 
-      // Réinitialiser les sélections
+      // Reset selections
       selectedNotifications.clear();
       updateSelectedCount();
       document.getElementById("selectAllCheckbox").checked = false;
@@ -563,21 +563,21 @@ function createNotificationsModal() {
   });
 }
 
-// Fonction pour mettre à jour le compteur de notifications sélectionnées
+// Function to update selected notifications counter
 function updateSelectedCount() {
   const count = selectedNotifications.size;
   document.getElementById("selectedCount").textContent = count;
   document.getElementById("deleteSelectedBtn").disabled = count === 0;
 }
 
-// Fonction pour mettre à jour les notifications dans le modal
+// Function to update notifications in the modal
 function updateModalNotifications(filterType = "all") {
   const notificationsList = document.querySelector(".all-notifications-list");
   notificationsList.innerHTML = "";
 
   let filteredNotifications = [...allNotifications];
 
-  // Appliquer le filtre si nécessaire
+  // Apply filter if needed
   if (filterType !== "all") {
     filteredNotifications = allNotifications.filter(
       (n) => n.type === filterType
@@ -596,7 +596,7 @@ function updateModalNotifications(filterType = "all") {
       "list-group-item list-group-item-action d-flex align-items-center notification-item";
     if (n.status === "unread") item.classList.add("unread-notification");
 
-    // Déterminer l'icône en fonction du type de notification
+    // Determine icon based on notification type
     let icon = "bi-bell";
     if (n.type === "stock") {
       icon = "bi-box";
@@ -606,12 +606,12 @@ function updateModalNotifications(filterType = "all") {
       icon = "bi-truck";
     }
 
-    // Ajouter -fill si non lu
+    // Add -fill if unread
     if (n.status === "unread") {
       icon += "-fill";
     }
 
-    // Déterminer la couleur en fonction du type
+    // Determine color based on type
     let iconColorClass = "text-muted";
     if (n.status === "unread") {
       if (n.type === "stock") {
@@ -625,7 +625,7 @@ function updateModalNotifications(filterType = "all") {
 
     const date = new Date(n.createdAt);
 
-    // Vérifier si cette notification est déjà sélectionnée
+    // Check if this notification is already selected
     const isChecked = selectedNotifications.has(n._id) ? "checked" : "";
 
     item.innerHTML = `
@@ -651,18 +651,18 @@ function updateModalNotifications(filterType = "all") {
     notificationsList.appendChild(item);
   });
 
-  // Ajouter les gestionnaires d'événements pour les boutons dans le modal
+  // Add event listeners for buttons in the modal
   setupModalButtonListeners();
 }
 
-// Fonction pour mettre à jour les notifications admin dans le modal
+// Function to update admin notifications in the modal
 function updateModalAdminNotifications(filterType = "all") {
   const notificationsList = document.querySelector(".all-notifications-list");
   notificationsList.innerHTML = "";
 
   let filteredNotifications = [...allAdminNotifications];
 
-  // Pour les notifications admin, on ne filtre que par type "admin"
+  // For admin notifications, only filter by "admin" type
   if (filterType !== "all" && filterType !== "admin") {
     filteredNotifications = [];
   }
@@ -679,32 +679,32 @@ function updateModalAdminNotifications(filterType = "all") {
       "list-group-item list-group-item-action d-flex align-items-center notification-item";
     if (n.status === "unread") item.classList.add("unread-notification");
 
-    // Pour les notifications admin, on utilise une icône spécifique
+    // For admin notifications, use a specific icon
     let icon = "bi-shield";
     
-    // Ajouter -fill si non lu
+    // Add -fill if unread
     if (n.status === "unread") {
       icon += "-fill";
     }
 
-    // Couleur pour les notifications admin
+    // Color for admin notifications
     let iconColorClass = "text-muted";
     if (n.status === "unread") {
-      iconColorClass = "text-danger"; // Rouge pour les notifications admin non lues
+      iconColorClass = "text-danger"; // Red for unread admin notifications
     }
 
     const date = new Date(n.createdAt);
     
-    // Récupérer les informations de la boutique si disponible
+    // Get shop information if available
     const shopName = n.shopId && n.shopId.shopName ? n.shopId.shopName : "N/A";
     const shopStatus = n.shopId && n.shopId.status ? n.shopId.status : "";
     const vendorName = n.vendorId && n.vendorId.vendorName ? n.vendorId.vendorName : "";
     
-    // Ajouter des informations supplémentaires pour les notifications admin
+    // Add additional information for admin notifications
     const shopInfo = shopName !== "N/A" ? `<div><strong>Shop:</strong> ${shopName} ${shopStatus ? `(${shopStatus})` : ''}</div>` : "";
     const vendorInfo = vendorName ? `<div><strong>Vendor:</strong> ${vendorName}</div>` : "";
 
-    // Vérifier si cette notification est déjà sélectionnée
+    // Check if this notification is already selected
     const isChecked = selectedNotifications.has(n._id) ? "checked" : "";
 
     item.innerHTML = `
@@ -732,13 +732,13 @@ function updateModalAdminNotifications(filterType = "all") {
     notificationsList.appendChild(item);
   });
 
-  // Ajouter les gestionnaires d'événements pour les boutons dans le modal
+  // Add event listeners for admin buttons in the modal
   setupModalAdminButtonListeners();
 }
 
-// Fonction pour configurer les gestionnaires d'événements pour les boutons dans le modal
+// Function to set up event listeners for buttons in the modal
 function setupModalButtonListeners() {
-  // Gestionnaire pour les cases à cocher
+  // Handler for checkboxes
   document.querySelectorAll(".notification-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", (e) => {
       const notificationId = e.target.dataset.id;
@@ -748,7 +748,7 @@ function setupModalButtonListeners() {
       } else {
         selectedNotifications.delete(notificationId);
 
-        // Désélectionner "Select All" si une case est décochée
+        // Uncheck "Select All" if a checkbox is unchecked
         document.getElementById("selectAllCheckbox").checked = false;
       }
 
@@ -756,36 +756,36 @@ function setupModalButtonListeners() {
     });
   });
 
-  // Gestionnaire pour le bouton "marquer comme lu"
+  // Handler for "mark as read" button
   document.querySelectorAll(".modal-mark-read-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
 
-      // Mettre à jour l'interface immédiatement
+      // Update UI immediately
       const notification = allNotifications.find((n) => n._id === id);
       if (notification) {
         notification.status = "read";
       }
 
-      // Mettre à jour l'affichage
+      // Update display
       updateModalNotifications(currentFilterType);
       showNotifications(allNotifications);
 
-      // Mettre à jour le compteur
+      // Update counter
       updateCounter(
         allNotifications.filter((n) => n.status === "unread").length
       );
 
-      // Envoyer la requête à l'API
+      // Send request to API
       makeRequest(
         "PUT",
         `${API_BASE_URL_1}/notifications/read/${id}`,
         null,
         () => {
-          // Succès silencieux - l'interface est déjà mise à jour
+          // Silent success - UI is already updated
         },
         () => {
-          // En cas d'erreur, revenir à l'état précédent
+          // In case of error, revert to previous state
           if (notification) {
             notification.status = "unread";
             updateModalNotifications(currentFilterType);
@@ -800,12 +800,12 @@ function setupModalButtonListeners() {
     });
   });
 
-  // Gestionnaire pour le bouton "supprimer"
+  // Handler for "delete" button
   document.querySelectorAll(".modal-delete-notification-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
       if (confirm("Are you sure you want to delete this notification?")) {
-        // Stocker une copie de la notification avant de la supprimer
+        // Store a copy of the notification before deleting it
         const notificationIndex = allNotifications.findIndex(
           (n) => n._id === id
         );
@@ -814,33 +814,33 @@ function setupModalButtonListeners() {
             ? { ...allNotifications[notificationIndex] }
             : null;
 
-        // Mettre à jour l'interface immédiatement
+        // Update UI immediately
         allNotifications = allNotifications.filter((n) => n._id !== id);
 
-        // Supprimer de la sélection si elle était sélectionnée
+        // Remove from selection if it was selected
         selectedNotifications.delete(id);
         updateSelectedCount();
 
-        // Mettre à jour l'affichage
+        // Update display
         updateModalNotifications(currentFilterType);
         showNotifications(allNotifications);
 
-        // Mettre à jour le compteur
+        // Update counter
         updateCounter(
           allNotifications.filter((n) => n.status === "unread").length
         );
 
-        // Envoyer la requête à l'API
+        // Send request to API
         makeRequest(
           "DELETE",
           `${API_BASE_URL_1}/notifications/${id}`,
           null,
           () => {
-            // Succès silencieux - l'interface est déjà mise à jour
+            // Silent success - UI is already updated
             toast("Notification successfully deleted", "success");
           },
           () => {
-            // En cas d'erreur, restaurer la notification
+            // In case of error, restore the notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
                 allNotifications.splice(
@@ -865,9 +865,9 @@ function setupModalButtonListeners() {
   });
 }
 
-// Fonction pour configurer les gestionnaires d'événements pour les boutons admin dans le modal
+// Function to set up event listeners for admin buttons in the modal
 function setupModalAdminButtonListeners() {
-  // Gestionnaire pour les cases à cocher
+  // Handler for checkboxes
   document.querySelectorAll(".notification-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", (e) => {
       const notificationId = e.target.dataset.id;
@@ -877,7 +877,7 @@ function setupModalAdminButtonListeners() {
       } else {
         selectedNotifications.delete(notificationId);
 
-        // Désélectionner "Select All" si une case est décochée
+        // Uncheck "Select All" if a checkbox is unchecked
         document.getElementById("selectAllCheckbox").checked = false;
       }
 
@@ -885,36 +885,36 @@ function setupModalAdminButtonListeners() {
     });
   });
 
-  // Gestionnaire pour le bouton "marquer comme lu" pour admin
+  // Handler for "mark as read" button for admin
   document.querySelectorAll(".modal-admin-mark-read-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
 
-      // Mettre à jour l'interface immédiatement
+      // Update UI immediately
       const notification = allAdminNotifications.find((n) => n._id === id);
       if (notification) {
         notification.status = "read";
       }
 
-      // Mettre à jour l'affichage
+      // Update display
       updateModalAdminNotifications(currentFilterType);
       showAdminNotifications(allAdminNotifications);
 
-      // Mettre à jour le compteur
+      // Update counter
       updateCounter(
         allAdminNotifications.filter((n) => n.status === "unread").length
       );
 
-      // Envoyer la requête à l'API
+      // Send request to API
       makeRequest(
         "PUT",
         `${API_BASE_URL_1}/notifications/admin/read/${id}`,
         null,
         () => {
-          // Succès silencieux - l'interface est déjà mise à jour
+          // Silent success - UI is already updated
         },
         () => {
-          // En cas d'erreur, revenir à l'état précédent
+          // In case of error, revert to previous state
           if (notification) {
             notification.status = "unread";
             updateModalAdminNotifications(currentFilterType);
@@ -929,12 +929,12 @@ function setupModalAdminButtonListeners() {
     });
   });
 
-  // Gestionnaire pour le bouton "supprimer" pour admin
+  // Handler for "delete" button for admin
   document.querySelectorAll(".modal-admin-delete-notification-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
       if (confirm("Are you sure you want to delete this notification?")) {
-        // Stocker une copie de la notification avant de la supprimer
+        // Store a copy of the notification before deleting it
         const notificationIndex = allAdminNotifications.findIndex(
           (n) => n._id === id
         );
@@ -943,33 +943,32 @@ function setupModalAdminButtonListeners() {
             ? { ...allAdminNotifications[notificationIndex] }
             : null;
 
-        // Mettre à jour l'interface immédiatement
+        // Update UI immediately
         allAdminNotifications = allAdminNotifications.filter((n) => n._id !== id);
 
-        // Supprimer de la sélection si elle était sélectionnée
         selectedNotifications.delete(id);
         updateSelectedCount();
 
-        // Mettre à jour l'affichage
+        // Update display
         updateModalAdminNotifications(currentFilterType);
         showAdminNotifications(allAdminNotifications);
 
-        // Mettre à jour le compteur
+        // Update counter
         updateCounter(
           allAdminNotifications.filter((n) => n.status === "unread").length
         );
 
-        // Envoyer la requête à l'API
+        // Send request to API
         makeRequest(
           "DELETE",
           `${API_BASE_URL_1}/notifications/admin/${id}`,
           null,
           () => {
-            // Succès silencieux - l'interface est déjà mise à jour
+            // Silent success - UI is already updated
             toast("Notification successfully deleted", "success");
           },
           () => {
-            // En cas d'erreur, restaurer la notification
+            // In case of error, restore the notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
                 allAdminNotifications.splice(
@@ -1001,14 +1000,14 @@ function setupShopListeners() {
       `${API_BASE_URL_1}/notifications/shop/${currentShopId}/read-all`,
       null,
       () => {
-        // Mettre à jour localement toutes les notifications
+        // Update all notifications locally
         allNotifications.forEach((notification) => {
           notification.status = "read";
         });
 
-        // Mettre à jour l'interface
+        // Update UI
         showNotifications(allNotifications);
-        updateCounter(0); // Toutes les notifications sont lues
+        updateCounter(0); // All notifications are read
 
         toast("All notifications have been marked as read", "success");
       },
@@ -1017,14 +1016,14 @@ function setupShopListeners() {
   });
 
   seeAllNotificationsBtn.addEventListener("click", () => {
-    // Réinitialiser les sélections
+    // Reset selections
     selectedNotifications.clear();
     updateSelectedCount();
 
-    // Mettre à jour les notifications dans le modal et l'afficher
+    // Update notifications in the modal and display it
     updateModalNotifications(currentFilterType);
 
-    // Afficher le modal
+    // Show the modal
     const modalElement = document.getElementById("allNotificationsModal");
     if (modalElement) {
       const modal = new window.bootstrap.Modal(modalElement);
@@ -1033,35 +1032,35 @@ function setupShopListeners() {
   });
 
   notificationList.addEventListener("click", (e) => {
-    // Gestion du bouton "marquer comme lu"
+    // Handle "mark as read" button
     const readBtn = e.target.closest(".mark-read-btn");
     if (readBtn) {
       const id = readBtn.dataset.id;
 
-      // Mettre à jour l'interface immédiatement
+      // Update UI immediately
       const notification = allNotifications.find((n) => n._id === id);
       if (notification) {
         notification.status = "read";
       }
 
-      // Mettre à jour l'affichage
+      // Update display
       showNotifications(allNotifications);
 
-      // Mettre à jour le compteur
+      // Update counter
       updateCounter(
         allNotifications.filter((n) => n.status === "unread").length
       );
 
-      // Envoyer la requête à l'API
+      // Send request to API
       makeRequest(
         "PUT",
         `${API_BASE_URL_1}/notifications/read/${id}`,
         null,
         () => {
-          // Succès silencieux - l'interface est déjà mise à jour
+          // Silent success - UI is already updated
         },
         () => {
-          // En cas d'erreur, revenir à l'état précédent
+          // In case of error, revert to previous state
           if (notification) {
             notification.status = "unread";
             showNotifications(allNotifications);
@@ -1074,14 +1073,14 @@ function setupShopListeners() {
       );
     }
 
-    // Gestion du bouton "supprimer"
+    // Handle "delete" button
     const deleteBtn = e.target.closest(".delete-notification-btn");
     if (deleteBtn) {
       const id = deleteBtn.dataset.id;
 
-      // Confirmation avant suppression
+      // Confirm before deletion
       if (confirm("Are you sure you want to delete this notification?")) {
-        // Stocker une copie de la notification avant de la supprimer
+        // Store a copy of the notification before deleting it
         const notificationIndex = allNotifications.findIndex(
           (n) => n._id === id
         );
@@ -1090,28 +1089,28 @@ function setupShopListeners() {
             ? { ...allNotifications[notificationIndex] }
             : null;
 
-        // Mettre à jour l'interface immédiatement
+        // Update UI immediately
         allNotifications = allNotifications.filter((n) => n._id !== id);
 
-        // Mettre à jour l'affichage
+        // Update display
         showNotifications(allNotifications);
 
-        // Mettre à jour le compteur
+        // Update counter
         updateCounter(
           allNotifications.filter((n) => n.status === "unread").length
         );
 
-        // Envoyer la requête à l'API
+        // Send request to API
         makeRequest(
           "DELETE",
           `${API_BASE_URL_1}/notifications/${id}`,
           null,
           () => {
-            // Succès silencieux - l'interface est déjà mise à jour
+            // Silent success - UI is already updated
             toast("Notification successfully deleted", "success");
           },
           () => {
-            // En cas d'erreur, restaurer la notification
+            // In case of error, restore the notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
                 allNotifications.splice(
@@ -1135,7 +1134,7 @@ function setupShopListeners() {
   });
 }
 
-// Fonction pour configurer les gestionnaires d'événements pour le dashboard admin
+// Function to set up event listeners for admin dashboard
 function setupAdminListeners() {
   markAllReadBtn.addEventListener("click", () => {
     makeRequest(
@@ -1143,14 +1142,14 @@ function setupAdminListeners() {
       `${API_BASE_URL_1}/notifications/admin/read-all`,
       null,
       () => {
-        // Mettre à jour localement toutes les notifications
+        // Update all notifications locally
         allAdminNotifications.forEach((notification) => {
           notification.status = "read";
         });
 
-        // Mettre à jour l'interface
+        // Update UI
         showAdminNotifications(allAdminNotifications);
-        updateCounter(0); // Toutes les notifications sont lues
+        updateCounter(0); // All notifications are read
 
         toast("All notifications have been marked as read", "success");
       },
@@ -1159,14 +1158,14 @@ function setupAdminListeners() {
   });
 
   seeAllNotificationsBtn.addEventListener("click", () => {
-    // Réinitialiser les sélections
+    // Reset selections
     selectedNotifications.clear();
     updateSelectedCount();
 
-    // Mettre à jour les notifications dans le modal et l'afficher
+    // Update notifications in the modal and display it
     updateModalAdminNotifications(currentFilterType);
 
-    // Afficher le modal
+    // Show the modal
     const modalElement = document.getElementById("allNotificationsModal");
     if (modalElement) {
       const modal = new window.bootstrap.Modal(modalElement);
@@ -1175,35 +1174,35 @@ function setupAdminListeners() {
   });
 
   notificationList.addEventListener("click", (e) => {
-    // Gestion du bouton "marquer comme lu" pour admin
+    // Handle "mark as read" button for admin
     const readBtn = e.target.closest(".admin-mark-read-btn");
     if (readBtn) {
       const id = readBtn.dataset.id;
 
-      // Mettre à jour l'interface immédiatement
+      // Update UI immediately
       const notification = allAdminNotifications.find((n) => n._id === id);
       if (notification) {
         notification.status = "read";
       }
 
-      // Mettre à jour l'affichage
+      // Update display
       showAdminNotifications(allAdminNotifications);
 
-      // Mettre à jour le compteur
+      // Update counter
       updateCounter(
         allAdminNotifications.filter((n) => n.status === "unread").length
       );
 
-      // Envoyer la requête à l'API
+      // Send request to API
       makeRequest(
         "PUT",
         `${API_BASE_URL_1}/notifications/admin/read/${id}`,
         null,
         () => {
-          // Succès silencieux - l'interface est déjà mise à jour
+          // Silent success - UI is already updated
         },
         () => {
-          // En cas d'erreur, revenir à l'état précédent
+          // In case of error, revert to previous state
           if (notification) {
             notification.status = "unread";
             showAdminNotifications(allAdminNotifications);
@@ -1216,14 +1215,14 @@ function setupAdminListeners() {
       );
     }
 
-    // Gestion du bouton "supprimer" pour admin
+    // Handle "delete" button for admin
     const deleteBtn = e.target.closest(".admin-delete-notification-btn");
     if (deleteBtn) {
       const id = deleteBtn.dataset.id;
 
-      // Confirmation avant suppression
+      // Confirm before deletion
       if (confirm("Are you sure you want to delete this notification?")) {
-        // Stocker une copie de la notification avant de la supprimer
+        // Store a copy of the notification before deleting it
         const notificationIndex = allAdminNotifications.findIndex(
           (n) => n._id === id
         );
@@ -1232,28 +1231,28 @@ function setupAdminListeners() {
             ? { ...allAdminNotifications[notificationIndex] }
             : null;
 
-        // Mettre à jour l'interface immédiatement
+        // Update UI immediately
         allAdminNotifications = allAdminNotifications.filter((n) => n._id !== id);
 
-        // Mettre à jour l'affichage
+        // Update display
         showAdminNotifications(allAdminNotifications);
 
-        // Mettre à jour le compteur
+        // Update counter
         updateCounter(
           allAdminNotifications.filter((n) => n.status === "unread").length
         );
 
-        // Envoyer la requête à l'API
+        // Send request to API
         makeRequest(
           "DELETE",
           `${API_BASE_URL_1}/notifications/admin/${id}`,
           null,
           () => {
-            // Succès silencieux - l'interface est déjà mise à jour
+            // Silent success - UI is already updated
             toast("Notification successfully deleted", "success");
           },
           () => {
-            // En cas d'erreur, restaurer la notification
+            // In case of error, restore the notification
             if (deletedNotification) {
               if (notificationIndex !== -1) {
                 allAdminNotifications.splice(
@@ -1432,7 +1431,7 @@ css.textContent = `
     cursor: not-allowed;
   }
   
-  /* Animation pour les actions */
+  /* Animation for actions */
   .notification-item {
     transition: opacity 0.3s, transform 0.3s;
   }
@@ -1444,14 +1443,14 @@ css.textContent = `
 `;
 document.head.appendChild(css);
 
-// Import des bibliothèques nécessaires
+// Import required libraries
 function loadScripts() {
   // Import Swal library
   const swalScript = document.createElement("script");
   swalScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
   document.head.appendChild(swalScript);
 
-  // Import Bootstrap JS si ce n'est pas déjà fait
+  // Import Bootstrap JS if not already done
   if (typeof window.bootstrap === "undefined") {
     const bootstrapScript = document.createElement("script");
     bootstrapScript.src =
@@ -1462,5 +1461,5 @@ function loadScripts() {
 
 loadScripts();
 
-// Exécuter ce code pour tester
+// Execute this code to test
 console.log("Notifications system initialized");

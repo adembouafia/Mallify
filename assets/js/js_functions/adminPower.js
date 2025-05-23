@@ -389,7 +389,7 @@ function checkProductAccess(callback) {
 
         console.log("Product data:", product)
 
-        // Vérifier que le produit appartient au shop de l'utilisateur
+        // verify if the product belongs to the user's shop
         const userShopId = extractShopId(userData)
         if (!userShopId) {
           console.error("User shop ID not found")
@@ -409,7 +409,7 @@ function checkProductAccess(callback) {
         console.log("User shop ID:", userShopId)
         console.log("Product shop ID:", productShopId)
 
-        // Comparer les IDs en tant que chaînes pour éviter les problèmes de type
+        // Compare the shop IDs
         const hasAccess = userShopId.toString() === productShopId.toString()
 
         if (!hasAccess) {
@@ -450,7 +450,7 @@ function editProduct() {
     return
   }
 
-  // Vérifier d'abord que l'utilisateur a le droit de modifier ce produit
+  // Verify if the user has the right to edit this product
   checkProductAccess((hasAccess) => {
     if (!hasAccess) {
       window.Swal.fire({
@@ -505,7 +505,7 @@ function deleteProduct() {
     return
   }
 
-  // Vérifier d'abord que l'utilisateur a le droit de supprimer ce produit
+  // Verify if the user has the right to delete this product
   checkProductAccess((hasAccess) => {
     if (!hasAccess) {
       window.Swal.fire({
@@ -597,7 +597,7 @@ function createDockItems() {
   if (userRole === "admin" || userRole === "superAdmin") {
     itemsToShow = adminDockItems
   } else if (userRole === "vendor" || userRole === "moderator") {
-    // Pour les vendeurs et modérateurs, vérifier d'abord qu'ils ont accès au produit
+    // for vendor and moderator, check if the user has access to the product
     checkProductAccess((hasAccess) => {
       if (hasAccess) {
         itemsToShow = vendorDockItems
