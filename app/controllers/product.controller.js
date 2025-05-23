@@ -40,7 +40,7 @@ exports.createProduct = async (req, res) => {
       if (!existingSubCategory) {
         return res.status(400).json({
           status: "fail",
-          message: "La sous-catégorie spécifiée n'existe pas",
+          message: "The specified subcategory does not exist",
         })
       }
 
@@ -92,7 +92,7 @@ exports.createProduct = async (req, res) => {
 // Get all products with populated subCategory and shop
 exports.getAllProducts = async (req, res) => {
   try {
-    let products = await Product.find().populate("subCategory", "name").populate("shop", "shopName status") // Ajout du status pour vérifier si la boutique est bannie
+    let products = await Product.find().populate("subCategory", "name").populate("shop", "shopName status") // Added status to check if the shop is banned
     if (req.user && (req.user.role === "vendor" || req.user.role === "admin" || req.user.role === "superAdmin")) {
     } else {
       products = products.filter((product) => {
@@ -169,12 +169,12 @@ exports.getMyProducts = async (req, res) => {
         shopId = vendor.shop
       }
     } else if (req.user.role === "moderator") {
-      // Pour les modérateurs, utiliser leur shopId du token
+      // For moderators, use their shopId from the token
       shopId = req.user.shopId
       if (!shopId) {
         return res.status(400).json({
           status: "fail",
-          message: "Shop ID non trouvé dans le token d'authentification",
+          message: "Shop ID not found in authentication token",
         })
       }
     } else if (req.user.role === "admin" && req.query.shopId) {
@@ -232,7 +232,7 @@ exports.updateProduct = async (req, res) => {
         })
       }
 
-      // Vérifier que le produit appartient au shop de l'utilisateur
+      // Check that the product belongs to the user's shop
       const shopId = req.user.shopId
       if (product.shop.toString() !== shopId) {
         return res.status(403).json({
@@ -247,7 +247,7 @@ exports.updateProduct = async (req, res) => {
         if (!existingSubCategory) {
           return res.status(400).json({
             status: "fail",
-            message: "La sous-catégorie spécifiée n'existe pas",
+            message: "The specified subcategory does not exist",
           })
         }
       }
@@ -288,7 +288,7 @@ exports.deleteProduct = async (req, res) => {
       })
     }
 
-    // Vérifier que le produit appartient au shop de l'utilisateur
+    // Check that the product belongs to the user's shop
     const shopId = req.user.shopId
     if (product.shop.toString() !== shopId) {
       return res.status(403).json({
@@ -606,7 +606,7 @@ exports.getProductsByCategory = async (req, res) => {
       })
       .populate("shop", "shopName status")
 
-    // Filtrer les produits par catégorie
+    // Filter products by category
     const filteredProducts = products.filter((product) => {
       if (product.subCategory && product.subCategory.category && product.subCategory.category.categoryName) {
         return product.subCategory.category.categoryName === categoryName

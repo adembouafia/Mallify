@@ -1,18 +1,18 @@
 const Cart = require('../models/cart.model');
 const Product = require('../models/product.model');
 
-// Ajout d'un produit au panier
+// Add a product to the cart
 exports.addToCart = async (req, res) => {
     const { clientId, productId, quantity } = req.body;
 
     if (!clientId || !productId || typeof quantity !== 'number') {
-        return res.status(400).json({ message: "Champs manquants ou invalides." });
+        return res.status(400).json({ message: "Missing or invalid fields." });
     }
 
     try {
         const product = await Product.findById(productId);
         if (!product) {
-            return res.status(404).json({ message: "Produit non trouvé" });
+            return res.status(404).json({ message: "Product not found" });
         }
 
         let cart = await Cart.findOne({ clientId });
@@ -28,7 +28,7 @@ exports.addToCart = async (req, res) => {
             }
         }
 
-        // Calcul du total avant enregistrement
+        // Calculate total before saving
         let total = 0;
         for (const item of cart.items) {
             const prod = item.productId.equals(productId) ? product : await Product.findById(item.productId);
@@ -45,24 +45,22 @@ exports.addToCart = async (req, res) => {
             totalPrice: cart.totalPrice
         });
     } catch (err) {
-        res.status(500).json({ message: "Erreur ajout panier", error: err.message });
+        res.status(500).json({ message: "Error adding to cart", error: err.message });
     }
 };
 
-
-
-// Supprimer un produit du panier
+// Remove a product from the cart
 exports.removeFromCart = async (req, res) => {
     const { clientId, productId } = req.body;
 
     try {
         let cart = await Cart.findOne({ clientId });
-        if (!cart) return res.status(404).json({ message: "Panier non trouvé" });
+        if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-        // Supprimer l'item
+        // Remove the item
         cart.items = cart.items.filter(item => item.productId.toString() !== productId);
 
-        // Recalculer le total
+        // Recalculate the total
         let total = 0;
         for (const item of cart.items) {
             const product = await Product.findById(item.productId);
@@ -76,12 +74,12 @@ exports.removeFromCart = async (req, res) => {
         cart = await Cart.findById(cart._id).populate('items.productId');
 
         res.status(200).json({
-            message: "Produit supprimé du panier",
+            message: "Product removed from cart",
             cart,
             totalPrice: cart.totalPrice
         });
     } catch (err) {
-        res.status(500).json({ message: "Erreur suppression produit du panier", error: err.message });
+        res.status(500).json({ message: "Error removing product from cart", error: err.message });
     }
 };
 // Get cart items for a client
@@ -154,17 +152,17 @@ exports.clearCart = async (req, res) => {
 
         if (!deletedCart) {
             return res.status(404).json({
-                message: "Aucun panier trouvé pour ce client"
+                message: "No cart found for this client"
             });
         }
 
         res.status(200).json({
-            message: "Panier supprimé avec succès",
+            message: "Cart deleted successfully",
             cart: deletedCart
         });
     } catch (error) {
         res.status(500).json({
-            message: "Erreur lors de la suppression du panier",
+            message: "Error while deleting cart",
             error: error.message
         });
     }

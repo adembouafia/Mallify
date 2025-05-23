@@ -8,7 +8,7 @@ exports.createCategory = async (req, res) => {
 
         const existingCategory = await Category.findOne({ categoryName });
         if (existingCategory) {
-        return res.status(400).json({ message: 'La catégorie existe déjà' });
+        return res.status(400).json({ message: 'Category already exists' });
         }
 
         const category = new Category(
@@ -17,10 +17,10 @@ exports.createCategory = async (req, res) => {
 
         await category.save();
 
-        res.status(201).json({ message: 'Catégorie créée avec succès', category });
+        res.status(201).json({ message: 'Category created successfully', category });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erreur serveur lors de la création de la catégorie' });
+        res.status(500).json({ message: 'Server error while creating category' });
     }
 };
 
@@ -49,8 +49,6 @@ exports.deleteCategory = async(req , res)=>{
     }
 };
 
-
-
 //get all categories
 exports.getAllCategories = async (req, res) => {
     try {
@@ -58,7 +56,7 @@ exports.getAllCategories = async (req, res) => {
         res.status(200).json({ categories });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erreur serveur lors de la récupération des catégories' });
+        res.status(500).json({ message: 'Server error while retrieving categories' });
     }
 };
 
@@ -68,16 +66,14 @@ exports.getCategoryById = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         if (!category) {
-            return res.status(404).json({ message: 'Catégorie non trouvée' });
+            return res.status(404).json({ message: 'Category not found' });
         }
         res.status(200).json({ category });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erreur serveur lors de la récupération de la catégorie' });
+        res.status(500).json({ message: 'Server error while retrieving category' });
     }
 };
-
-
 
 //get categories with subcategories
 exports.getCategoriesWithSubCategories = async (req, res) => {
@@ -106,7 +102,7 @@ exports.getCategoriesWithSubCategories = async (req, res) => {
     } catch (error) {
         console.error("Error in getCategoriesWithSubCategories:", error);
         return res.status(500).json({ 
-            message: 'Erreur lors du chargement des catégories avec sous-catégories', 
+            message: 'Error loading categories with subcategories', 
             error: error.message 
         });
     }

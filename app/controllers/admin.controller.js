@@ -18,8 +18,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage }).single("adminImage");
 
-
-
 // Add new admin
 exports.addAdmin = (req, res) => {
     upload(req, res, async (err) => {
@@ -49,8 +47,6 @@ exports.addAdmin = (req, res) => {
     }
 });
 };
-
-
 
 // Login admin
 exports.login = async (req, res) => {
@@ -92,8 +88,6 @@ exports.login = async (req, res) => {
     }
 };
 
-
-
 // Forgot Password
 exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
@@ -106,7 +100,7 @@ exports.forgotPassword = async (req, res) => {
     
         const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Ex: "A1B2C3"
         admin.resetPasswordCode = resetCode;
-        admin.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+        admin.resetPasswordExpires = Date.now() + 3600000; // 1 hour
     
         await admin.save();
     
@@ -132,8 +126,6 @@ exports.forgotPassword = async (req, res) => {
         res.status(500).send({ message: "Error sending reset code" });
     }
 };
-
-
 
 // Reset Password
 exports.resetPassword = async (req, res) => {
@@ -161,8 +153,6 @@ exports.resetPassword = async (req, res) => {
         res.status(500).send({ message: "Error resetting password" });
     }
 };
-
-
 
 //get all admins
 exports.getAllAdmins = async (req, res) => {

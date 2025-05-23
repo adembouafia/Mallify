@@ -41,13 +41,13 @@ const deliverySchema = new mongoose.Schema(
   }
 );
 
-// Méthode pour mettre à jour le statut
+// Update the delivery status
 deliverySchema.methods.editStatut = function (newStatut) {
   this.statut = newStatut;
   return this.save();
 };
 
-// Méthode pour suivre l’avancement (retourne l’objet actuel)
+// method to get the delivery info
 deliverySchema.methods.trackDelivery = function () {
   return {
     idDelivery: this._id,

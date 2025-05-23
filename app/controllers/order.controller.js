@@ -15,23 +15,23 @@ exports.createOrder = async (req, res) => {
     const cart = await Cart.findById(idPanier).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {
-      return res.status(404).json({ message: "Panier vide ou non trouvé" });
+      return res.status(404).json({ message: "Cart empty or not found" });
     }
 
-    // Regrouper les items par shop
+    // Group items by shop
     const itemsByShop = {};
 
     cart.items.forEach((item) => {
       const product = item.productId;
 
       if (!product) {
-        console.warn(`Produit introuvable: ${item.productId}`);
-        return; // ignorer cet item
+        console.warn(`Product not found: ${item.productId}`);
+        return; // ignore this item
       }
 
       if (!product.shop) {
-        console.warn(`Produit sans shopId: ${product._id}`);
-        return; // ignorer cet item
+        console.warn(`Product without shopId: ${product._id}`);
+        return; // ignore this item
       }
 
       const shopId = product.shop.toString();
@@ -96,10 +96,10 @@ exports.createOrder = async (req, res) => {
         .populate("idClient")
         .populate("shop");
 
-      // Créer une notification pour le vendeur
+      // Create a notification for the vendor
       const client = await Client.findById(cart.clientId);
       if (client) {
-        const notificationMessage = `Nouvelle commande créée par ${client.firstname} ${client.lastname} d'un montant de ${data.total.toFixed(2)}`;
+        const notificationMessage = `New order created by ${client.firstname} ${client.lastname} for an amount of ${data.total.toFixed(2)}`;
 
         await Notification.create({
           shopId: shopId,
@@ -117,13 +117,13 @@ exports.createOrder = async (req, res) => {
     await Cart.findByIdAndDelete(cart._id);
 
     res.status(201).json({
-      message: "Commandes créées avec succès",
+      message: "Orders created successfully",
       orders,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      message: "Erreur lors de la création des commandes",
+      message: "Error creating orders",
       error: err.message,
     });
   }
@@ -136,11 +136,11 @@ exports.getOrdersByShop = async (req, res) => {
     if (!shopId) {
       return res.status(400).json({
         message:
-          "Shop ID manquant. Assurez-vous d'être authentifié(e) et que le token contient bien shopId.",
+          "Missing Shop ID. Make sure you are authenticated and the token contains shopId.",
       });
     }
 
-    // Récupérer toutes les commandes sans filtrer par statut
+    // Get all orders without filtering by status
     const orders = await Order.find({
       shop: shopId,
     })
@@ -148,13 +148,13 @@ exports.getOrdersByShop = async (req, res) => {
       .populate("shop");
 
     res.status(200).json({
-      message: "Liste des commandes actives pour la boutique",
+      message: "List of active orders for the shop",
       orders,
     });
   } catch (err) {
-    console.error("Erreur getOrdersByShop:", err);
+    console.error("Error getOrdersByShop:", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération des commandes",
+      message: "Error retrieving orders",
       error: err.message,
     });
   }
@@ -167,11 +167,11 @@ exports.getOrderHistoriesByShop = async (req, res) => {
     if (!shopId) {
       return res.status(400).json({
         message:
-          "Shop ID manquant. Assurez-vous d'être authentifié(e) et que le token contient bien shopId.",
+          "Missing Shop ID. Make sure you are authenticated and the token contains shopId.",
       });
     }
 
-    // Récupérer uniquement les commandes terminées ou annulées
+    // Get only completed or cancelled orders
     const orders = await Order.find({
       shop: shopId,
       orderStatus: { $in: ["completed", "cancelled"] },
@@ -180,13 +180,13 @@ exports.getOrderHistoriesByShop = async (req, res) => {
       .populate("shop");
 
     res.status(200).json({
-      message: "Historique des commandes pour la boutique",
+      message: "Order history for the shop",
       orders,
     });
   } catch (err) {
-    console.error("Erreur getOrderHistoriesByShop:", err);
+    console.error("Error getOrderHistoriesByShop:", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération de l'historique des commandes",
+      message: "Error retrieving order history",
       error: err.message,
     });
   }
@@ -201,25 +201,25 @@ exports.getOrderById = async (req, res) => {
 
     if (!order) {
       return res.status(404).json({
-        message: "Commande non trouvée",
+        message: "Order not found",
       });
     }
 
-    // Vérifier que la commande appartient au shop de l'utilisateur
+    // Check that the order belongs to the user's shop
     const shopId = req.user.shopId;
     if (order.shop && order.shop._id && order.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette commande",
+        message: "You are not authorized to access this order",
       });
     }
 
     res.status(200).json({
-      message: "Commande trouvée",
+      message: "Order found",
       order,
     });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la récupération de la commande",
+      message: "Error retrieving the order",
       error: err.message,
     });
   }
@@ -232,15 +232,15 @@ exports.deleteOrder = async (req, res) => {
 
     if (!order) {
       return res.status(404).json({
-        message: "Commande non trouvée",
+        message: "Order not found",
       });
     }
 
-    // Vérifier que la commande appartient au shop de l'utilisateur
+    // Check that the order belongs to the user's shop
     const shopId = req.user.shopId;
     if (order.shop && order.shop.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à supprimer cette commande",
+        message: "You are not authorized to delete this order",
       });
     }
 
@@ -249,32 +249,32 @@ exports.deleteOrder = async (req, res) => {
       idCommande: req.params.id,
     });
     if (delivery) {
-      console.log("Livraison supprimée avec succès");
+      console.log("Delivery deleted successfully");
     } else {
-      console.log("Aucune livraison trouvée pour cette commande");
+      console.log("No delivery found for this order");
     }
 
     const invoice = await Invoice.findOneAndDelete({
       idCommande: req.params.id,
     });
     if (invoice) {
-      console.log("Facture supprimée avec succès");
+      console.log("Invoice deleted successfully");
     } else {
-      console.log("Aucune facture trouvée pour cette commande");
+      console.log("No invoice found for this order");
     }
 
     res.status(200).json({
-      message: "Commande supprimée avec succès",
+      message: "Order deleted successfully",
     });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur suppression de la commande",
+      message: "Error deleting the order",
       error: err.message,
     });
   }
 };
 
-// Mettre à jour le statut d'une commande
+// Update order status
 exports.updateStatusOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -293,52 +293,52 @@ exports.updateStatusOrder = async (req, res) => {
     ) {
       return res.status(400).json({
         message:
-          "Statut invalide. Les valeurs possibles sont: pending, accepted, completed, cancelled, non_returned, shipped, postponed",
+          "Invalid status. Possible values are: pending, accepted, completed, cancelled, non_returned, shipped, postponed",
       });
     }
 
-    // Si le statut est "cancelled", une raison doit être fournie
+    // If status is "cancelled", a reason must be provided
     if (status === "cancelled" && !refusalReason) {
       return res.status(400).json({
-        message: "Une raison de refus est requise pour annuler une commande",
+        message: "A refusal reason is required to cancel an order",
       });
     }
 
     const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({
-        message: "Commande non trouvée",
+        message: "Order not found",
       });
     }
 
-    // Vérifier que la commande appartient au shop de l'utilisateur
+    // Check that the order belongs to the user's shop
     const shopId = req.user.shopId;
     if (order.shop.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à modifier cette commande",
+        message: "You are not authorized to modify this order",
       });
     }
 
-    // Si la commande est annulée, enregistrer la raison et restaurer le stock
+    // If the order is cancelled, record the reason and restore stock
     if (status === "cancelled") {
       order.refusalReason = refusalReason;
 
-      // Restaurer le stock uniquement si la commande était précédemment acceptée ou expédiée
-      // car c'est seulement dans ces cas que le stock a été décrémenté
+      // Restore stock only if the order was previously accepted or shipped
+      // because it's only in these cases that stock was decremented
       if (order.orderStatus === "accepted" || order.orderStatus === "shipped") {
         await restoreProductStock(order);
       }
 
-      // Créer une notification pour l'annulation de commande
+      // Create a notification for order cancellation
       const client = await Client.findById(order.idClient);
 
-      // Vérifier qui annule la commande
+      // Check who is cancelling the order
       const isVendorCancellation =
         req.user.role === "vendor" || req.user.role === "moderator";
 
-      // Ne créer une notification que si c'est le client qui annule
+      // Only create a notification if it's the client who cancels
       if (client && !isVendorCancellation) {
-        const notificationMessage = `La commande #${order._id.toString().slice(-6)} a été annulée par ${client.firstname} ${client.lastname}. Raison: ${refusalReason}`;
+        const notificationMessage = `Order #${order._id.toString().slice(-6)} has been cancelled by ${client.firstname} ${client.lastname}. Reason: ${refusalReason}`;
 
         await Notification.create({
           shopId: order.shop,
@@ -350,19 +350,19 @@ exports.updateStatusOrder = async (req, res) => {
       }
     }
 
-    // Si la commande passe de 'pending' à 'accepted', mettre à jour le stock des produits
+    // If the order changes from 'pending' to 'accepted', update product stock
     if (status === "accepted" && order.orderStatus === "pending") {
       await updateProductStock(order);
     }
 
-    // Mettre à jour le statut de la commande
+    // Update the order status
     order.orderStatus = status;
     await order.save();
 
-    // Synchroniser le statut de la livraison associée si elle existe
+    // Synchronize the status of the associated delivery if it exists
     const associatedDelivery = await Delivery.findOne({ idCommande: id });
     if (associatedDelivery) {
-      // Mapper les statuts de commande avec les statuts de livraison
+      // Map order statuses to delivery statuses
       let deliveryStatus;
       switch (status) {
         case "shipped":
@@ -378,39 +378,39 @@ exports.updateStatusOrder = async (req, res) => {
           deliveryStatus = "Postponed";
           break;
         default:
-          // Garder le statut actuel pour les autres cas
+          // Keep current status for other cases
           deliveryStatus = associatedDelivery.statut;
       }
 
-      // Mettre à jour le statut de livraison
+      // Update delivery status
       associatedDelivery.statut = deliveryStatus;
       await associatedDelivery.save();
     }
 
     res.status(200).json({
-      message: "Statut de la commande mis à jour avec succès",
+      message: "Order status updated successfully",
       order,
       deliveryUpdated: associatedDelivery ? true : false,
     });
   } catch (err) {
-    console.error("Erreur updateStatusOrder:", err);
+    console.error("Error updateStatusOrder:", err);
     res.status(500).json({
-      message: "Erreur lors de la mise à jour du statut de la commande",
+      message: "Error updating order status",
       error: err.message,
     });
   }
 };
 
-// Fonction pour mettre à jour le stock des produits et créer des notifications si nécessaire
+// Function to update product stock and create notifications if necessary
 async function updateProductStock(order) {
   try {
-    // Vérifier si cartData existe et contient des items
+    // Check if cartData exists and contains items
     if (
       !order.cartData ||
       !order.cartData.items ||
       order.cartData.items.length === 0
     ) {
-      console.warn("Pas d'items dans la commande pour mettre à jour le stock");
+      console.warn("No items in the order to update stock");
       return;
     }
 
@@ -418,36 +418,36 @@ async function updateProductStock(order) {
     const shop = await Shop.findById(shopId);
 
     if (!shop) {
-      console.warn(`Boutique non trouvée: ${shopId}`);
+      console.warn(`Shop not found: ${shopId}`);
       return;
-    } // Parcourir tous les produits de la commande
+    } // Go through all products in the order
     for (const item of order.cartData.items) {
       const productId = item.productId._id;
       const quantity = item.quantity || 1;
 
-      // Récupérer le produit actuel
+      // Get the current product
       const product = await Product.findById(productId);
 
       if (!product) {
-        console.warn(`Produit non trouvé: ${productId}`);
+        console.warn(`Product not found: ${productId}`);
         continue;
       }
 
-      // Mettre à jour le stock
+      // Update stock
       const newStock = Math.max(0, product.stock - quantity);
       product.stock = newStock;
 
-      // Mettre à jour la disponibilité si nécessaire
+      // Update availability if necessary
       if (newStock === 0) {
         product.availability = "Out of stock";
       }
 
       await product.save();
 
-      // Vérifier si le stock est inférieur ou égal à la limite du produit
+      // Check if stock is less than or equal to the product's limit
       if (product.stockLimit > 0 && newStock <= product.stockLimit) {
         if (newStock === 0) {
-          const notificationMessage = `Le stock du produit "${product.productName}" est épuisé (${newStock} restants)`;
+          const notificationMessage = `The stock of product "${product.productName}" is depleted (${newStock} remaining)`;
 
           await Notification.create({
             productId: product._id,
@@ -456,18 +456,18 @@ async function updateProductStock(order) {
             message: notificationMessage,
           });
         } else {
-          // Créer une notification
-          const notificationMessage = `Le stock du produit "${product.productName}" est bas (${newStock} restants)`;
+          // Create a notification
+          const notificationMessage = `The stock of product "${product.productName}" is low (${newStock} remaining)`;
 
-          // Afficher la notification dans la console
-          console.log("=== NOTIFICATION CRÉÉE ===");
+          // Display the notification in the console
+          console.log("=== NOTIFICATION CREATED ===");
           console.log(`Shop ID: ${shopId}`);
           console.log(`Product ID: ${product._id}`);
           console.log(`Message: ${notificationMessage}`);
           console.log(`Type: stock`);
           console.log("=========================");
 
-          // Créer la notification dans la base de données
+          // Create the notification in the database
           await Notification.create({
             productId: product._id,
             shopId: shopId,
@@ -478,56 +478,56 @@ async function updateProductStock(order) {
       }
     }
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du stock:", error);
+    console.error("Error updating stock:", error);
     throw error;
   }
 }
 
-// Fonction pour restaurer le stock des produits lors de l'annulation d'une commande
+// Function to restore product stock when cancelling an order
 async function restoreProductStock(order) {
   try {
-    // Vérifier si cartData existe et contient des items
+    // Check if cartData exists and contains items
     if (
       !order.cartData ||
       !order.cartData.items ||
       order.cartData.items.length === 0
     ) {
-      console.warn("Pas d'items dans la commande pour restaurer le stock");
+      console.warn("No items in the order to restore stock");
       return;
     }
 
-    // Parcourir tous les produits de la commande
+    // Go through all products in the order
     for (const item of order.cartData.items) {
       const productId = item.productId._id;
       const quantity = item.quantity || 1;
 
-      // Récupérer le produit actuel
+      // Get the current product
       const product = await Product.findById(productId);
 
       if (!product) {
-        console.warn(`Produit non trouvé: ${productId}`);
+        console.warn(`Product not found: ${productId}`);
         continue;
       }
 
       console.log(
-        `Restauration du stock pour le produit ${product.productName}: ${product.stock} + ${quantity}`
+        `Restoring stock for product ${product.productName}: ${product.stock} + ${quantity}`
       );
 
-      // Mettre à jour le stock (ajouter la quantité)
+      // Update stock (add quantity)
       product.stock = product.stock + quantity;
 
-      // Mettre à jour la disponibilité si nécessaire
+      // Update availability if necessary
       if (product.stock > 0 && product.availability === "Out of stock") {
         product.availability = "In stock";
       }
 
       await product.save();
       console.log(
-        `Nouveau stock pour le produit ${product.productName}: ${product.stock}`
+        `New stock for product ${product.productName}: ${product.stock}`
       );
     }
   } catch (error) {
-    console.error("Erreur lors de la restauration du stock:", error);
+    console.error("Error restoring stock:", error);
     throw error;
   }
 }
@@ -538,7 +538,7 @@ exports.getOrdersByClientId = async (req, res) => {
     const clientId = req.params.id;
     const orders = await Order.find({ idClient: clientId })
       .populate("idClient")
-      .populate("shop") // Ajouter cette ligne pour inclure les détails du magasin
+      .populate("shop") // Add this line to include shop details
       .sort({ createdAt: -1 });
 
     console.log(
@@ -559,7 +559,7 @@ exports.getOrdersByClientId = async (req, res) => {
   }
 };
 
-// Modifier la fonction makeToShip pour créer automatiquement une livraison
+// Modify the makeToShip function to automatically create a delivery
 exports.makeToShip = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -567,14 +567,14 @@ exports.makeToShip = async (req, res) => {
     // Find the order
     const order = await Order.findById(orderId).populate("idClient");
     if (!order) {
-      return res.status(404).json({ message: "Commande non trouvée" });
+      return res.status(404).json({ message: "Order not found" });
     }
 
-    // Vérifier que la commande appartient au shop de l'utilisateur
+    // Check that the order belongs to the user's shop
     const shopId = req.user.shopId;
     if (order.shop.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à modifier cette commande",
+        message: "You are not authorized to modify this order",
       });
     }
 
@@ -582,7 +582,7 @@ exports.makeToShip = async (req, res) => {
     if (order.orderStatus !== "accepted") {
       return res.status(400).json({
         message:
-          "La commande doit être acceptée avant de pouvoir être expédiée",
+          "The order must be accepted before it can be shipped",
         currentStatus: order.orderStatus,
       });
     }
@@ -598,31 +598,31 @@ exports.makeToShip = async (req, res) => {
       await invoice.save();
     } // Update order status to shipped
     order.orderStatus = "shipped";
-    await order.save(); // Vérifier si une livraison existe déjà
+    await order.save(); // Check if a delivery already exists
     const existingDelivery = await Delivery.findOne({ idCommande: orderId });
     if (existingDelivery) {
-      // Mettre à jour le statut de la livraison existante
+      // Update the status of the existing delivery
       existingDelivery.statut = "InProgress";
       await existingDelivery.save();
 
       // Return success response with updated data
       return res.status(200).json({
-        message: "Commande passée en statut expédiée et livraison mise à jour",
+        message: "Order status changed to shipped and delivery updated",
         order,
         invoice,
         delivery: existingDelivery,
       });
     }
 
-    // Créer automatiquement une livraison si elle n'existe pas
+    // Automatically create a delivery if it doesn't exist
     const client = await Client.findById(order.idClient);
     if (!client) {
       return res.status(404).json({
-        message: "Client non trouvé",
+        message: "Client not found",
       });
     }
 
-    // Déterminer l'adresse de livraison
+    // Determine the delivery address
     let deliveryAddress = "";
     if (client.shippingInfo && client.shippingInfo.address) {
       deliveryAddress = `${client.shippingInfo.address}, ${client.shippingInfo.city}, ${client.shippingInfo.governorate}, ${client.shippingInfo.postCode}`;
@@ -637,10 +637,10 @@ exports.makeToShip = async (req, res) => {
     } else if (client.defaultShippingInfo) {
       deliveryAddress = `${client.defaultShippingInfo.address}, ${client.defaultShippingInfo.city}, ${client.defaultShippingInfo.governorate}, ${client.defaultShippingInfo.postCode}`;
     } else {
-      deliveryAddress = "Adresse non spécifiée";
+      deliveryAddress = "Address not specified";
     }
 
-    // Créer la livraison
+    // Create the delivery
     const newDelivery = new Delivery({
       idCommande: orderId,
       idClient: order.idClient,
@@ -657,14 +657,14 @@ exports.makeToShip = async (req, res) => {
 
     // Return success response with created data
     res.status(200).json({
-      message: "Commande passée en statut expédiée et livraison créée",
+      message: "Order status changed to shipped and delivery created",
       order,
       invoice,
       delivery: savedDelivery,
     });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors du traitement de la commande",
+      message: "Error processing the order",
       error: err.message,
     });
   }
@@ -1126,5 +1126,9 @@ exports.getOrdersByShopCount = async (req, res) => {
     res.status(200).json(shopOrders);
   } catch (err) {
     console.error("Error in getOrdersByShopCount:", err);
+    res.status(500).json({
+      message: "Error retrieving orders by shop count",
+      error: err.message,
+    });
   }
 };

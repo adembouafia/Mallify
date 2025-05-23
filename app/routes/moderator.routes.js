@@ -23,6 +23,5 @@ module.exports = (app) => {
     app.put('/moderator/update/:id', auth, authorize('moderator', 'vendor'), upload.single("moderatorImage"), moderator.updateModerator);
     app.delete('/moderator/delete/:id', auth, authorize('moderator', 'vendor'), moderator.deleteModerator);
     
-    // Nouvelle route
     app.get('/moderator/:id', auth, moderator.getModeratorById);
 };

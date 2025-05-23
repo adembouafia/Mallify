@@ -1,20 +1,20 @@
 const Invoice = require("../models/invoice.model")
 
-// Récupérer toutes les factures
+// Get all invoices
 exports.getAllInvoices = async (req, res) => {
   try {
-    // Récupérer le shopId depuis l'utilisateur authentifié
+    // Get shopId from authenticated user
     const shopId = req.user.shopId
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Shop ID non trouvé dans le token d'authentification",
+        message: "Shop ID not found in authentication token",
       })
     }
 
-    console.log(`Recherche des factures pour le shop: ${shopId}`)
+    console.log(`Searching for invoices for shop: ${shopId}`)
 
-    // Récupérer toutes les factures
+    // Get all invoices
     const allInvoices = await Invoice.find().populate({
       path: "idCommande",
       populate: [
@@ -32,20 +32,20 @@ exports.getAllInvoices = async (req, res) => {
       ],
     })
 
-    // Filtrer les factures qui correspondent au shopId spécifié
+    // Filter invoices that match the specified shopId
     const filteredInvoices = allInvoices.filter(
       (invoice) => invoice.idCommande && invoice.idCommande.shop && invoice.idCommande.shop._id.toString() === shopId,
     )
 
-    console.log(`Factures trouvées pour ce shop: ${filteredInvoices.length}`)
+    console.log(`Invoices found for this shop: ${filteredInvoices.length}`)
 
     res.status(200).json({ invoices: filteredInvoices })
   } catch (err) {
-    res.status(500).json({ message: "Erreur récupération factures", error: err.message })
+    res.status(500).json({ message: "Error retrieving invoices", error: err.message })
   }
 }
 
-// Récupérer une facture par ID de facture
+// Get an invoice by invoice ID
 exports.getInvoiceById = async (req, res) => {
   try {
     const invoice = await Invoice.findById(req.params.id).populate({
@@ -65,23 +65,23 @@ exports.getInvoiceById = async (req, res) => {
       ],
     })
 
-    if (!invoice) return res.status(404).json({ message: "Facture non trouvée" })
+    if (!invoice) return res.status(404).json({ message: "Invoice not found" })
 
-    // Vérifier que la facture appartient au shop de l'utilisateur
+    // Check that the invoice belongs to the user's shop
     const shopId = req.user.shopId
     if (invoice.idCommande && invoice.idCommande.shop && invoice.idCommande.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette facture",
+        message: "You are not authorized to access this invoice",
       })
     }
 
     res.status(200).json({ invoice })
   } catch (err) {
-    res.status(500).json({ message: "Erreur récupération facture", error: err.message })
+    res.status(500).json({ message: "Error retrieving invoice", error: err.message })
   }
 }
 
-// Récupérer la facture d'une commande spécifique
+// Get the invoice for a specific order
 exports.getInvoiceByOrder = async (req, res) => {
   try {
     const invoice = await Invoice.findOne({
@@ -103,18 +103,18 @@ exports.getInvoiceByOrder = async (req, res) => {
       ],
     })
 
-    if (!invoice) return res.status(404).json({ message: "Facture pour cette commande non trouvée" })
+    if (!invoice) return res.status(404).json({ message: "Invoice for this order not found" })
 
-    // Vérifier que la facture appartient au shop de l'utilisateur
+    // Check that the invoice belongs to the user's shop
     const shopId = req.user.shopId
     if (invoice.idCommande && invoice.idCommande.shop && invoice.idCommande.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette facture",
+        message: "You are not authorized to access this invoice",
       })
     }
 
     res.status(200).json({ invoice })
   } catch (err) {
-    res.status(500).json({ message: "Erreur récupération facture", error: err.message })
+    res.status(500).json({ message: "Error retrieving invoice", error: err.message })
   }
 }

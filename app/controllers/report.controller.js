@@ -106,7 +106,7 @@ exports.getReportById = async (req, res) => {
       .populate("targetId", "productId productName"); // Add this to get product details
 
     if (!report) {
-      return res.status(404).json({ message: "Rapport non trouvé" });
+      return res.status(404).json({ message: "Report not found" });
     }
 
     const userRole = req.user.role;
@@ -152,16 +152,16 @@ exports.getReportById = async (req, res) => {
       } else {
         return res
           .status(403)
-          .json({ message: "Vous n'êtes pas autorisé à accéder à ce rapport" });
+          .json({ message: "You are not authorized to access this report" });
       }
     } else {
       // Other users cannot see reports
-      return res.status(403).json({ message: "Accès non autorisé" });
+      return res.status(403).json({ message: "Unauthorized access" });
     }
   } catch (err) {
     console.error("Error in getReportById:", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération du rapport",
+      message: "Error retrieving the report",
       error: err.message,
     });
   }
@@ -242,13 +242,13 @@ exports.getReportsByTargetType = async (req, res) => {
       } else {
         return res.status(403).json({
           message:
-            "Vous n'êtes autorisé à voir que les rapports de produits de votre boutique",
+            "You are only authorized to view product reports for your shop",
         });
       }
     } else {
       // Other users cannot see reports
       return res.status(403).json({
-        message: "Accès non autorisé",
+        message: "Unauthorized access",
       });
     }
 
@@ -268,7 +268,7 @@ exports.getReportsByTargetType = async (req, res) => {
   } catch (err) {
     console.error("Error in getReportsByTargetType:", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération des rapports",
+      message: "Error retrieving reports",
       error: err.message,
     });
   }
@@ -354,7 +354,7 @@ exports.getAllReports = async (req, res) => {
   } catch (err) {
     console.error("Error in getAllReports:", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération des rapports",
+      message: "Error retrieving reports",
       error: err.message,
     });
   }
@@ -364,10 +364,10 @@ exports.deleteReport = async (req, res) => {
     const report = await Report.findById(req.params.id);
 
     if (!report) {
-      return res.status(404).json({ message: "Rapport non trouvé" });
+      return res.status(404).json({ message: "Report not found" });
     }
 
-    // Vérifier que le rapport appartient au shop de l'utilisateur si c'est un rapport de produit
+    // Check that the report belongs to the user's shop if it's a product report
     if (report.targetType === "Product") {
       const shopId = req.user.shopId;
       if (
@@ -376,25 +376,25 @@ exports.deleteReport = async (req, res) => {
         req.user.role !== "superAdmin"
       ) {
         return res.status(403).json({
-          message: "Vous n'êtes pas autorisé à supprimer ce rapport",
+          message: "You are not authorized to delete this report",
         });
       }
     } else if (req.user.role !== "admin" && req.user.role !== "superAdmin") {
       return res.status(403).json({
         message:
-          "Seuls les administrateurs peuvent supprimer ce type de rapport",
+          "Only administrators can delete this type of report",
       });
     }
 
     await Report.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
-      message: "Rapport supprimé avec succès",
+      message: "Report deleted successfully",
       deletedReport: report,
     });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la suppression du rapport",
+      message: "Error deleting the report",
       error: err.message,
     });
   }
@@ -405,16 +405,16 @@ exports.updateReportStatus = async (req, res) => {
     const { status } = req.body;
 
     if (!status) {
-      return res.status(400).json({ message: "Le statut est requis" });
+      return res.status(400).json({ message: "Status is required" });
     }
 
     const report = await Report.findById(req.params.id);
 
     if (!report) {
-      return res.status(404).json({ message: "Rapport non trouvé" });
+      return res.status(404).json({ message: "Report not found" });
     }
 
-    // Vérifier que le rapport appartient au shop de l'utilisateur si c'est un rapport de produit
+    // Check that the report belongs to the user's shop if it's a product report
     if (report.targetType === "Product") {
       const shopId = req.user.shopId;
       if (
@@ -423,13 +423,13 @@ exports.updateReportStatus = async (req, res) => {
         req.user.role !== "superAdmin"
       ) {
         return res.status(403).json({
-          message: "Vous n'êtes pas autorisé à modifier ce rapport",
+          message: "You are not authorized to modify this report",
         });
       }
     } else if (req.user.role !== "admin" && req.user.role !== "superAdmin") {
       return res.status(403).json({
         message:
-          "Seuls les administrateurs peuvent modifier ce type de rapport",
+          "Only administrators can modify this type of report",
       });
     }
 
@@ -440,12 +440,12 @@ exports.updateReportStatus = async (req, res) => {
     );
 
     res.status(200).json({
-      message: "Statut du rapport mis à jour avec succès",
+      message: "Report status updated successfully",
       updatedReport: updatedReport,
     });
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la mise à jour du statut du rapport",
+      message: "Error updating report status",
       error: err.message,
     });
   }

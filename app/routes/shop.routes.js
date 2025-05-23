@@ -8,30 +8,10 @@ module.exports = (app) => {
   app.get("/shop/:id", shop.getShopById);
 
   app.put("/shop/update/:id", auth, shop.updateShop);
-  app.put(
-    "/shop/status/:id",
-    auth,
-    authorize("superAdmin", "admin"),
-    shop.updateShopStatus
-  );
-  app.delete(
-    "/shop/delete/:id",
-    auth,
-    authorize("superAdmin", "admin"),
-    shop.deleteShop
-  );
-  app.put(
-    "/shop/ban/:id",
-    auth,
-    authorize("superAdmin", "admin"),
-    shop.banShop
-  );
-  app.put(
-    "/shop/unban/:id",
-    auth,
-    authorize("superAdmin", "admin"),
-    shop.unbanShop
-  );
+  app.put("/shop/status/:id",auth,authorize("superAdmin", "admin"),shop.updateShopStatus);
+  app.delete("/shop/delete/:id",auth,authorize("superAdmin", "admin"),shop.deleteShop);
+  app.put("/shop/ban/:id",auth,authorize("superAdmin", "admin"),shop.banShop);
+  app.put("/shop/unban/:id",auth,authorize("superAdmin", "admin"),shop.unbanShop);
   app.put("/shop/update-phone/:id", auth, shop.updateShopPhone);
 
   // Admin dashboard API endpoints

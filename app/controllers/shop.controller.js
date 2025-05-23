@@ -45,7 +45,7 @@ exports.getShopById = async (req, res) => {
   }
 };
 
-// Modifier la fonction updateShop pour synchroniser le numéro de téléphone avec celui du vendor
+// Modify the updateShop function to synchronize the phone number with the vendor's
 exports.updateShop = async (req, res) => {
   try {
     upload(req, res, async (err) => {
@@ -60,7 +60,7 @@ exports.updateShop = async (req, res) => {
         return res.status(404).send({ message: "Shop not found" });
       }
 
-      // Ajouter des logs pour déboguer
+      // Add logs for debugging
       console.log("req.userId:", req.userId);
       console.log("req.user:", req.user);
       console.log("shop.vendor._id:", shop.vendor._id);
@@ -73,10 +73,10 @@ exports.updateShop = async (req, res) => {
           const token = req.headers.authorization.split(" ")[1];
           const decoded = jwt.verify(token, process.env.JWT_SECRET);
           userId = decoded.id;
-          console.log("ID extrait du token:", userId);
+          console.log("ID extracted from token:", userId);
         } catch (tokenError) {
           console.error(
-            "Erreur lors de l'extraction de l'ID du token:",
+            "Error extracting ID from token:",
             tokenError
           );
         }
@@ -104,7 +104,7 @@ exports.updateShop = async (req, res) => {
 
       return updateShopData();
 
-      // Fonction interne pour mettre à jour les données du shop
+      // Internal function to update shop data
       async function updateShopData() {
         const updateData = {
           shopName: req.body.shopName || shop.shopName,
@@ -113,7 +113,7 @@ exports.updateShop = async (req, res) => {
           shop_phone: req.body.shop_phone || shop.shop_phone,
         };
 
-        // Si un nouveau logo a été téléchargé
+        // If a new logo has been uploaded
         if (req.file) {
           updateData.shopLogo = req.file.filename;
         }
@@ -248,7 +248,7 @@ exports.updateShopPhone = async (req, res) => {
       return res.status(404).send({ message: "Shop not found" });
     }
 
-    // Vérifier si l'utilisateur est autorisé à mettre à jour ce shop
+    // Check if the user is authorized to update this shop
     if (
       req.userId !== shop.vendor.toString() &&
       req.role !== "admin" &&

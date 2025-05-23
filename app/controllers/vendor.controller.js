@@ -34,7 +34,7 @@ exports.register = (req, res) => {
       if (existingVendor || existingClient)
         return res.status(400).json({ message: "Email already exists" });
 
-      // Créer le Shop d'abord
+      // Create the Shop first
       const newShop = new Shop({
         shopName: req.body.shopName,
         adresse: req.body.adresse,
@@ -45,7 +45,7 @@ exports.register = (req, res) => {
 
       const savedShop = await newShop.save();
 
-      // Créer le Vendor en liant au Shop
+      // Create the Vendor linked to the Shop
       const vendor = new Vendor({
         vendorName: req.body.vendorName,
         email: req.body.email,
@@ -56,7 +56,7 @@ exports.register = (req, res) => {
 
       const savedVendor = await vendor.save();
 
-      // 🔥 Maintenant on met à jour le Shop pour lui lier le Vendor
+      // 🔥 Now update the Shop to link it to the Vendor
       savedShop.vendor = savedVendor._id;
       await savedShop.save();
 
@@ -95,24 +95,24 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    // Récupérer le shop associé au vendor pour vérifier son statut
+    // Get the shop associated with the vendor to check its status
     const shop = await Shop.findById(vendor.shop);
 
     if (!shop) {
       return res.status(404).json({ message: "Shop not found" });
     }
 
-    // Vérifier le statut du shop
+    // Check shop status
     if (shop.status === "Pending") {
       return res.status(403).json({
-        message: "Votre boutique est en cours d'étude par l'administration.",
+        message: "Your shop is being reviewed by the administration.",
         status: "Pending",
       });
     }
 
     if (shop.status === "Rejected") {
       return res.status(403).json({
-        message: "Votre boutique a été rejetée.",
+        message: "Your shop has been rejected.",
         reason: shop.rejectionReason,
         status: "Rejected",
       });
@@ -120,13 +120,13 @@ exports.login = async (req, res) => {
 
     if (shop.status === "Banned") {
       return res.status(403).json({
-        message: "Votre boutique a été bannie.",
+        message: "Your shop has been banned.",
         reason: shop.bannedReason,
         status: "Banned",
       });
     }
 
-    // Si le shop est approuvé, continuer avec la connexion normale
+    // If the shop is approved, continue with normal login
     const token = jwt.sign(
       {
         id: vendor._id,
@@ -176,7 +176,7 @@ exports.forgotPassword = async (req, res) => {
 
     const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Ex: "A1B2C3"
     vendor.resetPasswordCode = resetCode;
-    vendor.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+    vendor.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
     await vendor.save();
 
@@ -250,33 +250,33 @@ exports.updateVendor = async (req, res) => {
   try {
     const { vendorName, email, phone, vendorPassword } = req.body;
 
-    // Vérifier si le vendor existe
+    // Check if the vendor exists
     const vendor = await Vendor.findById(req.params.id);
     if (!vendor) {
       return res.status(404).send({ message: "Vendor not found" });
     }
 
-    // Préparer les données à mettre à jour
+    // Prepare the data to update
     const updateData = {
       vendorName: vendorName || vendor.vendorName,
       email: email || vendor.email,
       phone: phone || vendor.phone,
     };
 
-    // Si un nouveau mot de passe est fourni, le hacher
+    // If a new password is provided, hash it
     if (vendorPassword) {
       const hashedPassword = await bcrypt.hash(vendorPassword, 10);
       updateData.vendorPassword = hashedPassword;
     }
 
-    // Mettre à jour le vendor
+    // Update the vendor
     const updatedVendor = await Vendor.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true }
     );
 
-    // Si le numéro de téléphone a été mis à jour, mettre à jour également le shop
+    // If the phone number has been updated, also update the shop
     if (phone && phone !== vendor.phone) {
       await Shop.findByIdAndUpdate(
         vendor.shop,

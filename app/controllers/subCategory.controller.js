@@ -63,7 +63,7 @@ exports.updateSubCategory = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, category } = req.body;
-          const existingCategory = await Category.findById(category);
+        const existingCategory = await Category.findById(category);
         if (!existingCategory) {
             return res.status(400).json({ message: 'The specified category does not exist' });
         }
@@ -78,7 +78,7 @@ exports.updateSubCategory = async (req, res) => {
             category,
             _id: { $ne: id } 
         });
-          if (duplicateSubCategory) {
+        if (duplicateSubCategory) {
             return res.status(400).json({ message: 'A subcategory with this name already exists in this category' });
         }
         
@@ -98,5 +98,3 @@ exports.updateSubCategory = async (req, res) => {
         res.status(500).json({ message: 'Server error while updating the subcategory' });
     }
 };
-
-

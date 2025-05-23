@@ -251,7 +251,7 @@ exports.getModeratorById = async (req, res) => {
       return res.status(404).send({ message: "Moderator not found" })
     }
 
-    // Vérifier que le modérateur appartient au shop de l'utilisateur
+    // Check that the moderator belongs to the user's shop
     const shopId = req.user.shopId
     if (req.user.role === "vendor" && moderator.shop.toString() !== shopId) {
       return res.status(403).send({ message: "You can only view moderators from your shop" })

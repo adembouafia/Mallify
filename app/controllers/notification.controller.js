@@ -3,12 +3,12 @@ const Notification = require("../models/notification.model");
 // Get all notifications for a shop
 exports.getNotificationsByShop = async (req, res) => {
   try {
-    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    // Use the shopId from the authenticated user instead of the parameter
     const shopId = req.user.shopId;
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Shop ID non trouvé dans le token d'authentification",
+        message: "Shop ID not found in authentication token",
       });
     }
 
@@ -18,12 +18,12 @@ exports.getNotificationsByShop = async (req, res) => {
       .populate("clientId", "firstname lastname")
       .sort({ createdAt: -1 });
     console.log(
-      `Notifications récupérées pour la boutique ${shopId}: ${notifications.length}`
+      `Notifications retrieved for shop ${shopId}: ${notifications.length}`
     );
     res.status(200).json({ status: "success", data: notifications });
   } catch (err) {
     console.error(
-      "Erreur lors de la récupération des notifications:",
+      "Error retrieving notifications:",
       err.message
     );
     res.status(500).json({ status: "fail", message: err.message });
@@ -33,12 +33,12 @@ exports.getNotificationsByShop = async (req, res) => {
 // Count unread notifications for a shop
 exports.countUnreadNotifications = async (req, res) => {
   try {
-    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    // Use the shopId from the authenticated user instead of the parameter
     const shopId = req.user.shopId;
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Shop ID non trouvé dans le token d'authentification",
+        message: "Shop ID not found in authentication token",
       });
     }
 
@@ -63,23 +63,23 @@ exports.markAsRead = async (req, res) => {
         .json({ status: "fail", message: "Notification not found" });
     }
 
-    // Vérifier que la notification appartient au shop de l'utilisateur
+    // Check that the notification belongs to the user's shop
     const shopId = req.user.shopId;
     if (notification.shopId.toString() !== shopId) {
       return res.status(403).json({
         status: "fail",
-        message: "Vous n'êtes pas autorisé à modifier cette notification",
+        message: "You are not authorized to modify this notification",
       });
     }
 
     notification.status = "read";
     await notification.save();
 
-    console.log(`Notification ${req.params.id} marquée comme lue`);
+    console.log(`Notification ${req.params.id} marked as read`);
     res.status(200).json({ status: "success", data: notification });
   } catch (err) {
     console.error(
-      "Erreur lors du marquage de la notification comme lue:",
+      "Error marking notification as read:",
       err.message
     );
     res.status(500).json({ status: "fail", message: err.message });
@@ -89,12 +89,12 @@ exports.markAsRead = async (req, res) => {
 // Mark all notifications as read for a shop
 exports.markAllAsRead = async (req, res) => {
   try {
-    // Utiliser le shopId de l'utilisateur authentifié au lieu du paramètre
+    // Use the shopId from the authenticated user instead of the parameter
     const shopId = req.user.shopId;
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Shop ID non trouvé dans le token d'authentification",
+        message: "Shop ID not found in authentication token",
       });
     }
 
@@ -121,12 +121,12 @@ exports.deleteNotification = async (req, res) => {
         .json({ status: "fail", message: "Notification not found" });
     }
 
-    // Vérifier que la notification appartient au shop de l'utilisateur
+    // Check that the notification belongs to the user's shop
     const shopId = req.user.shopId;
     if (notification.shopId.toString() !== shopId) {
       return res.status(403).json({
         status: "fail",
-        message: "Vous n'êtes pas autorisé à supprimer cette notification",
+        message: "You are not authorized to delete this notification",
       });
     }
 
@@ -139,7 +139,7 @@ exports.deleteNotification = async (req, res) => {
   }
 };
 
-// Dashbord admin notifications ----------------------------------------------------
+// Admin dashboard notifications ----------------------------------------------------
 exports.getNotificationsToAdmin = async (req, res) => {
   try {
     const notifications = await Notification.find({ type: "admin" })
@@ -150,7 +150,7 @@ exports.getNotificationsToAdmin = async (req, res) => {
     res.status(200).json({ status: "success", data: notifications });
   } catch (err) {
     console.error(
-      "Erreur lors de la récupération des notifications:",
+      "Error retrieving notifications:",
       err.message
     );
     res.status(500).json({ status: "fail", message: err.message });
@@ -179,22 +179,22 @@ exports.markAsReadToAdmin = async (req, res) => {
         .json({ status: "fail", message: "Notification not found" });
     }
 
-    // Vérifier que la notification est de type admin
+    // Check that the notification is of admin type
     if (notification.type !== "admin") {
       return res.status(403).json({
         status: "fail",
-        message: "Cette notification n'est pas destinée à l'administrateur",
+        message: "This notification is not intended for the administrator",
       });
     }
 
     notification.status = "read";
     await notification.save();
 
-    console.log(`Notification ${req.params.id} marquée comme lue`);
+    console.log(`Notification ${req.params.id} marked as read`);
     res.status(200).json({ status: "success", data: notification });
   } catch (err) {
     console.error(
-      "Erreur lors du marquage de la notification comme lue:",
+      "Error marking notification as read:",
       err.message
     );
     res.status(500).json({ status: "fail", message: err.message });
@@ -225,11 +225,11 @@ exports.deleteNotificationToAdmin = async (req, res) => {
         .json({ status: "fail", message: "Notification not found" });
     }
 
-    // Vérifier que la notification est de type admin
+    // Check that the notification is of admin type
     if (notification.type !== "admin") {
       return res.status(403).json({
         status: "fail",
-        message: "Cette notification n'est pas destinée à l'administrateur",
+        message: "This notification is not intended for the administrator",
       });
     }
 

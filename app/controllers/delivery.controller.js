@@ -4,95 +4,95 @@ const Order = require("../models/order.model")
 const Invoice = require("../models/invoice.model")
 const Notification = require("../models/notification.model")
 
-// Vérifier et mettre à jour automatiquement les livraisons reportées
+// Check and automatically update postponed deliveries
 exports.checkPostponedDeliveries = async (shopId = null) => {
   try {
     const currentDate = new Date()
 
-    // Critères de recherche pour les commandes reportées
+    // Search criteria for postponed orders
     const findCriteria = {
       orderStatus: "postponed",
       postponedDate: { $lte: currentDate },
     }
 
-    // Si un shopId est fourni, ajouter ce critère à la recherche
+    // If a shopId is provided, add this criterion to the search
     if (shopId) {
       findCriteria.shop = shopId
     }
 
-    // Trouver toutes les commandes avec le statut "postponed" dont la date de report est atteinte ou dépassée
-    // et qui appartiennent au shop spécifié (si fourni)
+    // Find all orders with "postponed" status whose postponement date has been reached or passed
+    // and that belong to the specified shop (if provided)
     const postponedOrders = await Order.find(findCriteria)
 
-    console.log(`Nombre de commandes reportées à traiter: ${postponedOrders.length}`)
+    console.log(`Number of postponed orders to process: ${postponedOrders.length}`)
 
     if (postponedOrders.length === 0) {
       return {
-        message: "Aucune livraison reportée à mettre à jour",
+        message: "No postponed deliveries to update",
         updated: 0,
       }
     }
 
     let updatedCount = 0
 
-    // Pour chaque commande reportée dont la date est atteinte
+    // For each postponed order whose date has been reached
     for (const order of postponedOrders) {
-      // Trouver la livraison associée à cette commande
+      // Find the delivery associated with this order
       const delivery = await Delivery.findOne({ idCommande: order._id })
 
       if (delivery && delivery.statut === "Postponed") {
-        // Mettre à jour le statut de la livraison à "InProgress"
+        // Update the delivery status to "InProgress"
         await delivery.editStatut("InProgress")
 
-        // Mettre à jour le statut de la commande à "shipped"
+        // Update the order status to "shipped"
         await Order.findByIdAndUpdate(order._id, {
           orderStatus: "shipped",
-          postponedDate: null, // Réinitialiser la date de report
+          postponedDate: null, // Reset the postponement date
         })
 
         updatedCount++
-        console.log(`Livraison ${delivery._id} mise à jour automatiquement de Postponed à InProgress`)
+        console.log(`Delivery ${delivery._id} automatically updated from Postponed to InProgress`)
       }
     }
 
     return {
-      message: `${updatedCount} livraisons reportées ont été mises à jour automatiquement`,
+      message: `${updatedCount} postponed deliveries have been automatically updated`,
       updated: updatedCount,
     }
   } catch (err) {
-    console.error("Erreur lors de la vérification des livraisons reportées:", err)
+    console.error("Error checking postponed deliveries:", err)
     return {
-      message: "Erreur lors de la vérification des livraisons reportées",
+      message: "Error checking postponed deliveries",
       error: err.message,
     }
   }
 }
 
-// Endpoint pour vérifier manuellement les livraisons reportées
+// Endpoint to manually check postponed deliveries
 exports.checkPostponedDeliveriesEndpoint = async (req, res) => {
   try {
-    // Récupérer le shopId depuis la requête
+    // Get shopId from the request
     const shopId = req.query.shopId
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Le paramètre shopId est requis",
+        message: "The shopId parameter is required",
       })
     }
 
-    console.log(`Vérification des livraisons reportées pour le shop: ${shopId}`)
+    console.log(`Checking postponed deliveries for shop: ${shopId}`)
 
     const result = await exports.checkPostponedDeliveries(shopId)
     return res.status(200).json(result)
   } catch (err) {
     return res.status(500).json({
-      message: "Erreur lors de la vérification des livraisons reportées",
+      message: "Error checking postponed deliveries",
       error: err.message,
     })
   }
 }
 
-// Créer une nouvelle livraison
+// Create a new delivery
 exports.createDelivery = async (req, res) => {
   try {
     const { idCommande, idClient, deliveryAdresse, deliveryDate } = req.body
@@ -100,7 +100,7 @@ exports.createDelivery = async (req, res) => {
     const client = await Client.findById(idClient)
     if (!client)
       return res.status(404).json({
-        message: "Client non trouvé",
+        message: "Client not found",
       })
 
     const newDelivery = new Delivery({
@@ -117,11 +117,11 @@ exports.createDelivery = async (req, res) => {
 
     const savedDelivery = await newDelivery.save()
 
-    // Mettre à jour le statut de la commande
+    // Update the order status
     await Order.findByIdAndUpdate(idCommande, { orderStatus: "shipped" })
 
     res.status(201).json({
-      message: "Livraison créée avec succès",
+      message: "Delivery created successfully",
       Delivery: savedDelivery,
       clientInfo: {
         nom: client.lastname,
@@ -130,31 +130,31 @@ exports.createDelivery = async (req, res) => {
     })
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la création de la Delivery",
+      message: "Error creating the Delivery",
       error: err.message,
     })
   }
 }
 
-// Obtenir toutes les livraisons
+// Get all deliveries
 exports.getAllDeliveries = async (req, res) => {
   try {
-    // Vérifier d'abord les livraisons reportées
+    // First check postponed deliveries
     await exports.checkPostponedDeliveries()
 
-    // Récupérer le shopId depuis l'utilisateur authentifié
+    // Get shopId from authenticated user
     const shopId = req.user.shopId
 
     if (!shopId) {
       return res.status(400).json({
-        message: "Shop ID non trouvé dans le token d'authentification",
+        message: "Shop ID not found in authentication token",
       })
     }
 
-    console.log(`Recherche des livraisons pour le shop: ${shopId}`)
+    console.log(`Searching for deliveries for shop: ${shopId}`)
 
-    // Utiliser populate avec plus de profondeur pour obtenir les détails de la commande
-    // et filtrer par shopId
+    // Use populate with more depth to get order details
+    // and filter by shopId
     const deliveries = await Delivery.find()
       .populate({
         path: "idClient",
@@ -169,24 +169,24 @@ exports.getAllDeliveries = async (req, res) => {
         },
       })
 
-    // Filtrer les livraisons qui correspondent au shopId spécifié
+    // Filter deliveries that match the specified shopId
     const filteredDeliveries = deliveries.filter(
       (delivery) =>
         delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() === shopId,
     )
-    console.log(`Livraisons trouvées pour ce shop: ${filteredDeliveries.length}`)
+    console.log(`Deliveries found for this shop: ${filteredDeliveries.length}`)
 
     res.status(200).json(filteredDeliveries)
   } catch (err) {
-    console.error("Erreur lors de la récupération des livraisons:", err)
+    console.error("Error retrieving deliveries:", err)
     res.status(500).json({
-      message: "Erreur lors de la récupération des livraisons",
+      message: "Error retrieving deliveries",
       error: err.message,
     })
   }
 }
 
-// Obtenir une livraison par ID
+// Get a delivery by ID
 exports.getDeliveryById = async (req, res) => {
   try {
     const delivery = await Delivery.findById(req.params.id)
@@ -201,28 +201,28 @@ exports.getDeliveryById = async (req, res) => {
 
     if (!delivery) {
       return res.status(404).json({
-        message: "Livraison non trouvée",
+        message: "Delivery not found",
       })
     }
 
-    // Vérifier que la livraison appartient au shop de l'utilisateur
+    // Check that the delivery belongs to the user's shop
     const shopId = req.user.shopId
     if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette livraison",
+        message: "You are not authorized to access this delivery",
       })
     }
 
     res.status(200).json(delivery)
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la récupération de la livraison",
+      message: "Error retrieving the delivery",
       error: err.message,
     })
   }
 }
 
-// Mettre à jour le statut d'une livraison
+// Update a delivery status
 exports.updateDeliveryStatut = async (req, res) => {
   try {
     const { newStatut, postponedDate } = req.body
@@ -236,95 +236,95 @@ exports.updateDeliveryStatut = async (req, res) => {
 
     if (!delivery) {
       return res.status(404).json({
-        message: "Livraison non trouvée",
+        message: "Delivery not found",
       })
     }
 
-    // Vérifier que la livraison appartient au shop de l'utilisateur
+    // Check that the delivery belongs to the user's shop
     const shopId = req.user.shopId
     if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à modifier cette livraison",
+        message: "You are not authorized to modify this delivery",
       })
     }
 
-    // Mettre à jour le statut de la livraison
+    // Update the delivery status
     await delivery.editStatut(newStatut)
 
-    // Récupérer la commande associée
+    // Get the associated order
     const order = await Order.findById(delivery.idCommande)
     if (!order) {
       return res.status(404).json({
-        message: "Commande associée non trouvée",
+        message: "Associated order not found",
       })
     }
 
-    // Récupérer la facture associée
+    // Get the associated invoice
     const invoice = await Invoice.findOne({ idCommande: delivery.idCommande })
 
-    // Récupérer le client
+    // Get the client
     const client = await Client.findById(delivery.idClient)
     const clientName = client ? `${client.firstname} ${client.lastname}` : "Client"
 
-    // Créer une notification pour le changement de statut de livraison
+    // Create a notification for the delivery status change
     let notificationMessage = ""
 
-    // Traiter selon le statut
+    // Process according to status
     switch (newStatut) {
       case "Delivered":
-        // Mettre à jour le statut de la commande
+        // Update the order status
         await Order.findByIdAndUpdate(delivery.idCommande, {
           orderStatus: "completed",
         })
 
-        // Mettre à jour le statut de la facture
+        // Update the invoice status
         if (invoice) {
           await Invoice.findByIdAndUpdate(invoice._id, {
             statutPaiement: "paid",
           })
         }
 
-        notificationMessage = `La livraison pour la commande #${order._id.toString().slice(-6)} de ${clientName} a été marquée comme livrée.`
+        notificationMessage = `The delivery for order #${order._id.toString().slice(-6)} from ${clientName} has been marked as delivered.`
         break
 
       case "Cancelled":
-        // Mettre à jour le statut de la commande
+        // Update the order status
         await Order.findByIdAndUpdate(delivery.idCommande, {
           orderStatus: "cancelled",
         })
 
-        // Restaurer le stock des produits
+        // Restore product stock
         await restoreProductStock(order)
 
-        // Supprimer la facture si elle existe
+        // Delete the invoice if it exists
         if (invoice) {
           await Invoice.findByIdAndDelete(invoice._id)
         }
 
-        notificationMessage = `La livraison pour la commande #${order._id.toString().slice(-6)} de ${clientName} a été annulée.`
+        notificationMessage = `The delivery for order #${order._id.toString().slice(-6)} from ${clientName} has been cancelled.`
         break
 
       case "Postponed":
         if (!postponedDate)
           return res.status(400).json({
-            message: "Date de report requise pour une livraison reportée",
+            message: "Postponement date required for a postponed delivery",
           })
 
-        // Mettre à jour la commande avec le statut reporté et la nouvelle date
+        // Update the order with the postponed status and new date
         await Order.findByIdAndUpdate(delivery.idCommande, {
           orderStatus: "postponed",
           postponedDate: new Date(postponedDate),
         })
 
         const formattedDate = new Date(postponedDate).toLocaleDateString()
-        notificationMessage = `La livraison pour la commande #${order._id.toString().slice(-6)} de ${clientName} a été reportée au ${formattedDate}.`
+        notificationMessage = `The delivery for order #${order._id.toString().slice(-6)} from ${clientName} has been postponed to ${formattedDate}.`
         break
 
       default:
-        notificationMessage = `Le statut de la livraison pour la commande #${order._id.toString().slice(-6)} a été mis à jour vers ${newStatut}.`
+        notificationMessage = `The delivery status for order #${order._id.toString().slice(-6)} has been updated to ${newStatut}.`
     }
 
-    // Créer la notification
+    // Create the notification
     if (notificationMessage) {
       await Notification.create({
         shopId: order.shop,
@@ -336,18 +336,18 @@ exports.updateDeliveryStatut = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Statut mis à jour avec succès",
+      message: "Status updated successfully",
       updatedDelivery: delivery,
     })
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la mise à jour du statut",
+      message: "Error updating status",
       error: err.message,
     })
   }
 }
 
-// Supprimer une livraison
+// Delete a delivery
 exports.deleteDelivery = async (req, res) => {
   try {
     const delivery = await Delivery.findById(req.params.id).populate({
@@ -360,69 +360,69 @@ exports.deleteDelivery = async (req, res) => {
 
     if (!delivery) {
       return res.status(404).json({
-        message: "Livraison non trouvée",
+        message: "Delivery not found",
       })
     }
 
-    // Vérifier que la livraison appartient au shop de l'utilisateur
+    // Check that the delivery belongs to the user's shop
     const shopId = req.user.shopId
     if (delivery.idCommande && delivery.idCommande.shop && delivery.idCommande.shop._id.toString() !== shopId) {
       return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à supprimer cette livraison",
+        message: "You are not authorized to delete this delivery",
       })
     }
 
     const deletedDelivery = await Delivery.findByIdAndDelete(req.params.id)
     res.status(200).json({
-      message: "Livraison supprimée avec succès",
+      message: "Delivery deleted successfully",
     })
   } catch (err) {
     res.status(500).json({
-      message: "Erreur lors de la suppression de la livraison",
+      message: "Error deleting the delivery",
       error: err.message,
     })
   }
 }
 
-// Fonction pour restaurer le stock des produits lors de l'annulation d'une livraison
+// Function to restore product stock when cancelling a delivery
 async function restoreProductStock(order) {
   try {
-    // Vérifier si cartData existe et contient des items
+    // Check if cartData exists and contains items
     if (!order.cartData || !order.cartData.items || order.cartData.items.length === 0) {
-      console.warn("Pas d'items dans la commande pour restaurer le stock")
+      console.warn("No items in the order to restore stock")
       return
     }
 
     const Product = require("../models/product.model")
 
-    // Parcourir tous les produits de la commande
+    // Go through all products in the order
     for (const item of order.cartData.items) {
       const productId = item.productId._id
       const quantity = item.quantity || 1
 
-      // Récupérer le produit actuel
+      // Get the current product
       const product = await Product.findById(productId)
 
       if (!product) {
-        console.warn(`Produit non trouvé: ${productId}`)
+        console.warn(`Product not found: ${productId}`)
         continue
       }
 
-      console.log(`Restauration du stock pour le produit ${product.productName}: ${product.stock} + ${quantity}`)
+      console.log(`Restoring stock for product ${product.productName}: ${product.stock} + ${quantity}`)
 
-      // Mettre à jour le stock (ajouter la quantité)
+      // Update the stock (add the quantity)
       product.stock = product.stock + quantity
 
-      // Mettre à jour la disponibilité si nécessaire
+      // Update availability if necessary
       if (product.stock > 0 && product.availability === "Out of stock") {
         product.availability = "In stock"
       }
 
       await product.save()
-      console.log(`Nouveau stock pour le produit ${product.productName}: ${product.stock}`)
+      console.log(`New stock for product ${product.productName}: ${product.stock}`)
     }
   } catch (error) {
-    console.error("Erreur lors de la restauration du stock:", error)
+    console.error("Error restoring stock:", error)
     throw error
   }
 }

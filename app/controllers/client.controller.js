@@ -48,7 +48,7 @@ exports.uploadProfilePicture = (req, res) => {
         return res.status(404).json({ message: "Client not found" });
       }
 
-      // Supprimer ancienne image si existante
+      // Delete old image if it exists
       if (client.profilePicture) {
         const oldPath = path.join("uploads", client.profilePicture);
         if (fs.existsSync(oldPath)) {
@@ -214,15 +214,15 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    // Générer un code aléatoire
-    const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Exemple : "A1B2C3"
+    // Generate a random code
+    const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // Example: "A1B2C3"
     client.resetPasswordCode = resetCode;
-    client.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+    client.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
     await client.save();
 
-    // Envoyer l'email avec le code
-    // transporter nodemailer
+    // Send email with the code
+    // nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -264,7 +264,7 @@ exports.resetPassword = async (req, res) => {
         .send({ message: "Invalid or expired reset code." });
     }
 
-    // Mettre à jour le mot de passe
+    // Update the password
     client.password = newPassword;
     client.resetPasswordCode = undefined;
     client.resetPasswordExpires = undefined;

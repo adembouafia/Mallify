@@ -15,7 +15,6 @@ module.exports = (app) => {
     app.get('/client/:id', auth, client.getById);
     app.get('/api/client/count', client.getClientCount);
     
-    // New shipping address routes
     app.post('/client/:id/shipping-address', auth, client.addShippingAddress);
     app.get('/client/:id/shipping-address', auth, client.getShippingAddresses);
     app.put('/client/:id/shipping-address/:addressId', auth, client.updateShippingAddress);

@@ -5,28 +5,13 @@ module.exports = (app) => {
   const order = require("../controllers/order.controller");
   app.post("/order/create", auth, order.createOrder);
   app.get("/order", auth, order.getOrdersByShop);
-  app.get(
-    "/order/histories",
-    auth,
-    authorize("vendor", "moderator"),
-    order.getOrderHistoriesByShop
-  );
+  app.get("/order/histories",auth,authorize("vendor", "moderator"),order.getOrderHistoriesByShop);
   app.get("/order/:id", auth, order.getOrderById);
-  app.delete(
-    "/order/delete/:id",
-    auth,
-    authorize("vendor", "moderator"),
-    order.deleteOrder
-  );
+  app.delete("/order/delete/:id",auth,authorize("vendor", "moderator"),order.deleteOrder);
   app.get("/client/:id/orders", auth, order.getOrdersByClientId);
   app.put("/order/:id/status", auth, order.updateStatusOrder);
 
-  app.put(
-    "/order/:id/ship",
-    auth,
-    authorize("vendor", "moderator"),
-    order.makeToShip
-  );
+  app.put("/order/:id/ship",auth,authorize("vendor", "moderator"),order.makeToShip);
   
   // Admin dashboard API endpoints
   app.get("/api/order/count", order.getOrderCount);
