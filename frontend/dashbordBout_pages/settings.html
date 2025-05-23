@@ -98,6 +98,13 @@
             <input type="tel" id="vendor-phone" placeholder="Phone Number" />
           </div>
           <div class="form-group">
+            <label>Vendor Image:</label>
+            <div id="vendor-image-preview" style="margin-bottom: 10px; display: none;">
+              <img id="vendor-image-display" src="/placeholder.svg" alt="Vendor Image" style="max-width: 150px; max-height: 150px; border-radius: 8px; object-fit: cover;" />
+            </div>
+            <input type="file" id="vendor-image-upload" accept="image/*" onchange="previewVendorImageSettings(event)" />
+          </div>
+          <div class="form-group">
             <label>Change Password:</label>
             <input
               type="password"

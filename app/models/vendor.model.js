@@ -20,6 +20,11 @@ const VendorSchema = new mongoose.Schema(
         type : String ,
     },
 
+    vendorImage: {
+        type : String,
+        required : true,
+    },
+
     role: {
         type: String,
         default: "vendor"

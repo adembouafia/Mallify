@@ -709,6 +709,14 @@
                               <label for="phone">Phone <span class="text-danger">*</span></label>
                               <input type="number" id="phone" name="phone" class="common-input" placeholder="Enter a phone Number">
                             </div>
+
+                            <div class="mb-24">
+                              <label for="vendorImage">Vendor Image <span class="text-danger">*</span></label>
+                              <input type="file" id="vendorImage" name="vendorImage" accept="image/*" onchange="previewVendorImage(event)">
+                              <div id="vendorImagePreview" class="mt-2" style="display: none;">
+                                <img src="/placeholder.svg" alt="Vendor Image Preview" style="max-width: 100px; max-height: 100px;">
+                              </div>
+                            </div>
                     
                             <div class="mb-24">
                               <label for="vendorpassword">Password <span class="text-danger">*</span></label>
@@ -725,6 +733,9 @@
                             <div class="mb-24">
                               <label for="shoplogo">Logo <span class="text-danger">*</span></label>
                               <input type="file" id="shopLogo" name="shopLogo" accept="image/*" onchange="previewImage(event)">
+                              <div id="shopLogoPreview" class="mt-2" style="display: none;">
+                                <img src="/placeholder.svg" alt="Shop Logo Preview" style="max-width: 100px; max-height: 100px;">
+                              </div>
                             </div>
 
                             <div class="mb-24">
