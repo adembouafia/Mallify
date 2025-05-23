@@ -466,7 +466,7 @@ function updateRecentProducts(products) {
   // Add new products
   products.forEach((product) => {
     const productDiv = document.createElement("div");
-    productDiv.className = "d-flex border-top py-2 px-1";
+    productDiv.className = "d-flex border-top py-2 px-1 align-items-center";
 
     // Determine badge class based on price
     let badgeClass = "text-bg-info";
