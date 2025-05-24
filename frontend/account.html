@@ -13,18 +13,182 @@
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/style1.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        
+        <!-- OAuth Styles -->
+        <style>
+            .oauth-section {
+                margin: 20px 0;
+                padding: 20px 0;
+                border-top: 1px solid #e9ecef;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .oauth-title {
+                text-align: center;
+                margin-bottom: 20px;
+                color: #6c757d;
+                font-size: 14px;
+                position: relative;
+            }
+            
+            .oauth-title::before,
+            .oauth-title::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                width: 30%;
+                height: 1px;
+                background-color: #e9ecef;
+            }
+            
+            .oauth-title::before {
+                left: 0;
+            }
+            
+            .oauth-title::after {
+                right: 0;
+            }
+            
+            .oauth-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .oauth-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 20px;
+                border: 2px solid #e9ecef;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                min-width: 160px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .oauth-btn:hover {
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            
+            .oauth-btn-google {
+                background-color: #fff;
+                border-color: #dadce0;
+                color: #3c4043;
+            }
+            
+            .oauth-btn-google:hover {
+                background-color: #f8f9fa;
+                border-color: #dadce0;
+                color: #3c4043;
+            }
+            
+            .oauth-btn-facebook {
+                background-color: #1877f2;
+                border-color: #1877f2;
+                color: white;
+            }
+            
+            .oauth-btn-facebook:hover {
+                background-color: #166fe5;
+                border-color: #166fe5;
+                color: white;
+            }
+            
+            .oauth-btn-icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+            
+            .oauth-btn-text {
+                font-size: 14px;
+            }
+            
+            .oauth-loading {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(255, 255, 255, 0.9);
+                display: none;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .oauth-loading.active {
+                display: flex;
+            }
+            
+            .oauth-spinner {
+                width: 20px;
+                height: 20px;
+                border: 2px solid #f3f3f3;
+                border-top: 2px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            @media (max-width: 576px) {
+                .oauth-buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                
+                .oauth-btn {
+                    width: 100%;
+                    max-width: 280px;
+                }
+            }
+            
+            /* Success message styling */
+            .oauth-success-message {
+                background-color: #d4edda;
+                border: 1px solid #c3e6cb;
+                color: #155724;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                display: none;
+            }
+            
+            .oauth-error-message {
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                color: #721c24;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                display: none;
+            }
+        </style>
     </head> 
 <body>
   <div id="google_translate_element" style="display:none;"></div>   
   <div class="preloader">
     <img src="../assets/preloader/preloader.svg  " alt="Loading ..." class="logo-spinner">
   </div>
+
 <!-- ==================== scroll up  ==================== -->
 <div class="progress-wrap">
   <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
       <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
     </svg>
 </div>
+
 <!-- ==================== Search Box Start Here ==================== -->
 <form action="#" class="search-box">
   <button
@@ -49,7 +213,6 @@
     </div>
   </div>
 </form>
-<!-- ==================== Search Box End Here ==================== -->
 
 <!-- ==================== Mobile Menu Start Here ==================== -->
 <div class="mobile-menu scroll-sm d-lg-none d-block">
@@ -81,7 +244,7 @@
     </div>
   </div>
 </div>
-<!-- ==================== Mobile Menu End Here ==================== -->
+
 <!-- ======================= Middle Header Two Start ========================= -->
 <header class="header-middle ">
   <div class="container container-lg">
@@ -151,7 +314,6 @@
           </div>
         </form>
       </div>
-      <!-- form Category start -->
 
       <!-- Header Middle Right start -->
       <div class="header-right flex-align d-lg-block d-none">
@@ -212,7 +374,6 @@
     </nav>
   </div>
 </header>
-<!-- ======================= Middle Header Two End ========================= -->
 
 <!-- ==================== Header Two Start Here ==================== -->
 <header class="header bg-white border-top border-gray-100 shadow-sm">
@@ -364,7 +525,6 @@
             </ul>
           </div>
         </div>
-        <!-- Category Dropdown End  -->
 
         <!-- Menu Start  -->
         <div class="header-menu d-lg-block d-none">
@@ -479,7 +639,6 @@
               </ul>
             </li>
           </ul>
-          <!-- Dropdown Select End -->
         </div>
         <div class="me-8 d-lg-none d-block">
           <div class="header-two-activities flex-align flex-wrap gap-32">
@@ -555,8 +714,8 @@
     </nav>
   </div>
 </header>
-<!-- ==================== Header End Here ==================== -->
-    <!-- ========================= Breadcrumb Start =============================== -->
+
+<!-- ========================= Breadcrumb Start =============================== -->
 <div class="breadcrumb mb-0 py-26 bg-main-two-50">
     <div class="container container-lg">
         <div class="breadcrumb-wrapper flex-between flex-wrap gap-16">
@@ -576,200 +735,260 @@
         </div>
     </div>
 </div>
-<!-- ========================= Breadcrumb End =============================== -->
 
 <!-- =============================== Account Section Start =========================== -->
 <section class="account py-80">
         <div class="container container-lg">
-                    <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
-                        <div class="row gy-4 d-flex justify-content-center">
+            <!-- OAuth Success/Error Messages -->
+            <div id="oauth-success-message" class="oauth-success-message">
+                <strong>Success!</strong> You have been logged in successfully with your social account.
+            </div>
+            <div id="oauth-error-message" class="oauth-error-message">
+                <strong>Error!</strong> <span id="oauth-error-text">There was an error with social login. Please try again.</span>
+            </div>
             
-                            <!-- Login Card Start -->
-                            <div class="col-xl-6 pe-xl-5 " id="loginCard">
-                                <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
-                                    <h6 class="text-xl mb-32">Login</h6>
-                                    <div class="input-wrapper">
-                                        <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
-                                        <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
-                                        <span class="icon"></span>
-                                    </div>
-                                    <div class="mb-24">
-                                        <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
-                                        <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
-                                        <small id="LoginPasswordErrorMessage" style="display: none;"></small>
-                                    </div>
-                                    <div class="mb-24 mt-48 d-flex justify-content-center">
-                                        <div class="flex-align gap-48 flex-wrap">
-                                            <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
-                                            <div class="form-check common-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="remember">
-                                                <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-48 d-flex justify-content-center">
-                                      <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline" data-bs-toggle="modal" data-bs-target="#emailModal">
-                                        Forgot your password?
-                                      </a>                                    
-                                    </div>
-                                    <div class="mt-24 d-flex justify-content-center">
-                                        <p class="text-gray-500">Don't have an account? 
-                                            <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                    </form>
-                    <!-- Login Card End -->
-                    <!-- choose an account type card start-->
-                    <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
-                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 text-center">
-                            <h6 class="text-xl mb-32">Choose Account Type</h6>
-                            <div class="d-flex justify-content-center gap-48">
-                                <div class="text-center cursor-pointer" onclick="showVendorCard()">
-                                    <img src="../assets/images/vendor.png" alt="Become a Vendor" class="rounded-16 shadow" width="200">
-                                    <p class="mt-2 fw-medium">Become a Vendor</p>
-                                </div>
-                                <div class="text-center cursor-pointer" onclick="showRegisterCard()">
-                                    <img src="../assets/images/client.png" alt="Register as Client" class="rounded-16 shadow" width="200">
-                                    <p class="mt-2 fw-medium">Register as Client</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- choose an account type card end-->
-    
-                    <!-- Register Card Start -->
-                
-                    <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
-                        <div class="row gy-4 d-flex justify-content-center">
-                            <div class="col-xl-6 " id="registerCard" style="display: none;">
+            <form id="loginForm" action="http://localhost:3000/client/login" method="POST">
+                <div class="row gy-4 d-flex justify-content-center">
+            
+                    <!-- Login Card Start -->
+                    <div class="col-xl-6 pe-xl-5 " id="loginCard">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 h-100">
+                            <h6 class="text-xl mb-32">Login</h6>
                             
-                            <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
-                                <h6 class="text-xl mb-32">Register</h6>
-                                <div class="mb-24">
-                                    <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
-                                    <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
-                                    <small id="firstnameErrorMessage" style="display: none;"></small>
-                                </div>
-                                <div class="mb-24">
-                                    <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
-                                    <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
-                                    <small id="lastnameErrorMessage" style="display: none;"></small>
-                                </div>
-                                <div class="input-wrapper">
-                                    <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
-                                    <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
-                                    <span class="icon"></span>
-                                </div>
-                                <div class="mb-24">
-                                    <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
-                                    <div class="position-relative">
-                                        <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
-                                        <small id="enter-passwordErrorMessage" style="display: none;"></small>
+                            <!-- OAuth Section -->
+                            
+                            
+                            <div class="input-wrapper">
+                                <label for="email" class="text-neutral-900 text-lg mb-8 fw-medium" >Email address <span class="text-danger">*</span> </label>
+                                <input type="email" class="common-input" id="email" placeholder="Email"  name ="email" required>
+                                <span class="icon"></span>
+                            </div>
+                            <div class="mb-24">
+                                <label for="password" class="text-neutral-900 text-lg mb-8 fw-medium" >Password <span class="text-danger">*</span> </label>
+                                <input type="password" class="common-input" id="password" placeholder="Enter your Password"  name = "password">
+                                <small id="LoginPasswordErrorMessage" style="display: none;"></small>
+                            </div>
+                            <div class="mb-24 mt-48 d-flex justify-content-center">
+                                <div class="flex-align gap-48 flex-wrap">
+                                    <button type="submit" class="btn btn-main py-18 px-40">Log in</button>
+                                    <div class="form-check common-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="remember">
+                                        <label class="form-check-label flex-grow-1" for="remember">Remember me</label>
                                     </div>
                                 </div>
-                                <div class="my-48">
-                                    <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
-                                        <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
-                                    .</p>
+                            </div>
+                            <div class="oauth-section">
+                                <div class="oauth-title">Or continue with</div>
+                                <div class="oauth-buttons">
+                                    <a href="/auth/google" class="oauth-btn oauth-btn-google" id="google-login-btn">
+                                        <div class="oauth-loading" id="google-loading">
+                                            <div class="oauth-spinner"></div>
+                                        </div>
+                                        <svg class="oauth-btn-icon" viewBox="0 0 24 24">
+                                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                        </svg>
+                                        <span class="oauth-btn-text">Google</span>
+                                    </a>
+                                    
+                                    <a href="/auth/facebook" class="oauth-btn oauth-btn-facebook" id="facebook-login-btn">
+                                        <div class="oauth-loading" id="facebook-loading">
+                                            <div class="oauth-spinner"></div>
+                                        </div>
+                                        <svg class="oauth-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                        </svg>
+                                        <span class="oauth-btn-text">Facebook</span>
+                                    </a>
                                 </div>
-                                <div class="mt-48 d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                                </div>
-                                <div class="mt-24 d-flex justify-content-center">
-                                    <p class="text-gray-500">Already have an account? 
-                                        <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
-                                    </p>
-                                </div>
+                            </div>
+                            <div class="mt-48 d-flex justify-content-center">
+                              <a href="#" class="text-danger-600 text-sm fw-semibold hover-text-decoration-underline" data-bs-toggle="modal" data-bs-target="#emailModal">
+                                Forgot your password?
+                              </a>                                    
+                            </div>
+                            <div class="mt-24 d-flex justify-content-center">
+                                <p class="text-gray-500">Don't have an account? 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showchooseAccountCard()">Sign Up</a> 
+                                </p>
                             </div>
                         </div>
                     </div>
-                    </form>
-                    <!-- Register Card End -->
-                    <!-- Become a vendor Card start -->
-                    <form id="vendorForm" enctype="multipart/form-data">
-                      <div class="row gy-4 d-flex justify-content-center">
-                        <div class="col-xl-6" id="vendorcard" style="display: none;">
-                          <div class="border rounded-16 px-24 py-40">
-                            <h6 class="text-xl mb-32">Vendor Informations</h6>
-                    
+            </form>
+            
+            <!-- Register Card with OAuth -->
+            <form action="http://localhost:3000/client/register" id="registerForm" method="POST">
+                <div class="row gy-4 d-flex justify-content-center">
+                    <div class="col-xl-6 " id="registerCard" style="display: none;">
+                        <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40  ">
+                            <h6 class="text-xl mb-32">Register</h6>
+                            
+                            
                             <div class="mb-24">
-                              <label for="vendorname">Vendor Name <span class="text-danger">*</span></label>
-                              <input type="text" id="vendorname" name="vendorName" class="common-input" placeholder="Write the vendor Name">
+                                <label for="firstname" class="text-neutral-900 text-lg mb-8 fw-medium">First name <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="firstname" placeholder="Write a first name"  name = "firstname">
+                                <small id="firstnameErrorMessage" style="display: none;"></small>
                             </div>
-                    
+                            <div class="mb-24">
+                                <label for="lastname" class="text-neutral-900 text-lg mb-8 fw-medium">Last name <span class="text-danger">*</span> </label>
+                                <input type="text" class="common-input" id="lastname" placeholder="Write a last name"  name = "lastname">
+                                <small id="lastnameErrorMessage" style="display: none;"></small>
+                            </div>
                             <div class="input-wrapper">
-                              <label for="mailadress">Email address <span class="text-danger">*</span></label>
-                              <input type="email" id="mailadress" name="email" class="common-input" placeholder="Enter Email Address" >
+                                <label for="emailTwo" class="text-neutral-900 text-lg mb-8 fw-medium">Email address <span class="text-danger">*</span> </label>
+                                <input type="email" class="common-input" id="emailTwo" placeholder="Enter Email Address"  name = "email" required>
+                                <span class="icon"></span>
                             </div>
-                    
                             <div class="mb-24">
-                              <label for="phone">Phone <span class="text-danger">*</span></label>
-                              <input type="number" id="phone" name="phone" class="common-input" placeholder="Enter a phone Number">
+                                <label for="enter-password" class="text-neutral-900 text-lg mb-8 fw-medium">Password <span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="password" class="common-input" id="enter_password" placeholder="Enter Password" name = "password">
+                                    <small id="enter-passwordErrorMessage" style="display: none;"></small>
+                                </div>
                             </div>
-
-                            <div class="mb-24">
-                              <label for="vendorImage">Vendor Image <span class="text-danger">*</span></label>
-                              <input type="file" id="vendorImage" name="vendorImage" accept="image/*" onchange="previewVendorImage(event)">
-                              <div id="vendorImagePreview" class="mt-2" style="display: none;">
-                                <img src="/placeholder.svg" alt="Vendor Image Preview" style="max-width: 100px; max-height: 100px;">
-                              </div>
+                            <!-- OAuth Section for Registration -->
+                            <div class="oauth-section">
+                                <div class="oauth-title">Or continue with</div>
+                                <div class="oauth-buttons">
+                                    <a href="/auth/google" class="oauth-btn oauth-btn-google" id="google-register-btn">
+                                        <div class="oauth-loading" id="google-register-loading">
+                                            <div class="oauth-spinner"></div>
+                                        </div>
+                                        <svg class="oauth-btn-icon" viewBox="0 0 24 24">
+                                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                        </svg>
+                                        <span class="oauth-btn-text">Google</span>
+                                    </a>
+                                    
+                                    <a href="/auth/facebook" class="oauth-btn oauth-btn-facebook" id="facebook-register-btn">
+                                        <div class="oauth-loading" id="facebook-register-loading">
+                                            <div class="oauth-spinner"></div>
+                                        </div>
+                                        <svg class="oauth-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                        </svg>
+                                        <span class="oauth-btn-text">Facebook</span>
+                                    </a>
+                                </div>
                             </div>
-                    
-                            <div class="mb-24">
-                              <label for="vendorpassword">Password <span class="text-danger">*</span></label>
-                              <input type="password" id="vendorpassword" name="vendorPassword" class="common-input" placeholder="Enter Password">
+                            
+                            <div class="my-48">
+                                <p class="text-gray-500">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our 
+                                    <a href="#" class="text-main-600 text-decoration-underline"> privacy policy</a>
+                                .</p>
                             </div>
-                    
-                            <h6 class="text-xl mb-32">Shop Informations</h6>
-                    
-                            <div class="mb-24">
-                              <label for="shopName">Shop Name <span class="text-danger">*</span></label>
-                              <input type="text" id="shopName" name="shopName" class="common-input" placeholder="Write a Shop name">
+                            <div class="mt-48 d-flex justify-content-center">
+                                <button type="submit" class="btn btn-main py-18 px-40">Register</button>
                             </div>
-                    
-                            <div class="mb-24">
-                              <label for="shoplogo">Logo <span class="text-danger">*</span></label>
-                              <input type="file" id="shopLogo" name="shopLogo" accept="image/*" onchange="previewImage(event)">
-                              <div id="shopLogoPreview" class="mt-2" style="display: none;">
-                                <img src="/placeholder.svg" alt="Shop Logo Preview" style="max-width: 100px; max-height: 100px;">
-                              </div>
+                            <div class="mt-24 d-flex justify-content-center">
+                                <p class="text-gray-500">Already have an account? 
+                                    <a href="#" class="text-main-600 text-decoration-underline" onclick="showLogin()">Log in</a> 
+                                </p>
                             </div>
-
-                            <div class="mb-24">
-                              <label for="shop-phone">Shop Phone</label>
-                              <input type="number" id="shop_phone" name="shop_phone" class="common-input" placeholder="Enter Shop Phone">
-                            </div>
-                    
-                            <div class="mb-24">
-                              <label for="adresse">Address</label>
-                              <input type="text" id="adresse" name="adresse" class="common-input" placeholder="Enter Shop Address">
-                            </div>
-                    
-                            <div class="mb-24">
-                              <label for="shopdescription">Description</label>
-                              <textarea id="shopdescription" name="shopdescription" class="common-input" rows="4" placeholder="Enter Your Description"></textarea>
-                            </div>
-                    
-                            <div class="mt-48 d-flex justify-content-center gap-48">
-                              <button type="submit" class="btn btn-main py-18 px-40">Register</button>
-                              <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
-                            </div>
-                          </div>
                         </div>
-                      </div>
-                    </form>
-                    
-                      <!-- Become a vendor Card end -->
-    
+                    </div>
                 </div>
+            </form>
+            
+            <!-- Choose Account Type Card -->
+            <div class="col-xl-6" id="chooseAccountCard" style=" display:none;">
+                <div class="border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40 text-center">
+                    <h6 class="text-xl mb-32">Choose Account Type</h6>
+                    <div class="d-flex justify-content-center gap-48">
+                        <div class="text-center cursor-pointer" onclick="showVendorCard()">
+                            <img src="../assets/images/vendor.png" alt="Become a Vendor" class="rounded-16 shadow" width="200">
+                            <p class="mt-2 fw-medium">Become a Vendor</p>
+                        </div>
+                        <div class="text-center cursor-pointer" onclick="showRegisterCard()">
+                            <img src="../assets/images/client.png" alt="Register as Client" class="rounded-16 shadow" width="200">
+                            <p class="mt-2 fw-medium">Register as Client</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendor Registration Form -->
+            <form id="vendorForm" enctype="multipart/form-data">
+              <div class="row gy-4 d-flex justify-content-center">
+                <div class="col-xl-6" id="vendorcard" style="display: none;">
+                  <div class="border rounded-16 px-24 py-40">
+                    <h6 class="text-xl mb-32">Vendor Informations</h6>
+            
+                    <div class="mb-24">
+                      <label for="vendorname">Vendor Name <span class="text-danger">*</span></label>
+                      <input type="text" id="vendorname" name="vendorName" class="common-input" placeholder="Write the vendor Name">
+                    </div>
+            
+                    <div class="input-wrapper">
+                      <label for="mailadress">Email address <span class="text-danger">*</span></label>
+                      <input type="email" id="mailadress" name="email" class="common-input" placeholder="Enter Email Address" >
+                    </div>
+            
+                    <div class="mb-24">
+                      <label for="phone">Phone <span class="text-danger">*</span></label>
+                      <input type="number" id="phone" name="phone" class="common-input" placeholder="Enter a phone Number">
+                    </div>
+
+                    <div class="mb-24">
+                      <label for="vendorImage">Vendor Image <span class="text-danger">*</span></label>
+                      <input type="file" id="vendorImage" name="vendorImage" accept="image/*" onchange="previewVendorImage(event)">
+                      <div id="vendorImagePreview" class="mt-2" style="display: none;">
+                        <img src="/placeholder.svg" alt="Vendor Image Preview" style="max-width: 100px; max-height: 100px;">
+                      </div>
+                    </div>
+            
+                    <div class="mb-24">
+                      <label for="vendorpassword">Password <span class="text-danger">*</span></label>
+                      <input type="password" id="vendorpassword" name="vendorPassword" class="common-input" placeholder="Enter Password">
+                    </div>
+            
+                    <h6 class="text-xl mb-32">Shop Informations</h6>
+            
+                    <div class="mb-24">
+                      <label for="shopName">Shop Name <span class="text-danger">*</span></label>
+                      <input type="text" id="shopName" name="shopName" class="common-input" placeholder="Write a Shop name">
+                    </div>
+            
+                    <div class="mb-24">
+                      <label for="shoplogo">Logo <span class="text-danger">*</span></label>
+                      <input type="file" id="shopLogo" name="shopLogo" accept="image/*" onchange="previewImage(event)">
+                      <div id="shopLogoPreview" class="mt-2" style="display: none;">
+                        <img src="/placeholder.svg" alt="Shop Logo Preview" style="max-width: 100px; max-height: 100px;">
+                      </div>
+                    </div>
+
+                    <div class="mb-24">
+                      <label for="shop-phone">Shop Phone</label>
+                      <input type="number" id="shop_phone" name="shop_phone" class="common-input" placeholder="Enter Shop Phone">
+                    </div>
+            
+                    <div class="mb-24">
+                      <label for="adresse">Address</label>
+                      <input type="text" id="adresse" name="adresse" class="common-input" placeholder="Enter Shop Address">
+                    </div>
+            
+                    <div class="mb-24">
+                      <label for="shopdescription">Description</label>
+                      <textarea id="shopdescription" name="shopdescription" class="common-input" rows="4" placeholder="Enter Your Description"></textarea>
+                    </div>
+            
+                    <div class="mt-48 d-flex justify-content-center gap-48">
+                      <button type="submit" class="btn btn-main py-18 px-40">Register</button>
+                      <button type="reset" class="btn btn-main py-18 px-40" onclick="backtologin()">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
         </div>
 </section>
 
-
-<!-- Modal 1 - email Verification -->
+<!-- Password Reset Modals -->
 <div class="modal fade" id="emailModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -779,7 +998,8 @@
                   Password Reset
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>          <div class="modal-body">
+          </div>
+          <div class="modal-body">
               <div class="mb-3">
                   <select id="userTypeSelect" class="form-select mb-3">
                       <option value="client" selected>Client</option>
@@ -804,7 +1024,6 @@
   </div>
 </div>
 
-<!-- Modal 2 - Code Verification -->
 <div class="modal fade" id="codeModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -833,7 +1052,6 @@
   </div>
 </div>
 
-<!-- Modal 3 - Password Reset -->
 <div class="modal fade" id="passwordModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -861,9 +1079,8 @@
       </div>
   </div>
 </div>
-<!-- =============================== Account Section End =========================== -->
 
-<!-- ========================== Shipping Section Start ============================ -->
+<!-- Footer and other sections remain the same as in original file -->
 <section class="shipping mb-24" id="shipping">
     <div class="container container-lg">
         <div class="row gy-4">
@@ -872,7 +1089,7 @@
                     <span class="w-56 h-56 flex-center rounded-circle bg-main-600 text-white text-32 flex-shrink-0"><i class="ph-fill ph-car-profile"></i></span>
                     <div class="">
                         <h6 class="mb-0">Shipping</h6>
-                        <span class="text-sm text-heading">shipping Where You are </span>
+                        <span class="text-sm text-heading">shipping Where You are </span> 
                     </div>
                 </div>
             </div>
@@ -906,11 +1123,8 @@
         </div>
     </div>
 </section>
-<!-- ========================== Shipping Section End ============================ -->
-    
-    
-<!-- ==================== Footer Two Start Here ==================== -->
-    <footer class="footer py-80 overflow-hidden">
+
+<footer class="footer py-80 overflow-hidden">
       <div class="container container-lg">
         <div class="footer-item-two-wrapper d-flex align-items-start flex-wrap">
           <div
@@ -969,8 +1183,6 @@
                   >Contact Us</a
                 >
               </li>
-
-             
             </ul>
           </div>
 
@@ -995,7 +1207,8 @@
             </ul>
           </div>
 
-          <div class="footer-item" data-aos="fade-up" data-aos-duration="800">            <h6 class="footer-item__title">My Account</h6>
+          <div class="footer-item" data-aos="fade-up" data-aos-duration="800">
+            <h6 class="footer-item__title">My Account</h6>
             <ul class="footer-menu">
               <li class="mb-16">
                 <a href="#" class="text-gray-600 hover-text-main-600" id="footer-my-account"
@@ -1090,8 +1303,8 @@
         </div>
       </div>
     </footer>
-        <!-- Rules & Policy Modal -->
-    <div class="modal fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
           <div class="modal-header bg-main-600">
@@ -1115,8 +1328,6 @@
         </div>
     </div>
 </div>
-<!-- ==================== Footer Two End Here ==================== -->
-
 
   <script src="../assets/js/jquery-3.7.1.min.js"></script>
   <script src="../assets/js/boostrap.bundle.min.js"></script>
@@ -1128,13 +1339,14 @@
   <script src="../assets/js/marque.min.js"></script>
   <script src="../assets/js/main.js"></script>
   <script src="../assets/js/js_functions/login_and_register.js"></script>
+  <script src="../assets/js/js_functions/auth.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script src="../assets/js/js_functions/preloader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/js_functions/categorisWithSubCategories.js"></script>
   <script src="../assets/js/js_functions/searchFiltred.js"></script>
   <script src="../assets/js/js_functions/footer.js"></script>
-          <script type="text/javascript">
+  <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement(
             {pageLanguage: 'en'},
@@ -1144,5 +1356,50 @@
     </script>
     <script type="text/javascript" src="/google-translate-proxy"></script>
     <script src="../assets/js/js_functions/lang.js"></script>
-    </body>
+    
+<script>
+// Check if user is already logged in when page loads
+document.addEventListener("DOMContentLoaded", function() {
+    // This will be handled by the oauth-handler.js file
+    console.log("Account page loaded");
+});
+
+// Function to show login card (called from other scripts)
+function showLogin() {
+    document.getElementById("loginCard").style.display = "block";
+    document.getElementById("registerCard").style.display = "none";
+    document.getElementById("chooseAccountCard").style.display = "none";
+    document.getElementById("vendorcard").style.display = "none";
+}
+
+// Function to show register card
+function showchooseAccountCard() {
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("registerCard").style.display = "none";
+    document.getElementById("chooseAccountCard").style.display = "block";
+    document.getElementById("vendorcard").style.display = "none";
+}
+
+// Function to show register card
+function showRegisterCard() {
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("registerCard").style.display = "block";
+    document.getElementById("chooseAccountCard").style.display = "none";
+    document.getElementById("vendorcard").style.display = "none";
+}
+
+// Function to show vendor card
+function showVendorCard() {
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("registerCard").style.display = "none";
+    document.getElementById("chooseAccountCard").style.display = "none";
+    document.getElementById("vendorcard").style.display = "block";
+}
+
+// Function to go back to login
+function backtologin() {
+    showLogin();
+}
+</script>
+</body>
 </html>

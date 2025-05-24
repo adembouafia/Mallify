@@ -1,333 +1,187 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const helmet = require("helmet");
-const path = require("path");
-const fs = require('fs');
-const https = require('https');
+const express = require("express")
+const mongoose = require("mongoose")
+const dotenv = require("dotenv")
+const cors = require("cors")
+const helmet = require("helmet")
+const path = require("path")
+const fs = require("fs")
+const https = require("https")
 
-dotenv.config();
-const app = express();
+// Load environment variables FIRST
+dotenv.config()
 
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+console.log("=== Server Starting ===")
+console.log("Environment variables loaded")
+
+const app = express()
+
+// Basic middleware
+app.use(express.json({ limit: "100mb" }))
+app.use(express.urlencoded({ extended: true, limit: "100mb" }))
 
 app.use(
   cors({
     origin: "*",
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  })
-);
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+)
 
 // Debug middleware to log request details
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+  next()
+})
 
-// Serve static files with proper MIME types
-app.use('/assets', express.static(path.join(__dirname, "assets"), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    } else if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.gif')) {
-      res.setHeader('Content-Type', 'image/' + path.split('.').pop());
-    }
-  }
-}));
+// Load and initialize passport AFTER environment variables are loaded
+console.log("Loading passport configuration...")
+let passport
+try {
+  passport = require("./app/config/passport")
+  app.use(passport.initialize())
+  console.log("✅ Passport initialized successfully")
+} catch (error) {
+  console.error("❌ Error loading/initializing passport:", error)
+  process.exit(1)
+}
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  setHeaders: (res, path) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-}));
+// Serve static files
+app.use(
+  "/assets",
+  express.static(path.join(__dirname, "assets"), {
+    setHeaders: (res, path) => {
+      if (path.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css")
+      } else if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript")
+      }
+    },
+  }),
+)
 
-// Helmet configuration with updated CSP for Google Translate
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"), {
+    setHeaders: (res, path) => {
+      res.setHeader("Access-Control-Allow-Origin", "*")
+    },
+  }),
+)
+
+// Simplified Helmet configuration
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "'unsafe-eval'", 
-          "cdnjs.cloudflare.com", 
-          "*.cloudflare.com", 
-          "code.jquery.com", 
-          "*.googleapis.com", 
-          "*.gstatic.com",
-          "cdn.jsdelivr.net",
-          "*.jsdelivr.net",
-          "ajax.googleapis.com",
-          "unpkg.com",
-          "*.unpkg.com",
-          "translate.google.com",
-          "*.translate.goog",
-          "translate.googleapis.com",
-          "*.google.com"  // Added for Google Translate
-        ],
-        scriptSrcAttr: ["'unsafe-inline'"], 
-        scriptSrcElem: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "'unsafe-eval'", 
-          "cdnjs.cloudflare.com", 
-          "*.cloudflare.com", 
-          "code.jquery.com", 
-          "*.googleapis.com", 
-          "*.gstatic.com",
-          "cdn.jsdelivr.net",
-          "*.jsdelivr.net",
-          "ajax.googleapis.com",
-          "unpkg.com",
-          "*.unpkg.com",
-          "translate.google.com",
-          "*.translate.goog",
-          "translate.googleapis.com",
-          "*.google.com"  // Added for Google Translate
-        ],
-        styleSrc: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "cdnjs.cloudflare.com", 
-          "*.cloudflare.com", 
-          "*.googleapis.com", 
-          "*.gstatic.com",
-          "cdn.jsdelivr.net",
-          "*.jsdelivr.net",
-          "unpkg.com",
-          "*.unpkg.com",
-          "translate.google.com",
-          "*.translate.goog"  // Added for Google Translate
-        ],
-        styleSrcElem: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "cdnjs.cloudflare.com", 
-          "*.cloudflare.com", 
-          "*.googleapis.com", 
-          "*.gstatic.com",
-          "cdn.jsdelivr.net",
-          "*.jsdelivr.net",
-          "unpkg.com",
-          "*.unpkg.com",
-          "translate.google.com",
-          "*.translate.goog"  // Added for Google Translate
-        ],
-        fontSrc: [
-          "'self'", 
-          "cdnjs.cloudflare.com", 
-          "*.cloudflare.com", 
-          "*.googleapis.com", 
-          "*.gstatic.com", 
-          "cdn.jsdelivr.net",
-          "*.jsdelivr.net",
-          "unpkg.com",
-          "*.unpkg.com",
-          "translate.google.com",
-          "*.translate.goog",
-          "data:"
-        ],
-        imgSrc: [
-          "'self'", 
-          "http://localhost:3000", 
-          "data:", 
-          "blob:", 
-          "*", 
-          "translate.google.com", 
-          "*.translate.goog", 
-          "*.gstatic.com", 
-          "*.google.com"
-        ],
-        connectSrc: [
-          "'self'", 
-          "ws:", 
-          "wss:", 
-          "*", 
-          "translate.google.com", 
-          "*.translate.goog", 
-          "translate.googleapis.com",
-          "*.google.com"
-        ],
-        frameSrc: [
-          "'self'", 
-          ".youtube.com", 
-          ".google.com", 
-          "translate.google.com", 
-          "*.translate.goog"
-        ],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'", "data:", "blob:"],
-        workerSrc: ["'self'", "blob:"]
-      },
-    },
+    contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: false
-  })
-);
-
-// Google Translate proxy route
-app.get("/google-translate-proxy", (req, res) => {
-  https.get("https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", (response) => {
-    let data = '';
-    
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    
-    response.on('end', () => {
-      // Modify the script to redirect analytics requests to our proxy
-      const modifiedScript = data.replace(
-        /translate\.google\.com\/gen204/g, 
-        '/translate-analytics'
-      );
-      
-      res.setHeader('Content-Type', 'application/javascript');
-      res.send(modifiedScript);
-    });
-  }).on('error', (err) => {
-    console.error('Error fetching Google Translate script:', err);
-    // Send a fallback script that does nothing but defines the required function
-    res.setHeader('Content-Type', 'application/javascript');
-    res.send(`
-      function googleTranslateElementInit() {
-        console.log('Google Translate fallback initialized');
-      }
-    `);
-  });
-});
-
-// Proxy route for Google Translate analytics
-app.get('/translate-analytics', (req, res) => {
-  // Just return a 200 OK response
-  res.status(200).send('OK');
-});
+    crossOriginResourcePolicy: false,
+  }),
+)
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, "frontend"), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    } else if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    }
-  }
-}));
+app.use(
+  express.static(path.join(__dirname, "frontend"), {
+    setHeaders: (res, path) => {
+      if (path.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css")
+      } else if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript")
+      }
+    },
+  }),
+)
 
 // Connect to MongoDB
 mongoose
   .connect(process.env.DB_URL)
-  .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch((err) => console.error("Erreur de connexion :", err));
+  .then(() => console.log("✅ MongoDB connection successful"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err)
+  })
 
-// IMPORTANT: Load API routes first, before the HTML routes
-// This ensures API routes take precedence over static page routes
-require("./app/routes/admin.routes")(app);
-require("./app/routes/cart.routes")(app);
-require("./app/routes/client.routes")(app);
-require("./app/routes/category.routes")(app);
-require("./app/routes/delivery.routes")(app);
-require("./app/routes/favoris.routes")(app);
-require("./app/routes/invoice.routes")(app);
-require("./app/routes/moderator.routes")(app);
-require("./app/routes/notification.routes")(app);
-require("./app/routes/order.routes")(app);
-require("./app/routes/product.routes")(app);
-require("./app/routes/report.routes")(app);
-require("./app/routes/shop.routes")(app);
-require("./app/routes/subCategory.routes")(app);
-require("./app/routes/vendor.routes")(app);
+// Load OAuth routes FIRST
+console.log("Loading OAuth routes...")
+try {
+  require("./app/routes/auth.routes")(app)
+  console.log("✅ OAuth routes loaded successfully")
+} catch (error) {
+  console.error("❌ Error loading OAuth routes:", error)
+}
 
-// Special handling for missing user images - provide fallback
-app.use((req, res, next) => {
-  if (req.url.match(/user\d+-\d+x\d+\.jpg/) || req.url.includes('default-150x150.png')) {
-    // Check if the file exists in assets/images directory
-    const imagePath = path.join(__dirname, 'assets', 'images', path.basename(req.url));
-    
-    if (fs.existsSync(imagePath)) {
-      return res.sendFile(imagePath);
-    } else {
-      // If not found, send a default placeholder image
-      const defaultImagePath = path.join(__dirname, 'assets', 'images', 'default-avatar.png');
-      if (fs.existsSync(defaultImagePath)) {
-        return res.sendFile(defaultImagePath);
-      } else {
-        // If default avatar doesn't exist, return a 404
-        return res.status(404).send('Image not found');
-      }
-    }
+// Load other routes
+const routes = [
+  "./app/routes/client.routes",
+  "./app/routes/admin.routes",
+  "./app/routes/cart.routes",
+  "./app/routes/category.routes",
+  "./app/routes/delivery.routes",
+  "./app/routes/favoris.routes",
+  "./app/routes/invoice.routes",
+  "./app/routes/moderator.routes",
+  "./app/routes/notification.routes",
+  "./app/routes/order.routes",
+  "./app/routes/product.routes",
+  "./app/routes/report.routes",
+  "./app/routes/shop.routes",
+  "./app/routes/subCategory.routes",
+  "./app/routes/vendor.routes",
+]
+
+routes.forEach((routePath) => {
+  try {
+    require(routePath)(app)
+    console.log(`✅ Loaded: ${routePath}`)
+  } catch (error) {
+    console.error(`❌ Error loading ${routePath}:`, error.message)
   }
-  next();
-});
+})
 
-// Route handler for all HTML files in the frontend directory
+// Route handler for HTML files
 app.get("/:page.html", (req, res) => {
-  const page = req.params.page;
-  const filePath = path.join(__dirname, "frontend", `${page}.html`);
-  
+  const page = req.params.page
+  const filePath = path.join(__dirname, "frontend", `${page}.html`)
+
   try {
     if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
+      res.sendFile(filePath)
     } else {
-      res.status(404).send('Page not found');
+      res.status(404).send("Page not found")
     }
   } catch (err) {
-    console.error(`Error serving ${filePath}:`, err);
-    res.status(500).send('Server error');
+    console.error(`Error serving ${filePath}:`, err)
+    res.status(500).send("Server error")
   }
-});
+})
 
 // Default route
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "index.html"));
-});
-
-// Dashboard routes
-app.get("/dashboard/:page", (req, res) => {
-  const page = req.params.page;
-  const filePath = path.join(__dirname, "frontend", "dashboardOut_pages", `${page}.html`);
-  
   try {
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).send('Dashboard page not found');
-    }
+    res.sendFile(path.join(__dirname, "frontend", "index.html"))
   } catch (err) {
-    console.error(`Error serving dashboard page ${page}:`, err);
-    res.status(500).send('Server error');
+    console.error("Error serving index.html:", err)
+    res.status(500).send("Error loading homepage")
   }
-});
+})
 
-// Admin dashboard routes - MOVED AFTER API ROUTES to prevent route conflicts
-app.get("/admin/:page", (req, res) => {
-  const page = req.params.page;
-  const filePath = path.join(__dirname, "frontend", "dashboardA_pages", `${page}.html`);
-  
-  try {
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).send('Admin page not found');
-    }
-  } catch (err) {
-    console.error(`Error serving admin page ${page}:`, err);
-    res.status(500).send('Server error');
-  }
-});
-
-// Error handling middleware
+// Enhanced error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).send('Something broke on the server!');
-});
+  console.error("=== Server Error ===")
+  console.error("URL:", req.url)
+  console.error("Method:", req.method)
+  console.error("Error:", err.message)
+  console.error("Stack:", err.stack)
+  console.error("=== End Error ===")
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`Serveur en cours d'exécution sur le port ${PORT}`)
-);
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: process.env.NODE_ENV === "development" ? err.message : "Something went wrong",
+    timestamp: new Date().toISOString(),
+  })
+})
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`)
+  console.log(`📱 Local: http://localhost:${PORT}`)
+  console.log(`🔐 Test OAuth: http://localhost:${PORT}/auth/test`)
+  console.log("=== Server Ready ===")
+})
