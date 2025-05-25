@@ -352,11 +352,13 @@ function populateFeaturedSection(products) {
 
     // Create a row container for this slide
     const rowDiv = document.createElement("div");
-    rowDiv.className = "row w-100 gx-3 gy-3";
+    rowDiv.className = "row w-100 gx-2 gy-2";
 
     // Add up to 4 products to this slide
     for (let j = 0; j < 4 && i + j < products.length; j++) {
       const productCard = createCardFeaturedProduct(products[i + j]);
+      // Add responsive classes for better mobile experience
+      productCard.className = "col-lg-6 col-md-12 col-sm-12";
       rowDiv.appendChild(productCard);
     }
 
@@ -1412,60 +1414,109 @@ style.textContent = `
         transition: all 0.3s ease;
     }
 
-    /* Featured products grid styling */
-    .featured-product-slider {
-        display: block;
-        width: 100%;
-    }
+    /* Featured products grid styling - Responsive */
+.featured-product-slider {
+  display: block;
+  width: 100%;
+}
 
-    .featured-product-slider .featured-slide {
-        padding: 0 8px;
-    }
+.featured-product-slider .featured-slide {
+  padding: 0 4px;
+}
 
-    .featured-product-slider .row {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: -10px;
-        margin-left: -10px;
-    }
+.featured-product-slider .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -8px;
+  margin-left: -8px;
+}
 
-    .featured-product-slider .col-md-6 {
-        padding: 10px;
-        width: 50%;
-        max-width: 50%;
-        flex: 0 0 50%;
-    }
+/* Responsive column sizing */
+.featured-product-slider .col-lg-6 {
+  padding: 8px;
+  width: 50%;
+  max-width: 50%;
+  flex: 0 0 50%;
+}
 
-    /* Ensure horizontal card layout in grid */
-    .featured-product-slider .product-card {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: flex-start !important;
-        height: 100%;
-        margin-bottom: 0 !important;
-    }
+/* Mobile responsiveness */
+@media (max-width: 991.98px) {
+  .featured-product-slider .col-lg-6 {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+  
+  .featured-product-slider .product-card {
+    margin-bottom: 15px;
+  }
+}
 
-    /* Make product cards have consistent sizes */
-    .featured-product-slider .product-card__thumb img {
-        width: auto;
-        max-width: 100px;
-        max-height: 100px;
-        object-fit: contain;
-    }
+@media (max-width: 767.98px) {
+  .featured-product-slider .featured-slide {
+    padding: 0 2px;
+  }
+  
+  .featured-product-slider .col-lg-6 {
+    padding: 4px;
+  }
+}
 
-    /* Make content fit better in small cards */
-    .featured-product-slider .product-card__content {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding-right: 5px;
-    }
+/* Ensure horizontal card layout in grid */
+.featured-product-slider .product-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  height: 100%;
+  margin-bottom: 0 !important;
+  min-height: 140px;
+}
 
-    /* Make sure the slick slider shows a full featured slide */
-    .featured-product-slider .slick-slide {
-        float: none;
-        height: auto !important;
-    }
+/* Responsive product card images */
+.featured-product-slider .product-card__thumb img {
+  width: auto;
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+@media (max-width: 767.98px) {
+  .featured-product-slider .product-card__thumb img {
+    max-width: 60px;
+    max-height: 60px;
+  }
+}
+
+/* Make content fit better in small cards */
+.featured-product-slider .product-card__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 5px;
+  flex: 1;
+}
+
+/* Responsive text sizing */
+@media (max-width: 767.98px) {
+  .featured-product-slider .product-card__content .title {
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+  
+  .featured-product-slider .product-card__content .text-xs {
+    font-size: 0.7rem;
+  }
+  
+  .featured-product-slider .product-card__content .text-sm {
+    font-size: 0.8rem;
+  }
+}
+
+/* Make sure the slick slider shows a full featured slide */
+.featured-product-slider .slick-slide {
+  float: none;
+  height: auto !important;
+}
     
     /* Fix for recommended products images */
     .recommended-slider .product-card__thumb {
