@@ -2522,6 +2522,108 @@
     </section>
     <!-- ========================== Shipping Section End ============================ -->
 
+    <!-- ==================== CTG Chat Bot ==================== -->
+<div id="CTG-chat-circle" class="btn-raised">
+      <svg class="icon-speech" viewBox="0 0 48 48">
+        <use xlink:href="#icon-speech" />
+      </svg>
+    </div>
+
+    <div class="CTG-chat CTG-chat--closed">
+      <div class="CTG-chat__header">
+        <p onclick="toggleChatbot()" style="cursor: pointer">
+          <strong class="CTG-strong">Got a question?</strong>
+          <span class="CTG-highlight">Ask CTG</span>
+        </p>
+
+        <div class="CTG-chat__controls">
+          <button id="CTG-clear-chat" class="CTG-chat__icon" disabled>🗑️</button>
+          <button id="CTG-mute-toggle" class="CTG-chat__icon">🔈</button>
+          <button id="CTG-night-toggle" class="CTG-chat__icon">🌙</button>
+          <svg class="CTG-chat__close-button icon-close" viewBox="0 0 32 32">
+            <use xlink:href="#icon-close" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="CTG-chat__message-window">
+        <ul class="CTG-chat__messages">
+          <li class="is-ai CTG-animation">
+            <div class="is-ai__profile-picture">
+              <img
+                id="CTG-img"
+                src="1.png"
+                style="
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                  border-radius: 50%;
+                "
+                width="30"
+                height="30"
+              />
+            </div>
+            <span class="CTG-chat__arrow CTG-chat__arrow--left"></span>
+            <p class="CTG-chat__message">
+              <strong class="CTG-intro"
+                >Hello, i'm CTGBot, how can i assist you?!
+              </strong>
+            </p>
+          </li>
+          <!-- Message here -->
+        </ul>
+      </div>
+      <div class="CTG-chat__entry CTG-chat--closed">
+        <input
+          id="CTG-input"
+          type="text"
+          class="CTG-chat__input"
+          placeholder="Write a message..."
+        />
+        <svg onclick="ajouter();" class="CTG-chat__submit" viewBox="0 0 32 32">
+          <use xlink:href="#icon-send" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Symbols -->
+    <svg>
+      <!-- Close icon -->
+      <symbol id="icon-close" viewBox="0 0 32 32">
+        <title>Close</title>
+        <path
+          d="M2.624 8.297l2.963-2.963 23.704 23.704-2.963 2.963-23.704-23.704z"
+        />
+        <path
+          d="M2.624 29.037l23.704-23.704 2.963 2.963-23.704 23.704-2.963-2.963z"
+        />
+      </symbol>
+
+      <!-- Speech icon -->
+      <symbol id="icon-speech" viewBox="0 0 32 32">
+        <title>Speech</title>
+        <path
+          style="fill: #ffffff; fill-rule: evenodd"
+          d="M21.795 5.333h-11.413c-0.038 0-0.077 0-0.114 0l-0.134 0.011v2.796c0.143-0.006 0.273-0.009 0.385-0.009h11.277c0.070 0 7.074 0.213 7.074 7.695 0 5.179-2.956 7.695-9.036 7.695h-3.792c-0.691 0-1.12 0.526-1.38 1.159l-1.387 3.093-1.625 3.77 0.245 0.453h2.56l2.538-5.678h2.837c7.633 0 11.84-3.727 11.84-10.494 0.001-8.564-7.313-10.492-9.875-10.492z"
+        />
+        <path
+          style="fill: #ffffff; fill-rule: evenodd"
+          d="M10.912 24.259c-0.242-0.442-0.703-0.737-1.234-0.737-0 0-0 0-0 0h-0.56c-0.599-0.011-1.171-0.108-1.71-0.28l0.042 0.012c-1.82-0.559-4.427-2.26-4.427-7.424 0-6.683 5.024-7.597 7.109-7.686v-2.8c-2.042 0.095-9.91 1.067-9.91 10.483 0 4.832 1.961 7.367 3.606 8.64 1.38 1.067 3.109 1.744 4.991 1.843l0.033 0.019 2.805 5.211 1.41-3.273z"
+        />
+      </symbol>
+
+      <!-- Send icon -->
+      <symbol id="icon-send" viewBox="0 0 23.97 21.9">
+        <title>Send</title>
+        <path d="M0.31,9.43a0.5,0.5,0,0,0,0,.93l8.3,3.23L23.15,0Z" />
+        <path
+          d="M9,14.6H9V21.4a0.5,0.5,0,0,0,.93.25L13.22,16l6,3.32A0.5,0.5,0,0,0,20,19l4-18.4Z"
+        />
+      </symbol>
+
+      <!-- Avatar icon -->
+    </svg>
+
     <!-- ==================== Footer Two Start Here ==================== -->
     <footer class="footer py-80 overflow-hidden">
       <div class="container container-lg">
@@ -2733,107 +2835,8 @@
         </div>
       </div>
     </div>
-<!-- ==================== CTG Chat Bot ==================== -->
-<div id="CTG-chat-circle" class="btn-raised">
-      <svg class="icon-speech" viewBox="0 0 48 48">
-        <use xlink:href="#icon-speech" />
-      </svg>
-    </div>
 
-    <div class="CTG-chat CTG-chat--closed">
-      <div class="CTG-chat__header">
-        <p onclick="toggleChatbot()" style="cursor: pointer">
-          <strong class="CTG-strong">Got a question?</strong>
-          <span class="CTG-highlight">Ask CTG</span>
-        </p>
 
-        <div class="CTG-chat__controls">
-          <button id="CTG-clear-chat" class="CTG-chat__icon" disabled>🗑️</button>
-          <button id="CTG-mute-toggle" class="CTG-chat__icon">🔈</button>
-          <button id="CTG-night-toggle" class="CTG-chat__icon">🌙</button>
-          <svg class="CTG-chat__close-button icon-close" viewBox="0 0 32 32">
-            <use xlink:href="#icon-close" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="CTG-chat__message-window">
-        <ul class="CTG-chat__messages">
-          <li class="is-ai CTG-animation">
-            <div class="is-ai__profile-picture">
-              <img
-                id="CTG-img"
-                src="1.png"
-                style="
-                  display: block;
-                  margin-left: auto;
-                  margin-right: auto;
-                  border-radius: 50%;
-                "
-                width="30"
-                height="30"
-              />
-            </div>
-            <span class="CTG-chat__arrow CTG-chat__arrow--left"></span>
-            <p class="CTG-chat__message">
-              <strong class="CTG-intro"
-                >Hello, i'm CTGBot, how can i assist you?!
-              </strong>
-            </p>
-          </li>
-          <!-- Message here -->
-        </ul>
-      </div>
-      <div class="CTG-chat__entry CTG-chat--closed">
-        <input
-          id="CTG-input"
-          type="text"
-          class="CTG-chat__input"
-          placeholder="Write a message..."
-        />
-        <svg onclick="ajouter();" class="CTG-chat__submit" viewBox="0 0 32 32">
-          <use xlink:href="#icon-send" />
-        </svg>
-      </div>
-    </div>
-
-    <!-- Symbols -->
-    <svg>
-      <!-- Close icon -->
-      <symbol id="icon-close" viewBox="0 0 32 32">
-        <title>Close</title>
-        <path
-          d="M2.624 8.297l2.963-2.963 23.704 23.704-2.963 2.963-23.704-23.704z"
-        />
-        <path
-          d="M2.624 29.037l23.704-23.704 2.963 2.963-23.704 23.704-2.963-2.963z"
-        />
-      </symbol>
-
-      <!-- Speech icon -->
-      <symbol id="icon-speech" viewBox="0 0 32 32">
-        <title>Speech</title>
-        <path
-          style="fill: #ffffff; fill-rule: evenodd"
-          d="M21.795 5.333h-11.413c-0.038 0-0.077 0-0.114 0l-0.134 0.011v2.796c0.143-0.006 0.273-0.009 0.385-0.009h11.277c0.070 0 7.074 0.213 7.074 7.695 0 5.179-2.956 7.695-9.036 7.695h-3.792c-0.691 0-1.12 0.526-1.38 1.159l-1.387 3.093-1.625 3.77 0.245 0.453h2.56l2.538-5.678h2.837c7.633 0 11.84-3.727 11.84-10.494 0.001-8.564-7.313-10.492-9.875-10.492z"
-        />
-        <path
-          style="fill: #ffffff; fill-rule: evenodd"
-          d="M10.912 24.259c-0.242-0.442-0.703-0.737-1.234-0.737-0 0-0 0-0 0h-0.56c-0.599-0.011-1.171-0.108-1.71-0.28l0.042 0.012c-1.82-0.559-4.427-2.26-4.427-7.424 0-6.683 5.024-7.597 7.109-7.686v-2.8c-2.042 0.095-9.91 1.067-9.91 10.483 0 4.832 1.961 7.367 3.606 8.64 1.38 1.067 3.109 1.744 4.991 1.843l0.033 0.019 2.805 5.211 1.41-3.273z"
-        />
-      </symbol>
-
-      <!-- Send icon -->
-      <symbol id="icon-send" viewBox="0 0 23.97 21.9">
-        <title>Send</title>
-        <path d="M0.31,9.43a0.5,0.5,0,0,0,0,.93l8.3,3.23L23.15,0Z" />
-        <path
-          d="M9,14.6H9V21.4a0.5,0.5,0,0,0,.93.25L13.22,16l6,3.32A0.5,0.5,0,0,0,20,19l4-18.4Z"
-        />
-      </symbol>
-
-      <!-- Avatar icon -->
-    </svg>
     <script src="main.js"></script>
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
