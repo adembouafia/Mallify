@@ -5,7 +5,7 @@ function createshopCard(shop) {
     const shopDescription = shop.shopdescription || 'Shop description not available';
     const shopAddress = shop.adresse || 'Shop address not available';
     const shopEmail = shop.vendor?.email || 'Shop email not available';
-    const shopPhone = shop.vendor?.phone || 'Shop phone not available';
+    const shopPhone = shop.shop_phone || 'Shop phone not available';
     
     // Create column element to hold the shop card - changed from col-lg-4 to col-lg-3 for 4 cards per row
     const colDiv = document.createElement('div');
