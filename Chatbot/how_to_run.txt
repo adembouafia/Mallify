@@ -1,0 +1,50 @@
+🚀 CHATBOT INSTALLATION & RUN GUIDE
+===================================
+
+1️⃣  Create and Activate a New Anaconda Environment:
+
+    conda create -n Chatbot python=3.8 -y
+    conda activate Chatbot
+
+2️⃣  Install Dependencies from requirements.txt:
+
+    pip install -r requirements.txt
+
+3️⃣  Download NLTK Data (only once):
+
+    python
+    >>> import nltk
+    >>> nltk.download('punkt')
+    >>> nltk.download('wordnet')
+    >>> exit()
+
+4️⃣  Train the Chatbot Model:
+
+    python train_chatbot.py
+
+    🔹 This generates:
+        - chatbot_model.h5
+        - words.pkl
+        - classes.pkl
+
+5️⃣  Run the Flask API:
+
+    python api.py
+
+    🔹 This starts the backend at: http://127.0.0.1:5000
+
+6️⃣  Open the Chat Interface:
+
+    Open index.html in a browser (double-click or drag into Chrome/Firefox)
+
+7️⃣  (Optional) Clear NLTK Download Prompts:
+
+    You can use:
+    >>> nltk.download('punkt', quiet=True)
+    >>> nltk.download('wordnet', quiet=True)
+
+⚠️  If TensorFlow fails to install in Anaconda, run:
+
+    conda install -c conda-forge tensorflow keras
+
+✅ Done! Your chatbot is now running locally.

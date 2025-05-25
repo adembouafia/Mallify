@@ -9303,8 +9303,8 @@ input:focus-visible {
 /* ===================== Scroll to Top Start ================================= */
 .progress-wrap {
     position: fixed;
-    inset-inline-end: 36px;
-    inset-block-end: 36px;
+    inset-inline-end: 22px;
+    inset-block-end: 80px;
     height: 46px;
     line-height: 46px;
     width: 46px;
@@ -9323,8 +9323,8 @@ input:focus-visible {
 
 @media screen and (max-width: 991px) {
     .progress-wrap {
-        inset-inline-end: 24px;
-        inset-block-end: 24px;
+        inset-inline-end: 25px;
+        inset-block-end: 80px;
         height: 40px;
         width: 40px;
         line-height: 40px;

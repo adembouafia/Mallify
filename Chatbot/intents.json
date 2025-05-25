@@ -1,0 +1,187 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey", "Good morning", "Good evening"],
+      "responses": [
+        "Hello! How can I assist you medically today?",
+        "Hi there! What can I help you with?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "Goodbye", "See you", "Catch you later"],
+      "responses": ["Goodbye! Stay healthy.", "Take care and see you soon."]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "Appreciate it", "Thanks a lot"],
+      "responses": ["You're welcome!", "Glad I could help."]
+    },
+    {
+      "tag": "fever",
+      "patterns": [
+        "I have a fever",
+        "I'm feeling hot",
+        "My temperature is high",
+        "I think I have a fever"
+      ],
+      "responses": [
+        "Have you taken your temperature? You might want to rest, stay hydrated, and take paracetamol if needed."
+      ]
+    },
+    {
+      "tag": "cough",
+      "patterns": [
+        "I have a cough",
+        "Dry cough",
+        "I'm coughing a lot",
+        "Persistent cough"
+      ],
+      "responses": [
+        "Try to stay hydrated. If it lasts more than a few days, consider seeing a doctor."
+      ]
+    },
+    {
+      "tag": "headache",
+      "patterns": [
+        "My head hurts",
+        "I have a headache",
+        "Throbbing pain in head"
+      ],
+      "responses": [
+        "Try resting in a quiet place and drinking water. If the pain is severe or recurrent, see a specialist."
+      ]
+    },
+    {
+      "tag": "diabetes",
+      "patterns": [
+        "What is diabetes?",
+        "Tell me about type 2 diabetes",
+        "How is diabetes treated?"
+      ],
+      "responses": [
+        "Diabetes is a condition that affects blood sugar levels. Treatment often includes diet, exercise, and medication."
+      ]
+    },
+    {
+      "tag": "asthma",
+      "patterns": [
+        "What is asthma?",
+        "I have trouble breathing",
+        "Wheezing and tight chest"
+      ],
+      "responses": [
+        "Asthma is a condition where airways narrow. Inhalers can help during an attack. Avoid allergens if possible."
+      ]
+    },
+    {
+      "tag": "first_aid_bleeding",
+      "patterns": [
+        "First aid for bleeding",
+        "What to do for a cut?",
+        "How to stop bleeding?"
+      ],
+      "responses": [
+        "Apply pressure to the wound with a clean cloth. Elevate the area and seek medical help if it's severe."
+      ]
+    },
+    {
+      "tag": "first_aid_burns",
+      "patterns": ["I burned myself", "First aid for burns", "Hot oil burn"],
+      "responses": [
+        "Cool the burn under running water for 10-15 minutes. Avoid applying ice. Cover with a clean dressing."
+      ]
+    },
+    {
+      "tag": "medicine_advice",
+      "patterns": [
+        "Can I take ibuprofen?",
+        "What does paracetamol treat?",
+        "Should I take antibiotics?"
+      ],
+      "responses": [
+        "Always follow the dosage instructions. Consult a pharmacist or doctor for advice on specific medications."
+      ]
+    },
+    {
+      "tag": "appointment",
+      "patterns": [
+        "I want to book an appointment",
+        "Schedule a visit",
+        "Doctor availability"
+      ],
+      "responses": [
+        "Please contact your clinic or use their app to book an appointment."
+      ]
+    },
+    {
+      "tag": "health_tips",
+      "patterns": [
+        "Give me health tips",
+        "How can I stay healthy?",
+        "Tips for immune system"
+      ],
+      "responses": [
+        "Stay hydrated, eat balanced meals, sleep well, and get regular exercise."
+      ]
+    },
+    {
+      "tag": "emergency",
+      "patterns": [
+        "What to do in an emergency?",
+        "I'm in pain",
+        "Should I call an ambulance?"
+      ],
+      "responses": [
+        "If you're in immediate danger or pain, please call emergency services or go to the nearest hospital."
+      ]
+    },
+    {
+      "tag": "vaccines",
+      "patterns": [
+        "Should I get vaccinated?",
+        "COVID vaccine",
+        "Flu shot info"
+      ],
+      "responses": [
+        "Vaccines help prevent serious illness. Consult your doctor to know which ones are right for you."
+      ]
+    },
+    {
+      "tag": "cold_vs_flu",
+      "patterns": [
+        "Difference between cold and flu",
+        "Is it flu or cold?",
+        "Symptoms of flu"
+      ],
+      "responses": [
+        "Colds are milder with runny nose and sneezing. Flu often causes fever, body aches, and fatigue."
+      ]
+    },
+    {
+      "tag": "pregnancy",
+      "patterns": [
+        "I'm pregnant",
+        "Pregnancy tips",
+        "What to avoid in pregnancy?"
+      ],
+      "responses": [
+        "Congrats! Avoid alcohol, raw food, and heavy lifting. Take prenatal vitamins and see your OB regularly."
+      ]
+    },
+    {
+      "tag": "fallback",
+      "patterns": [
+        "I don't know",
+        "???",
+        "Can you help me?",
+        "What do you mean?"
+      ],
+      "responses": [
+        "I'm not sure I understood that. Could you rephrase?",
+        "Can you clarify your question?"
+      ]
+    }
+  ]
+}
