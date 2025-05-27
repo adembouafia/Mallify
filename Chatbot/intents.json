@@ -506,6 +506,667 @@
       "responses": [
         "I can help you compare products. Which items would you like to compare?"
       ]
+    },
+
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi", "Hello", "Hey", "Good morning", "Good evening", 
+        "Bonjour", "Salut", "Marhaba"
+      ],
+      "responses": [
+        "Hello! Welcome to Mallify. How can I assist you today?",
+        "Hi there! I'm Mallify's virtual assistant. How can I help you?",
+        "Welcome to Mallify! I'm here to help with any questions about our platform."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye", "Goodbye", "See you", "Catch you later", 
+        "Au revoir", "À bientôt"
+      ],
+      "responses": [
+        "Goodbye! Thank you for visiting Mallify.",
+        "See you soon! Enjoy shopping on Mallify.",
+        "Thank you for chatting with me. Have a great shopping experience!"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks", "Thank you", "Appreciate it", "Thanks a lot", "Merci"
+      ],
+      "responses": [
+        "You're welcome! Is there anything else I can help you with?",
+        "Happy to assist! Feel free to ask if you have more questions.",
+        "My pleasure! I'm always here to help Mallify customers."
+      ]
+    },
+        
+    {
+      "tag": "size_guide",
+      "patterns": [
+        "Size guide", "Size chart", "What size should I get", "How to measure size",
+        "Size conversion", "Sizing help", "Size recommendations", "Fit guide",
+        "Guide des tailles", "Quelle taille choisir"
+      ],
+      "responses": [
+        "Each seller provides their own size guide on the product page. Look for the 'Size Guide' link near the size selection. If you're unsure, you can also message the seller directly for personalized sizing advice.",
+        "Size charts are available on individual product pages. Click 'Size Guide' to see measurements. Remember that sizes may vary between different sellers and brands on Mallify."
+      ]
+    },
+    
+    {
+      "tag": "bulk_orders",
+      "patterns": [
+        "Bulk order", "Wholesale", "Large quantity", "Buy in bulk", 
+        "Quantity discount", "Business order", "Bulk pricing", "Volume discount",
+        "Commande en gros", "Achat en quantité"
+      ],
+      "responses": [
+        "For bulk orders, contact the seller directly through their shop page. Many sellers offer quantity discounts for large orders. You can also reach out to our business support team at business@mallify.com for assistance with wholesale purchases."
+      ]
+    },
+    
+    {
+      "tag": "product_customization",
+      "patterns": [
+        "Custom product", "Personalization", "Can you customize", "Made to order",
+        "Custom design", "Personalized item", "Bespoke", "Tailor made",
+        "Produit personnalisé", "Sur mesure"
+      ],
+      "responses": [
+        "Many sellers on Mallify offer customization services! Look for the 'Customization Available' badge on product pages, or contact sellers directly to discuss your specific requirements. Custom orders may take longer to process and ship."
+      ]
+    },
+    
+    {
+      "tag": "pre_orders",
+      "patterns": [
+        "Pre-order", "Pre order", "Coming soon", "When available", 
+        "Reserve product", "Advance booking", "Future release",
+        "Pré-commande", "Réserver produit"
+      ],
+      "responses": [
+        "Some sellers offer pre-orders for upcoming products. These will be clearly marked as 'Pre-Order' with expected availability dates. You'll be charged when the item ships, and you can cancel pre-orders anytime before shipping."
+      ]
+    },
+    
+    {
+      "tag": "loyalty_program",
+      "patterns": [
+        "Loyalty program", "Rewards", "Points system", "Member benefits",
+        "VIP program", "Loyalty points", "Membership perks", "Reward points",
+        "Programme de fidélité", "Points de récompense"
+      ],
+      "responses": [
+        "Mallify's loyalty program rewards frequent shoppers with points for every purchase! Earn 1 point per dollar spent, get exclusive access to sales, and redeem points for discounts. Join by going to 'My Account' > 'Loyalty Program'."
+      ]
+    },
+    
+    {
+      "tag": "price_matching",
+      "patterns": [
+        "Price match", "Lower price found", "Price comparison", "Best price guarantee",
+        "Match competitor price", "Price protection", "Cheaper elsewhere",
+        "Égalisation de prix", "Meilleur prix"
+      ],
+      "responses": [
+        "While Mallify doesn't have a formal price matching policy since our sellers set their own prices, you can contact individual sellers to discuss pricing. Many sellers are willing to negotiate, especially for multiple items or return customers."
+      ]
+    },
+    
+    {
+      "tag": "subscription_service",
+      "patterns": [
+        "Subscription", "Auto delivery", "Recurring order", "Monthly delivery",
+        "Subscribe and save", "Automatic reorder", "Regular delivery",
+        "Abonnement", "Livraison automatique"
+      ],
+      "responses": [
+        "Some sellers offer subscription services for regularly needed items like beauty products, pet supplies, or household goods. Look for the 'Subscribe & Save' option on eligible products to set up automatic deliveries with discounts."
+      ]
+    },
+    
+    {
+      "tag": "virtual_try_on",
+      "patterns": [
+        "Try before buy", "Virtual try on", "AR try on", "See how it looks",
+        "Try on virtually", "Augmented reality", "Virtual fitting",
+        "Essayage virtuel", "Essayer avant d'acheter"
+      ],
+      "responses": [
+        "Some fashion and beauty sellers on Mallify offer virtual try-on features using AR technology. Look for the 'Virtual Try-On' button on supported products to see how items look on you before purchasing."
+      ]
+    },
+    
+    {
+      "tag": "eco_friendly",
+      "patterns": [
+        "Eco friendly", "Sustainable", "Green products", "Environmentally friendly",
+        "Organic", "Eco conscious", "Sustainable shopping", "Green alternatives",
+        "Écologique", "Produits durables"
+      ],
+      "responses": [
+        "Mallify promotes sustainable shopping! Use our 'Eco-Friendly' filter to find products from environmentally conscious sellers. Look for badges like 'Sustainable Materials', 'Carbon Neutral Shipping', and 'Eco-Certified' on product pages."
+      ]
+    },
+    
+    {
+      "tag": "local_sellers",
+      "patterns": [
+        "Local sellers", "Nearby shops", "Local businesses", "Sellers near me",
+        "Support local", "Local vendors", "Regional sellers", "Local marketplace",
+        "Vendeurs locaux", "Commerces de proximité"
+      ],
+      "responses": [
+        "Support local businesses on Mallify! Use the location filter to find sellers in your area. Local purchases often mean faster delivery, lower shipping costs, and supporting your community's economy."
+      ]
+    },
+    
+    {
+      "tag": "seller_verification",
+      "patterns": [
+        "Verified seller", "Trusted seller", "Seller verification", "How to verify seller",
+        "Seller badges", "Authentic seller", "Seller credibility", "Seller trust",
+        "Vendeur vérifié", "Vendeur de confiance"
+      ],
+      "responses": [
+        "Mallify verifies sellers through our trust program. Look for verification badges like 'Verified Seller', 'Top Rated', and 'Mallify Certified' on shop pages. These indicate sellers who have met our quality and reliability standards."
+      ]
+    },
+    
+    {
+      "tag": "flash_sales",
+      "patterns": [
+        "Flash sale", "Limited time offer", "Daily deals", "Lightning deals",
+        "Time limited sale", "Quick sale", "Flash discount", "Limited offer",
+        "Vente éclair", "Offre limitée"
+      ],
+      "responses": [
+        "Don't miss our flash sales! Check the homepage daily for lightning deals that last only a few hours. You can also enable push notifications in your account settings to get alerts about flash sales in your favorite categories."
+      ]
+    },
+    
+    {
+      "tag": "product_alerts",
+      "patterns": [
+        "Price alert", "Stock alert", "Notify when available", "Price drop notification",
+        "Back in stock alert", "Product notification", "Alert me", "Notify me",
+        "Alerte prix", "Notification de stock"
+      ],
+      "responses": [
+        "Set up product alerts to never miss a deal! On any product page, click 'Set Alert' to get notified about price drops, restocks, or sales. You can manage all your alerts from 'My Account' > 'Product Alerts'."
+      ]
+    },
+    
+    {
+      "tag": "group_buying",
+      "patterns": [
+        "Group buy", "Group purchase", "Collective buying", "Group discount",
+        "Team buying", "Group order", "Bulk group purchase", "Community buying",
+        "Achat groupé", "Achat collectif"
+      ],
+      "responses": [
+        "Join group buying events for better prices! Some sellers offer group discounts when multiple customers purchase together. Look for 'Group Buy' events on the homepage or in the 'Special Offers' section."
+      ]
+    },
+    
+    {
+      "tag": "live_shopping",
+      "patterns": [
+        "Live shopping", "Live stream", "Live sale", "Shopping live",
+        "Live broadcast", "Live demo", "Live product show", "Interactive shopping",
+        "Shopping en direct", "Vente en direct"
+      ],
+      "responses": [
+        "Experience live shopping on Mallify! Some sellers host live streams to showcase products, answer questions in real-time, and offer exclusive live-only deals. Check the 'Live Now' section on our homepage."
+      ]
+    },
+    
+    {
+      "tag": "age_verification",
+      "patterns": [
+        "Age verification", "Age restricted", "Adult products", "Age limit",
+        "Verify age", "18+", "Age confirmation", "Restricted items",
+        "Vérification d'âge", "Produits pour adultes"
+      ],
+      "responses": [
+        "Some products on Mallify require age verification for legal compliance. You'll be prompted to verify your age during checkout for restricted items. We use secure age verification services to protect your privacy."
+      ]
+    },
+    
+    {
+      "tag": "product_insurance",
+      "patterns": [
+        "Product insurance", "Purchase protection", "Item insurance", "Warranty",
+        "Product guarantee", "Extended warranty", "Protection plan", "Insurance coverage",
+        "Assurance produit", "Garantie étendue"
+      ],
+      "responses": [
+        "Protect your purchases with Mallify's optional product insurance! Available for electronics and high-value items, it covers accidental damage, theft, and extends warranty coverage. Add insurance during checkout for eligible products."
+      ]
+    },
+    
+    {
+      "tag": "virtual_shopping_assistant",
+      "patterns": [
+        "Personal shopper", "Shopping assistant", "Help me choose", "Product recommendation",
+        "Style advice", "Shopping guidance", "Personal styling", "Shopping help",
+        "Assistant personnel", "Conseiller shopping"
+      ],
+      "responses": [
+        "Need personalized shopping help? Our virtual shopping assistants can help you find the perfect products based on your preferences, budget, and needs. Start a consultation by clicking 'Personal Shopping' in your account menu."
+      ]
+    },
+    
+    {
+      "tag": "marketplace_fees",
+      "patterns": [
+        "Buyer fees", "Transaction fees", "Marketplace charges", "Additional costs",
+        "Hidden fees", "Service charges", "Platform fees", "Extra charges",
+        "Frais d'achat", "Frais de transaction"
+      ],
+      "responses": [
+        "Mallify doesn't charge buyers any additional fees! The price you see is what you pay, plus shipping costs set by the seller. We only charge sellers a small commission to maintain and improve the platform."
+      ]
+    },
+    
+    {
+      "tag": "dispute_resolution",
+      "patterns": [
+        "Dispute", "Problem with order", "Seller dispute", "Resolution center",
+        "Complaint", "Issue with seller", "Mediation", "Resolve problem",
+        "Litige", "Problème avec commande"
+      ],
+      "responses": [
+        "If you have an issue with an order, first try contacting the seller directly. If that doesn't resolve the problem, open a dispute in our Resolution Center within 30 days of delivery. Our mediation team will help find a fair solution."
+      ]
+    },
+    
+    {
+      "tag": "what_is_mallify",
+      "patterns": [
+        "What is Mallify?", "Tell me about Mallify", "What does Mallify do?",
+        "How does Mallify work?", "What kind of platform is this?"
+      ],
+      "responses": [
+        "Mallify is a virtual mall where anyone can access and open a shop to sell products. We provide a platform for both shoppers to find various products and vendors to set up their online shops easily."
+      ]
+    },
+    
+    
+    {
+      "tag": "fallback",
+      "patterns": [
+        "I don't know", "???", "random text", "asdfghjkl", "test test"
+      ],
+      "responses": [
+        "I'm not sure I understood that. Could you rephrase your question?",
+        "I didn't quite catch that. How else can I help you with Mallify?",
+        "I'm still learning! Could you ask your question in a different way?"
+      ]
+    },
+
+    {
+      "tag": "order_cancellation",
+      "patterns": [
+        "Cancel my order", "I want to cancel", "How to cancel order", "Cancel purchase",
+        "Stop my order", "Cancel order please", "Annuler ma commande", "Je veux annuler"
+      ],
+      "responses": [
+        "You can cancel your order from 'My Orders' if it hasn't been shipped yet. Click on the order and select 'Cancel Order'. If it's already shipped, you'll need to return it after delivery.",
+        "To cancel an order, go to your account dashboard and find the order in 'My Orders'. Orders can only be cancelled before they're shipped."
+      ]
+    },
+    
+    {
+      "tag": "order_modification",
+      "patterns": [
+        "Change my order", "Modify order", "Update my order", "Edit order details",
+        "Change delivery address", "Update shipping address", "Modifier ma commande"
+      ],
+      "responses": [
+        "Order modifications are possible only before shipping. Go to 'My Orders', select your order, and click 'Modify' if available. For shipped orders, please contact the seller directly.",
+        "You can modify unshipped orders from your account dashboard. Changes to address, quantity, or items may be possible depending on the seller's policy."
+      ]
+    },
+
+    {
+      "tag": "refund_status",
+      "patterns": [
+        "Refund status", "Where is my refund", "Check refund", "Refund processing time",
+        "When will I get refund", "Refund update", "Statut du remboursement"
+      ],
+      "responses": [
+        "Check your refund status in 'My Orders' > 'Returns & Refunds'. Refunds typically take 3-7 business days to process after the seller receives the returned item.",
+        "Refund processing times vary by payment method: 3-5 days for cards, 1-2 days for digital wallets. You'll receive email updates on the refund progress."
+      ]
+    },
+
+    {
+      "tag": "exchange_process",
+      "patterns": [
+        "Exchange item", "How to exchange", "Return and exchange", "Swap product",
+        "Exchange policy", "Change for different size", "Échanger un produit"
+      ],
+      "responses": [
+        "To exchange an item, initiate a return from 'My Orders' and select 'Exchange' as the reason. Choose your preferred replacement and we'll process both the return and new order together.",
+        "Exchanges are available within the seller's return window. The new item will be sent once we receive your return, or you can pay the difference if there's a price change."
+      ]
+    },
+
+    {
+      "tag": "damaged_item_report",
+      "patterns": [
+        "Item damaged", "Received broken item", "Product arrived damaged", "Damaged package",
+        "Broken product", "Item not working", "Produit endommagé", "Article cassé"
+      ],
+      "responses": [
+        "Sorry to hear about the damaged item! Please report it immediately through 'My Orders' > 'Report Issue'. Take photos of the damage and packaging - this helps us process your claim faster.",
+        "For damaged items, contact the seller within 48 hours of delivery. Most sellers will offer immediate replacement or full refund for damaged products."
+      ]
+    },
+
+    {
+      "tag": "missing_item_report",
+      "patterns": [
+        "Missing item", "Didn't receive item", "Item not delivered", "Package not arrived",
+        "Where is my order", "Lost package", "Article manquant", "Colis non reçu"
+      ],
+      "responses": [
+        "If your item hasn't arrived within the expected timeframe, first check with neighbors or building management. Then report it through 'My Orders' > 'Item Not Received' for investigation.",
+        "For missing packages, we'll track with the shipping carrier and contact the seller. You're protected by our buyer guarantee - you'll get a refund or replacement."
+      ]
+    },
+
+    {
+      "tag": "wrong_item_received",
+      "patterns": [
+        "Wrong item", "Received different product", "This isn't what I ordered", "Incorrect item",
+        "Wrong product sent", "Different item delivered", "Mauvais article", "Produit incorrect"
+      ],
+      "responses": [
+        "If you received the wrong item, report it through 'My Orders' > 'Wrong Item Received'. We'll arrange for the correct item to be sent and provide a return label for the incorrect one.",
+        "Wrong item deliveries are covered by our guarantee. Contact the seller immediately, and they'll send the correct product while arranging pickup of the wrong item."
+      ]
+    },
+
+    {
+      "tag": "delivery_issues",
+      "patterns": [
+        "Delivery problem", "Delivery issues", "Shipping problem", "Delivery delay",
+        "Late delivery", "Delivery not attempted", "Problème de livraison", "Retard de livraison"
+      ],
+      "responses": [
+        "For delivery issues, first check the tracking information in 'My Orders'. If there are problems, contact our delivery support team who can coordinate with the shipping carrier.",
+        "Delivery problems can usually be resolved by contacting the carrier directly. If unsuccessful, our customer service team can escalate the issue and find alternative solutions."
+      ]
+    },
+
+    {
+      "tag": "payment_failed",
+      "patterns": [
+        "Payment failed", "Payment declined", "Card declined", "Payment not working",
+        "Transaction failed", "Payment error", "Paiement échoué", "Carte refusée"
+      ],
+      "responses": [
+        "Payment failures can occur due to insufficient funds, expired cards, or bank security measures. Try a different payment method or contact your bank to authorize the transaction.",
+        "If your payment failed, check your card details and try again. You can also use alternative payment methods available at checkout."
+      ]
+    },
+
+    {
+      "tag": "payment_pending",
+      "patterns": [
+        "Payment pending", "Payment processing", "Payment not confirmed", "Transaction pending",
+        "Payment verification", "Payment under review", "Paiement en attente"
+      ],
+      "responses": [
+        "Pending payments usually resolve within 24 hours. This can happen with bank transfers or when additional verification is required. Your order will be processed once payment is confirmed.",
+        "Some payment methods take longer to process. Check your payment status in 'My Orders' or contact your bank if the payment remains pending for more than 2 business days."
+      ]
+    },
+
+    {
+      "tag": "invoice_request",
+      "patterns": [
+        "Need invoice", "Request invoice", "Get receipt", "Tax invoice",
+        "Business invoice", "VAT invoice", "Facture", "Reçu fiscal"
+      ],
+      "responses": [
+        "Download your invoice from 'My Orders' by clicking on the specific order and selecting 'Download Invoice'. For business invoices with specific details, contact the seller directly.",
+        "Invoices are automatically generated for all orders. Access them through your account dashboard under 'My Orders' > 'Invoice/Receipt'."
+      ]
+    },
+
+    {
+      "tag": "receipt_download",
+      "patterns": [
+        "Download receipt", "Get receipt", "Receipt copy", "Purchase receipt",
+        "Order receipt", "Transaction receipt", "Télécharger reçu"
+      ],
+      "responses": [
+        "Download your receipt from 'My Orders' section. Click on any order to view details and download the receipt as PDF. Receipts are available immediately after purchase.",
+        "All purchase receipts are stored in your account. Go to 'My Orders', select the order, and click 'Download Receipt' for a PDF copy."
+      ]
+    },
+
+    {
+      "tag": "product_specifications",
+      "patterns": [
+        "Product specs", "Technical specifications", "Product details", "Item specifications",
+        "Technical details", "Product features", "Spécifications produit", "Détails techniques"
+      ],
+      "responses": [
+        "Detailed product specifications are available on each product page under the 'Specifications' tab. This includes dimensions, materials, technical features, and compatibility information.",
+        "Find complete product specs by scrolling down on the product page. If you need additional technical information, you can contact the seller directly through their shop page."
+      ]
+    },
+
+    {
+      "tag": "product_warranty_info",
+      "patterns": [
+        "Product warranty", "Warranty information", "Guarantee details", "Warranty period",
+        "Warranty coverage", "Warranty claim", "Garantie produit", "Informations garantie"
+      ],
+      "responses": [
+        "Warranty information is provided by individual sellers and varies by product. Check the product page for warranty details, or contact the seller for specific warranty terms and claim procedures.",
+        "Most products come with manufacturer warranty. Warranty terms, duration, and claim process are detailed on the product page under 'Warranty Information'."
+      ]
+    },
+
+    {
+      "tag": "product_care_instructions",
+      "patterns": [
+        "Care instructions", "How to care for product", "Maintenance guide", "Product care",
+        "Cleaning instructions", "How to maintain", "Instructions d'entretien", "Guide d'entretien"
+      ],
+      "responses": [
+        "Care instructions are usually included with your product or available on the product page. For specific care guidance, check the 'Care & Maintenance' section or contact the seller.",
+        "Proper care instructions help extend product life. Look for care labels on the product or download care guides from the product page under 'Additional Information'."
+      ]
+    },
+
+    {
+      "tag": "similar_products",
+      "patterns": [
+        "Similar products", "Products like this", "Alternative products", "Related items",
+        "Comparable products", "Other options", "Produits similaires", "Alternatives"
+      ],
+      "responses": [
+        "Find similar products in the 'You May Also Like' section on any product page, or use our 'Find Similar' feature to discover comparable items from different sellers.",
+        "Our recommendation engine suggests similar products based on your browsing history and other customers' purchases. Check the 'Related Products' section for alternatives."
+      ]
+    },
+
+    {
+      "tag": "product_bundles",
+      "patterns": [
+        "Product bundles", "Bundle deals", "Package deals", "Combo offers",
+        "Set products", "Bundle discounts", "Offres groupées", "Packs produits"
+      ],
+      "responses": [
+        "Many sellers offer bundle deals for related products. Look for 'Bundle & Save' options on product pages, or check the 'Special Offers' section for current bundle promotions.",
+        "Bundle deals provide great value when buying multiple related items. These are highlighted on product pages and in our 'Deals' section with clear savings information."
+      ]
+    },
+
+    {
+      "tag": "new_arrivals",
+      "patterns": [
+        "New arrivals", "Latest products", "New items", "Recently added",
+        "Fresh products", "What's new", "Nouveautés", "Derniers produits"
+      ],
+      "responses": [
+        "Check out our 'New Arrivals' section updated daily with the latest products from all sellers. You can also filter by category to see new items in your areas of interest.",
+        "Stay updated with new products by following your favorite sellers or enabling notifications for specific categories in your account preferences."
+      ]
+    },
+
+    {
+      "tag": "bestsellers",
+      "patterns": [
+        "Best sellers", "Popular products", "Top selling", "Most popular",
+        "Trending items", "Top rated", "Meilleures ventes", "Produits populaires"
+      ],
+      "responses": [
+        "Discover our bestsellers in the 'Popular Products' section, updated weekly based on sales data and customer ratings. These represent the most loved items on Mallify.",
+        "Bestsellers are great starting points for shopping. Find them on our homepage or use the 'Sort by Popularity' filter in any category."
+      ]
+    },
+
+    {
+      "tag": "seasonal_products",
+      "patterns": [
+        "Seasonal products", "Holiday items", "Seasonal collection", "Holiday specials",
+        "Seasonal offers", "Holiday deals", "Produits saisonniers", "Articles de saison"
+      ],
+      "responses": [
+        "Browse seasonal collections updated throughout the year for holidays, weather changes, and special occasions. Find them in our 'Seasonal' section or homepage banners.",
+        "Seasonal products are curated for timely relevance. Check back regularly as we update collections for holidays, back-to-school, summer, winter, and special events."
+      ]
+    },
+
+    {
+      "tag": "cart_management",
+      "patterns": [
+        "Manage cart", "Edit cart", "Update cart", "Cart options",
+        "Shopping cart help", "Cart features", "Gérer panier", "Modifier panier"
+      ],
+      "responses": [
+        "Manage your cart by clicking the cart icon. You can update quantities, remove items, save for later, or apply discount codes. Your cart is saved across devices when logged in.",
+        "Cart management features include quantity updates, item removal, and saving items for later. You can also see shipping estimates and apply promotional codes before checkout."
+      ]
+    },
+
+    {
+      "tag": "save_for_later",
+      "patterns": [
+        "Save for later", "Save item", "Wishlist", "Save product",
+        "Keep for later", "Bookmark item", "Sauvegarder pour plus tard", "Garder pour plus tard"
+      ],
+      "responses": [
+        "Save items for later by clicking the 'Save for Later' button in your cart or the heart icon on product pages. Access saved items from your account dashboard.",
+        "Your saved items are stored in your wishlist and remain there until you move them to cart or remove them. You'll also get notifications about price drops on saved items."
+      ]
+    },
+
+    {
+      "tag": "guest_checkout",
+      "patterns": [
+        "Guest checkout", "Checkout without account", "Buy without registration", "No account needed",
+        "Quick checkout", "Guest purchase", "Achat sans compte", "Commande invité"
+      ],
+      "responses": [
+        "Yes, you can checkout as a guest without creating an account. Simply select 'Continue as Guest' during checkout. However, creating an account helps track orders and saves your preferences.",
+        "Guest checkout is available for quick purchases. You'll need to provide shipping and payment information, but won't have access to order history or tracking without an account."
+      ]
+    },
+
+    {
+      "tag": "express_checkout",
+      "patterns": [
+        "Express checkout", "Quick checkout", "Fast purchase", "One click buy",
+        "Speed checkout", "Rapid purchase", "Commande express", "Achat rapide"
+      ],
+      "responses": [
+        "Use express checkout with saved payment methods and addresses for faster purchases. Enable 'Quick Buy' in your account settings to streamline future checkouts.",
+        "Express checkout uses your default shipping address and payment method. You can modify these before confirming, or set up multiple quick-checkout profiles."
+      ]
+    },
+
+    {
+      "tag": "payment_installments",
+      "patterns": [
+        "Payment installments", "Pay in installments", "Monthly payments", "Split payment",
+        "Payment plans", "Installment options", "Paiement échelonné", "Paiement en plusieurs fois"
+      ],
+      "responses": [
+        "Some sellers offer installment payment options for higher-value items. Look for 'Pay in Installments' during checkout, or check if the seller supports payment plan services.",
+        "Installment payments are available through third-party services for eligible purchases. Terms and interest rates vary by provider and are shown during checkout."
+      ]
+    },
+
+    {
+      "tag": "currency_conversion",
+      "patterns": [
+        "Currency conversion", "Different currency", "Price in my currency", "Exchange rate",
+        "Local currency", "Currency options", "Conversion de devise", "Monnaie locale"
+      ],
+      "responses": [
+        "Prices are automatically converted to your local currency based on your location. You can change currency from the dropdown in the top navigation bar.",
+        "Currency conversion uses real-time exchange rates. Final charges may vary slightly due to your bank's conversion rates and any international transaction fees."
+      ]
+    },
+
+    {
+      "tag": "tax_calculation",
+      "patterns": [
+        "Tax calculation", "How much tax", "Tax included", "VAT information",
+        "Sales tax", "Tax details", "Calcul des taxes", "Informations TVA"
+      ],
+      "responses": [
+        "Tax calculation depends on your location and the seller's location. Taxes are calculated at checkout and clearly displayed before you complete your purchase.",
+        "Some prices include tax while others add it at checkout. Tax information is shown on product pages and detailed in your order summary before payment."
+      ]
+    },
+
+    {
+      "tag": "shipping_calculator",
+      "patterns": [
+        "Shipping cost", "Calculate shipping", "Delivery cost", "Shipping rates",
+        "How much shipping", "Shipping calculator", "Coût de livraison", "Calculer livraison"
+      ],
+      "responses": [
+        "Shipping costs are calculated based on your location, item weight, and selected delivery speed. Enter your postal code on the product page to see shipping options and costs.",
+        "Use our shipping calculator at checkout to compare delivery options and costs. Some sellers offer free shipping above certain order values."
+      ]
+    },
+
+    {
+      "tag": "pickup_locations",
+      "patterns": [
+        "Pickup locations", "Collection points", "Where to collect", "Pickup options",
+        "Self pickup", "Collection centers", "Points de retrait", "Lieux de collecte"
+      ],
+      "responses": [
+        "Some sellers offer pickup locations to save on shipping costs. Available pickup points are shown during checkout if the seller supports this option.",
+        "Pickup locations include partner stores, lockers, and seller locations. You'll receive notification when your order is ready for collection, usually within 1-2 business days."
+      ]
+    },
+
+    {
+      "tag": "same_day_delivery",
+      "patterns": [
+        "Same day delivery", "Delivery today", "Urgent delivery", "Express delivery",
+        "Fast delivery", "Quick delivery", "Livraison le jour même", "Livraison express"
+      ],
+      "responses": [
+        "Same-day delivery is available in select cities for eligible products ordered before the cutoff time (usually 2 PM). Check product pages for same-day delivery availability.",
+        "Express delivery options vary by seller and location. Same-day delivery typically costs more but ensures you receive your order within hours of purchase."
+      ]
     }
   ]
 }
