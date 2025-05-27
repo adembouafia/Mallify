@@ -2,185 +2,509 @@
   "intents": [
     {
       "tag": "greeting",
-      "patterns": ["Hi", "Hello", "Hey", "Good morning", "Good evening"],
+      "patterns": [
+        "Hi", 
+        "Hello", 
+        "Hey", 
+        "Good morning", 
+        "Good evening", 
+        "Bonjour", 
+        "Salut", 
+        "Marhaba"
+      ],
       "responses": [
-        "Hello! How can I assist you medically today?",
-        "Hi there! What can I help you with?"
+        "Hello! Welcome to Mallify. How can I assist you today?",
+        "Hi there! I'm Mallify's virtual assistant. How can I help you?",
+        "Welcome to Mallify! I'm here to help with any questions about our platform."
       ]
     },
     {
       "tag": "goodbye",
-      "patterns": ["Bye", "Goodbye", "See you", "Catch you later"],
-      "responses": ["Goodbye! Stay healthy.", "Take care and see you soon."]
+      "patterns": [
+        "Bye", 
+        "Goodbye", 
+        "See you", 
+        "Catch you later", 
+        "Au revoir", 
+        "À bientôt"
+      ],
+      "responses": [
+        "Goodbye! Thank you for visiting Mallify.",
+        "See you soon! Enjoy shopping on Mallify.",
+        "Thank you for chatting with me. Have a great shopping experience!"
+      ]
     },
     {
       "tag": "thanks",
-      "patterns": ["Thanks", "Thank you", "Appreciate it", "Thanks a lot"],
-      "responses": ["You're welcome!", "Glad I could help."]
-    },
-    {
-      "tag": "fever",
       "patterns": [
-        "I have a fever",
-        "I'm feeling hot",
-        "My temperature is high",
-        "I think I have a fever"
+        "Thanks", 
+        "Thank you", 
+        "Appreciate it", 
+        "Thanks a lot", 
+        "Merci"
       ],
       "responses": [
-        "Have you taken your temperature? You might want to rest, stay hydrated, and take paracetamol if needed."
+        "You're welcome! Is there anything else I can help you with?",
+        "Happy to assist! Feel free to ask if you have more questions.",
+        "My pleasure! I'm always here to help Mallify customers."
       ]
     },
     {
-      "tag": "cough",
+      "tag": "what_is_mallify",
       "patterns": [
-        "I have a cough",
-        "Dry cough",
-        "I'm coughing a lot",
-        "Persistent cough"
+        "What is Mallify?",
+        "Tell me about Mallify",
+        "What does Mallify do?",
+        "How does Mallify work?",
+        "What kind of platform is this?"
       ],
       "responses": [
-        "Try to stay hydrated. If it lasts more than a few days, consider seeing a doctor."
+        "Mallify is a virtual mall where anyone can access and open a shop to sell products. We provide a platform for both shoppers to find various products and vendors to set up their online shops easily."
       ]
     },
     {
-      "tag": "headache",
+      "tag": "create_shop",
       "patterns": [
-        "My head hurts",
-        "I have a headache",
-        "Throbbing pain in head"
+        "How do I create a shop?",
+        "I want to sell on Mallify",
+        "How to become a vendor?",
+        "Can I open a store?",
+        "How to start selling?",
+        "Register as seller"
       ],
       "responses": [
-        "Try resting in a quiet place and drinking water. If the pain is severe or recurrent, see a specialist."
+        "To create a shop on Mallify, go to the 'Become a Seller' section and fill out the registration form. You'll need to provide your shop details, contact information, and upload some product images. Our team will review your application and approve it shortly."
       ]
     },
     {
-      "tag": "diabetes",
+      "tag": "shop_management",
       "patterns": [
-        "What is diabetes?",
-        "Tell me about type 2 diabetes",
-        "How is diabetes treated?"
+        "How to manage my shop?",
+        "Add products to my store",
+        "Update product information",
+        "Change shop details",
+        "Edit my shop",
+        "Dashboard access"
       ],
       "responses": [
-        "Diabetes is a condition that affects blood sugar levels. Treatment often includes diet, exercise, and medication."
+        "You can manage your shop through the Seller Dashboard. Log in to your account, go to 'My Shop', and you'll find options to add/edit products, update shop information, view orders, and track your performance."
       ]
     },
     {
-      "tag": "asthma",
+      "tag": "shopping_process",
       "patterns": [
-        "What is asthma?",
-        "I have trouble breathing",
-        "Wheezing and tight chest"
+        "How to buy products?",
+        "How does shopping work?",
+        "Purchasing process",
+        "How to make an order?",
+        "Shopping on Mallify"
       ],
       "responses": [
-        "Asthma is a condition where airways narrow. Inhalers can help during an attack. Avoid allergens if possible."
+        "Shopping on Mallify is easy! Browse products, add items to your cart, proceed to checkout, fill in your delivery details, and choose payment on delivery. You'll receive confirmation and can track your order status from your account."
       ]
     },
     {
-      "tag": "first_aid_bleeding",
+      "tag": "payment_methods",
       "patterns": [
-        "First aid for bleeding",
-        "What to do for a cut?",
-        "How to stop bleeding?"
+        "How to pay?",
+        "Payment options",
+        "Do you accept credit cards?",
+        "Payment methods",
+        "Can I pay online?",
+        "Is there cash on delivery?"
       ],
       "responses": [
-        "Apply pressure to the wound with a clean cloth. Elevate the area and seek medical help if it's severe."
+        "At Mallify, we currently offer payment on delivery to ensure a safer shopping experience. When your order arrives, you can pay in cash directly to the delivery person. We're working on adding more payment options in the future."
       ]
     },
     {
-      "tag": "first_aid_burns",
-      "patterns": ["I burned myself", "First aid for burns", "Hot oil burn"],
-      "responses": [
-        "Cool the burn under running water for 10-15 minutes. Avoid applying ice. Cover with a clean dressing."
-      ]
-    },
-    {
-      "tag": "medicine_advice",
+      "tag": "shipping_delivery",
       "patterns": [
-        "Can I take ibuprofen?",
-        "What does paracetamol treat?",
-        "Should I take antibiotics?"
+        "Shipping options",
+        "How long for delivery?",
+        "When will I receive my order?",
+        "Delivery time",
+        "Track my order",
+        "Shipping methods"
       ],
       "responses": [
-        "Always follow the dosage instructions. Consult a pharmacist or doctor for advice on specific medications."
+        "Delivery times depend on your location and the seller. Typically, orders are delivered within 2-5 business days. You can track your order status from your account dashboard under 'My Orders'."
       ]
     },
     {
-      "tag": "appointment",
+      "tag": "return_policy",
       "patterns": [
-        "I want to book an appointment",
-        "Schedule a visit",
-        "Doctor availability"
+        "Return policy",
+        "How to return items?",
+        "Can I get a refund?",
+        "What if product is damaged?",
+        "Exchange policy",
+        "Return process"
       ],
       "responses": [
-        "Please contact your clinic or use their app to book an appointment."
+        "If you're not satisfied with your purchase, you can initiate a return within 7 days of delivery. Contact the seller directly through the platform, explain the issue, and follow the return instructions. Refunds are processed once the returned item is received."
       ]
     },
     {
-      "tag": "health_tips",
+      "tag": "account_issues",
       "patterns": [
-        "Give me health tips",
-        "How can I stay healthy?",
-        "Tips for immune system"
+        "Can't log in",
+        "Reset password",
+        "Account problems",
+        "Forgot my password",
+        "Change email",
+        "Update account information"
       ],
       "responses": [
-        "Stay hydrated, eat balanced meals, sleep well, and get regular exercise."
+        "For account issues, click 'Forgot Password' on the login page to reset your password. To update account information, log in and go to 'My Account' settings. If you're still having trouble, contact our support team for assistance."
       ]
     },
     {
-      "tag": "emergency",
+      "tag": "product_search",
       "patterns": [
-        "What to do in an emergency?",
-        "I'm in pain",
-        "Should I call an ambulance?"
+        "How to find products?",
+        "Search function",
+        "Find specific items",
+        "Browse categories",
+        "Filter products"
       ],
       "responses": [
-        "If you're in immediate danger or pain, please call emergency services or go to the nearest hospital."
+        "You can find products by using the search bar at the top of the page, browsing categories, or using filters for price, brand, etc. You can also explore featured shops and products on our homepage."
       ]
     },
     {
-      "tag": "vaccines",
+      "tag": "technical_issues",
       "patterns": [
-        "Should I get vaccinated?",
-        "COVID vaccine",
-        "Flu shot info"
+        "Website not working",
+        "App crashed",
+        "Technical problems",
+        "Error message",
+        "Can't complete purchase",
+        "Site is slow"
       ],
       "responses": [
-        "Vaccines help prevent serious illness. Consult your doctor to know which ones are right for you."
+        "I'm sorry you're experiencing technical issues. Try refreshing the page or clearing your browser cache. If the problem persists, please contact our technical support at support@mallify.com with details about the issue."
       ]
     },
     {
-      "tag": "cold_vs_flu",
+      "tag": "contact_support",
       "patterns": [
-        "Difference between cold and flu",
-        "Is it flu or cold?",
-        "Symptoms of flu"
+        "How to contact support?",
+        "Help desk",
+        "Customer service",
+        "Support email",
+        "Contact Mallify",
+        "Talk to human agent"
       ],
       "responses": [
-        "Colds are milder with runny nose and sneezing. Flu often causes fever, body aches, and fatigue."
+        "You can contact our support team through the 'Contact Us' page, by email at support@mallify.com, or use the live chat feature at the bottom right of the screen during business hours (9 AM - 6 PM, Monday to Friday)."
       ]
     },
     {
-      "tag": "pregnancy",
+      "tag": "mobile_app",
       "patterns": [
-        "I'm pregnant",
-        "Pregnancy tips",
-        "What to avoid in pregnancy?"
+        "Is there a mobile app?",
+        "Mallify app",
+        "Android app",
+        "iOS application",
+        "Download app"
       ],
       "responses": [
-        "Congrats! Avoid alcohol, raw food, and heavy lifting. Take prenatal vitamins and see your OB regularly."
+        "We're excited to announce that a Mallify mobile app is coming soon! We're currently developing applications for both iOS and Android to make your shopping experience even more convenient. Stay tuned for the launch announcement."
       ]
     },
     {
+      "tag": "seller_fees",
+      "patterns": [
+        "Seller fees",
+        "Commission rates",
+        "How much does it cost to sell?",
+        "Selling fees",
+        "Marketplace charges"
+      ],
+      "responses": [
+        "Mallify charges a competitive commission of 5% on each sale. There are no monthly fees or listing charges - you only pay when you make a sale. This includes access to all seller tools and features on our platform."
+      ]
+    },
+    {
+      "tag": "product_categories",
+      "patterns": [
+        "What categories do you have?",
+        "Product types",
+        "What can I sell?",
+        "Allowed products",
+        "Prohibited items"
+      ],
+      "responses": [
+        "Mallify supports a wide range of categories including fashion, electronics, home & garden, beauty, sports, toys, and more. Prohibited items include illegal goods, weapons, adult content, and counterfeit products. Check our seller guidelines for a complete list."
+      ]
+    },
+    {
+      "tag": "account_creation",
+      "patterns": [
+        "How to create account?",
+        "Sign up process",
+        "Register new user",
+        "Create customer account",
+        "Join Mallify"
+      ],
+      "responses": [
+        "To create an account, click the 'Sign Up' button in the top right corner of the page. Fill in your details (name, email, password), agree to the terms, and click 'Create Account'. You'll receive a confirmation email to verify your account."
+      ]
+    },
+    {
+      "tag": "language_support",
+      "patterns": [
+        "Languages available",
+        "Change language",
+        "Arabic version",
+        "French support",
+        "English option"
+      ],
+      "responses": [
+        "Mallify supports multiple languages including English, Arabic, French, and German. You can change your preferred language from the dropdown menu in the top navigation bar."
+      ]
+    },    {
       "tag": "fallback",
       "patterns": [
         "I don't know",
         "???",
-        "Can you help me?",
-        "What do you mean?"
+        "random text",
+        "asdfghjkl",
+        "test test"
       ],
       "responses": [
-        "I'm not sure I understood that. Could you rephrase?",
-        "Can you clarify your question?"
+        "I'm not sure I understood that. Could you rephrase your question?",
+        "I didn't quite catch that. How else can I help you with Mallify?",
+        "I'm still learning! Could you ask your question in a different way?"
+      ]
+    },
+    {
+      "tag": "promotions_deals",
+      "patterns": [
+        "Current promotions",
+        "Any deals?",
+        "Discount codes",
+        "Special offers",
+        "Sales",
+        "Promo code",
+        "Any coupons available",
+        "Best deals",
+        "Seasonal sales"
+      ],
+      "responses": [
+        "Mallify regularly offers promotions and deals! Check our homepage for featured deals, or visit individual shops to see their special offers. You can also subscribe to our newsletter to receive updates about our latest promotions and seasonal sales."
+      ]
+    },
+    {
+      "tag": "wishlist",
+      "patterns": [
+        "How to save products for later",
+        "Add to wishlist",
+        "Save favorite items",
+        "Create wishlist",
+        "Saved items",
+        "How to use wishlist",
+        "Find my wishlist"
+      ],
+      "responses": [
+        "You can save products to your wishlist by clicking the heart icon on any product. To view your saved items, log in to your account and go to 'My Wishlist'. From there, you can move items to your cart or remove them from your wishlist."
+      ]
+    },
+    {
+      "tag": "order_tracking",
+      "patterns": [
+        "Track my order",
+        "Where is my package",
+        "Order status",
+        "Package tracking",
+        "Check delivery status",
+        "Order location",
+        "Track shipment"
+      ],
+      "responses": [
+        "You can track your order by logging into your account and going to 'My Orders'. Click on the specific order to see its current status and tracking information. If the seller has provided a tracking number, you'll be able to click on it to see detailed delivery updates."
+      ]
+    },
+    {
+      "tag": "security_privacy",
+      "patterns": [
+        "Is my data safe",
+        "Payment security",
+        "Privacy policy",
+        "Data protection",
+        "Secure shopping",
+        "Credit card safety",
+        "Account security"
+      ],
+      "responses": [
+        "At Mallify, we take your security and privacy seriously. We use industry-standard encryption for all transactions, never store complete credit card information, and have strict data protection policies in place. You can review our detailed Privacy Policy in the footer of our website."
+      ]
+    },
+    {
+      "tag": "store_ratings",
+      "patterns": [
+        "Shop ratings",
+        "Seller reviews",
+        "How to rate a shop",
+        "Vendor feedback",
+        "Store rating system",
+        "Review a seller",
+        "Trusted shops"
+      ],
+      "responses": [
+        "You can see shop ratings on each seller's profile page. After completing a purchase, you'll receive an invitation to rate and review the seller. These ratings help other shoppers make informed decisions and help us maintain quality standards across Mallify."
+      ]
+    },
+    {
+      "tag": "product_reviews",
+      "patterns": [
+        "How to review products",
+        "Write product review",
+        "Product ratings",
+        "Review system",
+        "Leave feedback on item",
+        "Rate my purchase",
+        "Customer reviews"
+      ],
+      "responses": [
+        "After receiving your order, you can write a product review by going to 'My Orders', finding the item, and clicking 'Write a Review'. Your honest feedback helps other customers and also helps sellers improve their products and services."
+      ]
+    },
+    {
+      "tag": "gift_options",
+      "patterns": [
+        "Gift wrapping",
+        "Send as gift",
+        "Gift options",
+        "Gift message",
+        "Present wrapping",
+        "Gift receipt",
+        "Buying gifts"
+      ],
+      "responses": [
+        "Many sellers on Mallify offer gift options! During checkout, look for the 'Send as Gift' option. Depending on the seller, you may be able to add gift wrapping, a personalized message, or a gift receipt. The available gift options will be displayed on the product page or during checkout."
+      ]
+    },
+    {
+      "tag": "international_shipping",
+      "patterns": [
+        "Do you ship internationally",
+        "International delivery",
+        "Shipping to other countries",
+        "Global shipping",
+        "Overseas delivery",
+        "Countries you deliver to",
+        "Worldwide shipping"
+      ],
+      "responses": [
+        "International shipping availability depends on the individual sellers on Mallify. When browsing products, you can filter for items that ship to your country. During checkout, you'll see shipping options and costs for international delivery if the seller offers it."
+      ]
+    },    {
+      "tag": "social_media",
+      "patterns": [
+        "Mallify social media",
+        "Instagram account",
+        "Facebook page",
+        "Twitter handle",
+        "Social networks",
+        "Follow Mallify online",
+        "Social media accounts"
+      ],
+      "responses": [
+        "Yes, Mallify is active on social media! You can follow us on Instagram (@mallify_official), Facebook (Mallify Marketplace), Twitter (@mallify), and LinkedIn. We regularly post about new shops, product highlights, and special promotions."
+      ]
+    },
+    {
+      "tag": "product_availability",
+      "patterns": [
+        "Do you have",
+        "Is product available",
+        "Product availability",
+        "Check if in stock",
+        "Looking for product",
+        "Find product",
+        "Available products",
+        "Do you sell",
+        "Est-ce que vous avez",
+        "Produit disponible",
+        "Chercher un produit"
+      ],
+      "responses": [
+        "I'll check our database for you. Please provide the product name or description, and I'll tell you if it's available and in stock."
+      ]
+    },
+    {
+      "tag": "product_info",
+      "patterns": [
+        "Tell me about product",
+        "Product details",
+        "Product information",
+        "Product specs",
+        "Product description",
+        "What are the features of",
+        "Price of product",
+        "How much does cost",
+        "Details about",
+        "Information sur produit",
+        "Caractéristiques du produit"
+      ],
+      "responses": [
+        "I'll look up the details for you. Could you tell me which product you're interested in?"
+      ]
+    },
+    {
+      "tag": "stock_check",
+      "patterns": [
+        "Check stock",
+        "Is in stock",
+        "Stock availability",
+        "How many in stock",
+        "Out of stock",
+        "When will be back in stock",
+        "Stock status",
+        "Available quantity",
+        "Est-ce qu'il y a en stock",
+        "Quantité disponible"
+      ],
+      "responses": [
+        "Let me check our current stock levels for you. Which product would you like to know about?"
+      ]
+    },
+    {
+      "tag": "recommend_products",
+      "patterns": [
+        "Recommend me",
+        "Suggest products",
+        "Best products",
+        "Popular items",
+        "What's trending",
+        "What should I buy",
+        "Top selling products",
+        "Products like",
+        "Similar to",
+        "Recommandez-moi",
+        "Produits populaires"
+      ],
+      "responses": [
+        "I'd be happy to recommend some products for you. Could you tell me what category you're interested in or what you're looking for?"
+      ]
+    },
+    {
+      "tag": "compare_products",
+      "patterns": [
+        "Compare products",
+        "Difference between",
+        "Which is better",
+        "Compare price",
+        "Compare features",
+        "Pros and cons",
+        "Versus",
+        "Comparer les produits",
+        "Quelle est la différence"
+      ],
+      "responses": [
+        "I can help you compare products. Which items would you like to compare?"
       ]
     }
   ]
