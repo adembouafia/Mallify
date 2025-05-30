@@ -506,6 +506,1757 @@
       "responses": [
         "I can help you compare products. Which items would you like to compare?"
       ]
+    },
+
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi", "Hello", "Hey", "Good morning", "Good evening", 
+        "Bonjour", "Salut", "Marhaba"
+      ],
+      "responses": [
+        "Hello! Welcome to Mallify. How can I assist you today?",
+        "Hi there! I'm Mallify's virtual assistant. How can I help you?",
+        "Welcome to Mallify! I'm here to help with any questions about our platform."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye", "Goodbye", "See you", "Catch you later", 
+        "Au revoir", "À bientôt"
+      ],
+      "responses": [
+        "Goodbye! Thank you for visiting Mallify.",
+        "See you soon! Enjoy shopping on Mallify.",
+        "Thank you for chatting with me. Have a great shopping experience!"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks", "Thank you", "Appreciate it", "Thanks a lot", "Merci"
+      ],
+      "responses": [
+        "You're welcome! Is there anything else I can help you with?",
+        "Happy to assist! Feel free to ask if you have more questions.",
+        "My pleasure! I'm always here to help Mallify customers."
+      ]
+    },
+        
+    {
+      "tag": "size_guide",
+      "patterns": [
+        "Size guide", "Size chart", "What size should I get", "How to measure size",
+        "Size conversion", "Sizing help", "Size recommendations", "Fit guide",
+        "Guide des tailles", "Quelle taille choisir"
+      ],
+      "responses": [
+        "Each seller provides their own size guide on the product page. Look for the 'Size Guide' link near the size selection. If you're unsure, you can also message the seller directly for personalized sizing advice.",
+        "Size charts are available on individual product pages. Click 'Size Guide' to see measurements. Remember that sizes may vary between different sellers and brands on Mallify."
+      ]
+    },
+    
+    {
+      "tag": "bulk_orders",
+      "patterns": [
+        "Bulk order", "Wholesale", "Large quantity", "Buy in bulk", 
+        "Quantity discount", "Business order", "Bulk pricing", "Volume discount",
+        "Commande en gros", "Achat en quantité"
+      ],
+      "responses": [
+        "For bulk orders, contact the seller directly through their shop page. Many sellers offer quantity discounts for large orders. You can also reach out to our business support team at business@mallify.com for assistance with wholesale purchases."
+      ]
+    },
+    
+    {
+      "tag": "product_customization",
+      "patterns": [
+        "Custom product", "Personalization", "Can you customize", "Made to order",
+        "Custom design", "Personalized item", "Bespoke", "Tailor made",
+        "Produit personnalisé", "Sur mesure"
+      ],
+      "responses": [
+        "Many sellers on Mallify offer customization services! Look for the 'Customization Available' badge on product pages, or contact sellers directly to discuss your specific requirements. Custom orders may take longer to process and ship."
+      ]
+    },
+    
+    {
+      "tag": "pre_orders",
+      "patterns": [
+        "Pre-order", "Pre order", "Coming soon", "When available", 
+        "Reserve product", "Advance booking", "Future release",
+        "Pré-commande", "Réserver produit"
+      ],
+      "responses": [
+        "Some sellers offer pre-orders for upcoming products. These will be clearly marked as 'Pre-Order' with expected availability dates. You'll be charged when the item ships, and you can cancel pre-orders anytime before shipping."
+      ]
+    },
+    
+    {
+      "tag": "loyalty_program",
+      "patterns": [
+        "Loyalty program", "Rewards", "Points system", "Member benefits",
+        "VIP program", "Loyalty points", "Membership perks", "Reward points",
+        "Programme de fidélité", "Points de récompense"
+      ],
+      "responses": [
+        "Mallify's loyalty program rewards frequent shoppers with points for every purchase! Earn 1 point per dollar spent, get exclusive access to sales, and redeem points for discounts. Join by going to 'My Account' > 'Loyalty Program'."
+      ]
+    },
+    
+    {
+      "tag": "price_matching",
+      "patterns": [
+        "Price match", "Lower price found", "Price comparison", "Best price guarantee",
+        "Match competitor price", "Price protection", "Cheaper elsewhere",
+        "Égalisation de prix", "Meilleur prix"
+      ],
+      "responses": [
+        "While Mallify doesn't have a formal price matching policy since our sellers set their own prices, you can contact individual sellers to discuss pricing. Many sellers are willing to negotiate, especially for multiple items or return customers."
+      ]
+    },
+    
+    {
+      "tag": "subscription_service",
+      "patterns": [
+        "Subscription", "Auto delivery", "Recurring order", "Monthly delivery",
+        "Subscribe and save", "Automatic reorder", "Regular delivery",
+        "Abonnement", "Livraison automatique"
+      ],
+      "responses": [
+        "Some sellers offer subscription services for regularly needed items like beauty products, pet supplies, or household goods. Look for the 'Subscribe & Save' option on eligible products to set up automatic deliveries with discounts."
+      ]
+    },
+    
+    {
+      "tag": "virtual_try_on",
+      "patterns": [
+        "Try before buy", "Virtual try on", "AR try on", "See how it looks",
+        "Try on virtually", "Augmented reality", "Virtual fitting",
+        "Essayage virtuel", "Essayer avant d'acheter"
+      ],
+      "responses": [
+        "Some fashion and beauty sellers on Mallify offer virtual try-on features using AR technology. Look for the 'Virtual Try-On' button on supported products to see how items look on you before purchasing."
+      ]
+    },
+    
+    {
+      "tag": "eco_friendly",
+      "patterns": [
+        "Eco friendly", "Sustainable", "Green products", "Environmentally friendly",
+        "Organic", "Eco conscious", "Sustainable shopping", "Green alternatives",
+        "Écologique", "Produits durables"
+      ],
+      "responses": [
+        "Mallify promotes sustainable shopping! Use our 'Eco-Friendly' filter to find products from environmentally conscious sellers. Look for badges like 'Sustainable Materials', 'Carbon Neutral Shipping', and 'Eco-Certified' on product pages."
+      ]
+    },
+    
+    {
+      "tag": "local_sellers",
+      "patterns": [
+        "Local sellers", "Nearby shops", "Local businesses", "Sellers near me",
+        "Support local", "Local vendors", "Regional sellers", "Local marketplace",
+        "Vendeurs locaux", "Commerces de proximité"
+      ],
+      "responses": [
+        "Support local businesses on Mallify! Use the location filter to find sellers in your area. Local purchases often mean faster delivery, lower shipping costs, and supporting your community's economy."
+      ]
+    },
+    
+    {
+      "tag": "seller_verification",
+      "patterns": [
+        "Verified seller", "Trusted seller", "Seller verification", "How to verify seller",
+        "Seller badges", "Authentic seller", "Seller credibility", "Seller trust",
+        "Vendeur vérifié", "Vendeur de confiance"
+      ],
+      "responses": [
+        "Mallify verifies sellers through our trust program. Look for verification badges like 'Verified Seller', 'Top Rated', and 'Mallify Certified' on shop pages. These indicate sellers who have met our quality and reliability standards."
+      ]
+    },
+    
+    {
+      "tag": "flash_sales",
+      "patterns": [
+        "Flash sale", "Limited time offer", "Daily deals", "Lightning deals",
+        "Time limited sale", "Quick sale", "Flash discount", "Limited offer",
+        "Vente éclair", "Offre limitée"
+      ],
+      "responses": [
+        "Don't miss our flash sales! Check the homepage daily for lightning deals that last only a few hours. You can also enable push notifications in your account settings to get alerts about flash sales in your favorite categories."
+      ]
+    },
+    
+    {
+      "tag": "product_alerts",
+      "patterns": [
+        "Price alert", "Stock alert", "Notify when available", "Price drop notification",
+        "Back in stock alert", "Product notification", "Alert me", "Notify me",
+        "Alerte prix", "Notification de stock"
+      ],
+      "responses": [
+        "Set up product alerts to never miss a deal! On any product page, click 'Set Alert' to get notified about price drops, restocks, or sales. You can manage all your alerts from 'My Account' > 'Product Alerts'."
+      ]
+    },
+    
+    {
+      "tag": "group_buying",
+      "patterns": [
+        "Group buy", "Group purchase", "Collective buying", "Group discount",
+        "Team buying", "Group order", "Bulk group purchase", "Community buying",
+        "Achat groupé", "Achat collectif"
+      ],
+      "responses": [
+        "Join group buying events for better prices! Some sellers offer group discounts when multiple customers purchase together. Look for 'Group Buy' events on the homepage or in the 'Special Offers' section."
+      ]
+    },
+    
+    {
+      "tag": "live_shopping",
+      "patterns": [
+        "Live shopping", "Live stream", "Live sale", "Shopping live",
+        "Live broadcast", "Live demo", "Live product show", "Interactive shopping",
+        "Shopping en direct", "Vente en direct"
+      ],
+      "responses": [
+        "Experience live shopping on Mallify! Some sellers host live streams to showcase products, answer questions in real-time, and offer exclusive live-only deals. Check the 'Live Now' section on our homepage."
+      ]
+    },
+    
+    {
+      "tag": "age_verification",
+      "patterns": [
+        "Age verification", "Age restricted", "Adult products", "Age limit",
+        "Verify age", "18+", "Age confirmation", "Restricted items",
+        "Vérification d'âge", "Produits pour adultes"
+      ],
+      "responses": [
+        "Some products on Mallify require age verification for legal compliance. You'll be prompted to verify your age during checkout for restricted items. We use secure age verification services to protect your privacy."
+      ]
+    },
+    
+    {
+      "tag": "product_insurance",
+      "patterns": [
+        "Product insurance", "Purchase protection", "Item insurance", "Warranty",
+        "Product guarantee", "Extended warranty", "Protection plan", "Insurance coverage",
+        "Assurance produit", "Garantie étendue"
+      ],
+      "responses": [
+        "Protect your purchases with Mallify's optional product insurance! Available for electronics and high-value items, it covers accidental damage, theft, and extends warranty coverage. Add insurance during checkout for eligible products."
+      ]
+    },
+    
+    {
+      "tag": "virtual_shopping_assistant",
+      "patterns": [
+        "Personal shopper", "Shopping assistant", "Help me choose", "Product recommendation",
+        "Style advice", "Shopping guidance", "Personal styling", "Shopping help",
+        "Assistant personnel", "Conseiller shopping"
+      ],
+      "responses": [
+        "Need personalized shopping help? Our virtual shopping assistants can help you find the perfect products based on your preferences, budget, and needs. Start a consultation by clicking 'Personal Shopping' in your account menu."
+      ]
+    },
+    
+    {
+      "tag": "marketplace_fees",
+      "patterns": [
+        "Buyer fees", "Transaction fees", "Marketplace charges", "Additional costs",
+        "Hidden fees", "Service charges", "Platform fees", "Extra charges",
+        "Frais d'achat", "Frais de transaction"
+      ],
+      "responses": [
+        "Mallify doesn't charge buyers any additional fees! The price you see is what you pay, plus shipping costs set by the seller. We only charge sellers a small commission to maintain and improve the platform."
+      ]
+    },
+    
+    {
+      "tag": "dispute_resolution",
+      "patterns": [
+        "Dispute", "Problem with order", "Seller dispute", "Resolution center",
+        "Complaint", "Issue with seller", "Mediation", "Resolve problem",
+        "Litige", "Problème avec commande"
+      ],
+      "responses": [
+        "If you have an issue with an order, first try contacting the seller directly. If that doesn't resolve the problem, open a dispute in our Resolution Center within 30 days of delivery. Our mediation team will help find a fair solution."
+      ]
+    },
+    
+    {
+      "tag": "what_is_mallify",
+      "patterns": [
+        "What is Mallify?", "Tell me about Mallify", "What does Mallify do?",
+        "How does Mallify work?", "What kind of platform is this?"
+      ],
+      "responses": [
+        "Mallify is a virtual mall where anyone can access and open a shop to sell products. We provide a platform for both shoppers to find various products and vendors to set up their online shops easily."
+      ]
+    },
+    
+    
+    {
+      "tag": "fallback",
+      "patterns": [
+        "I don't know", "???", "random text", "asdfghjkl", "test test"
+      ],
+      "responses": [
+        "I'm not sure I understood that. Could you rephrase your question?",
+        "I didn't quite catch that. How else can I help you with Mallify?",
+        "I'm still learning! Could you ask your question in a different way?"
+      ]
+    },
+
+    {
+      "tag": "order_cancellation",
+      "patterns": [
+        "Cancel my order", "I want to cancel", "How to cancel order", "Cancel purchase",
+        "Stop my order", "Cancel order please", "Annuler ma commande", "Je veux annuler"
+      ],
+      "responses": [
+        "You can cancel your order from 'My Orders' if it hasn't been shipped yet. Click on the order and select 'Cancel Order'. If it's already shipped, you'll need to return it after delivery.",
+        "To cancel an order, go to your account dashboard and find the order in 'My Orders'. Orders can only be cancelled before they're shipped."
+      ]
+    },
+    
+    {
+      "tag": "order_modification",
+      "patterns": [
+        "Change my order", "Modify order", "Update my order", "Edit order details",
+        "Change delivery address", "Update shipping address", "Modifier ma commande"
+      ],
+      "responses": [
+        "Order modifications are possible only before shipping. Go to 'My Orders', select your order, and click 'Modify' if available. For shipped orders, please contact the seller directly.",
+        "You can modify unshipped orders from your account dashboard. Changes to address, quantity, or items may be possible depending on the seller's policy."
+      ]
+    },
+
+    {
+      "tag": "refund_status",
+      "patterns": [
+        "Refund status", "Where is my refund", "Check refund", "Refund processing time",
+        "When will I get refund", "Refund update", "Statut du remboursement"
+      ],
+      "responses": [
+        "Check your refund status in 'My Orders' > 'Returns & Refunds'. Refunds typically take 3-7 business days to process after the seller receives the returned item.",
+        "Refund processing times vary by payment method: 3-5 days for cards, 1-2 days for digital wallets. You'll receive email updates on the refund progress."
+      ]
+    },
+
+    {
+      "tag": "exchange_process",
+      "patterns": [
+        "Exchange item", "How to exchange", "Return and exchange", "Swap product",
+        "Exchange policy", "Change for different size", "Échanger un produit"
+      ],
+      "responses": [
+        "To exchange an item, initiate a return from 'My Orders' and select 'Exchange' as the reason. Choose your preferred replacement and we'll process both the return and new order together.",
+        "Exchanges are available within the seller's return window. The new item will be sent once we receive your return, or you can pay the difference if there's a price change."
+      ]
+    },
+
+    {
+      "tag": "damaged_item_report",
+      "patterns": [
+        "Item damaged", "Received broken item", "Product arrived damaged", "Damaged package",
+        "Broken product", "Item not working", "Produit endommagé", "Article cassé"
+      ],
+      "responses": [
+        "Sorry to hear about the damaged item! Please report it immediately through 'My Orders' > 'Report Issue'. Take photos of the damage and packaging - this helps us process your claim faster.",
+        "For damaged items, contact the seller within 48 hours of delivery. Most sellers will offer immediate replacement or full refund for damaged products."
+      ]
+    },
+
+    {
+      "tag": "missing_item_report",
+      "patterns": [
+        "Missing item", "Didn't receive item", "Item not delivered", "Package not arrived",
+        "Where is my order", "Lost package", "Article manquant", "Colis non reçu"
+      ],
+      "responses": [
+        "If your item hasn't arrived within the expected timeframe, first check with neighbors or building management. Then report it through 'My Orders' > 'Item Not Received' for investigation.",
+        "For missing packages, we'll track with the shipping carrier and contact the seller. You're protected by our buyer guarantee - you'll get a refund or replacement."
+      ]
+    },
+
+    {
+      "tag": "wrong_item_received",
+      "patterns": [
+        "Wrong item", "Received different product", "This isn't what I ordered", "Incorrect item",
+        "Wrong product sent", "Different item delivered", "Mauvais article", "Produit incorrect"
+      ],
+      "responses": [
+        "If you received the wrong item, report it through 'My Orders' > 'Wrong Item Received'. We'll arrange for the correct item to be sent and provide a return label for the incorrect one.",
+        "Wrong item deliveries are covered by our guarantee. Contact the seller immediately, and they'll send the correct product while arranging pickup of the wrong item."
+      ]
+    },
+
+    {
+      "tag": "delivery_issues",
+      "patterns": [
+        "Delivery problem", "Delivery issues", "Shipping problem", "Delivery delay",
+        "Late delivery", "Delivery not attempted", "Problème de livraison", "Retard de livraison"
+      ],
+      "responses": [
+        "For delivery issues, first check the tracking information in 'My Orders'. If there are problems, contact our delivery support team who can coordinate with the shipping carrier.",
+        "Delivery problems can usually be resolved by contacting the carrier directly. If unsuccessful, our customer service team can escalate the issue and find alternative solutions."
+      ]
+    },
+
+    {
+      "tag": "payment_failed",
+      "patterns": [
+        "Payment failed", "Payment declined", "Card declined", "Payment not working",
+        "Transaction failed", "Payment error", "Paiement échoué", "Carte refusée"
+      ],
+      "responses": [
+        "Payment failures can occur due to insufficient funds, expired cards, or bank security measures. Try a different payment method or contact your bank to authorize the transaction.",
+        "If your payment failed, check your card details and try again. You can also use alternative payment methods available at checkout."
+      ]
+    },
+
+    {
+      "tag": "payment_pending",
+      "patterns": [
+        "Payment pending", "Payment processing", "Payment not confirmed", "Transaction pending",
+        "Payment verification", "Payment under review", "Paiement en attente"
+      ],
+      "responses": [
+        "Pending payments usually resolve within 24 hours. This can happen with bank transfers or when additional verification is required. Your order will be processed once payment is confirmed.",
+        "Some payment methods take longer to process. Check your payment status in 'My Orders' or contact your bank if the payment remains pending for more than 2 business days."
+      ]
+    },
+
+    {
+      "tag": "invoice_request",
+      "patterns": [
+        "Need invoice", "Request invoice", "Get receipt", "Tax invoice",
+        "Business invoice", "VAT invoice", "Facture", "Reçu fiscal"
+      ],
+      "responses": [
+        "Download your invoice from 'My Orders' by clicking on the specific order and selecting 'Download Invoice'. For business invoices with specific details, contact the seller directly.",
+        "Invoices are automatically generated for all orders. Access them through your account dashboard under 'My Orders' > 'Invoice/Receipt'."
+      ]
+    },
+
+    {
+      "tag": "receipt_download",
+      "patterns": [
+        "Download receipt", "Get receipt", "Receipt copy", "Purchase receipt",
+        "Order receipt", "Transaction receipt", "Télécharger reçu"
+      ],
+      "responses": [
+        "Download your receipt from 'My Orders' section. Click on any order to view details and download the receipt as PDF. Receipts are available immediately after purchase.",
+        "All purchase receipts are stored in your account. Go to 'My Orders', select the order, and click 'Download Receipt' for a PDF copy."
+      ]
+    },
+
+    {
+      "tag": "product_specifications",
+      "patterns": [
+        "Product specs", "Technical specifications", "Product details", "Item specifications",
+        "Technical details", "Product features", "Spécifications produit", "Détails techniques"
+      ],
+      "responses": [
+        "Detailed product specifications are available on each product page under the 'Specifications' tab. This includes dimensions, materials, technical features, and compatibility information.",
+        "Find complete product specs by scrolling down on the product page. If you need additional technical information, you can contact the seller directly through their shop page."
+      ]
+    },
+
+    {
+      "tag": "product_warranty_info",
+      "patterns": [
+        "Product warranty", "Warranty information", "Guarantee details", "Warranty period",
+        "Warranty coverage", "Warranty claim", "Garantie produit", "Informations garantie"
+      ],
+      "responses": [
+        "Warranty information is provided by individual sellers and varies by product. Check the product page for warranty details, or contact the seller for specific warranty terms and claim procedures.",
+        "Most products come with manufacturer warranty. Warranty terms, duration, and claim process are detailed on the product page under 'Warranty Information'."
+      ]
+    },
+
+    {
+      "tag": "product_care_instructions",
+      "patterns": [
+        "Care instructions", "How to care for product", "Maintenance guide", "Product care",
+        "Cleaning instructions", "How to maintain", "Instructions d'entretien", "Guide d'entretien"
+      ],
+      "responses": [
+        "Care instructions are usually included with your product or available on the product page. For specific care guidance, check the 'Care & Maintenance' section or contact the seller.",
+        "Proper care instructions help extend product life. Look for care labels on the product or download care guides from the product page under 'Additional Information'."
+      ]
+    },
+
+    {
+      "tag": "similar_products",
+      "patterns": [
+        "Similar products", "Products like this", "Alternative products", "Related items",
+        "Comparable products", "Other options", "Produits similaires", "Alternatives"
+      ],
+      "responses": [
+        "Find similar products in the 'You May Also Like' section on any product page, or use our 'Find Similar' feature to discover comparable items from different sellers.",
+        "Our recommendation engine suggests similar products based on your browsing history and other customers' purchases. Check the 'Related Products' section for alternatives."
+      ]
+    },
+
+    {
+      "tag": "product_bundles",
+      "patterns": [
+        "Product bundles", "Bundle deals", "Package deals", "Combo offers",
+        "Set products", "Bundle discounts", "Offres groupées", "Packs produits"
+      ],
+      "responses": [
+        "Many sellers offer bundle deals for related products. Look for 'Bundle & Save' options on product pages, or check the 'Special Offers' section for current bundle promotions.",
+        "Bundle deals provide great value when buying multiple related items. These are highlighted on product pages and in our 'Deals' section with clear savings information."
+      ]
+    },
+
+    {
+      "tag": "new_arrivals",
+      "patterns": [
+        "New arrivals", "Latest products", "New items", "Recently added",
+        "Fresh products", "What's new", "Nouveautés", "Derniers produits"
+      ],
+      "responses": [
+        "Check out our 'New Arrivals' section updated daily with the latest products from all sellers. You can also filter by category to see new items in your areas of interest.",
+        "Stay updated with new products by following your favorite sellers or enabling notifications for specific categories in your account preferences."
+      ]
+    },
+
+    {
+      "tag": "bestsellers",
+      "patterns": [
+        "Best sellers", "Popular products", "Top selling", "Most popular",
+        "Trending items", "Top rated", "Meilleures ventes", "Produits populaires"
+      ],
+      "responses": [
+        "Discover our bestsellers in the 'Popular Products' section, updated weekly based on sales data and customer ratings. These represent the most loved items on Mallify.",
+        "Bestsellers are great starting points for shopping. Find them on our homepage or use the 'Sort by Popularity' filter in any category."
+      ]
+    },
+
+    {
+      "tag": "seasonal_products",
+      "patterns": [
+        "Seasonal products", "Holiday items", "Seasonal collection", "Holiday specials",
+        "Seasonal offers", "Holiday deals", "Produits saisonniers", "Articles de saison"
+      ],
+      "responses": [
+        "Browse seasonal collections updated throughout the year for holidays, weather changes, and special occasions. Find them in our 'Seasonal' section or homepage banners.",
+        "Seasonal products are curated for timely relevance. Check back regularly as we update collections for holidays, back-to-school, summer, winter, and special events."
+      ]
+    },
+
+    {
+      "tag": "cart_management",
+      "patterns": [
+        "Manage cart", "Edit cart", "Update cart", "Cart options",
+        "Shopping cart help", "Cart features", "Gérer panier", "Modifier panier"
+      ],
+      "responses": [
+        "Manage your cart by clicking the cart icon. You can update quantities, remove items, save for later, or apply discount codes. Your cart is saved across devices when logged in.",
+        "Cart management features include quantity updates, item removal, and saving items for later. You can also see shipping estimates and apply promotional codes before checkout."
+      ]
+    },
+
+    {
+      "tag": "save_for_later",
+      "patterns": [
+        "Save for later", "Save item", "Wishlist", "Save product",
+        "Keep for later", "Bookmark item", "Sauvegarder pour plus tard", "Garder pour plus tard"
+      ],
+      "responses": [
+        "Save items for later by clicking the 'Save for Later' button in your cart or the heart icon on product pages. Access saved items from your account dashboard.",
+        "Your saved items are stored in your wishlist and remain there until you move them to cart or remove them. You'll also get notifications about price drops on saved items."
+      ]
+    },
+
+    {
+      "tag": "guest_checkout",
+      "patterns": [
+        "Guest checkout", "Checkout without account", "Buy without registration", "No account needed",
+        "Quick checkout", "Guest purchase", "Achat sans compte", "Commande invité"
+      ],
+      "responses": [
+        "Yes, you can checkout as a guest without creating an account. Simply select 'Continue as Guest' during checkout. However, creating an account helps track orders and saves your preferences.",
+        "Guest checkout is available for quick purchases. You'll need to provide shipping and payment information, but won't have access to order history or tracking without an account."
+      ]
+    },
+
+    {
+      "tag": "express_checkout",
+      "patterns": [
+        "Express checkout", "Quick checkout", "Fast purchase", "One click buy",
+        "Speed checkout", "Rapid purchase", "Commande express", "Achat rapide"
+      ],
+      "responses": [
+        "Use express checkout with saved payment methods and addresses for faster purchases. Enable 'Quick Buy' in your account settings to streamline future checkouts.",
+        "Express checkout uses your default shipping address and payment method. You can modify these before confirming, or set up multiple quick-checkout profiles."
+      ]
+    },
+
+    {
+      "tag": "payment_installments",
+      "patterns": [
+        "Payment installments", "Pay in installments", "Monthly payments", "Split payment",
+        "Payment plans", "Installment options", "Paiement échelonné", "Paiement en plusieurs fois"
+      ],
+      "responses": [
+        "Some sellers offer installment payment options for higher-value items. Look for 'Pay in Installments' during checkout, or check if the seller supports payment plan services.",
+        "Installment payments are available through third-party services for eligible purchases. Terms and interest rates vary by provider and are shown during checkout."
+      ]
+    },
+
+    {
+      "tag": "currency_conversion",
+      "patterns": [
+        "Currency conversion", "Different currency", "Price in my currency", "Exchange rate",
+        "Local currency", "Currency options", "Conversion de devise", "Monnaie locale"
+      ],
+      "responses": [
+        "Prices are automatically converted to your local currency based on your location. You can change currency from the dropdown in the top navigation bar.",
+        "Currency conversion uses real-time exchange rates. Final charges may vary slightly due to your bank's conversion rates and any international transaction fees."
+      ]
+    },
+
+    {
+      "tag": "tax_calculation",
+      "patterns": [
+        "Tax calculation", "How much tax", "Tax included", "VAT information",
+        "Sales tax", "Tax details", "Calcul des taxes", "Informations TVA"
+      ],
+      "responses": [
+        "Tax calculation depends on your location and the seller's location. Taxes are calculated at checkout and clearly displayed before you complete your purchase.",
+        "Some prices include tax while others add it at checkout. Tax information is shown on product pages and detailed in your order summary before payment."
+      ]
+    },
+
+    {
+      "tag": "shipping_calculator",
+      "patterns": [
+        "Shipping cost", "Calculate shipping", "Delivery cost", "Shipping rates",
+        "How much shipping", "Shipping calculator", "Coût de livraison", "Calculer livraison"
+      ],
+      "responses": [
+        "Shipping costs are calculated based on your location, item weight, and selected delivery speed. Enter your postal code on the product page to see shipping options and costs.",
+        "Use our shipping calculator at checkout to compare delivery options and costs. Some sellers offer free shipping above certain order values."
+      ]
+    },
+
+    {
+      "tag": "pickup_locations",
+      "patterns": [
+        "Pickup locations", "Collection points", "Where to collect", "Pickup options",
+        "Self pickup", "Collection centers", "Points de retrait", "Lieux de collecte"
+      ],
+      "responses": [
+        "Some sellers offer pickup locations to save on shipping costs. Available pickup points are shown during checkout if the seller supports this option.",
+        "Pickup locations include partner stores, lockers, and seller locations. You'll receive notification when your order is ready for collection, usually within 1-2 business days."
+      ]
+    },    
+    {
+      "tag": "same_day_delivery",
+      "patterns": [
+        "Same day delivery", "Delivery today", "Urgent delivery", "Express delivery",
+        "Fast delivery", "Quick delivery", "Livraison le jour même", "Livraison express"
+      ],
+      "responses": [
+        "Same-day delivery is available in select cities for eligible products ordered before the cutoff time (usually 2 PM). Check product pages for same-day delivery availability.",
+        "Express delivery options vary by seller and location. Same-day delivery typically costs more but ensures you receive your order within hours of purchase."
+      ]
+    },
+
+    {
+      "tag": "gift_cards",
+      "patterns": [
+        "Gift cards", "Purchase gift card", "Gift voucher", "E-gift card", "Digital gift card",
+        "Gift card balance", "Gift card expiry", "Cartes-cadeaux", "Chèque cadeau"
+      ],
+      "responses": [
+        "Mallify gift cards make perfect presents! Purchase digital gift cards in denominations from $10-$500. Recipients can use them for any purchase on the platform.",
+        "Our gift cards are delivered instantly by email and can be personalized with a message. They're valid for 12 months from purchase and can be used across all Mallify shops."
+      ]
+    },
+
+    {
+      "tag": "price_match",
+      "patterns": [
+        "Price match", "Price guarantee", "Found cheaper elsewhere", "Match competitor price",
+        "Better price", "Price adjustment", "Égalisation des prix", "Garantie de prix"
+      ],
+      "responses": [
+        "Some Mallify sellers offer price matching. If you find an identical product for less within 7 days of purchase, contact the seller with proof, and they may refund the difference.",
+        "Price matching policies vary by seller. Check the seller's policy page for details on their specific terms, eligible competitors, and how to submit a price match request."
+      ]
+    },
+
+    {
+      "tag": "student_discount",
+      "patterns": [
+        "Student discount", "Educational discount", "Student offers", "University discount",
+        "School discount", "Student pricing", "Réduction étudiant", "Offres pour étudiants"
+      ],
+      "responses": [
+        "Many Mallify sellers offer student discounts. Verify your student status through our partner verification service to access these special rates across participating shops.",
+        "Students can receive 5-15% off at participating stores. Verify once with your educational email, and enjoy discounts automatically applied at checkout for a whole year."
+      ]
+    },
+
+    {
+      "tag": "gift_wrapping",
+      "patterns": [
+        "Gift wrapping", "Wrap my purchase", "Gift packaging", "Present wrapping",
+        "Gift options", "Gift message", "Emballage cadeau", "Options cadeau"
+      ],
+      "responses": [
+        "Many sellers offer gift wrapping services. Select 'This is a gift' during checkout to see available gift wrapping options, add a personalized message, and hide price information.",
+        "Gift wrapping costs and options vary by seller. Premium wrapping typically costs $3-5 per item, while gift messaging is usually free. All gift orders ship without price receipts."
+      ]
+    },
+
+    {
+      "tag": "seller_ratings",
+      "patterns": [
+        "Seller ratings", "Seller reviews", "Shop reviews", "Trusted sellers",
+        "Seller reputation", "Top rated sellers", "Évaluations vendeur", "Vendeurs fiables"
+      ],
+      "responses": [
+        "Seller ratings appear as 1-5 stars based on customer feedback, delivery speed, product quality, and communication. We recommend shopping with 4+ star sellers for the best experience.",
+        "Mallify verifies top sellers with a 'Trusted Seller' badge. These sellers maintain at least 4.7 stars, have completed 100+ orders, and consistently follow our marketplace guidelines."
+      ]
+    },
+
+    {
+      "tag": "membership_benefits",
+      "patterns": [
+        "Membership benefits", "Premium membership", "Mallify Plus", "Member perks",
+        "Membership program", "VIP membership", "Avantages membres", "Programme fidélité"
+      ],
+      "responses": [
+        "Mallify Plus members enjoy free express shipping, early access to sales, exclusive discounts, and dedicated customer service. Join for $49/year or $4.99/month.",
+        "Our membership program offers priority customer service, member-only deals, free shipping on all orders, and reward points that accumulate with every purchase. The membership pays for itself with just a few orders!"
+      ]
+    },
+
+    {
+      "tag": "mobile_shopping",
+      "patterns": [
+        "Shop on mobile", "Mobile experience", "Shopping app", "Mobile website",
+        "App features", "Mobile checkout", "Achats sur mobile", "Application mobile"
+      ],
+      "responses": [
+        "Mallify offers a responsive mobile website optimized for all devices. Our upcoming mobile app (launching next month) will include exclusive app-only deals and mobile payment options.",
+        "Shop Mallify on the go with our mobile-friendly site. Save your payment details securely for faster checkout, and enable notifications to stay updated on orders and exclusive mobile deals."
+      ]
+    },
+
+    {
+      "tag": "sustainable_shopping",
+      "patterns": [
+        "Eco-friendly products", "Sustainable items", "Green products", "Ethical shopping",
+        "Environmental impact", "Sustainable sellers", "Produits écologiques", "Shopping éthique"
+      ],
+      "responses": [
+        "Look for our 'Eco-Friendly' badge on products and sellers committed to sustainability. These items meet our standards for ethical production, minimal packaging, and reduced environmental impact.",
+        "Mallify promotes sustainable shopping with our carbon-neutral shipping option at checkout. We also highlight eco-friendly products made with sustainable materials and ethical manufacturing processes."
+      ]
+    },
+
+    {
+      "tag": "marketplace_security",
+      "patterns": [
+        "Safe shopping", "Secure payments", "Data protection", "Shopping security",
+        "Protect my information", "Payment security", "Sécurité achats", "Protection données"
+      ],
+      "responses": [
+        "Mallify prioritizes security with SSL encryption, secure payment processing, and regular security audits. We never store complete payment details and use advanced fraud detection systems.",
+        "Shop confidently knowing all transactions are protected by our secure payment gateway. We implement bank-level security measures and never share your personal data with unauthorized parties."
+      ]
+    },
+
+    {
+      "tag": "counterfeit_policy",
+      "patterns": [
+        "Fake products", "Counterfeit items", "Authenticate product", "Report fake",
+        "Product authenticity", "Genuine products", "Produits contrefaits", "Authenticité"
+      ],
+      "responses": [
+        "Mallify has zero tolerance for counterfeit products. All sellers must certify product authenticity, and we conduct random authenticity checks. Report suspected fakes through the product page.",
+        "We protect buyers with our authenticity guarantee. If you receive an item you believe is counterfeit, report it immediately for a full refund and investigation of the seller."
+      ]
+    },
+
+    {
+      "tag": "sponsored_products",
+      "patterns": [
+        "Sponsored listings", "Promoted products", "Ad products", "Why promoted",
+        "Sponsored tag", "Product promotion", "Produits sponsorisés", "Articles promus"
+      ],
+      "responses": [
+        "Products marked 'Sponsored' are promotional listings paid for by sellers to gain additional visibility. These products still meet all Mallify quality standards but appear higher in search results.",
+        "Sponsored products help sellers reach more customers. They're always clearly labeled and don't affect our recommendation algorithm for non-sponsored content or your personalized suggestions."
+      ]
+    },
+
+    {
+      "tag": "price_drop_alerts",
+      "patterns": [
+        "Price alerts", "Price drop notification", "Alert when cheaper", "Price tracking",
+        "Notify price change", "Watch item price", "Alertes prix", "Suivi des prix"
+      ],
+      "responses": [
+        "Set price drop alerts by clicking the bell icon on any product page. We'll notify you when the price falls below your target so you never miss a deal.",
+        "Mallify's price tracking feature lets you monitor products and receive notifications when prices drop. Access all your tracked items from your account dashboard under 'My Price Alerts'."
+      ]
+    },
+
+    {
+      "tag": "product_comparison",
+      "patterns": [
+        "Compare products", "Product comparison", "Compare features", "Side by side comparison",
+        "Compare prices", "Feature comparison", "Comparer produits", "Comparaison articles"
+      ],
+      "responses": [
+        "Use our comparison tool to evaluate up to 5 products side-by-side. Click 'Add to Compare' on product pages, then access the comparison table from the top navigation menu.",
+        "Product comparison lets you evaluate similar items based on specifications, price, seller ratings, and shipping options. This helps you make informed decisions when choosing between alternatives."
+      ]
+    },
+
+    {
+      "tag": "sales_events",
+      "patterns": [
+        "Annual sale", "Black Friday", "Special sales", "Seasonal discounts", "Promotion events",
+        "Major sales", "Sale calendar", "Événements promotionnels", "Soldes annuelles"
+      ],
+      "responses": [
+        "Mallify hosts major sales events throughout the year, including our Anniversary Sale (April), Summer Sale (July), Black Friday/Cyber Monday (November), and Holiday Sales (December).",
+        "Our biggest shopping events feature discounts up to 70%, flash deals, and exclusive limited-time offers. Subscribe to our newsletter or enable notifications to receive early access to these events."
+      ]
+    },
+
+    {
+      "tag": "cross_border_shopping",
+      "patterns": [
+        "International orders", "Cross-border shipping", "Customs duties", "Import fees",
+        "International delivery", "Global shipping", "Commandes internationales", "Frais de douane"
+      ],
+      "responses": [
+        "Mallify supports international shipping to over 60 countries. International orders may incur customs duties and import taxes that are the buyer's responsibility and collected upon delivery.",
+        "When shopping from international sellers, you'll see estimated delivery times and shipping costs during checkout. We recommend checking your country's import regulations before ordering internationally."
+      ]
+    },
+
+    {
+      "tag": "digital_products",
+      "patterns": [
+        "Digital downloads", "E-products", "Digital items", "Download products",
+        "Non-physical items", "Digital content", "Produits numériques", "Téléchargements"
+      ],
+      "responses": [
+        "Mallify offers digital products including e-books, printables, digital art, software, and online courses. These are delivered instantly via email after purchase with download instructions.",
+        "Digital products can be accessed from 'My Downloads' in your account after purchase. Most digital items allow up to 5 downloads and come with detailed usage terms specified by the seller."
+      ]
+    },
+
+    {
+      "tag": "bulk_discounts",
+      "patterns": [
+        "Bulk pricing", "Volume discount", "Wholesale prices", "Quantity discount",
+        "Buy more save more", "Bulk orders", "Prix de gros", "Remises quantité"
+      ],
+      "responses": [
+        "Many sellers offer tiered pricing with discounts for bulk purchases. These volume discounts are automatically applied in your cart when eligible quantities are reached.",
+        "Look for 'Bulk Pricing' information on product pages to see quantity thresholds and corresponding discounts. For very large orders, some sellers offer custom quotes through direct messages."
+      ]
+    },
+
+    {
+      "tag": "affiliate_program",
+      "patterns": [
+        "Become affiliate", "Affiliate commission", "Referral program", "Earn commission",
+        "Affiliate marketing", "Partner program", "Programme d'affiliation", "Commissions partenaires"
+      ],
+      "responses": [
+        "Join our affiliate program to earn 5-15% commission on referred sales. Sign up through the 'Affiliates' link in the footer, get your unique referral links, and start promoting Mallify products.",
+        "Our affiliate dashboard provides promotional materials, performance tracking, and monthly commission payments. Successful affiliates can qualify for higher commission tiers and exclusive promotions."
+      ]
+    },
+
+    {
+      "tag": "preorder_info",
+      "patterns": [
+        "Pre-order", "Advance order", "Future release", "Coming soon products",
+        "Order before release", "Pre-purchase", "Précommande", "Commander à l'avance"
+      ],
+      "responses": [
+        "Pre-order items are clearly marked with estimated release dates. Your payment is processed at the time of pre-order, and the item ships once available. Cancel anytime before shipping for a full refund.",
+        "Pre-ordering secures high-demand items and often includes special bonuses or early-bird pricing. Product pages show the expected shipping timeframe and any pre-order exclusives."
+      ]
+    },
+
+    {
+      "tag": "privacy_policy",
+      "patterns": [
+        "Privacy policy", "Data usage", "Information collection", "Personal data",
+        "Privacy rights", "Data storage", "Politique de confidentialité", "Données personnelles"
+      ],
+      "responses": [
+        "Our privacy policy details how we collect, use, and protect your information. We only gather necessary data for transactions, personalization, and legal requirements. View the full policy in our footer links.",
+        "Mallify respects your privacy rights. You can request access to your personal data, opt out of non-essential communications, and request data deletion through your account settings or by contacting our privacy team."
+      ]
+    },
+
+    {
+      "tag": "seller_support",
+      "patterns": [
+        "Seller help", "Vendor support", "Help for sellers", "Seller assistance",
+        "Merchant support", "Seller resources", "Aide aux vendeurs", "Support marchand"
+      ],
+      "responses": [
+        "Seller support is available through our dedicated Seller Help Center or via email at sellers@mallify.com. We offer live chat support for sellers Monday-Friday, 9 AM-6 PM.",
+        "New sellers can access our Seller Academy with comprehensive guides, webinars, and best practices. Our seller support team provides personalized assistance with account setup, product listings, and policy questions."
+      ]
+    },
+
+    {
+      "tag": "seller_payout",
+      "patterns": [
+        "Seller payments", "Payout schedule", "Withdraw earnings", "Payment methods for sellers",
+        "Seller funds", "Payment processing", "Paiements vendeurs", "Retrait des gains"
+      ],
+      "responses": [
+        "Seller payouts occur weekly for established sellers and bi-weekly for new sellers. Funds become available 3 days after order delivery to allow for potential returns or issues.",
+        "Sellers can withdraw earnings via bank transfer, PayPal, or store credit. Minimum payout thresholds vary by method, and processing times range from 1-5 business days depending on your bank."
+      ]
+    },
+
+    {
+      "tag": "product_removal",
+      "patterns": [
+        "Remove listing", "Delete product", "Take down item", "Deactivate listing",
+        "Hide product", "Unpublish item", "Retirer un produit", "Supprimer une annonce"
+      ],
+      "responses": [
+        "Sellers can temporarily hide or permanently remove product listings from their Seller Dashboard. Select the product and choose 'Deactivate' to hide temporarily or 'Delete' to remove completely.",
+        "When a product is removed, it won't appear in search results or category pages. Any active orders for that product will still be fulfilled, and the product history remains in your seller analytics."
+      ]
+    },
+
+    {
+      "tag": "restricted_items",
+      "patterns": [
+        "Prohibited products", "Restricted selling", "Banned items", "Selling restrictions",
+        "Not allowed to sell", "Prohibited listings", "Articles interdits", "Produits restreints"
+      ],
+      "responses": [
+        "Mallify prohibits selling counterfeit goods, illegal items, prescription medications, weapons, adult content, and certain hazardous materials. See our full restricted items policy for complete details.",
+        "Sellers must comply with all applicable laws and our marketplace policies. Listings for prohibited items will be removed, and repeated violations may result in permanent seller account suspension."
+      ]
+    },
+
+    {
+      "tag": "seller_performance",
+      "patterns": [
+        "Performance metrics", "Seller rating", "Shop performance", "Seller analytics",
+        "Store statistics", "Sales metrics", "Performance vendeur", "Statistiques boutique"
+      ],
+      "responses": [
+        "Access comprehensive performance metrics in your Seller Dashboard, including conversion rates, traffic sources, customer satisfaction, and competitive benchmarking against similar sellers.",
+        "We evaluate seller performance based on customer satisfaction, shipping speed, response time, and policy compliance. Maintaining good metrics qualifies you for featured placement and reduced fees."
+      ]
+    },
+
+    {
+      "tag": "seller_tiers",
+      "patterns": [
+        "Seller levels", "Seller tiers", "Seller status", "Level up seller",
+        "Advanced seller", "Elite seller", "Niveaux vendeur", "Statut boutique"
+      ],
+      "responses": [
+        "Mallify has four seller tiers: Standard, Silver, Gold, and Platinum. Higher tiers offer lower commission rates, priority support, and additional promotional opportunities based on sales volume and ratings.",
+        "Seller tiers are evaluated quarterly based on sales volume, customer ratings, and policy compliance. Each tier upgrade unlocks new benefits like reduced fees, better visibility, and exclusive promotional tools."
+      ]
+    },
+
+    {
+      "tag": "flash_deals",
+      "patterns": [
+        "Flash deals", "Limited time offers", "Flash sales", "Deal of the day",
+        "Daily deals", "Timed discounts", "Ventes flash", "Offres limitées"
+      ],
+      "responses": [
+        "Flash deals appear in our 'Deals' section and last for just 4-8 hours with limited quantities. Enable notifications to be alerted when new flash deals launch in your favorite categories.",
+        "Our daily deals feature significant discounts on selected products, refreshed every 24 hours at midnight. These offers have limited stock, so we recommend acting quickly when you see something you like."
+      ]
+    },
+
+    {
+      "tag": "buyer_protection",
+      "patterns": [
+        "Buyer protection", "Purchase protection", "Satisfaction guarantee", "Money back guarantee",
+        "Safe shopping guarantee", "Order protection", "Protection acheteur", "Garantie satisfaction"
+      ],
+      "responses": [
+        "All purchases on Mallify are covered by our Buyer Protection Program, which guarantees a refund if an item doesn't arrive, is significantly different from description, or is counterfeit.",
+        "Our Buyer Protection covers the full purchase price plus shipping for eligible claims filed within 30 days of delivery. This ensures a risk-free shopping experience on our marketplace."
+      ]
+    },
+
+    {
+      "tag": "out_of_stock",
+      "patterns": [
+        "Out of stock", "Back in stock", "When available", "Stock notification",
+        "Sold out", "Restock alert", "Rupture de stock", "Notification disponibilité"
+      ],
+      "responses": [
+        "For out-of-stock items, click 'Notify Me' to receive an email when the product becomes available again. Some sellers also display estimated restock dates on their product pages.",
+        "Popular items often sell out quickly but are usually restocked within 1-4 weeks. Using the stock notification feature ensures you'll be among the first to know when your desired item returns."
+      ]
+    },
+
+    {
+      "tag": "platform_fees",
+      "patterns": [
+        "Platform fees", "Service charges", "Transaction fees", "Processing fees",
+        "Hidden costs", "Additional charges", "Frais de plateforme", "Commissions marketplace"
+      ],
+      "responses": [
+        "Mallify is free for shoppers with no platform fees or subscription costs. The prices you see are set by sellers, who pay a commission on sales and may factor this into their pricing.",
+        "There are no hidden fees for buyers. The final price shown at checkout includes the product cost, applicable taxes, and shipping fees. We don't charge extra processing or platform fees to customers."
+      ]
+    },
+
+    {
+      "tag": "abandoned_cart",
+      "patterns": [
+        "Recover cart", "Saved cart", "Cart reminder", "Abandoned checkout",
+        "Return to cart", "Restore cart", "Panier abandonné", "Récupérer panier"
+      ],
+      "responses": [
+        "Items in your cart are automatically saved when you're logged in. You'll receive a gentle reminder email after 24 hours if you leave items in your cart without completing checkout.",
+        "Your saved cart items remain for 30 days. Access them anytime by logging in and visiting the cart page, even across different devices or browsers when using the same account."
+      ]
+    },
+
+    {
+      "tag": "mobile_notifications",
+      "patterns": [
+        "Push notifications", "Order updates", "Mobile alerts", "App notifications",
+        "Deal alerts", "Notification settings", "Notifications mobiles", "Alertes application"
+      ],
+      "responses": [
+        "Manage your notification preferences in Account Settings > Notifications. Choose which updates you receive (order status, deals, price drops, etc.) and your preferred delivery method (email, push, or SMS).",
+        "Our mobile notifications keep you updated on order status, delivery progress, price drops on wishlist items, and exclusive limited-time offers tailored to your shopping interests."
+      ]
+    },
+
+    {
+      "tag": "browser_compatibility",
+      "patterns": [
+        "Compatible browsers", "Browser issues", "Website compatibility", "Browser problems",
+        "Best browser", "Site not working", "Compatibilité navigateur", "Problèmes d'affichage"
+      ],
+      "responses": [
+        "Mallify is fully compatible with the latest versions of Chrome, Firefox, Safari, and Edge. For the best experience, we recommend keeping your browser updated to the newest version.",
+        "If you're experiencing display problems, try clearing your browser cache and cookies. For persistent issues, our site works best with Chrome or Firefox with JavaScript and cookies enabled."
+      ]
+    },
+
+    {
+      "tag": "content_creators",
+      "patterns": [
+        "Creator program", "Influencer collaboration", "Content partnership", "Creator marketplace",
+        "Influencer program", "Brand collaboration", "Programme créateurs", "Collaboration influenceurs"
+      ],
+      "responses": [
+        "Our Creator Program connects content creators with Mallify sellers for authentic product promotions. Apply through the Creator Hub with your social media statistics and content examples.",
+        "Content creators can earn through affiliate commissions, sponsored content, and exclusive product collaborations. Approved creators gain access to our Creator Dashboard with collaboration opportunities and performance tracking."
+      ]
+    },
+
+    {
+      "tag": "accessibility_features",
+      "patterns": [
+        "Accessibility options", "Screen reader support", "Accessible shopping", "Keyboard navigation",
+        "Accessibility compliance", "Disability access", "Fonctionnalités d'accessibilité", "Support handicap"
+      ],
+      "responses": [
+        "Mallify is committed to accessibility with screen reader compatibility, keyboard navigation, color contrast options, and resizable text. We continuously improve our platform to meet WCAG guidelines.",
+        "Our accessibility features include alt text for images, proper heading structure, keyboard-navigable menus, and focus indicators. For assistance with accessibility needs, contact our support team."
+      ]
+    },
+
+    {
+      "tag": "website_performance",
+      "patterns": [
+        "Site speed", "Website performance", "Slow loading", "Page loading issues",
+        "Website lag", "Fast browsing", "Vitesse du site", "Problèmes de chargement"
+      ],
+      "responses": [
+        "We optimize Mallify for fast loading with content delivery networks, image optimization, and performance monitoring. If you experience slowness, try refreshing or clearing your browser cache.",
+        "For the best performance, ensure you have a stable internet connection and an updated browser. Our mobile site is specially optimized for various connection speeds, including slower networks."
+      ]
+    },
+
+    {
+      "tag": "product_videos",
+      "patterns": [
+        "Product videos", "Video demonstrations", "How-to videos", "Product demos",
+        "Video reviews", "Tutorial videos", "Vidéos produits", "Démonstrations vidéo"
+      ],
+      "responses": [
+        "Products with video demonstrations are marked with a video icon. These videos show the product in use, highlight features, and provide size or scale reference to help with purchase decisions.",
+        "Seller-provided videos offer a 360-degree view of products and often include usage demonstrations. You can find these videos in the product gallery or dedicated video section on applicable listings."
+      ]
+    },
+
+    {
+      "tag": "product_questions",
+      "patterns": [
+        "Ask about product", "Product questions", "Question for seller", "Pre-purchase questions",
+        "Product inquiry", "Ask seller", "Questions produit", "Demander au vendeur"
+      ],
+      "responses": [
+        "Use the 'Ask a Question' button on product pages to inquire about specific details. Your question will be sent to the seller, and both the question and answer will be publicly visible to help other shoppers.",
+        "Most sellers respond to product questions within 24-48 hours. Check the existing Q&A section on the product page, as your question may have already been answered by the seller."
+      ]
+    },
+
+    {
+      "tag": "shopping_history",
+      "patterns": [
+        "Order history", "Past purchases", "Previous orders", "Purchase history",
+        "View past orders", "Order records", "Historique commandes", "Achats précédents"
+      ],
+      "responses": [
+        "Access your complete order history in 'My Account' > 'Order History'. You can view details, track shipments, reorder items, and download invoices for orders up to 3 years old.",
+        "Your shopping history includes all order details, payment information, shipping status, and any correspondence with sellers. Use the search and filter options to quickly find specific past purchases."
+      ]
+    },
+
+    {
+      "tag": "market_expansion",
+      "patterns": [
+        "New markets", "Expanding locations", "Available countries", "New regions",
+        "International expansion", "Coming to my country", "Nouveaux marchés", "Expansion internationale"
+      ],
+      "responses": [
+        "Mallify is currently expanding our seller network in Europe, Southeast Asia, and Latin America. We add new shipping destinations quarterly based on customer demand and logistical capabilities.",
+        "Our marketplace expansion roadmap includes dedicated regional versions with local sellers, payment methods, and language support. Subscribe to our newsletter for announcements about new market launches."
+      ]
+    },
+
+    {
+      "tag": "multi_language",
+      "patterns": [
+        "Language options", "Change language", "Website language", "Translate site",
+        "English version", "Language settings", "Options de langue", "Changer de langue"
+      ],
+      "responses": [
+        "Mallify currently supports English, French, Arabic, and Spanish. Switch languages using the language selector in the footer. Product descriptions may vary by language based on seller translations.",
+        "We're adding new language support regularly. The platform interface is fully translated, though some product descriptions may only be available in the seller's primary language with automatic translation options."
+      ]
+    },
+
+    {
+      "tag": "multi_currency",
+      "patterns": [
+        "Currency options", "Change currency", "Payment currency", "Local currency",
+        "Currency conversion", "Price currency", "Options de devise", "Changer de monnaie"
+      ],
+      "responses": [
+        "Mallify displays prices in multiple currencies. Select your preferred currency from the dropdown in the header to see all prices converted based on current exchange rates.",
+        "We support payments in USD, EUR, GBP, and CAD. Even when browsing in other currencies, your actual payment will be processed in one of these four currencies with transparent conversion rates shown at checkout."
+      ]
+    },
+
+    {
+      "tag": "search_filters",
+      "patterns": [
+        "Advanced search", "Filter results", "Search options", "Narrow search",
+        "Search filters", "Refined search", "Filtres recherche", "Options de recherche"
+      ],
+      "responses": [
+        "Refine your search using filters in the left sidebar. Filter by category, price range, seller location, shipping options, ratings, and product attributes specific to each category.",
+        "Our advanced search features include filtering by seller ratings, availability, free shipping options, and product-specific attributes. You can also sort results by relevance, price, newest, or customer ratings."
+      ]
+    },
+
+    {
+      "tag": "in_store_pickup",
+      "patterns": [
+        "In-store pickup", "Click and collect", "Store collection", "Local pickup",
+        "Pickup option", "Collect in store", "Retrait en magasin", "Retrait en boutique"
+      ],
+      "responses": [
+        "Some sellers with physical locations offer in-store pickup. Select this option at checkout to skip shipping fees and collect your purchase directly from the seller's location.",
+        "When choosing in-store pickup, you'll receive a confirmation email with pickup instructions, location details, and business hours. Most items are ready for collection within 24 hours of order placement."
+      ]
+    },
+
+    {
+      "tag": "covid_safety",
+      "patterns": [
+        "COVID safety", "Contactless delivery", "Pandemic precautions", "Safe delivery",
+        "Health safety", "Sanitary measures", "Sécurité COVID", "Livraison sans contact"
+      ],
+      "responses": [
+        "Mallify maintains strict safety protocols including contactless delivery options, sanitized packaging, and health screening for warehouse and delivery staff to ensure safe shopping during the pandemic.",
+        "Our COVID safety measures include contactless delivery as the default option, regular sanitization of fulfillment centers, and support for sellers implementing additional safety procedures in their operations."
+      ]
+    },
+
+    {
+      "tag": "shopping_for_others",
+      "patterns": [
+        "Gift shopping", "Shopping for someone", "Buy for others", "Purchase as gift",
+        "Gift recipient", "Different shipping address", "Acheter pour offrir", "Cadeau pour quelqu'un"
+      ],
+      "responses": [
+        "When shopping for others, you can add multiple shipping addresses to your account and select the appropriate one at checkout. Enable the 'This is a gift' option to add gift wrapping and a personalized message.",
+        "For gift purchases, we offer gift receipts that hide price information, gift messaging, and special packaging options. You can also choose to ship directly to the recipient with a personalized gift note."
+      ]
+    },
+
+    {
+      "tag": "size_charts",
+      "patterns": [
+        "Size chart", "Sizing guide", "Measurement guide", "Size conversion",
+        "How to measure", "Find my size", "Guide des tailles", "Tableau des mesures"
+      ],
+      "responses": [
+        "Size charts are available on product pages for clothing, shoes, and accessories. Each chart includes detailed measurements and instructions for finding your perfect fit based on the brand's sizing.",
+        "Our size guides include international conversion charts and brand-specific sizing information. For the most accurate fit, we recommend taking your measurements and comparing them to the size charts provided."
+      ]
+    },
+
+    {
+      "tag": "customer_care",
+      "patterns": [
+        "Customer care", "Customer service", "Support team", "Help center",
+        "Assistance team", "Customer help", "Service client", "Assistance clientèle"
+      ],
+      "responses": [
+        "Our customer care team is available 24/7 via live chat, email (support@mallify.com), and phone (1-800-MALLIFY) during business hours (8 AM-8 PM). We typically respond to emails within 2-4 hours.",
+        "Mallify's customer care representatives can assist with order issues, account questions, product information, and technical support. For seller-specific questions, they'll connect you directly with the seller."
+      ]
+    },
+
+    {
+      "tag": "browser_extensions",
+      "patterns": [
+        "Browser extension", "Shopping assistant", "Price comparison extension", "Mallify extension",
+        "Deal finder extension", "Shopping toolbar", "Extension navigateur", "Assistant d'achat"
+      ],
+      "responses": [
+        "The Mallify Browser Extension for Chrome and Firefox helps you find the best deals, compare prices with other sites, and get coupon code alerts. Download it from our website or browser extension stores.",
+        "Our browser extension features price drop alerts, automatic coupon application, product comparison across websites, and quick access to your wishlist and cart from any website."
+      ]
+    },
+
+    {
+      "tag": "age_restricted",
+      "patterns": [
+        "Age verification", "Adult products", "Age restricted", "Verify my age",
+        "Age limit", "Adult verification", "Vérification d'âge", "Produits pour adultes"
+      ],
+      "responses": [
+        "Age-restricted products (like certain supplements or mature content) require age verification during checkout. This is a one-time process using a secure third-party verification service.",
+        "For age-restricted items, you'll need to verify your age through our secure verification process. This information is encrypted and not stored on Mallify servers after verification is complete."
+      ]
+    },
+
+    {
+      "tag": "browser_cookies",
+      "patterns": [
+        "Cookie policy", "Website cookies", "Cookie settings", "Accept cookies",
+        "Cookie preferences", "Disable cookies", "Politique cookies", "Paramètres cookies"
+      ],
+      "responses": [
+        "Mallify uses cookies for essential functions, personalization, and analytics. Manage your cookie preferences in the Privacy Settings accessible from the footer of any page.",
+        "Our cookie policy explains how we use cookies to enhance your shopping experience. Essential cookies are always active, while analytical and personalization cookies can be disabled in your browser settings."
+      ]
+    },
+
+    {      "tag": "report_abuse",
+      "patterns": [
+        "Report abuse", "Report seller", "Report listing", "Inappropriate content",
+        "Seller violation", "Report scam", "Signaler abus", "Signaler vendeur"
+      ],
+      "responses": [
+        "Report any marketplace violations through the 'Report' button on product listings or seller profiles. You can also email trust@mallify.com with details. All reports are investigated confidentially.",
+        "We take abuse reports seriously. Our trust and safety team reviews all reports within 24 hours and takes appropriate action according to our marketplace policies, including content removal and seller penalties."
+      ]
+    },
+
+    {
+      "tag": "augmented_reality",
+      "patterns": [
+        "AR view", "Augmented reality", "View in my space", "Virtual try-on",
+        "3D product view", "Place in room", "Réalité augmentée", "Essayage virtuel"
+      ],
+      "responses": [
+        "Mallify's AR feature lets you visualize products in your space before buying. Look for the 'View in AR' button on compatible product pages and use your smartphone camera to see how items fit in your environment.",
+        "Our augmented reality tool works with furniture, home decor, and certain fashion accessories. Compatible devices include recent iOS and Android smartphones with AR capabilities and the latest Mallify app version."
+      ]
+    },
+
+    {
+      "tag": "personalized_recommendations",
+      "patterns": [
+        "Product recommendations", "Suggested items", "For you", "Personalized suggestions",
+        "Recommended products", "Custom picks", "Recommandations personnalisées", "Suggestions"
+      ],
+      "responses": [
+        "Mallify's recommendation engine analyzes your browsing history, past purchases, and wishlist items to suggest products you might like. Find personalized recommendations on your homepage and product pages.",
+        "Your personalized suggestions improve as you interact with the platform. You can fine-tune recommendations by rating products you've purchased and clicking the thumbs up/down on recommendation cards."
+      ]
+    },
+
+    {
+      "tag": "family_sharing",
+      "patterns": [
+        "Family account", "Shared account", "Family sharing", "Household account",
+        "Multiple users", "Family profile", "Compte famille", "Utilisateurs multiples"
+      ],
+      "responses": [
+        "Mallify's Family Sharing lets up to 6 family members share payment methods and address book while maintaining separate profiles. The primary account holder can enable Family Sharing in Account Settings.",
+        "With Family Sharing, family members can shop independently while sharing Prime benefits, gift cards, and payment methods. Each member has their own order history, recommendations, and privacy settings."
+      ]
+    },
+
+    {
+      "tag": "shopping_lists",
+      "patterns": [
+        "Shopping list", "Create list", "Multiple wishlist", "List for later",
+        "Organize wishlist", "Save to list", "Liste d'achats", "Créer une liste"
+      ],
+      "responses": [
+        "Create customized shopping lists for different needs by clicking 'Lists' in your account menu. Add products directly to any list, organize items by category, and share lists with friends or family.",
+        "Shopping lists help organize your future purchases by theme, occasion, or project. Create as many lists as you need, set them as public or private, and add notes to remind yourself why you saved each item."
+      ]
+    },
+
+    {
+      "tag": "accessibility_support",
+      "patterns": [
+        "Assistance shopping", "Accessibility help", "Shopping for disabled", "Special needs",
+        "Adaptive features", "Assistance needs", "Accessibilité", "Aide spéciale"
+      ],
+      "responses": [
+        "Mallify offers accessibility support through our dedicated accessibility team. Contact them at accessibility@mallify.com for personalized shopping assistance, including help placing orders or finding adaptive products.",
+        "Our accessibility team can provide personalized shopping support, recommend products for specific needs, and help navigate the platform using assistive technologies. We're committed to making shopping accessible for everyone."
+      ]
+    },
+
+    {
+      "tag": "subscription_products",
+      "patterns": [
+        "Subscribe and save", "Regular delivery", "Subscription service", "Recurring orders",
+        "Auto-replenishment", "Scheduled delivery", "Abonnement produits", "Livraison régulière"
+      ],
+      "responses": [
+        "Save 5-15% with Subscribe & Save on eligible essentials like household supplies, beauty products, and pantry items. Choose delivery frequency (2 weeks to 6 months) and modify or cancel anytime.",
+        "Subscription orders offer convenience and savings on products you purchase regularly. Manage all your subscriptions from your account dashboard, where you can adjust quantities, delivery dates, and payment methods."
+      ]
+    },
+
+    {
+      "tag": "social_shopping",
+      "patterns": [
+        "Shop with friends", "Group shopping", "Social features", "Share shopping",
+        "Collaborative cart", "Shop together", "Shopping social", "Achats en groupe"
+      ],
+      "responses": [
+        "Mallify's social shopping lets you shop with friends in real-time. Create a shopping session, invite friends via email or link, browse together, chat about products, and check out individually or as a group.",
+        "Our collaborative shopping feature is perfect for planning group gifts or events. Everyone in the session can suggest items, comment on products, and see each other's selections in real-time."
+      ]
+    },
+
+    {
+      "tag": "shopping_rewards",
+      "patterns": [
+        "Reward points", "Loyalty rewards", "Earn points", "Points program",
+        "Reward system", "Point redemption", "Programme fidélité", "Points de récompense"
+      ],
+      "responses": [
+        "Earn Mallify Rewards points on every purchase (1 point per $1 spent) and through activities like reviews and referrals. Redeem points for discounts, free shipping, or exclusive products in the Rewards Center.",
+        "Our tiered rewards program includes Silver, Gold, and Platinum levels with increasing benefits. Your tier is determined by annual spending and engagement, with special perks like birthday rewards and early access to sales."
+      ]
+    },
+
+    {
+      "tag": "trade_in_program",
+      "patterns": [
+        "Trade in items", "Exchange old products", "Trade for credit", "Upgrade products",
+        "Product trade-in", "Sell back items", "Programme d'échange", "Reprise produits"
+      ],
+      "responses": [
+        "Our Trade-In Program lets you exchange eligible used products for Mallify credit. Check eligibility in the Trade-In section, ship your items for free using our prepaid label, and receive credit once assessed.",
+        "Trade-in values are based on product condition, age, and market value. Electronics, small appliances, and certain high-value items are eligible. The credit is usually added to your account within 7-10 days after we receive your item."
+      ]
+    },
+
+    {
+      "tag": "price_history",
+      "patterns": [
+        "Price history", "Price fluctuations", "Past prices", "Price trends",
+        "Historical pricing", "Price tracking", "Historique des prix", "Évolution prix"
+      ],
+      "responses": [
+        "View price history charts on product pages to track how prices have changed over time. This helps you determine if the current price is a good deal or if you should wait for a potential drop.",
+        "Our price history feature shows price fluctuations over the past 6 months, including lowest and highest prices, average price, and sale periods. This transparency helps you make more informed purchasing decisions."
+      ]
+    },
+
+    {
+      "tag": "extended_warranty",
+      "patterns": [
+        "Extended warranty", "Product protection", "Additional coverage", "Protection plan",
+        "Warranty extension", "Accident protection", "Garantie prolongée", "Protection produit"
+      ],
+      "responses": [
+        "Protect your purchases with our extended warranty plans, available for electronics, appliances, and other eligible products. These plans extend beyond the manufacturer's warranty and often include accidental damage coverage.",
+        "Extended protection plans are offered at checkout for eligible items. Coverage periods range from 1-5 years with various levels of protection, including repair or replacement for mechanical failures and accidental damage."
+      ]
+    },
+
+    {
+      "tag": "shopping_assistant",
+      "patterns": [
+        "Shopping assistant", "Product advisor", "Shopping help", "Purchase guidance",
+        "Buying advice", "Expert recommendations", "Assistant d'achat", "Conseils d'achat"
+      ],
+      "responses": [
+        "Our virtual shopping assistants help you find the perfect products based on your needs. Access this service by clicking 'Shopping Assistant' in the header or product pages for category-specific guidance.",
+        "For personalized shopping help, our expert advisors are available via live chat 24/7. They can answer product questions, compare options, and recommend products based on your requirements and preferences."
+      ]
+    },
+
+    {
+      "tag": "price_adjustment",
+      "patterns": [
+        "Price adjustment", "Price drop refund", "Post-purchase price match", "Price protection",
+        "Lower price refund", "Price guarantee", "Ajustement de prix", "Remboursement différence"
+      ],
+      "responses": [
+        "If a product's price drops within 7 days of your purchase, you may be eligible for a price adjustment. Contact customer service with your order number to request the difference as a refund to your original payment method.",
+        "Our Price Protection policy applies to most products except marketplace items marked as excluded. Submit your request through the order details page by clicking 'Request Price Adjustment' within the eligible timeframe."
+      ]
+    },
+
+    {
+      "tag": "fraud_protection",
+      "patterns": [
+        "Account security", "Fraud protection", "Suspicious activity", "Account protection",
+        "Security measures", "Unauthorized purchases", "Protection contre fraude", "Sécurité compte"
+      ],
+      "responses": [
+        "Mallify employs multiple security measures to protect against fraud, including encrypted transactions, two-factor authentication, and AI-powered fraud detection systems that flag unusual account activity.",
+        "If you notice suspicious activity, secure your account immediately by changing your password and contacting our security team at security@mallify.com or through the 'Report Suspicious Activity' link in your account settings."
+      ]
+    },
+
+    {
+      "tag": "corporate_gifts",
+      "patterns": [
+        "Corporate gifting", "Business gifts", "Bulk gifts", "Company presents",
+        "Corporate orders", "Gift for clients", "Cadeaux d'entreprise", "Cadeaux professionnels"
+      ],
+      "responses": [
+        "Our Corporate Gifting Program offers personalized service for business gifts, including bulk ordering, custom branding options, and recipient management. Contact corporate@mallify.com for details.",
+        "Corporate customers enjoy volume discounts, dedicated account managers, and tools to manage recipient lists and delivery scheduling. We can coordinate personalized messages and custom packaging for a professional presentation."
+      ]
+    },
+
+    {
+      "tag": "carbon_footprint",
+      "patterns": [
+        "Carbon footprint", "Environmental impact", "Eco-friendly shipping", "Carbon neutral",
+        "Sustainable shipping", "Green delivery", "Empreinte carbone", "Impact environnemental"
+      ],
+      "responses": [
+        "Mallify is committed to reducing our carbon footprint with eco-friendly packaging, carbon-neutral shipping options, and consolidated delivery to minimize transportation emissions.",
+        "Track the environmental impact of your orders in your account dashboard. We calculate carbon emissions for each purchase and offset them through verified environmental projects. Choose 'Eco Delivery' for the most sustainable option."
+      ]
+    },
+
+    {
+      "tag": "automatic_reordering",
+      "patterns": [
+        "Auto-reorder", "Smart reordering", "Automatic replenishment", "Replenish automatically",
+        "Repeat order", "Smart refill", "Commande automatique", "Réapprovisionnement"
+      ],
+      "responses": [
+        "Enable Smart Reordering for everyday essentials. Our system learns your usage patterns and suggests optimal reorder times. Adjust frequencies, pause, or cancel anytime from your account dashboard.",
+        "Automatic reordering ensures you never run out of essential items. Set up frequency-based or smart reordering that detects when you might need a refill based on your past purchase history and typical usage rates."
+      ]
+    },
+
+    {
+      "tag": "product_recalls",
+      "patterns": [
+        "Product recall", "Safety recall", "Recalled items", "Return recalled product",
+        "Safety notice", "Recall information", "Rappel produit", "Rappel sécurité"
+      ],
+      "responses": [
+        "If a product you purchased is recalled, you'll be notified immediately via email with instructions for return or replacement. You can check recall status of any purchase in your order history.",
+        "Product recalls are taken very seriously at Mallify. All affected customers are contacted directly, and recalled products are removed from our platform immediately. Full refunds are always provided for recalled items."
+      ]
+    },
+
+    {
+      "tag": "third_party_sellers",
+      "patterns": [
+        "Third-party sellers", "Marketplace sellers", "External vendors", "Independent sellers",
+        "Non-Mallify sellers", "Partner sellers", "Vendeurs tiers", "Vendeurs externes"
+      ],
+      "responses": [
+        "Mallify hosts thousands of third-party sellers who meet our quality and service standards. Each seller manages their inventory, shipping, and customer service while adhering to our marketplace policies.",
+        "All third-party sellers undergo verification before joining our platform. They're rated based on customer feedback, shipping speed, and policy compliance. Look for the 'Sold by' information on product pages to identify the seller."
+      ]
+    },
+
+    {
+      "tag": "community_forums",
+      "patterns": [
+        "Community forums", "Customer discussions", "Community help", "User forums",
+        "Discussion boards", "Q&A community", "Forums communautaires", "Discussions utilisateurs"
+      ],
+      "responses": [
+        "Join our Community Forums to ask questions, share experiences, and connect with other Mallify shoppers. Browse product discussions, seller reviews, and shopping tips organized by category and interest.",
+        "Our community features expert users who volunteer their knowledge to help others. Look for 'Verified Expert' badges for the most reliable advice. You can also create discussion threads about products or shopping topics."
+      ]
+    },
+
+    {
+      "tag": "exclusive_launches",
+      "patterns": [
+        "Product launches", "Exclusive releases", "New product drops", "Limited releases",
+        "Early access", "Product debut", "Lancements exclusifs", "Nouveaux produits"
+      ],
+      "responses": [
+        "Mallify regularly hosts exclusive product launches and limited releases. Sign up for launch notifications in your preferred categories to receive alerts when new products are about to drop.",
+        "Mallify Plus members receive early access to high-demand product launches, usually 24 hours before general release. Some limited-edition products are available by invitation only based on your shopping history and preferences."
+      ]
+    },
+
+    {
+      "tag": "accessibility_shopping",
+      "patterns": [
+        "Accessible products", "Adaptive items", "Products for disabilities", "Assistive devices",
+        "Accessibility category", "Special needs products", "Produits adaptés", "Articles accessibilité"
+      ],
+      "responses": [
+        "Our Adaptive & Accessible Products category features items designed for various accessibility needs, including mobility aids, sensory-friendly products, and adaptive clothing with detailed accessibility specifications.",
+        "Shop our curated collections for specific accessibility needs, including vision, hearing, mobility, and sensory-friendly products. Each item includes detailed information about accessibility features to help find the right product for you."
+      ]
+    },
+
+    {
+      "tag": "product_certifications",
+      "patterns": [
+        "Product certifications", "Certified products", "Quality certifications", "Safety certifications",
+        "Certified materials", "Certification standards", "Produits certifiés", "Normes de qualité"
+      ],
+      "responses": [
+        "Products on Mallify may carry various certifications including organic, fair trade, FSC (sustainable forestry), Energy Star, and safety certifications like UL or CE. These are displayed in the product specifications.",
+        "We verify all certification claims made by sellers to ensure authenticity. You can filter search results by specific certifications to find products that meet particular standards or values important to you."
+      ]
+    },
+
+    {
+      "tag": "referral_program",
+      "patterns": [
+        "Refer friends", "Friend referral", "Referral bonus", "Invite friends",
+        "Referral rewards", "Share and earn", "Programme parrainage", "Inviter des amis"
+      ],
+      "responses": [
+        "Earn rewards by referring friends to Mallify! When your friends make their first purchase using your unique referral link, you'll receive $15 in Mallify credit, and they'll get $10 off their first order.",
+        "Our referral program lets you share via email, social media, or messaging apps from your account dashboard. Track your referrals and rewards in the 'My Referrals' section. You can refer up to 25 friends per calendar year."
+      ]
+    },
+
+    {
+      "tag": "ai_shopping",
+      "patterns": [
+        "AI shopping", "Smart recommendations", "AI product finder", "Intelligent shopping",
+        "AI assistant", "Smart shopping", "IA pour achats", "Assistant intelligent"
+      ],
+      "responses": [
+        "Our AI shopping assistant uses advanced algorithms to understand your preferences and needs. Simply describe what you're looking for in natural language, and it will suggest the most relevant products.",
+        "Mallify's AI technology powers personalized shopping experiences including smart search, style matching for fashion, room compatibility for furniture, and even gift suggestions based on recipient descriptions."
+      ]
+    },
+
+    {
+      "tag": "user_generated_content",
+      "patterns": [
+        "Customer photos", "User images", "Shopper photos", "Real product photos",
+        "Customer gallery", "User uploads", "Photos clients", "Images utilisateurs"
+      ],
+      "responses": [
+        "Browse customer photos in the 'Customer Images' section on product pages to see real-world usage. These unedited photos help you evaluate size, color, and how products look in different environments.",
+        "Share your own photos of purchased products to help other shoppers and earn Mallify Rewards points. You can upload photos through the 'Write a Review' section or directly from your order history."
+      ]
+    },
+
+    {
+      "tag": "vendor_application",
+      "patterns": [
+        "Become a vendor", "Seller application", "Join as seller", "Start selling",
+        "Merchant application", "Vendor registration", "Devenir vendeur", "Inscription vendeur"
+      ],
+      "responses": [
+        "To become a Mallify seller, visit the 'Sell on Mallify' page and complete the application form. You'll need business information, product details, and banking information for payments. Applications are typically reviewed within 3-5 business days.",
+        "Our seller application process includes verification of your business credentials, product authenticity, and fulfillment capabilities. Approved sellers receive access to our Seller Dashboard with tools for listing products, managing inventory, and tracking sales."
+      ]
+    },
+
+    {
+      "tag": "shopping_events",
+      "patterns": [
+        "Live shopping", "Shopping events", "Virtual events", "Product showcases",
+        "Live demonstrations", "Shopping streams", "Événements shopping", "Démonstrations en direct"
+      ],
+      "responses": [
+        "Join our live shopping events where sellers showcase products, demonstrate features, and answer questions in real-time. Schedule and RSVP for upcoming events in the 'Live Events' section of our mobile app or website.",
+        "Our virtual shopping events include product launches, expert Q&As, and themed showcases. Participate to enjoy exclusive event-only discounts and the ability to purchase featured products directly from the livestream."
+      ]
+    },
+
+    {
+      "tag": "shopping_categories",
+      "patterns": [
+        "Product categories", "Shopping categories", "Item categories", "Browse categories",
+        "Department navigation", "Shop by category", "Catégories produits", "Départements"
+      ],
+      "responses": [
+        "Mallify features 25 main categories including Fashion, Electronics, Home & Kitchen, Beauty, Toys & Games, and Sports & Outdoors. Each main category contains subcategories for more specific browsing.",
+        "Navigate our comprehensive category system using the top navigation menu or the 'All Categories' dropdown. You can also browse trending categories on the homepage or use search filters to narrow results within categories."
+      ]
+    },
+
+    {
+      "tag": "shopping_seasons",
+      "patterns": [
+        "Seasonal shopping", "Holiday shopping", "Season specials", "Seasonal items",
+        "Holiday items", "Seasonal deals", "Achats saisonniers", "Articles de saison"
+      ],
+      "responses": [
+        "Mallify updates seasonal collections throughout the year including Back to School, Halloween, Holiday Season, Valentine's Day, and Summer Essentials. Find seasonal items featured on our homepage and in category-specific seasonal sections.",
+        "Our seasonal shopping guides help you prepare for holidays and special occasions with curated product selections, gift ideas, and limited-time seasonal merchandise that's only available during specific times of year."
+      ]
+    },
+
+    {
+      "tag": "packaging_options",
+      "patterns": [
+        "Packaging options", "Eco-friendly packaging", "Gift packaging", "Packaging choices",
+        "Sustainable packaging", "Minimal packaging", "Options emballage", "Emballage écologique"
+      ],
+      "responses": [
+        "Mallify offers several packaging options: standard (efficient protection), minimal (reduced materials), frustration-free (easy-open), and gift packaging. Select your preference during checkout.",
+        "Our eco-friendly packaging uses recycled and recyclable materials with minimal plastic. Many sellers also offer plastic-free packaging options labeled with our 'Eco Packaging' badge on product pages."
+      ]
+    },
+
+    {
+      "tag": "customized_products",
+      "patterns": [
+        "Custom products", "Personalized items", "Product customization", "Bespoke items",
+        "Made to order", "Customized goods", "Produits personnalisés", "Articles sur mesure"
+      ],
+      "responses": [
+        "Shop our wide selection of customizable products including apparel, jewelry, home decor, and gifts. Personalization options vary by item but may include engraving, monogramming, color selection, and custom text.",
+        "Customized products typically take 1-3 additional days to produce before shipping. Look for the 'Customizable' badge on product listings and follow the customization instructions during the ordering process."
+      ]
+    },
+
+    {
+      "tag": "in_stock_guarantee",
+      "patterns": [
+        "In stock guarantee", "Available now", "Ready to ship", "Immediate availability",
+        "Ships today", "In stock only", "Garantie de stock", "Disponible immédiatement"
+      ],
+      "responses": [
+        "Products labeled 'In Stock Guarantee' are ready for immediate shipping from the seller's warehouse. If such an item becomes unavailable after ordering, you'll be offered a comparable alternative or compensation.",
+        "Filter search results to show only 'Ready to Ship' items to ensure you're viewing products that are immediately available. Items with the 'Ships Today' badge will be processed the same day for orders placed before the cutoff time."
+      ]
+    },
+
+    {
+      "tag": "smart_home_integration",
+      "patterns": [
+        "Smart home compatibility", "Voice shopping", "Shop with Alexa", "Smart speaker shopping",
+        "Voice assistant orders", "Smart device shopping", "Achats vocaux", "Assistant vocal"
+      ],
+      "responses": [
+        "Use voice assistants like Alexa, Google Assistant, or Siri to shop on Mallify. Link your account in the 'Connected Devices' section of your account settings to enable voice ordering and shopping list management.",
+        "Our smart home integration lets you check prices, reorder items, and track packages using voice commands. For security, voice purchasing requires a confirmation code or can be limited to certain product categories."
+      ]
+    },
+
+    {
+      "tag": "shopping_hours",
+      "patterns": [
+        "Shopping hours", "Customer service hours", "When open", "Service availability",
+        "Support hours", "Business hours", "Heures de service", "Disponibilité support"
+      ],
+      "responses": [
+        "Mallify's online marketplace is available 24/7/365 for shopping. Our customer service team is available via chat 24/7, while phone support operates from 8 AM to 10 PM in your local time zone, seven days a week.",
+        "While you can place orders at any time, keep in mind that order processing and seller response times follow business hours. Most sellers process orders Monday-Friday, with specific hours listed on their shop profiles."
+      ]
+    },
+
+    {
+      "tag": "product_popularity",
+      "patterns": [
+        "Popular items", "Best selling", "Trending now", "Most purchased",
+        "Customer favorites", "Hot items", "Articles populaires", "Meilleures ventes"
+      ],
+      "responses": [
+        "Browse trending and popular products in our 'What's Hot' section updated hourly based on real-time sales data, search trends, and customer engagement across the platform.",
+        "Product popularity indicators on Mallify include 'Bestseller' badges, customer purchase counts (e.g., '1000+ bought this month'), and popularity rankings within categories to help you discover what other shoppers are loving."
+      ]
+    },
+
+    {
+      "tag": "payment_plans",
+      "patterns": [
+        "Buy now pay later", "Payment plans", "Installment options", "Financing options",
+        "Split payments", "Pay in installments", "Paiement différé", "Paiement échelonné"
+      ],
+      "responses": [
+        "Mallify partners with several buy-now-pay-later services including Affirm, Klarna, and Afterpay. On eligible purchases over $50, select your preferred payment plan option during checkout to split your payment into installments.",
+        "Payment plans typically offer 3-4 interest-free installments for smaller purchases, while larger purchases may qualify for longer terms with competitive interest rates. Eligibility is determined by a soft credit check that won't affect your credit score."
+      ]
+    },
+
+    {
+      "tag": "brand_authenticity",
+      "patterns": [
+        "Authentic brands", "Genuine products", "Brand verification", "Official products",
+        "Authorized seller", "Brand guarantee", "Produits authentiques", "Marques officielles"
+      ],
+      "responses": [
+        "Mallify verifies authorized retailers for premium brands to ensure authenticity. Look for the 'Authorized Retailer' or 'Official Store' badge on seller profiles and product listings for guaranteed authentic merchandise.",
+        "Our Brand Registry program partners directly with manufacturers to verify product authenticity and take action against counterfeit listings. All luxury and high-value items undergo additional verification checks before shipment."
+      ]
+    },
+
+    {
+      "tag": "ethical_sourcing",
+      "patterns": [
+        "Ethically sourced", "Fair trade", "Ethical products", "Responsible sourcing",
+        "Ethical standards", "Fair labor", "Commerce équitable", "Approvisionnement éthique"
+      ],
+      "responses": [
+        "Shop our 'Ethically Sourced' collection featuring products that meet standards for fair labor practices, responsible material sourcing, and ethical production methods. Each product includes transparency information about its supply chain.",
+        "Mallify's Ethical Standards program verifies sellers' claims about fair trade, labor practices, and material sourcing. Look for certification badges like Fair Trade, GOTS Organic, or B Corp on product listings."
+      ]
     }
   ]
 }
