@@ -5,6 +5,7 @@ const dotenv = require("dotenv")
 const multer = require("multer")
 const crypto = require("crypto")
 const nodemailer = require("nodemailer")
+const Shop = require("../models/shop.model")
 dotenv.config()
 
 // Multer storage configuration
@@ -65,6 +66,16 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, moderator.moderatorPassword)
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" })
+    }
+
+    const shop = await Shop.findById(moderator.shop._id)
+
+    if (shop.status === "Banned") {
+      return res.status(403).json({
+        message: "Your shop has been banned.",
+        reason: shop.bannedReason,
+        status: "Banned",
+      })
     }
 
     const token = jwt.sign(

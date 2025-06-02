@@ -347,7 +347,7 @@ function initializeLoginForm() {
             console.error("Error parsing response:", error)
             tryLogin(index + 1)
           }
-        } else if (xhr.status === 403 && userType === "vendor") {
+        } else if (xhr.status === 403 && (userType === "vendor" || userType === "moderator")) {
           // Special case for vendors: check if it's related to shop status
           try {
             const response = JSON.parse(xhr.responseText)
