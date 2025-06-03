@@ -67,14 +67,14 @@ function displayProductDetails(product) {
 
   const priceElement = document.querySelector(".flex-align.gap-8 h6")
   if (priceElement) {
-    priceElement.textContent = `${product.productPrice || 0} DT`
+    priceElement.textContent = `${product.productPrice || 0} TND`
   }
 
   updateProductStarRating(product.averageRating || 4.7)
 
   const regularPriceElement = document.querySelector(".flex-align.gap-4 h6")
   if (regularPriceElement && product.regularPrice) {
-    regularPriceElement.textContent = `${product.regularPrice} DT`
+    regularPriceElement.textContent = `${product.regularPrice} TND`
   }
 
   const discountElement = document.querySelector(".flex-align.gap-8.text-main-two-600")
@@ -860,7 +860,7 @@ function updateTotalPrice() {
     const quantity = Number.parseInt(quantityInput.value) || 1
     const unitPrice = currentProduct.productPrice || 0
     const totalPrice = (quantity * unitPrice).toFixed(2)
-    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${totalPrice} DT</h6>`
+    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${totalPrice} TND</h6>`
   }
 }
 
@@ -1075,12 +1075,12 @@ function initializePriceDisplay() {
 
   const priceElement = document.getElementById("side-price-prod")
   if (priceElement) {
-    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${currentProduct.productPrice.toFixed(2)} DT</h6>`
+    priceElement.innerHTML = `<h6 class="text-20 text-gray-900">${currentProduct.productPrice.toFixed(2)} TND</h6>`
   }
 
   const shippingElement = document.getElementById("shipping-fee")
   if (shippingElement) {
-    shippingElement.textContent = "15 DT"
+    shippingElement.textContent = "15 TND"
   }
 }
 

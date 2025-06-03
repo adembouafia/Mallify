@@ -77,7 +77,7 @@ function displayProductDetails(product) {
   // Update price
   const priceElement = document.querySelector("h4.text-danger.fw-bold");
   if (priceElement) {
-    priceElement.textContent = `$${Number.parseFloat(product.productPrice || 0).toFixed(2)}`;
+    priceElement.textContent = `${Number.parseFloat(product.productPrice || 0).toFixed(2)} TND`;
   }
 
   // Update category

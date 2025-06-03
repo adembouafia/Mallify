@@ -569,8 +569,8 @@ function displayOrderDetails(order) {
                             <td>${item.id || "N/A"}</td>
                             <td>${item.name || "N/A"}</td>
                             <td>${item.quantity}</td>
-                            <td>${item.price.toFixed(2)} DT</td>
-                            <td>${item.total.toFixed(2)} DT</td>
+                            <td>${item.price.toFixed(2)} TND</td>
+                            <td>${item.total.toFixed(2)} TND</td>
                           </tr>
                         `
                           )
@@ -603,7 +603,7 @@ function displayOrderDetails(order) {
                         </p>
                       </td>
                       <td class="text-end text-dark fw-medium px-0">
-                        ${subtotal.toFixed(2)} DT
+                        ${subtotal.toFixed(2)} TND
                       </td>
                     </tr>
                     <tr>
@@ -614,7 +614,7 @@ function displayOrderDetails(order) {
                         </p>
                       </td>
                       <td class="text-end text-dark fw-medium px-0">
-                        ${deliveryCharge.toFixed(2)} DT
+                        ${deliveryCharge.toFixed(2)} TND
                       </td>
                     </tr>
                   </tbody>
@@ -626,7 +626,7 @@ function displayOrderDetails(order) {
                 <p class="fw-medium text-dark mb-0">Total Amount</p>
               </div>
               <div>
-                <p class="fw-medium text-dark mb-0">${totalAmount} DT</p>
+                <p class="fw-medium text-dark mb-0">${totalAmount} TND</p>
               </div>
             </div>
           </div>
@@ -1392,7 +1392,7 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
       <td><span class="order-id">#${order._id ? order._id.substring(0, 8) : "N/A"}</span></td>
       <td><span class="date-text">${formattedDate}</span></td>
       <td><span class="customer-name">${customerName}</span></td>
-      <td><span class="price-amount">${total.toFixed(2)} DT</span></td>
+      <td><span class="price-amount">${total.toFixed(2)} TND</span></td>
       <td><span class="items-count">${itemCount}</span></td>
       <td><span class="delivery-number">#D-${Math.floor(Math.random() * 10000000)}</span></td>
       <td><span class="status-badge ${statusClass}">${statusText}</span></td>

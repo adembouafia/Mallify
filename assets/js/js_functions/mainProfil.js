@@ -705,7 +705,7 @@ function createProductCard(item) {
   }
 
   // Format price
-  const formattedPrice = typeof price === "number" ? `${price.toFixed(2)} DT` : price
+  const formattedPrice = typeof price === "number" ? `${price.toFixed(2)} TND` : price
 
   console.log("Final card data:", {
     productId,
@@ -1639,7 +1639,7 @@ function initializeOrdersSection() {
         <h3>${productName}</h3>
         <p class="product-sku">SKU: ${productSku}</p>
         <div class="product-meta">
-          <span class="product-price">${productPrice.toFixed(2)} DT</span>
+          <span class="product-price">${productPrice.toFixed(2)} TND</span>
           <span class="product-qty">Qty: ${productQty}</span>
         </div>
       </div>
@@ -1658,11 +1658,11 @@ function initializeOrdersSection() {
     orderSummary.innerHTML = `
     <div class="summary-row">
       <span>Subtotal</span>
-      <span>${subtotal.toFixed(2)} DT</span>
+      <span>${subtotal.toFixed(2)} TND</span>
     </div>
     <div class="summary-row total">
       <span>Total</span>
-      <span>${total.toFixed(2)} DT</span>
+      <span>${total.toFixed(2)} TND</span>
     </div>
   `
 
@@ -1975,9 +1975,9 @@ function initializeOrdersSection() {
             <h4 class="product-name">${product.productId.productName}</h4>
             <div class="product-meta-simplified">
               <span class="quantity">${product.quantity} x</span>
-              <span class="price">${product.productId.productPrice.toFixed(2)} DT</span>
+              <span class="price">${product.productId.productPrice.toFixed(2)} TND</span>
             </div>
-            <span class="item-total">${(product.quantity * product.productId.productPrice).toFixed(2)} DT</span>
+            <span class="item-total">${(product.quantity * product.productId.productPrice).toFixed(2)} TND</span>
           </div>
         `
         productList.appendChild(productItem)
@@ -1991,9 +1991,9 @@ function initializeOrdersSection() {
             <h4 class="product-name">${item.name}</h4>
             <div class="product-meta-simplified">
               <span class="quantity">${item.quantity} x</span>
-              <span class="price">${item.price.toFixed(2)} DT</span>
+              <span class="price">${item.price.toFixed(2)} TND</span>
             </div>
-            <span class="item-total">${(item.quantity * item.price).toFixed(2)} DT</span>
+            <span class="item-total">${(item.quantity * item.price).toFixed(2)} TND</span>
           </div>
         `
         productList.appendChild(productItem)
@@ -2006,11 +2006,11 @@ function initializeOrdersSection() {
     receiptSummary.innerHTML = `
       <div class="summary-row">
         <span class="summary-label">Subtotal</span>
-        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} DT</span>
+        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} TND</span>
       </div>
       <div class="summary-row total">
         <span class="summary-label">Total</span>
-        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} DT</span>
+        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} TND</span>
       </div>
     `
     receiptContainer.appendChild(receiptSummary)

@@ -96,9 +96,9 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       
       // Set totals to zero
-      subtotalEl.textContent = "0 DT";
-      deliveryFeeEl.textContent = "0 DT";
-      finalTotalEl.textContent = "0 DT";
+      subtotalEl.textContent = "0 TND";
+      deliveryFeeEl.textContent = "0 TND";
+      finalTotalEl.textContent = "0 TND";
       
       return;
     }
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </td>
-        <td><span class="price">${item.price.toFixed(2)} DT</span></td>
+        <td><span class="price">${item.price.toFixed(2)} TND</span></td>
         <td>
           <div class="quantity-control">
             <button class="btn-qty" data-action="decrease">-</button>
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="btn-qty" data-action="increase">+</button>
           </div>
         </td>
-        <td><span class="price item-subtotal">${sub.toFixed(2)} DT</span></td>
+        <td><span class="price item-subtotal">${sub.toFixed(2)} TND</span></td>
         <td><button class="btn-remove">Remove</button></td>
       `;
       tableBody.appendChild(tr);
@@ -148,13 +148,13 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="product-details">
             <h6><a href="${item.link}">${item.name}</a></h6>
-            <p>Unit Price: <span class="price">${item.price.toFixed(2)} DT</span></p>
+            <p>Unit Price: <span class="price">${item.price.toFixed(2)} TND</span></p>
             <div class="quantity-control">
               <button class="btn-qty" data-action="decrease">-</button>
               <input type="text" value="${item.quantity}" readonly />
               <button class="btn-qty" data-action="increase">+</button>
             </div>
-            <p>Subtotal: <span class="price item-subtotal">${sub.toFixed(2)} DT</span></p>
+            <p>Subtotal: <span class="price item-subtotal">${sub.toFixed(2)} TND</span></p>
           </div>
         </div>
         <div class="card-actions">
@@ -173,9 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
       (sum, { price, quantity }) => sum + price * quantity,
       0
     );
-    subtotalEl.textContent = `${subTotal.toFixed(2)} DT`;
-    deliveryFeeEl.textContent = `${DELIVERY_FEE.toFixed(2)} DT`;
-    finalTotalEl.textContent = `${(subTotal + DELIVERY_FEE).toFixed(2)} DT`;
+    subtotalEl.textContent = `${subTotal.toFixed(2)} TND`;
+    deliveryFeeEl.textContent = `${DELIVERY_FEE.toFixed(2)} TND`;
+    finalTotalEl.textContent = `${(subTotal + DELIVERY_FEE).toFixed(2)} TND`;
   }
 
   // Update cart item quantity on the server

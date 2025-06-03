@@ -386,7 +386,7 @@ function viewProductDetails(productId) {
           tableRows[1].querySelector("td:last-child").textContent = product.shop?.shopName || "Unknown"
           tableRows[2].querySelector("td:last-child").textContent =
             product.subCategory?.category?.categoryName || "Unknown"
-          tableRows[3].querySelector("td:last-child").textContent = `$${product.productPrice.toFixed(2)}`
+          tableRows[3].querySelector("td:last-child").textContent = `${product.productPrice.toFixed(2)} TND`
 
           const banDate = new Date(product.updatedAt).toLocaleDateString("en-US", {
             year: "numeric",

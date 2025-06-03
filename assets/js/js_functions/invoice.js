@@ -485,9 +485,9 @@ function updateInvoiceTable(data) {
     tableBody.appendChild(emptyRow);
 
     // Update summary with zeros
-    document.getElementById("totalSales").textContent = "0.00 DT";
+    document.getElementById("totalSales").textContent = "0.00 TND";
     document.getElementById("totalOrders").textContent = "0";
-    document.getElementById("averageOrder").textContent = "0.00 DT";
+    document.getElementById("averageOrder").textContent = "0.00 TND";
 
     return;
   }
@@ -515,7 +515,7 @@ function updateInvoiceTable(data) {
             <td>#${invoice.orderId}</td>
             <td>${formattedDate}</td>
             <td>${invoice.customer.name}</td>
-            <td>${invoice.amount.toFixed(2)} DT</td>
+            <td>${invoice.amount.toFixed(2)} TND</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
             <td><button class="view-details-btn" data-order-id="${invoice.orderId}">View Details</button></td>
         `;
@@ -534,12 +534,12 @@ function updateInvoiceTable(data) {
 
   // Update summary
   document.getElementById("totalSales").textContent =
-    totalSales.toFixed(2) + " DT";
+    totalSales.toFixed(2) + " TND";
   document.getElementById("totalOrders").textContent = data.length;
 
   const averageOrder = totalSales / data.length;
   document.getElementById("averageOrder").textContent =
-    averageOrder.toFixed(2) + " DT";
+    averageOrder.toFixed(2) + " TND";
 }
 
 function showOrderDetails(orderId, data) {
@@ -573,9 +573,9 @@ function showOrderDetails(orderId, data) {
 
     row.innerHTML = `
             <td>${item.name}</td>
-            <td>${item.price.toFixed(2)} DT</td>
+            <td>${item.price.toFixed(2)} TND</td>
             <td>${item.quantity}</td>
-            <td>${itemTotal.toFixed(2)} DT</td>
+            <td>${itemTotal.toFixed(2)} TND</td>
         `;
 
     itemsBody.appendChild(row);
@@ -587,11 +587,11 @@ function showOrderDetails(orderId, data) {
   const total = subtotal + shipping + tax;
 
   document.getElementById("modalSubtotal").textContent =
-    subtotal.toFixed(2) + " DT";
+    subtotal.toFixed(2) + " TND";
   document.getElementById("modalShipping").textContent =
-    shipping.toFixed(2) + " DT";
-  document.getElementById("modalTax").textContent = tax.toFixed(2) + " DT";
-  document.getElementById("modalTotal").textContent = total.toFixed(2) + " DT";
+    shipping.toFixed(2) + " TND";
+  document.getElementById("modalTax").textContent = tax.toFixed(2) + " TND";
+  document.getElementById("modalTotal").textContent = total.toFixed(2) + " TND";
 
   // Update the event listener for the existing button
   document.getElementById("printSingleOrderBtn").onclick = () => {
@@ -876,9 +876,9 @@ function printSingleOrderInvoice(order) {
             <tr>
                 <td>${productId}</td>
                 <td>${item.name}</td>
-                <td>${item.price.toFixed(2)} DT</td>
+                <td>${item.price.toFixed(2)} TND</td>
                 <td>${item.quantity}</td>
-                <td>${itemTotal.toFixed(2)} DT</td>
+                <td>${itemTotal.toFixed(2)} TND</td>
             </tr>
         `);
   });
@@ -892,19 +892,19 @@ function printSingleOrderInvoice(order) {
                 <div class="invoice-summary">
                     <div class="summary-row">
                         <span>Subtotal:</span>
-                        <span>${subtotal.toFixed(2)} DT</span>
+                        <span>${subtotal.toFixed(2)} TND</span>
                     </div>
                     <div class="summary-row">
                         <span>Shipping:</span>
-                        <span>${shipping.toFixed(2)} DT</span>
+                        <span>${shipping.toFixed(2)} TND</span>
                     </div>
                     <div class="summary-row">
                         <span>Tax:</span>
-                        <span>${tax.toFixed(2)} DT</span>
+                        <span>${tax.toFixed(2)} TND</span>
                     </div>
                     <div class="summary-row total">
                         <span>Total:</span>
-                        <span>${total.toFixed(2)} DT</span>
+                        <span>${total.toFixed(2)} TND</span>
                     </div>
                 </div>
                 
@@ -1177,8 +1177,8 @@ function generateCustomPDF() {
             <tr>
                 <td>${productName}</td>
                 <td>${product.quantity}</td>
-                <td>${avgPrice.toFixed(2)} DT</td>
-                <td>${product.totalSales.toFixed(2)} DT</td>
+                <td>${avgPrice.toFixed(2)} TND</td>
+                <td>${product.totalSales.toFixed(2)} TND</td>
             </tr>
         `);
   });
@@ -1189,7 +1189,7 @@ function generateCustomPDF() {
                 <td>Total</td>
                 <td>${totalQuantity}</td>
                 <td></td>
-                <td>${grandTotal.toFixed(2)} DT</td>
+                <td>${grandTotal.toFixed(2)} TND</td>
             </tr>
         </tbody>
     </table>
@@ -1208,7 +1208,7 @@ function generateCustomPDF() {
                     </div>
                     <div class="summary-row total">
                         <span>Total Sales:</span>
-                        <span>${grandTotal.toFixed(2)} DT</span>
+                        <span>${grandTotal.toFixed(2)} TND</span>
                     </div>
                 </div>
                 

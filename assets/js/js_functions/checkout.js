@@ -301,7 +301,7 @@ function loadCartProducts(clientId, token) {
 
           // Calculate total with shipping fee
           const subtotal = response.totalPrice || 0
-          const shippingFee = 15 // 15 DT shipping fee
+          const shippingFee = 15 // 15 TND shipping fee
           const total = subtotal + shippingFee
 
           // Store cart data in localStorage (just for the cart ID and totals)
@@ -374,7 +374,7 @@ function renderCheckoutSidebar(cartItems, subtotal, shippingFee, total) {
           <span class="text-gray-900 fw-normal text-md font-heading-two"><i class="ph-bold ph-x"></i></span>
           <span class="text-gray-900 fw-semibold text-md font-heading-two">${item.quantity}</span>
         </div>
-        <span class="text-gray-900 fw-bold text-md font-heading-two">${productPrice.toFixed(2)} DT</span>
+        <span class="text-gray-900 fw-bold text-md font-heading-two">${productPrice.toFixed(2)} TND</span>
       `
 
     sidebarContainer.appendChild(productElement)
@@ -386,11 +386,11 @@ function renderCheckoutSidebar(cartItems, subtotal, shippingFee, total) {
   paymentSection.innerHTML = `
       <div class="mb-16 flex-between gap-8">
         <span class="text-gray-900 font-heading-two text-md fw-medium">Subtotal</span>
-        <span class="text-gray-900 font-heading-two text-md fw-bold">${subtotal.toFixed(2)} DT</span>
+        <span class="text-gray-900 font-heading-two text-md fw-bold">${subtotal.toFixed(2)} TND</span>
       </div>
       <div class="mb-16 flex-between gap-8">
         <span class="text-gray-900 font-heading-two text-md fw-medium">Shipping Fee</span>
-        <span class="text-gray-900 font-heading-two text-md fw-bold">${shippingFee.toFixed(2)} DT</span>
+        <span class="text-gray-900 font-heading-two text-md fw-bold">${shippingFee.toFixed(2)} TND</span>
       </div>
       <div class="mb-32 flex-between gap-8">
         <span class="text-gray-900 font-heading-two text-xl fw-semibold">Payment</span>
@@ -398,7 +398,7 @@ function renderCheckoutSidebar(cartItems, subtotal, shippingFee, total) {
       </div>
       <div class="mb-0 flex-between gap-8">
         <span class="text-gray-900 font-heading-two text-xl fw-semibold">Total</span>
-        <span class="text-gray-900 font-heading-two text-md fw-bold">${total.toFixed(2)} DT</span>
+        <span class="text-gray-900 font-heading-two text-md fw-bold">${total.toFixed(2)} TND</span>
       </div>
     `
 

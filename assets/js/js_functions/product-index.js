@@ -624,8 +624,8 @@ function createProductCard(product) {
           : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
         }
         <div class="product-card__price mt-16 mb-30">
-            <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} DT</span>
-            <span class="text-heading text-md fw-semibold ">${price} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
+            <span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${originalPrice} TND</span>
+            <span class="text-heading text-md fw-semibold ">${price} TND<span class="text-gray-500 fw-normal">/Qty</span></span>
         </div>
           ${availability === "In stock"
             ?`<button 
@@ -760,7 +760,7 @@ function createCardFeaturedProduct(produit) {
           }
         </div>
         <div class="product-card__price my-8">
-          <span class="text-heading text-sm fw-semibold">${price} DT <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
+          <span class="text-heading text-sm fw-semibold">${price} TND <span class="text-gray-500 fw-normal text-xs">/Qty</span></span>
         </div>
           ${availability === "In stock"
             ?`<button 
@@ -836,8 +836,8 @@ function createCardRecommendedProduct(produit) {
           : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
         }
         <div class="product-card__price mt-16 mb-30">
-          ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
-          <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
+          ${discountPercentage > 0 ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} TND</span>` : ""}
+          <span class="text-heading text-md fw-semibold ">${price} TND <span class="text-gray-500 fw-normal">/Qty</span> </span>
         </div>
           ${availability === "In stock"
             ?`<button 
@@ -912,8 +912,8 @@ function createProductCardTrending(product) {
                       : `<span class="py-2 px-8 text-xs-bold  rounded-pill bg-warning-100 text-danger-600  mt-16">${availability}</span>`
                     }
                     <div class="product-card__price mt-16 mb-30">
-                        ${product.discountPercentage ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} DT</span>` : ""}
-                        <span class="text-heading text-md fw-semibold ">${price} DT <span class="text-gray-500 fw-normal">/Qty</span> </span>
+                        ${product.discountPercentage ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through"> ${originalPrice} TND</span>` : ""}
+                        <span class="text-heading text-md fw-semibold ">${price} TND <span class="text-gray-500 fw-normal">/Qty</span> </span>
                     </div>
                     ${availability === "In stock"
                       ?`<button 

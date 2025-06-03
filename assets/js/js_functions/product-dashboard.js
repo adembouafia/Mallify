@@ -446,7 +446,7 @@ function addProductToTable(product) {
         </div>
       </div>
     </td>
-    <td>$${Number.parseFloat(product.productPrice).toFixed(2)}</td>    <td>
+    <td>${Number.parseFloat(product.productPrice).toFixed(2)} TND</td>    <td>
       <div class="text-muted">
         <span class="fw-semibold text-dark">${product.stock}</span><br> Item Left
         ${product.stockLimit ? `<span class="badge bg-light text-warning">Alert at ${product.stockLimit}</span>` : ""}<br>
@@ -1060,7 +1060,7 @@ function updateProductRowInTable(productId, product) {
   // Update price
   const priceCell = row.querySelector("td:nth-child(3)");
   if (priceCell) {
-    priceCell.textContent = `$${Number.parseFloat(product.productPrice).toFixed(2)}`;
+    priceCell.textContent = `${Number.parseFloat(product.productPrice).toFixed(2)} TND`;
   }
 
   // Update stock value

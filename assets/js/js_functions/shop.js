@@ -174,7 +174,7 @@ const createProductCard = (product) => {
       </div>
       <div class="product-card__price my-20">
         <span class="text-heading text-md fw-semibold">
-          ${product.productPrice} DT
+          ${product.productPrice} TND
           <span class="text-gray-500 fw-normal">/Qty</span>
         </span>
       </div>
@@ -880,10 +880,10 @@ function initModernPriceFilter() {
       },
       tooltips: [
         {
-          to: (value) => value + " DT",
+          to: (value) => value + " TND",
         },
         {
-          to: (value) => value + " DT",
+          to: (value) => value + " TND",
         },
       ],
     });

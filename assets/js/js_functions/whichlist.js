@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </td>
-        <td><span class="price">${item.price.toFixed(2)} DT</span></td>
+        <td><span class="price">${item.price.toFixed(2)} TND</span></td>
         <td><span class="stock-status">${item.stock}</span></td>
         <td class="action-buttons">
           <div class="btn-group">
@@ -194,7 +194,7 @@ card.innerHTML = `
       <span class="rating">${item.rating}</span>
     </div>
     <div class="meta">
-      <span class="price">${item.price.toFixed(2)} DT</span>
+      <span class="price">${item.price.toFixed(2)} TND</span>
       <span class="stock-status">${item.stock}</span>
     </div>
     <div class="card-actions">

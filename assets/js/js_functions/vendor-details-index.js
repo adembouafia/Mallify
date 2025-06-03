@@ -259,11 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const maxPriceInput = document.getElementById("max-price")
 
     if (minPriceInput) {
-      minPriceInput.placeholder = `Min (${Math.floor(min)} DT)`
+      minPriceInput.placeholder = `Min (${Math.floor(min)} TND)`
     }
 
     if (maxPriceInput) {
-      maxPriceInput.placeholder = `Max (${Math.ceil(max)} DT)`
+      maxPriceInput.placeholder = `Max (${Math.ceil(max)} TND)`
     }
   }
 
@@ -476,8 +476,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="product-card__price mt-16 mb-30">
-                    ${product.productoldPrice ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${product.productoldPrice} DT</span>` : ""}
-                    <span class="text-heading text-md fw-semibold ">${product.productPrice} DT<span class="text-gray-500 fw-normal">/Qty</span></span>
+                    ${product.productoldPrice ? `<span class="text-gray-400 text-md fw-semibold text-decoration-line-through">${product.productoldPrice} TND</span>` : ""}
+                    <span class="text-heading text-md fw-semibold ">${product.productPrice} TND<span class="text-gray-500 fw-normal">/Qty</span></span>
                 </div>
                 <a href="product-details.html?id=${product._id}" class="product-card__cart btn text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium" tabindex="0">
                     View Details <i class="ph ph-arrow-right"></i> 
