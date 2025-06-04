@@ -336,7 +336,6 @@ function fetchMonthlyOrdersData() {
             createOrdersChart(data);
           } catch (chartError) {
             console.error("Error creating orders chart:", chartError);
-            // Try once more with a different format of the data - this can help with inconsistent APIs
             try {
               // If data is in array format but chart expects object or vice versa
               if (Array.isArray(data)) {
