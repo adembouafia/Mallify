@@ -5,7 +5,6 @@
     padding: 20px;
 }
 
-/* Invoice Container */
 .invoice-container {
     width: 100%;
     max-width: 1200px;
@@ -15,7 +14,6 @@
     padding: 30px;
 }
 
-/* Invoice Header */
 .invoice-header {
     text-align: center;
     margin-bottom: 30px;
@@ -35,7 +33,6 @@
     font-weight: 500;
 }
 
-/* Invoice Controls */
 .invoice-controls {
     display: flex;
     justify-content: space-between;
@@ -104,7 +101,6 @@
     background-color: #2980b9;
 }
 
-/* Date Range Modal */
 .date-range-modal {
     display: none;
     position: fixed;
@@ -185,7 +181,6 @@
     background-color: #2980b9;
 }
 
-/* Invoice Display */
 .invoice-period {
     display: flex;
     align-items: center;
@@ -195,7 +190,6 @@
     margin-bottom: 20px;
 }
 
-/* Invoice Table */
 .invoice-table {
     width: 100%;
     border-collapse: collapse;

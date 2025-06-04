@@ -1,16 +1,13 @@
 window.addEventListener('load', function() {
         console.log('Window loaded - checking chart library...');
         
-        // Verify ApexCharts availability
         if (typeof ApexCharts === 'undefined') {
           console.error('ApexCharts not available after window load. Attempting to load from alternate CDN...');
           
-          // Show loading message on charts
           document.querySelectorAll('#ordersChart, #shopCategoriesChart, #bestSellersChart').forEach(el => {
             el.innerHTML = '<div class="d-flex justify-content-center align-items-center h-100"><span class="spinner-border text-primary" role="status"></span><span class="ms-2">Loading chart library...</span></div>';
           });
           
-          // Try multiple CDNs in sequence for better reliability
           const loadApexChartsFromCDN = function(cdnUrls, index = 0) {
             if (index >= cdnUrls.length) {
               console.error('Failed to load ApexCharts from all CDNs');
@@ -20,7 +17,6 @@ window.addEventListener('load', function() {
               return;
             }
             
-            // Create and append a new script element
             const apexScript = document.createElement('script');
             apexScript.src = cdnUrls[index];
             
@@ -42,14 +38,12 @@ window.addEventListener('load', function() {
             document.head.appendChild(apexScript);
           };
           
-          // List of CDNs to try in order
           const cdnUrls = [
             'https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js',
             'https://unpkg.com/apexcharts@3.45.1/dist/apexcharts.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.1/apexcharts.min.js'
           ];
           
-          // Start the loading process
           loadApexChartsFromCDN(cdnUrls);
         } else {
           console.log('ApexCharts already available from primary source');
@@ -67,7 +61,6 @@ window.initDashboard = function () {
   if (!token) {
     console.warn("No authentication token found. You might need to log in.");
   }
-  // Initialize the dashboard
   fetchShopsCount();
   fetchClientsCount();
   fetchOrdersCount();
@@ -76,7 +69,6 @@ window.initDashboard = function () {
   fetchOrdersPerShop();
   fetchBestSellers();
 
-  // Setup refresh buttons click events
   setupRefreshButtons();
 };
 
@@ -104,7 +96,6 @@ function setupRefreshButtons() {
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded - Initializing admin dashboard...");
 
-  // Verify that ApexCharts is available with multiple attempts
   let checkApexCharts = function (retries = 0, maxRetries = 3) {
     if (typeof ApexCharts !== "undefined") {
       console.log("ApexCharts is available, initializing dashboard...");
@@ -117,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     if (retries < maxRetries) {
-      // Display waiting message on chart containers
       document
         .querySelectorAll(
           "#ordersChart, #shopCategoriesChart, #bestSellersChart"
@@ -127,7 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="d-flex justify-content-center align-items-center h-100"><span class="spinner-border text-primary" role="status"></span><span class="ms-2">Loading chart library...</span></div>';
         });
 
-      // Try again with increasing delay
       setTimeout(
         () => checkApexCharts(retries + 1, maxRetries),
         500 * Math.pow(2, retries)
@@ -147,10 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Start checking if ApexCharts is available
   setTimeout(() => checkApexCharts(), 300);
 
-  // Setup refresh buttons click events
   document
     .querySelectorAll('.card-tools button[data-bs-toggle="tooltip"]')
     .forEach((button) => {
@@ -171,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Individual fetch functions for better error handling and separate loading states
 function fetchShopsCount() {
   const xhr = new XMLHttpRequest();
   // Make sure this API endpoint matches your backend structure

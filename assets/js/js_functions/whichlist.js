@@ -397,9 +397,7 @@ card.innerHTML = `
     }, 3000);
   }
 
-  // Event delegation for button clicks
   document.addEventListener("click", e => {
-    // Handle remove button clicks
     if (e.target.closest(".btn-remove")) {
       const btn = e.target.closest(".btn-remove");
       const productId = btn.dataset.productId;
@@ -409,7 +407,6 @@ card.innerHTML = `
       }
     }
     
-    // Handle add to cart button clicks
     if (e.target.closest(".btn-add-to-cart")) {
       const btn = e.target.closest(".btn-add-to-cart");
       const productId = btn.dataset.productId;
@@ -420,6 +417,5 @@ card.innerHTML = `
     }
   });
 
-  // first fetch and render
   fetchWishlistItems();
 });
