@@ -675,7 +675,7 @@ function createProductCardTopSelling(product) {
             </div>
             <div class="product-card__content mt-16">                
                 <h6 class="title text-lg fw-semibold mt-12 mb-20">
-                    <a href="product-details.html?id=${id}" class="link text-line-2 d-flex" tabindex="0">${name}</a>
+                    <a href="product-details.html?id=${id}" class="link text-line-2" tabindex="0">${name}</a>
                 </h6>
                 <div class="flex-align gap-6">
                     <div class="flex-align gap-8">
