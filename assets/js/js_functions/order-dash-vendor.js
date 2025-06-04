@@ -1,182 +1,182 @@
 // Global variables
-let currentPage = 1;
-let itemsPerPage = 10;
-let totalOrders = 0;
-let orders = [];
-let filteredOrders = [];
-let searchQuery = "";
-let currentOrder = null;
-let currentSort = "newest"; // Default sort order
+let currentPage = 1
+let itemsPerPage = 10
+let totalOrders = 0
+let orders = []
+let filteredOrders = []
+let searchQuery = ""
+let currentOrder = null
+let currentSort = "newest" // Default sort order
 
 // DOM elements
-const searchInput = document.querySelector(".search-input");
-const searchButton = document.querySelector(".search-button");
-const itemsPerPageSelect = document.querySelector(".items-per-page");
-const paginationInfo = document.querySelector(".pagination-info");
-const paginationLinks = document.querySelector(".pagination");
-const sortOptions = document.querySelectorAll(".sort-option");
+const searchInput = document.querySelector(".search-input")
+const searchButton = document.querySelector(".search-button")
+const itemsPerPageSelect = document.querySelector(".items-per-page")
+const paginationInfo = document.querySelector(".pagination-info")
+const paginationLinks = document.querySelector(".pagination")
+const sortOptions = document.querySelectorAll(".sort-option")
 
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
   // Load orders on page load
-  const currentUrl = window.location.href;
+  const currentUrl = window.location.href
 
   if (currentUrl.includes("detailsOrders.html")) {
     // We're on the order details page
-    loadOrderDetails();
+    loadOrderDetails()
   } else {
     // We're on the main orders page
-    loadOrders();
+    loadOrders()
   }
 
   // Set up event listeners
-  setupEventListeners();
+  setupEventListeners()
 
   // Add notification loading
-  const shopId = localStorage.getItem("shopId");
+  const shopId = localStorage.getItem("shopId")
   if (shopId) {
     // Load notifications immediately
-    loadNotifications();
+    loadNotifications()
 
     // Refresh notifications every 5 minutes
-    setInterval(loadNotifications, 5 * 60 * 1000);
+    setInterval(loadNotifications, 5 * 60 * 1000)
   }
-});
+})
 
-// Mettre à jour la fonction setupEventListeners pour gérer l'onglet "postponed"
+// Update the setupEventListeners function to handle the "postponed" tab
 function setupEventListeners() {
   // Search functionality
   if (searchButton) {
     searchButton.addEventListener("click", () => {
-      searchQuery = searchInput.value.trim();
-      currentPage = 1;
-      filterAndDisplayOrders();
-    });
+      searchQuery = searchInput.value.trim()
+      currentPage = 1
+      filterAndDisplayOrders()
+    })
   }
 
   if (searchInput) {
     searchInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
-        searchQuery = searchInput.value.trim();
-        currentPage = 1;
-        filterAndDisplayOrders();
+        searchQuery = searchInput.value.trim()
+        currentPage = 1
+        filterAndDisplayOrders()
       }
-    });
+    })
   }
 
   // Change number of entries displayed
   if (itemsPerPageSelect) {
     itemsPerPageSelect.addEventListener("change", () => {
-      itemsPerPage = Number.parseInt(itemsPerPageSelect.value);
-      currentPage = 1;
-      filterAndDisplayOrders();
-    });
+      itemsPerPage = Number.parseInt(itemsPerPageSelect.value)
+      currentPage = 1
+      filterAndDisplayOrders()
+    })
   }
 
   // Tab change event listeners
   document.querySelectorAll('button[data-bs-toggle="tab"]').forEach((tab) => {
     tab.addEventListener("shown.bs.tab", (e) => {
-      const targetId = e.target.getAttribute("aria-controls");
+      const targetId = e.target.getAttribute("aria-controls")
       if (targetId === "all") {
-        filterAndDisplayOrders();
+        filterAndDisplayOrders()
       } else if (targetId === "pending") {
-        displayFilteredOrders("pending");
+        displayFilteredOrders("pending")
       } else if (targetId === "accepted") {
-        displayFilteredOrders("accepted");
+        displayFilteredOrders("accepted")
       } else if (targetId === "completed") {
-        displayFilteredOrders("completed");
+        displayFilteredOrders("completed")
       } else if (targetId === "cancelled") {
-        displayFilteredOrders("cancelled");
+        displayFilteredOrders("cancelled")
       } else if (targetId === "shipped") {
-        displayFilteredOrders("shipped");
+        displayFilteredOrders("shipped")
       } else if (targetId === "postponed") {
-        displayFilteredOrders("postponed");
+        displayFilteredOrders("postponed")
       }
-    });
-  });
+    })
+  })
 
   // Sort options
   if (sortOptions) {
     sortOptions.forEach((option) => {
       option.addEventListener("click", function (e) {
-        e.preventDefault();
-        currentSort = this.getAttribute("data-sort");
-        document.querySelector(".sort-dropdown").textContent = this.textContent;
-        filterAndDisplayOrders();
-      });
-    });
+        e.preventDefault()
+        currentSort = this.getAttribute("data-sort")
+        document.querySelector(".sort-dropdown").textContent = this.textContent
+        filterAndDisplayOrders()
+      })
+    })
   }
 }
 
 // Function to load order details from URL parameters
 function loadOrderDetails() {
   // Get order ID from URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const orderId = urlParams.get("id");
+  const urlParams = new URLSearchParams(window.location.search)
+  const orderId = urlParams.get("id")
 
   if (!orderId) {
-    displayError("No order ID provided in the URL");
-    return;
+    displayError("No order ID provided in the URL")
+    return
   }
 
   // Create loading indicator in the page content area
-  const contentArea = document.querySelector(".app-main");
+  const contentArea = document.querySelector(".app-main")
   if (contentArea) {
     contentArea.innerHTML =
-      '<div class="d-flex justify-content-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      '<div class="d-flex justify-content-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>'
   }
 
   // Get the auth token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
   // Create XHR request to get order details
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
     if (xhr.status === 200) {
       try {
-        const response = JSON.parse(xhr.responseText);
-        console.log("Order details response:", response);
-        currentOrder = response.order;
-        displayOrderDetails(currentOrder);
+        const response = JSON.parse(xhr.responseText)
+        console.log("Order details response:", response)
+        currentOrder = response.order
+        displayOrderDetails(currentOrder)
       } catch (error) {
-        console.error("Error parsing order details:", error);
-        displayError("Failed to parse order details");
+        console.error("Error parsing order details:", error)
+        displayError("Failed to parse order details")
       }
     } else {
-      console.error("Error fetching order details:", xhr.status);
-      displayError("Failed to load order details. Status: " + xhr.status);
+      console.error("Error fetching order details:", xhr.status)
+      displayError("Failed to load order details. Status: " + xhr.status)
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error("Network error when fetching order details");
-    displayError("Network error. Please check your connection and try again.");
-  };
+    console.error("Network error when fetching order details")
+    displayError("Network error. Please check your connection and try again.")
+  }
 
   // Send the request
-  xhr.send();
+  xhr.send()
 }
 
-// Mettre à jour la fonction displayOrderDetails pour gérer le statut "postponed"
+// Update the displayOrderDetails function to handle the "postponed" status
 function displayOrderDetails(order) {
-  const contentArea = document.querySelector(".app-main");
-  if (!contentArea) return;
+  const contentArea = document.querySelector(".app-main")
+  if (!contentArea) return
 
-  console.log("Displaying order details:", order);
+  console.log("Displaying order details:", order)
 
   // Format order date
-  let orderDate = new Date();
-  let formattedDate = "N/A";
+  let orderDate = new Date()
+  let formattedDate = "N/A"
   try {
-    orderDate = new Date(order.createdAt || order.dateCommande);
+    orderDate = new Date(order.createdAt || order.dateCommande)
     if (!isNaN(orderDate.getTime())) {
       formattedDate = orderDate.toLocaleDateString("en-US", {
         month: "long",
@@ -184,46 +184,40 @@ function displayOrderDetails(order) {
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      });
+      })
     }
   } catch (e) {
-    console.error("Error formatting date:", e);
+    console.error("Error formatting date:", e)
   }
 
   // Calculate shipping date (3 days after order date)
-  const shippingDate = new Date(orderDate);
-  shippingDate.setDate(shippingDate.getDate());
+  const shippingDate = new Date(orderDate)
+  shippingDate.setDate(shippingDate.getDate())
   const formattedShippingDate = shippingDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  });
+  })
 
   // Format customer details from the database
-  const firstName = order.idClient?.firstname || "";
-  const lastName = order.idClient?.lastname || "";
-  const customerName =
-    firstName && lastName
-      ? `${firstName} ${lastName}`.trim()
-      : "Unknown Customer";
-  const customerEmail = order.idClient?.email || "";
-  const customerPhone = order.idClient?.phoneNumber || "";
+  const firstName = order.idClient?.firstname || ""
+  const lastName = order.idClient?.lastname || ""
+  const customerName = firstName && lastName ? `${firstName} ${lastName}`.trim() : "Unknown Customer"
+  const customerEmail = order.idClient?.email || ""
+  const customerPhone = order.idClient?.phoneNumber || ""
 
   // Get shipping details - first check if there's shipping details in the order
-  let shippingDetails = order.shippingDetails || {};
+  let shippingDetails = order.shippingDetails || {}
 
   // If no shipping details in order, check if client has shipping info
   if (Object.keys(shippingDetails).length === 0 && order.idClient) {
-    console.log("Checking client for shipping info:", order.idClient);
+    console.log("Checking client for shipping info:", order.idClient)
 
     // Check for shippingInfo in the client model
     if (order.idClient.shippingInfo) {
-      console.log(
-        "Found shipping info in client:",
-        order.idClient.shippingInfo
-      );
+      console.log("Found shipping info in client:", order.idClient.shippingInfo)
 
-      const clientShippingInfo = order.idClient.shippingInfo;
+      const clientShippingInfo = order.idClient.shippingInfo
       shippingDetails = {
         firstname: firstName,
         lastname: lastName,
@@ -232,22 +226,15 @@ function displayOrderDetails(order) {
         governorate: clientShippingInfo.governorate,
         postCode: clientShippingInfo.postCode,
         phone: clientShippingInfo.phone || customerPhone,
-      };
+      }
     }
     // Check for shipping addresses in the client model (as fallback)
-    else if (
-      order.idClient.shippingAddresses &&
-      order.idClient.shippingAddresses.length > 0
-    ) {
-      console.log(
-        "Found shipping addresses in client:",
-        order.idClient.shippingAddresses
-      );
+    else if (order.idClient.shippingAddresses && order.idClient.shippingAddresses.length > 0) {
+      console.log("Found shipping addresses in client:", order.idClient.shippingAddresses)
 
       // Get default shipping address or first one
-      const clientAddresses = order.idClient.shippingAddresses;
-      const defaultAddress =
-        clientAddresses.find((addr) => addr.isDefault) || clientAddresses[0];
+      const clientAddresses = order.idClient.shippingAddresses
+      const defaultAddress = clientAddresses.find((addr) => addr.isDefault) || clientAddresses[0]
 
       shippingDetails = {
         firstname: firstName,
@@ -257,16 +244,13 @@ function displayOrderDetails(order) {
         governorate: defaultAddress.governorate,
         postCode: defaultAddress.postCode,
         phone: defaultAddress.phone || customerPhone,
-      };
+      }
     }
     // If no shipping addresses array, check for defaultShippingInfo
     else if (order.idClient.defaultShippingInfo) {
-      console.log(
-        "Found default shipping info in client:",
-        order.idClient.defaultShippingInfo
-      );
+      console.log("Found default shipping info in client:", order.idClient.defaultShippingInfo)
 
-      const defaultInfo = order.idClient.defaultShippingInfo;
+      const defaultInfo = order.idClient.defaultShippingInfo
       shippingDetails = {
         firstname: firstName,
         lastname: lastName,
@@ -275,58 +259,51 @@ function displayOrderDetails(order) {
         governorate: defaultInfo.governorate,
         postCode: defaultInfo.postCode,
         phone: defaultInfo.phone || customerPhone,
-      };
+      }
     }
   }
 
-  console.log("Final shipping details:", shippingDetails);
+  console.log("Final shipping details:", shippingDetails)
 
   // Use shipping details if available, otherwise fall back to client info
   const shippingName =
     shippingDetails.firstname && shippingDetails.lastname
       ? `${shippingDetails.firstname} ${shippingDetails.lastname}`.trim()
-      : customerName;
+      : customerName
 
-  const shippingPhone =
-    shippingDetails.phone || customerPhone || "No phone number provided";
-  const shippingAddress = shippingDetails.address || "No address provided";
-  const shippingCity = shippingDetails.city || "No city provided";
-  const shippingGovernorate =
-    shippingDetails.governorate || "No governorate provided";
-  const shippingPostCode =
-    shippingDetails.postCode || "No postal code provided";
+  const shippingPhone = shippingDetails.phone || customerPhone || "No phone number provided"
+  const shippingAddress = shippingDetails.address || "No address provided"
+  const shippingCity = shippingDetails.city || "No city provided"
+  const shippingGovernorate = shippingDetails.governorate || "No governorate provided"
+  const shippingPostCode = shippingDetails.postCode || "No postal code provided"
 
   // Calculate order details
-  let subtotal = 0;
-  let items = [];
+  let subtotal = 0
+  let items = []
 
-  console.log("Order object:", order);
+  console.log("Order object:", order)
 
   // Check if cartData is available and use it to display items
-  if (
-    order.cartData &&
-    order.cartData.items &&
-    order.cartData.items.length > 0
-  ) {
-    console.log("Cart items found:", order.cartData.items);
+  if (order.cartData && order.cartData.items && order.cartData.items.length > 0) {
+    console.log("Cart items found:", order.cartData.items)
 
     order.cartData.items.forEach((item) => {
       // In the order model, productId is a complete product object
-      const product = item.productId;
-      console.log("Product data:", product);
+      const product = item.productId
+      console.log("Product data:", product)
 
-      const price = Number.parseFloat(product.productPrice) || 0;
-      const quantity = Number.parseInt(item.quantity) || 0;
-      const itemTotal = price * quantity;
-      subtotal += itemTotal;
+      const price = Number.parseFloat(product.productPrice) || 0
+      const quantity = Number.parseInt(item.quantity) || 0
+      const itemTotal = price * quantity
+      subtotal += itemTotal
 
       // Access the productId field correctly based on your data structure
-      let displayProductId = "N/A";
+      let displayProductId = "N/A"
 
       // This is the key fix - product.productId is the field we want
       if (product && product.productId) {
-        displayProductId = product.productId;
-        console.log("Using product.productId:", displayProductId);
+        displayProductId = product.productId
+        console.log("Using product.productId:", displayProductId)
       }
 
       items.push({
@@ -335,100 +312,92 @@ function displayOrderDetails(order) {
         price: price,
         quantity: quantity,
         total: itemTotal,
-      });
-    });
+      })
+    })
   } else {
-    console.warn("No cart items found in order:", order);
+    console.warn("No cart items found in order:", order)
     // Fallback sample data if no items are found
-    items = [
-      { id: "2541", name: "Product 1", quantity: 1, price: 80, total: 80 },
-    ];
-    subtotal = 80.0;
+    items = [{ id: "2541", name: "Product 1", quantity: 1, price: 80, total: 80 }]
+    subtotal = 80.0
   }
 
   // Calculate total amount (no discount or tax)
-  const deliveryCharge = 15.0;
-  const totalAmount = (
-    Number.parseFloat(subtotal) + Number.parseFloat(deliveryCharge)
-  ).toFixed(2);
-
-  // Déterminer les boutons d'action en fonction du statut de la commande
-  let actionButtons = "";
+  const deliveryCharge = 15.0
+  const totalAmount = (Number.parseFloat(subtotal) + Number.parseFloat(deliveryCharge)).toFixed(2)
+  // Determine action buttons based on order status
+  let actionButtons = ""
 
   if (order.orderStatus === "pending") {
     actionButtons = `
       <div>
-        <a href="#!" class="btn btn-success me-2" id="accept-order-btn">Accepter la commande</a>
-        <a href="#!" class="btn btn-warning me-2" id="postpone-order-btn">Reporter la commande</a>
-        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Annuler la commande</a>
+        <a href="#!" class="btn btn-success me-2" id="accept-order-btn">Accept Order</a>
+        <a href="#!" class="btn btn-warning me-2" id="postpone-order-btn">Postpone Order</a>
+        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Cancel Order</a>
       </div>
-    `;
+    `
   } else if (order.orderStatus === "accepted") {
     actionButtons = `
       <div>
-        <a href="#!" class="btn btn-primary me-2" id="make-to-ship-btn">Expédier la commande</a>
-        <a href="#!" class="btn btn-warning me-2" id="postpone-order-btn">Reporter la commande</a>
-        <a href="#!" class="btn btn-success me-2" id="complete-order-btn">Compléter la commande</a>
-        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Annuler la commande</a>
+        <a href="#!" class="btn btn-primary me-2" id="make-to-ship-btn">Ship Order</a>
+        <a href="#!" class="btn btn-warning me-2" id="postpone-order-btn">Postpone Order</a>
+        <a href="#!" class="btn btn-success me-2" id="complete-order-btn">Complete Order</a>
+        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Cancel Order</a>
       </div>
-    `;
+    `
   } else if (order.orderStatus === "shipped") {
     actionButtons = `
       <div>
-        <a href="#!" class="btn btn-success me-2" id="complete-order-btn">Compléter la commande</a>
-        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Annuler la commande</a>
+        <a href="#!" class="btn btn-success me-2" id="complete-order-btn">Complete Order</a>
+        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Cancel Order</a>
       </div>
-    `;
+    `
   } else if (order.orderStatus === "postponed") {
     actionButtons = `
       <div>
-        <a href="#!" class="btn btn-primary me-2" id="reschedule-order-btn">Reprogrammer</a>
-        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Annuler la commande</a>
+        <a href="#!" class="btn btn-primary me-2" id="reschedule-order-btn">Reschedule</a>
+        <a href="#!" class="btn btn-danger me-2" id="cancel-order-btn">Cancel Order</a>
       </div>
-    `;
+    `
   } else if (order.orderStatus === "completed") {
     actionButtons = `
       <div>
-        <span class="badge bg-success p-2 me-2">Commande complétée</span>
-        <a href="#!" class="btn btn-danger" id="delete-order-btn">Supprimer</a>
+        <span class="badge bg-success p-2 me-2">Order Completed</span>
+        <a href="#!" class="btn btn-danger" id="delete-order-btn">Delete</a>
       </div>
-    `;
+    `
   } else if (order.orderStatus === "cancelled") {
     actionButtons = `
       <div>
-        <span class="badge bg-danger p-2 me-2">Commande annulée</span>
-        <a href="#!" class="btn btn-danger" id="delete-order-btn">Supprimer</a>
+        <span class="badge bg-danger p-2 me-2">Order Cancelled</span>
+        <a href="#!" class="btn btn-danger" id="delete-order-btn">Delete</a>
       </div>
-    `;
-  }
-  // Afficher les informations de report si la commande est reportée
-  let postponedInfo = "";
+    `
+  } // Display postponement information if the order is postponed
+  let postponedInfo = ""
   if (order.orderStatus === "postponed" && order.postponeInfo) {
-    const postponeDate = new Date(order.postponeInfo.newDeliveryDate);
+    const postponeDate = new Date(order.postponeInfo.newDeliveryDate)
     const formattedPostponeDate = postponeDate.toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
-    });
-
+    })
     postponedInfo = `
       <div class="alert alert-purple mt-3">
-        <h5><i class="bi bi-calendar2-plus"></i> Informations de report</h5>
-        <p><strong>Nouvelle date de livraison:</strong> ${formattedPostponeDate}</p>
+        <h5><i class="bi bi-calendar2-plus"></i> Postponement Information</h5>
+        <p><strong>New delivery date:</strong> ${formattedPostponeDate}</p>
         ${order.postponeInfo.notes ? `<p><strong>Notes:</strong> ${order.postponeInfo.notes}</p>` : ""}
       </div>
-    `;
+    `
   }
-
-  // Afficher la raison d'annulation si la commande est annulée
-  let cancelInfo = "";
+  // Display cancellation reason if the order is cancelled
+  let cancelInfo = ""
   if (order.orderStatus === "cancelled" && order.refusalReason) {
     cancelInfo = `
       <div class="alert alert-danger mt-3">
-        <h5><i class="bi bi-x-circle"></i> Informations d'annulation</h5>
-        <p><strong>Raison:</strong> ${order.refusalReason}</p>
+        <h5><i class="bi bi-x-circle"></i> Cancellation Information</h5>
+        <p><strong>Reason:</strong> ${order.refusalReason}</p>
       </div>
-    `;
+    `
   }
 
   // Create the order details HTML
@@ -572,7 +541,7 @@ function displayOrderDetails(order) {
                             <td>${item.price.toFixed(2)} TND</td>
                             <td>${item.total.toFixed(2)} TND</td>
                           </tr>
-                        `
+                        `,
                           )
                           .join("")}
                       </tbody>
@@ -673,116 +642,116 @@ function displayOrderDetails(order) {
         </div>
       </div>
     </div>
-  `;
+  `
 
   // Display the order details in the content area
-  contentArea.innerHTML = orderDetailsHTML;
+  contentArea.innerHTML = orderDetailsHTML
 
   // Add event listeners
-  setupOrderActionButtons(order._id);
+  setupOrderActionButtons(order._id)
 }
 
-// Mettre à jour la fonction setupOrderActionButtons pour gérer les boutons d'action pour les commandes reportées
+// Update the setupOrderActionButtons function to handle action buttons for postponed orders
 function setupOrderActionButtons(orderId) {
   // Accept order button
-  const acceptOrderBtn = document.getElementById("accept-order-btn");
+  const acceptOrderBtn = document.getElementById("accept-order-btn")
   if (acceptOrderBtn) {
     acceptOrderBtn.addEventListener("click", () => {
-      acceptOrder(orderId);
-    });
+      acceptOrder(orderId)
+    })
   }
 
   // Make to Ship button
-  const makeToShipBtn = document.getElementById("make-to-ship-btn");
+  const makeToShipBtn = document.getElementById("make-to-ship-btn")
   if (makeToShipBtn) {
     makeToShipBtn.addEventListener("click", () => {
       // Call the makeToShip function from delivery.js
       if (typeof window.makeToShip === "function") {
-        window.makeToShip(orderId);
+        window.makeToShip(orderId)
       } else {
-        makeToShipFallback(orderId);
+        makeToShipFallback(orderId)
       }
-    });
+    })
   }
 
   // Complete order button
-  const completeOrderBtn = document.getElementById("complete-order-btn");
+  const completeOrderBtn = document.getElementById("complete-order-btn")
   if (completeOrderBtn) {
     completeOrderBtn.addEventListener("click", () => {
-      completeOrder(orderId);
-    });
+      completeOrder(orderId)
+    })
   }
 
   // Cancel order button
-  const cancelOrderBtn = document.getElementById("cancel-order-btn");
+  const cancelOrderBtn = document.getElementById("cancel-order-btn")
   if (cancelOrderBtn) {
     cancelOrderBtn.addEventListener("click", () => {
-      cancelOrder(orderId);
-    });
+      cancelOrder(orderId)
+    })
   }
 
   // Delete order button
-  const deleteOrderBtn = document.getElementById("delete-order-btn");
+  const deleteOrderBtn = document.getElementById("delete-order-btn")
   if (deleteOrderBtn) {
     deleteOrderBtn.addEventListener("click", () => {
-      confirmDeleteOrder(orderId);
-    });
+      confirmDeleteOrder(orderId)
+    })
   }
 
   // Postpone order button
-  const postponeOrderBtn = document.getElementById("postpone-order-btn");
+  const postponeOrderBtn = document.getElementById("postpone-order-btn")
   if (postponeOrderBtn) {
     postponeOrderBtn.addEventListener("click", () => {
-      postponeOrder(orderId);
-    });
+      postponeOrder(orderId)
+    })
   }
 
   // Reschedule order button
-  const rescheduleOrderBtn = document.getElementById("reschedule-order-btn");
+  const rescheduleOrderBtn = document.getElementById("reschedule-order-btn")
   if (rescheduleOrderBtn) {
     rescheduleOrderBtn.addEventListener("click", () => {
-      rescheduleOrder(orderId);
-    });
+      rescheduleOrder(orderId)
+    })
   }
 }
 
 // Function to update order status via XHR
 function updateOrderStatus(orderId, status) {
   // Get the auth token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
   // Create loading indicator
   Swal.fire({
-    title: "Traitement en cours...",
-    text: "Mise à jour du statut de la commande",
+    title: "Processing...",
+    text: "Updating order status",
     icon: "info",
     showConfirmButton: false,
     allowOutsideClick: false,
     didOpen: () => {
-      Swal.showLoading();
+      Swal.showLoading()
     },
-  });
+  })
 
   // Create XHR request to update order status
-  const xhr = new XMLHttpRequest();
-  xhr.open("PUT", `http://localhost:3000/order/${orderId}/status`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/order/${orderId}/status`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
   xhr.onload = () => {
     if (xhr.status === 200) {
       try {
         // Check which page we're on and refresh accordingly
-        const currentUrl = window.location.href;
+        const currentUrl = window.location.href
         if (currentUrl.includes("detailsOrders.html")) {
           // Refresh the order details to show updated status
-          loadOrderDetails();
+          loadOrderDetails()
         } else {
           // Reload orders list
-          loadOrders();
+          loadOrders()
         }
 
         // Show success message
@@ -791,92 +760,87 @@ function updateOrderStatus(orderId, status) {
           text: `Order successfully marked as ${status.replace("_", " ")}`,
           icon: "success",
           confirmButtonText: "OK",
-        });
+        })
       } catch (error) {
-        console.error("Error parsing update response:", error);
+        console.error("Error parsing update response:", error)
         Swal.fire({
           title: "Error!",
           text: "Failed to update order status",
           icon: "error",
           confirmButtonText: "OK",
-        });
+        })
       }
     } else {
-      console.error("Error updating order status:", xhr.status);
+      console.error("Error updating order status:", xhr.status)
       Swal.fire({
         title: "Error!",
         text: "Failed to update order status. Please try again.",
         icon: "error",
         confirmButtonText: "OK",
-      });
+      })
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error("Network error when updating order status");
+    console.error("Network error when updating order status")
     Swal.fire({
       title: "Network Error",
       text: "Please check your connection and try again.",
       icon: "error",
       confirmButtonText: "OK",
-    });
-  };
+    })
+  }
 
   // Send the request with status data
-  xhr.send(JSON.stringify({ status: status }));
+  xhr.send(JSON.stringify({ status: status }))
 }
 
 // Function to update order status with reason via XHR
 function updateOrderStatusWithReason(orderId, status, refusalReason) {
   // Get the auth token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
   // Create loading indicator
   Swal.fire({
-    title: "Traitement en cours...",
-    text: "Mise à jour du statut de la commande",
+    title: "Processing...",
+    text: "Updating order status",
     icon: "info",
     showConfirmButton: false,
     allowOutsideClick: false,
     didOpen: () => {
-      Swal.showLoading();
+      Swal.showLoading()
     },
-  });
+  })
 
   // Log the order info for debugging
-  console.log(
-    `Updating order ${orderId} to status: ${status} with reason: ${refusalReason}`
-  );
+  console.log(`Updating order ${orderId} to status: ${status} with reason: ${refusalReason}`)
 
   // Create XHR request to update order status
-  const xhr = new XMLHttpRequest();
-  xhr.open("PUT", `http://localhost:3000/order/${orderId}/status`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  const xhr = new XMLHttpRequest()
+  xhr.open("PUT", `http://localhost:3000/order/${orderId}/status`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
-    console.log(
-      `Response status: ${xhr.status}, Response text:`,
-      xhr.responseText
-    );
+    console.log(`Response status: ${xhr.status}, Response text:`, xhr.responseText)
 
     if (xhr.status === 200) {
       try {
         // Parse the response to check for any errors from server
-        const response = JSON.parse(xhr.responseText);
+        const response = JSON.parse(xhr.responseText)
 
         // Check which page we're on and refresh accordingly
-        const currentUrl = window.location.href;
+        const currentUrl = window.location.href
         if (currentUrl.includes("detailsOrders.html")) {
           // Refresh the order details to show updated status
-          loadOrderDetails();
+          loadOrderDetails()
         } else {
           // Reload orders list
-          loadOrders();
+          loadOrders()
         }
 
         // Show success message
@@ -885,64 +849,60 @@ function updateOrderStatusWithReason(orderId, status, refusalReason) {
           text: `Order successfully marked as ${status.replace("_", " ")}`,
           icon: "success",
           confirmButtonText: "OK",
-        });
+        })
       } catch (error) {
-        console.error(
-          "Error parsing update response:",
-          error,
-          xhr.responseText
-        );
+        console.error("Error parsing update response:", error, xhr.responseText)
         Swal.fire({
           title: "Error!",
           text: "Failed to parse server response. Please try again.",
           icon: "error",
           confirmButtonText: "OK",
-        });
+        })
       }
     } else {
       // Try to parse error message from server
-      let errorMessage = "Failed to update order status. Please try again.";
+      let errorMessage = "Failed to update order status. Please try again."
       try {
-        const errorResponse = JSON.parse(xhr.responseText);
+        const errorResponse = JSON.parse(xhr.responseText)
         if (errorResponse && errorResponse.message) {
-          errorMessage = errorResponse.message;
+          errorMessage = errorResponse.message
         }
       } catch (e) {
-        console.error("Could not parse error response:", e);
+        console.error("Could not parse error response:", e)
       }
 
-      console.error("Error updating order status:", xhr.status, errorMessage);
+      console.error("Error updating order status:", xhr.status, errorMessage)
       Swal.fire({
         title: "Error!",
         text: errorMessage,
         icon: "error",
         confirmButtonText: "OK",
-      });
+      })
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error("Network error when updating order status");
+    console.error("Network error when updating order status")
     Swal.fire({
       title: "Network Error",
       text: "Please check your connection and try again.",
       icon: "error",
       confirmButtonText: "OK",
-    });
-  };
+    })
+  }
 
   // Send the request with status data and refusal reason
   const requestData = {
     status: status,
     refusalReason: refusalReason,
-  };
-  console.log("Sending request data:", requestData);
-  xhr.send(JSON.stringify(requestData));
+  }
+  console.log("Sending request data:", requestData)
+  xhr.send(JSON.stringify(requestData))
 }
 
 // Display error message
 function displayError(message) {
-  const contentArea = document.querySelector(".app-main");
+  const contentArea = document.querySelector(".app-main")
   if (contentArea) {
     contentArea.innerHTML = `
       <div class="alert alert-danger m-4">
@@ -950,98 +910,84 @@ function displayError(message) {
         <p>${message}</p>
         <a href="orders.html" class="btn btn-primary mt-2">Back to Orders</a>
       </div>
-    `;
+    `
   }
 }
 
-// Mettre à jour la fonction loadOrders pour inclure le tableau des commandes reportées
+// Update the loadOrders function to include the postponed orders table
 function loadOrders() {
   // Show loading indicator in all tables
-  const allOrdersTable = document.getElementById("all-orders-table");
-  const pendingOrdersTable = document.getElementById("pending-orders-table");
-  const completedOrdersTable = document.getElementById(
-    "completed-orders-table"
-  );
-  const cancelledOrdersTable = document.getElementById(
-    "cancelled-orders-table"
-  );
-  const shippedOrdersTable = document.getElementById("shipped-orders-table");
-  const postponedOrdersTable = document.getElementById(
-    "postponed-orders-table"
-  );
+  const allOrdersTable = document.getElementById("all-orders-table")
+  const pendingOrdersTable = document.getElementById("pending-orders-table")
+  const completedOrdersTable = document.getElementById("completed-orders-table")
+  const cancelledOrdersTable = document.getElementById("cancelled-orders-table")
+  const shippedOrdersTable = document.getElementById("shipped-orders-table")
+  const postponedOrdersTable = document.getElementById("postponed-orders-table")
 
   if (allOrdersTable) {
-    allOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading orders...</td></tr>';
+    allOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading orders...</td></tr>'
   }
   if (pendingOrdersTable) {
-    pendingOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading pending orders...</td></tr>';
+    pendingOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading pending orders...</td></tr>'
   }
   if (completedOrdersTable) {
-    completedOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading completed orders...</td></tr>';
+    completedOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading completed orders...</td></tr>'
   }
   if (cancelledOrdersTable) {
-    cancelledOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading cancelled orders...</td></tr>';
+    cancelledOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading cancelled orders...</td></tr>'
   }
   if (shippedOrdersTable) {
-    shippedOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading shipped orders...</td></tr>';
+    shippedOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading shipped orders...</td></tr>'
   }
   if (postponedOrdersTable) {
-    postponedOrdersTable.innerHTML =
-      '<tr><td colspan="8" class="text-center">Loading postponed orders...</td></tr>';
+    postponedOrdersTable.innerHTML = '<tr><td colspan="8" class="text-center">Loading postponed orders...</td></tr>'
   }
 
   // Get the authentication token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
   // Create XHR request to get orders
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:3000/order", true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", "http://localhost:3000/order", true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
     if (xhr.status === 200) {
       try {
-        const data = JSON.parse(xhr.responseText);
-        orders = data.orders || [];
-        console.log("Loaded orders:", orders);
+        const data = JSON.parse(xhr.responseText)
+        orders = data.orders || []
+        console.log("Loaded orders:", orders)
 
         // Update order counts
-        updateOrderCounts(orders);
+        updateOrderCounts(orders)
 
         // Filter and display orders
-        filterAndDisplayOrders();
+        filterAndDisplayOrders()
       } catch (error) {
-        console.error("Error parsing orders data:", error);
-        displayErrorInTables("Error parsing orders data: " + error.message);
+        console.error("Error parsing orders data:", error)
+        displayErrorInTables("Error parsing orders data: " + error.message)
       }
     } else {
-      console.error("Error fetching orders:", xhr.status);
-      displayErrorInTables("Error loading orders. Status: " + xhr.status);
+      console.error("Error fetching orders:", xhr.status)
+      displayErrorInTables("Error loading orders. Status: " + xhr.status)
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error("Network error when fetching orders");
-    displayErrorInTables(
-      "Network error. Please check your connection and try again."
-    );
-  };
+    console.error("Network error when fetching orders")
+    displayErrorInTables("Network error. Please check your connection and try again.")
+  }
 
   // Send the request
-  xhr.send();
+  xhr.send()
 }
 
-// Mettre à jour la fonction displayErrorInTables pour inclure le tableau des commandes reportées
+// Update the displayErrorInTables function to include the postponed orders table
 function displayErrorInTables(message) {
   const tables = [
     document.getElementById("all-orders-table"),
@@ -1051,165 +997,131 @@ function displayErrorInTables(message) {
     document.getElementById("cancelled-orders-table"),
     document.getElementById("shipped-orders-table"),
     document.getElementById("postponed-orders-table"),
-  ];
+  ]
 
   tables.forEach((table) => {
     if (table) {
-      table.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${message}</td></tr>`;
+      table.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${message}</td></tr>`
     }
-  });
+  })
 }
 
-// Mettre à jour la fonction filterAndDisplayOrders pour inclure les commandes reportées
+// Update the filterAndDisplayOrders function to include postponed orders
 function filterAndDisplayOrders() {
   if (!orders || orders.length === 0) {
-    displayNoOrdersMessage();
-    return;
+    displayNoOrdersMessage()
+    return
   }
 
   // Filter orders by search query
-  filteredOrders = searchQuery
-    ? filterOrdersBySearch(orders, searchQuery)
-    : [...orders];
+  filteredOrders = searchQuery ? filterOrdersBySearch(orders, searchQuery) : [...orders]
 
   // Sort filtered orders
-  sortOrders(filteredOrders, currentSort);
+  sortOrders(filteredOrders, currentSort)
 
   // Update total orders count
-  totalOrders = filteredOrders.length;
+  totalOrders = filteredOrders.length
 
   // Calculate pagination
-  const totalPages = Math.ceil(totalOrders / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalOrders);
+  const totalPages = Math.ceil(totalOrders / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = Math.min(startIndex + itemsPerPage, totalOrders)
 
   // Display orders for current page in the "All" tab
-  displayOrdersInTable(
-    filteredOrders.slice(startIndex, endIndex),
-    "all-orders-table"
-  );
+  displayOrdersInTable(filteredOrders.slice(startIndex, endIndex), "all-orders-table")
 
   // Update pagination info
-  updatePaginationInfo(startIndex, endIndex, totalOrders);
+  updatePaginationInfo(startIndex, endIndex, totalOrders)
 
   // Update pagination links
-  updatePaginationLinks(currentPage, totalPages);
+  updatePaginationLinks(currentPage, totalPages)
 
   // Also update the filtered tabs
-  displayFilteredOrders("pending");
-  displayFilteredOrders("completed");
-  displayFilteredOrders("cancelled");
-  displayFilteredOrders("accepted");
-  displayFilteredOrders("shipped");
-  displayFilteredOrders("postponed");
+  displayFilteredOrders("pending")
+  displayFilteredOrders("completed")
+  displayFilteredOrders("cancelled")
+  displayFilteredOrders("accepted")
+  displayFilteredOrders("shipped")
+  displayFilteredOrders("postponed")
 }
 
 // Display orders filtered by status
 function displayFilteredOrders(status) {
-  const statusOrders = orders.filter((order) => order.orderStatus === status);
-  const tableId = `${status}-orders-table`;
+  const statusOrders = orders.filter((order) => order.orderStatus === status)
+  const tableId = `${status}-orders-table`
 
   if (statusOrders.length === 0) {
-    const table = document.getElementById(tableId);
+    const table = document.getElementById(tableId)
     if (table) {
-      table.innerHTML = `<tr><td colspan="8" class="text-center">No ${status} orders found</td></tr>`;
+      table.innerHTML = `<tr><td colspan="8" class="text-center">No ${status} orders found</td></tr>`
     }
-    return;
+    return
   }
 
   // Sort the status-filtered orders
-  sortOrders(statusOrders, currentSort);
+  sortOrders(statusOrders, currentSort)
 
   // Display in the appropriate table
-  displayOrdersInTable(statusOrders, tableId);
+  displayOrdersInTable(statusOrders, tableId)
 
   // Update the badge count
-  const badge = document.querySelector(`.${status}-orders-badge`);
+  const badge = document.querySelector(`.${status}-orders-badge`)
   if (badge) {
-    badge.textContent = statusOrders.length;
+    badge.textContent = statusOrders.length
   }
 }
 
 // Filter orders by search query
 function filterOrdersBySearch(orders, query) {
-  query = query.toLowerCase();
+  query = query.toLowerCase()
   return orders.filter((order) => {
     // Search in order ID
-    if (order._id && order._id.toLowerCase().includes(query)) return true;
+    if (order._id && order._id.toLowerCase().includes(query)) return true
 
     // Search in customer name
-    if (
-      order.idClient &&
-      order.idClient.firstname &&
-      order.idClient.firstname.toLowerCase().includes(query)
-    )
-      return true;
-    if (
-      order.idClient &&
-      order.idClient.lastname &&
-      order.idClient.lastname.toLowerCase().includes(query)
-    )
-      return true;
-    if (
-      order.idClient &&
-      order.idClient.lastname &&
-      order.idClient.lastname.toLowerCase().includes(query)
-    )
-      return true;
+    if (order.idClient && order.idClient.firstname && order.idClient.firstname.toLowerCase().includes(query))
+      return true
+    if (order.idClient && order.idClient.lastname && order.idClient.lastname.toLowerCase().includes(query)) return true
+    if (order.idClient && order.idClient.lastname && order.idClient.lastname.toLowerCase().includes(query)) return true
 
     // Search in email
-    if (
-      order.idClient &&
-      order.idClient.email &&
-      order.idClient.email.toLowerCase().includes(query)
-    )
-      return true;
+    if (order.idClient && order.idClient.email && order.idClient.email.toLowerCase().includes(query)) return true
 
     // Search in product names
     if (order.cartData && order.cartData.items) {
       for (const item of order.cartData.items) {
-        if (
-          item.productId &&
-          item.productId.productName &&
-          item.productId.productName.toLowerCase().includes(query)
-        ) {
-          return true;
+        if (item.productId && item.productId.productName && item.productId.productName.toLowerCase().includes(query)) {
+          return true
         }
       }
     }
 
-    return false;
-  });
+    return false
+  })
 }
 
 // Sort orders based on sort option
 function sortOrders(ordersToSort, sortOption) {
   switch (sortOption) {
     case "newest":
-      ordersToSort.sort(
-        (a, b) => new Date(b.dateCommande) - new Date(a.dateCommande)
-      );
-      break;
+      ordersToSort.sort((a, b) => new Date(b.dateCommande) - new Date(a.dateCommande))
+      break
     case "oldest":
-      ordersToSort.sort(
-        (a, b) => new Date(a.dateCommande) - new Date(b.dateCommande)
-      );
-      break;
+      ordersToSort.sort((a, b) => new Date(a.dateCommande) - new Date(b.dateCommande))
+      break
     case "high":
-      ordersToSort.sort((a, b) => (b.orderTotal || 0) - (a.orderTotal || 0));
-      break;
+      ordersToSort.sort((a, b) => (b.orderTotal || 0) - (a.orderTotal || 0))
+      break
     case "low":
-      ordersToSort.sort((a, b) => (a.orderTotal || 0) - (b.orderTotal || 0));
-      break;
+      ordersToSort.sort((a, b) => (a.orderTotal || 0) - (b.orderTotal || 0))
+      break
     default:
       // Default to newest
-      ordersToSort.sort(
-        (a, b) => new Date(b.dateCommande) - new Date(a.dateCommande)
-      );
+      ordersToSort.sort((a, b) => new Date(b.dateCommande) - new Date(a.dateCommande))
   }
 }
 
-// Mettre à jour la fonction displayNoOrdersMessage pour inclure le tableau des commandes reportées
+// Update the displayNoOrdersMessage function to include the postponed orders table
 function displayNoOrdersMessage() {
   const tables = [
     document.getElementById("all-orders-table"),
@@ -1219,117 +1131,110 @@ function displayNoOrdersMessage() {
     document.getElementById("cancelled-orders-table"),
     document.getElementById("shipped-orders-table"),
     document.getElementById("postponed-orders-table"),
-  ];
+  ]
 
   tables.forEach((table) => {
     if (table) {
-      table.innerHTML =
-        '<tr><td colspan="8" class="text-center">No orders found</td></tr>';
+      table.innerHTML = '<tr><td colspan="8" class="text-center">No orders found</td></tr>'
     }
-  });
+  })
 
   // Update pagination info
   if (paginationInfo) {
-    paginationInfo.textContent = "Showing 0 to 0 of 0 entries";
+    paginationInfo.textContent = "Showing 0 to 0 of 0 entries"
   }
 
   // Update pagination links
   if (paginationLinks) {
-    paginationLinks.innerHTML = "";
+    paginationLinks.innerHTML = ""
   }
 }
 
-// Mettre à jour la fonction displayOrdersInTable pour gérer le statut "postponed"
+// Update the displayOrdersInTable function to handle the "postponed" status
 function displayOrdersInTable(ordersToDisplay, tableId) {
-  const tableBody = document.getElementById(tableId);
-  if (!tableBody) return;
+  const tableBody = document.getElementById(tableId)
+  if (!tableBody) return
 
   if (ordersToDisplay.length === 0) {
-    tableBody.innerHTML =
-      '<tr><td colspan="8" class="text-center">No orders found</td></tr>';
-    return;
+    tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No orders found</td></tr>'
+    return
   }
 
-  tableBody.innerHTML = "";
+  tableBody.innerHTML = ""
 
   ordersToDisplay.forEach((order) => {
-    let total = order.orderTotal || 0;
-    let itemCount = 0;
+    let total = order.orderTotal || 0
+    let itemCount = 0
 
     // Use the cartData field for item count and total calculation
     if (order.cartData && order.cartData.items) {
-      itemCount = order.cartData.items.length;
+      itemCount = order.cartData.items.length
 
       // If orderTotal is not set, calculate it from cartData
       if (!order.orderTotal) {
-        total = 0;
+        total = 0
         order.cartData.items.forEach((item) => {
-          const price = Number.parseFloat(item.productId.productPrice) || 0;
-          const quantity = Number.parseInt(item.quantity) || 0;
-          total += price * quantity;
-        });
+          const price = Number.parseFloat(item.productId.productPrice) || 0
+          const quantity = Number.parseInt(item.quantity) || 0
+          total += price * quantity
+        })
       }
     }
 
     // Format date
-    let formattedDate = "Invalid Date";
+    let formattedDate = "Invalid Date"
     try {
-      const orderDate = new Date(order.dateCommande);
+      const orderDate = new Date(order.dateCommande)
       if (!isNaN(orderDate.getTime())) {
         formattedDate = orderDate.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "numeric",
-        });
+        })
       }
     } catch (e) {
-      console.error("Error formatting date:", e);
+      console.error("Error formatting date:", e)
     }
 
     // Format customer name
-    const firstName =
-      order.idClient && order.idClient.firstname
-        ? order.idClient.firstname
-        : "";
-    const lastName =
-      order.idClient && order.idClient.lastname ? order.idClient.lastname : "";
-    const customerName =
-      firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown";
+    const firstName = order.idClient && order.idClient.firstname ? order.idClient.firstname : ""
+    const lastName = order.idClient && order.idClient.lastname ? order.idClient.lastname : ""
+    const customerName = firstName || lastName ? `${firstName} ${lastName}`.trim() : "Unknown"
 
     // Determine status class and text
-    let statusClass = "status-pending";
-    let statusText = "Pending";
+    let statusClass = "status-pending"
+    let statusText = "Pending"
 
     if (order.orderStatus === "accepted") {
-      statusClass = "status-accepted";
-      statusText = "Accepted";
+      statusClass = "status-accepted"
+      statusText = "Accepted"
     } else if (order.orderStatus === "completed") {
-      statusClass = "status-shipped";
-      statusText = "Completed";
+      statusClass = "status-shipped"
+      statusText = "Completed"
     } else if (order.orderStatus === "cancelled") {
-      statusClass = "status-cancelled";
-      statusText = "Cancelled";
+      statusClass = "status-cancelled"
+      statusText = "Cancelled"
     } else if (order.orderStatus === "shipped") {
-      statusClass = "status-shipped";
-      statusText = "Shipped";
+      statusClass = "status-shipped"
+      statusText = "Shipped"
     } else if (order.orderStatus === "postponed") {
-      statusClass = "status-postponed";
-      statusText = "Postponed";
+      statusClass = "status-postponed"
+      statusText = "Postponed"
     }
 
-    // Déterminer les actions en fonction du statut de la commande
-    let actionButtons = "";
+    // Determine actions based on order status
+    let actionButtons = ""
 
-    // Toujours afficher le bouton "View Details"
+    // Always display the "View Details" button
     actionButtons += `
       <a href="detailsOrders.html?id=${order._id}" class="btn btn-action btn-outline-primary me-1" title="View Details">
         <i class="bi bi-eye"></i>
       </a>
-    `;
+    `
 
-    // Actions spécifiques selon le statut
+    // Specific actions based on status
     if (order.orderStatus === "pending") {
-      // Pour les commandes en attente: view details, accepte order, cancel order
+      // For pending orders: view details, accept order, cancel order
       actionButtons += `
         <button class="btn btn-action btn-outline-success me-1 accept-order" data-id="${order._id}" title="Accept Order">
           <i class="bi bi-check"></i>
@@ -1337,9 +1242,9 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
         <button class="btn btn-action btn-outline-danger cancel-order" data-id="${order._id}" title="Cancel Order">
           <i class="bi bi-x-circle"></i>
         </button>
-      `;
+      `
     } else if (order.orderStatus === "accepted") {
-      // Pour les commandes acceptées: view details, make to ship, complete order, cancel order
+      // For accepted orders: view details, make to ship, complete order, cancel order
       actionButtons += `
         <button class="btn btn-action btn-outline-primary me-1 make-to-ship" data-id="${order._id}" title="Make to Ship">
           <i class="bi bi-truck"></i>
@@ -1350,9 +1255,9 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
         <button class="btn btn-action btn-outline-danger cancel-order" data-id="${order._id}" title="Cancel Order">
           <i class="bi bi-x-circle"></i>
         </button>
-      `;
+      `
     } else if (order.orderStatus === "shipped") {
-      // Pour les commandes expédiées: view details, complete order, cancel order
+      // For shipped orders: view details, complete order, cancel order
       actionButtons += `
         <button class="btn btn-action btn-outline-success me-1 complete-order" data-id="${order._id}" title="Complete Order">
           <i class="bi bi-check-all"></i>
@@ -1360,9 +1265,10 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
         <button class="btn btn-action btn-outline-danger cancel-order" data-id="${order._id}" title="Cancel Order">
           <i class="bi bi-x-circle"></i>
         </button>
-      `;
+      `
     } else if (order.orderStatus === "postponed") {
-      // Pour les commandes reportées: view details, reschedule, cancel order
+      // For postponed orders: view details, reschedule, cancel order
+
       actionButtons += `
         <button class="btn btn-action btn-outline-primary me-1 reschedule-order" data-id="${order._id}" title="Reschedule Order">
           <i class="bi bi-calendar-check"></i>
@@ -1373,21 +1279,18 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
         <button class="btn btn-action btn-outline-danger cancel-order" data-id="${order._id}" title="Cancel Order">
           <i class="bi bi-x-circle"></i>
         </button>
-      `;
-    } else if (
-      order.orderStatus === "completed" ||
-      order.orderStatus === "cancelled"
-    ) {
-      // Pour les commandes complétées ou annulées: view details, supprimer
+      `
+    } else if (order.orderStatus === "completed" || order.orderStatus === "cancelled") {
+      // For completed or cancelled orders: view details, delete
       actionButtons += `
         <button class="btn btn-action btn-outline-danger delete-order" data-id="${order._id}" title="Delete Order">
           <i class="bi bi-trash"></i>
         </button>
-      `;
+      `
     }
 
     // Create table row
-    const row = document.createElement("tr");
+    const row = document.createElement("tr")
     row.innerHTML = `
       <td><span class="order-id">#${order._id ? order._id.substring(0, 8) : "N/A"}</span></td>
       <td><span class="date-text">${formattedDate}</span></td>
@@ -1401,534 +1304,471 @@ function displayOrdersInTable(ordersToDisplay, tableId) {
           ${actionButtons}
         </div>
       </td>
-    `;
+    `
 
-    tableBody.appendChild(row);
-  });
+    tableBody.appendChild(row)
+  })
 
   // Add event listeners to action buttons
   document.querySelectorAll(".delete-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
-      confirmDeleteOrder(orderId);
-    });
-  });
+      const orderId = e.currentTarget.getAttribute("data-id")
+      confirmDeleteOrder(orderId)
+    })
+  })
 
   // Add event listeners to accept buttons
   document.querySelectorAll(".accept-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
-      acceptOrder(orderId);
-    });
-  });
+      const orderId = e.currentTarget.getAttribute("data-id")
+      acceptOrder(orderId)
+    })
+  })
 
   // Add event listeners to cancel buttons
   document.querySelectorAll(".cancel-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
-      cancelOrder(orderId);
-    });
-  });
+      const orderId = e.currentTarget.getAttribute("data-id")
+      cancelOrder(orderId)
+    })
+  })
 
   // Add event listeners to complete buttons
   document.querySelectorAll(".complete-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
-      completeOrder(orderId);
-    });
-  });
+      const orderId = e.currentTarget.getAttribute("data-id")
+      completeOrder(orderId)
+    })
+  })
 
   // Add event listeners to make-to-ship buttons
   document.querySelectorAll(".make-to-ship").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
+      const orderId = e.currentTarget.getAttribute("data-id")
       if (typeof window.makeToShip === "function") {
-        window.makeToShip(orderId);
+        window.makeToShip(orderId)
       } else {
-        makeToShipFallback(orderId);
+        makeToShipFallback(orderId)
       }
-    });
-  });
+    })
+  })
 
   // Add event listeners to reschedule buttons
   document.querySelectorAll(".reschedule-order").forEach((button) => {
     button.addEventListener("click", (e) => {
-      const orderId = e.currentTarget.getAttribute("data-id");
-      rescheduleOrder(orderId);
-    });
-  });
+      const orderId = e.currentTarget.getAttribute("data-id")
+      rescheduleOrder(orderId)
+    })
+  })
 }
 
-// Ajouter une fonction pour compléter une commande
+// Add a function to complete an order
 function completeOrder(orderId) {
   Swal.fire({
-    title: "Compléter la commande",
-    text: "Êtes-vous sûr de vouloir marquer cette commande comme complétée?",
+    title: "Complete Order",
+    text: "Are you sure you want to mark this order as completed?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, compléter",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes, complete",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
-      updateOrderStatus(orderId, "completed");
+      updateOrderStatus(orderId, "completed")
     }
-  });
+  })
 }
 
-// Ajouter une fonction pour annuler une commande
+// Add a function to cancel an order
 function cancelOrder(orderId) {
   Swal.fire({
-    title: "Annuler la commande",
-    text: "Êtes-vous sûr de vouloir annuler cette commande?",
+    title: "Cancel Order",
+    text: "Are you sure you want to cancel this order?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, annuler",
-    cancelButtonText: "Non, garder",
+    confirmButtonText: "Yes, cancel",
+    cancelButtonText: "No, keep",
     input: "text",
-    inputLabel: "Raison d'annulation (obligatoire)",
-    inputPlaceholder: "Veuillez saisir la raison de l'annulation",
+    inputLabel: "Cancellation reason (required)",
+    inputPlaceholder: "Please enter the reason for cancellation",
     inputValidator: (value) => {
       if (!value) {
-        return "Vous devez saisir une raison d'annulation!";
+        return "You must enter a cancellation reason!"
       }
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      const refusalReason = result.value;
-      updateOrderStatusWithReason(orderId, "cancelled", refusalReason);
+      const refusalReason = result.value
+      updateOrderStatusWithReason(orderId, "cancelled", refusalReason)
     }
-  });
+  })
 }
 
 // Function to accept an order
 function acceptOrder(orderId) {
-  // Afficher un indicateur de chargement
+  // Show loading indicator
   Swal.fire({
-    title: "Vérification du stock...",
-    text: "Nous vérifions la disponibilité des produits",
+    title: "Checking stock...",
+    text: "We are verifying product availability",
     allowOutsideClick: false,
     didOpen: () => {
-      Swal.showLoading();
+      Swal.showLoading()
     },
-  });
+  })
 
-  // Récupérer les détails de la commande pour vérifier le stock
-  const token = localStorage.getItem("token");
+  // Get order details to check stock
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
-  // Créer une requête XHR pour obtenir les détails de la commande
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  // Create XHR request to get order details
+  const xhr = new XMLHttpRequest()
+  xhr.open("GET", `http://localhost:3000/order/${orderId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
     if (xhr.status === 200) {
       try {
-        const response = JSON.parse(xhr.responseText);
-        const order = response.order;
+        const response = JSON.parse(xhr.responseText)
+        const order = response.order
 
-        // Vérifier si la commande a des produits
-        if (
-          !order.cartData ||
-          !order.cartData.items ||
-          order.cartData.items.length === 0
-        ) {
+        // Check if the order has products
+        if (!order.cartData || !order.cartData.items || order.cartData.items.length === 0) {
           Swal.fire({
-            title: "Erreur!",
-            text: "Impossible de vérifier le stock: aucun produit trouvé dans la commande",
+            title: "Error!",
+            text: "Unable to verify stock: no products found in the order",
             icon: "error",
-          });
-          return;
+          })
+          return
         }
 
-        // Vérifier le stock pour chaque produit
-        checkStockForAllProducts(order, token);
+        // Check stock for each product
+        checkStockForAllProducts(order, token)
       } catch (error) {
-        console.error(
-          "Erreur lors de l'analyse des détails de la commande:",
-          error
-        );
+        console.error("Error parsing order details:", error)
         Swal.fire({
-          title: "Erreur!",
-          text: "Erreur lors de la vérification du stock",
+          title: "Error!",
+          text: "Error checking stock",
           icon: "error",
-        });
+        })
       }
     } else {
-      console.error(
-        "Erreur lors de la récupération des détails de la commande:",
-        xhr.status
-      );
+      console.error("Error retrieving order details:", xhr.status)
       Swal.fire({
-        title: "Erreur!",
-        text: "Erreur lors de la récupération des détails de la commande",
+        title: "Error!",
+        text: "Error retrieving order details",
         icon: "error",
-      });
+      })
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error(
-      "Erreur réseau lors de la récupération des détails de la commande"
-    );
+    console.error("Network error when retrieving order details")
     Swal.fire({
-      title: "Erreur réseau",
-      text: "Veuillez vérifier votre connexion et réessayer",
+      title: "Network Error",
+      text: "Please check your connection and try again",
       icon: "error",
-    });
-  };
+    })
+  }
 
-  // Envoyer la requête
-  xhr.send();
+  // Send the request
+  xhr.send()
 }
 
-// Modifier la fonction checkStockForAllProducts pour mieux gérer les IDs de produits et les erreurs
+// Update the checkStockForAllProducts function to better handle product IDs and errors
 function checkStockForAllProducts(order, token) {
-  // Tableau pour stocker les produits avec stock insuffisant
-  const productsWithInsufficientStock = [];
-  let pendingRequests = 0;
-  let failedRequests = 0;
+  // Array to store products with insufficient stock
+  const productsWithInsufficientStock = []
+  let pendingRequests = 0
+  let failedRequests = 0
 
-  // Pour chaque produit dans la commande
+  // For each product in the order
   order.cartData.items.forEach((item) => {
-    const product = item.productId;
-    const quantityOrdered = item.quantity;
+    const product = item.productId
+    const quantityOrdered = item.quantity
 
-    // Déterminer l'ID du produit à utiliser
-    let productId = null;
+    // Determine the product ID to use
+    let productId = null
 
-    // Essayer différentes propriétés pour trouver un ID valide
+    // Try different properties to find a valid ID
     if (product._id) {
-      productId = product._id;
+      productId = product._id
     } else if (product.productId) {
-      productId = product.productId;
+      productId = product.productId
     } else if (product.id) {
-      productId = product.id;
+      productId = product.id
     }
 
-    // Si aucun ID valide n'est trouvé, ajouter à la liste des produits avec stock insuffisant
+    // If no valid ID is found, add to the list of products with insufficient stock
     if (!productId) {
-      console.error("Impossible de déterminer l'ID du produit:", product);
+      console.error("Unable to determine product ID:", product)
       productsWithInsufficientStock.push({
-        name: product.productName || "Produit inconnu",
+        name: product.productName || "Unknown product",
         ordered: quantityOrdered,
         available: 0,
-        error: "ID de produit invalide",
-      });
-      return; // Passer au produit suivant
+        error: "Invalid product ID",
+      })
+      return // Skip to next product
     }
 
-    // Incrémenter le compteur de requêtes en attente
-    pendingRequests++; // Vérifier le stock actuel du produit
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true);
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    xhr.setRequestHeader("Content-Type", "application/json");
+    // Increment pending requests counter
+    pendingRequests++ // Check current product stock
+    const xhr = new XMLHttpRequest()
+    xhr.open("GET", `http://localhost:3000/product/get/${productId}`, true)
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    xhr.setRequestHeader("Content-Type", "application/json")
 
     xhr.onload = () => {
-      pendingRequests--;
+      pendingRequests--
       if (xhr.status === 200) {
         try {
-          const productData = JSON.parse(xhr.responseText);
-          let currentStock = 0;
-          let productName = "Produit inconnu";
+          const productData = JSON.parse(xhr.responseText)
+          let currentStock = 0
+          let productName = "Unknown product"
 
-          // Accéder correctement aux données du produit dans la réponse API
+          // Correctly access product data in API response
           if (productData.data && productData.data.product) {
             if (productData.data.product.stock !== undefined) {
-              currentStock = productData.data.product.stock;
+              currentStock = productData.data.product.stock
             }
             if (productData.data.product.productName) {
-              productName = productData.data.product.productName;
+              productName = productData.data.product.productName
             }
           }
           console.log(
-            `Produit ${productName}: Stock disponible = ${currentStock}, Quantité commandée = ${quantityOrdered}`
-          );
+            `Product ${productName}: Available stock = ${currentStock}, Ordered quantity = ${quantityOrdered}`,
+          )
 
           if (currentStock < quantityOrdered) {
             productsWithInsufficientStock.push({
               name: productName,
               ordered: quantityOrdered,
               available: currentStock,
-            });
+            })
           }
         } catch (error) {
-          console.error(
-            "Erreur lors de l'analyse des données du produit:",
-            error
-          );
-          failedRequests++;
+          console.error("Error parsing product data:", error)
+          failedRequests++
           productsWithInsufficientStock.push({
-            name: product.productName || "Produit inconnu",
+            name: product.productName || "Unknown product",
             ordered: quantityOrdered,
-            available: "Erreur",
-            error: "Erreur lors de l'analyse des données",
-          });
+            available: "Error",
+            error: "Error parsing data",
+          })
         }
       } else {
-        console.error(
-          `Erreur lors de la récupération des données du produit ${productId}:`,
-          xhr.status
-        );
-        failedRequests++;
+        console.error(`Error retrieving product data ${productId}:`, xhr.status)
+        failedRequests++
         productsWithInsufficientStock.push({
-          name: product.productName || "Produit inconnu",
+          name: product.productName || "Unknown product",
           ordered: quantityOrdered,
-          available: "Erreur",
-          error: `Erreur ${xhr.status} lors de la récupération des données`,
-        });
+          available: "Error",
+          error: `Error ${xhr.status} retrieving data`,
+        })
       }
 
       if (pendingRequests === 0) {
-        processStockCheckResults(
-          order._id,
-          productsWithInsufficientStock,
-          failedRequests
-        );
+        processStockCheckResults(order._id, productsWithInsufficientStock, failedRequests)
       }
-    };
+    }
 
     xhr.ontimeout = () => {
-      pendingRequests--;
-      failedRequests++;
-      console.error(
-        `Timeout lors de la récupération des données du produit ${productId}`
-      );
+      pendingRequests--
+      failedRequests++
+      console.error(`Timeout retrieving product data ${productId}`)
       productsWithInsufficientStock.push({
-        name: product.productName || "Produit inconnu",
+        name: product.productName || "Unknown product",
         ordered: quantityOrdered,
         available: "Timeout",
-        error: "La requête a expiré",
-      });
+        error: "Request timed out",
+      })
 
-      
       if (pendingRequests === 0) {
-        processStockCheckResults(
-          order._id,
-          productsWithInsufficientStock,
-          failedRequests
-        );
+        processStockCheckResults(order._id, productsWithInsufficientStock, failedRequests)
       }
-    };
+    }
 
     xhr.onerror = () => {
-      pendingRequests--;
-      failedRequests++;
-      console.error(
-        `Erreur réseau lors de la récupération des données du produit ${productId}`
-      );
+      pendingRequests--
+      failedRequests++
+      console.error(`Network error retrieving product data ${productId}`)
       productsWithInsufficientStock.push({
-        name: product.productName || "Produit inconnu",
+        name: product.productName || "Unknown product",
         ordered: quantityOrdered,
-        available: "Erreur",
-        error: "Erreur réseau",
-      });
+        available: "Error",
+        error: "Network error",
+      })
 
       if (pendingRequests === 0) {
-        processStockCheckResults(
-          order._id,
-          productsWithInsufficientStock,
-          failedRequests
-        );
+        processStockCheckResults(order._id, productsWithInsufficientStock, failedRequests)
       }
-    };
+    }
 
-    xhr.send();
-  });
+    xhr.send()
+  })
 
   if (pendingRequests === 0) {
-    processStockCheckResults(
-      order._id,
-      productsWithInsufficientStock,
-      failedRequests
-    );
+    processStockCheckResults(order._id, productsWithInsufficientStock, failedRequests)
   }
 }
 
-// Mettre à jour la fonction processStockCheckResults pour gérer les erreurs
-function processStockCheckResults(
-  orderId,
-  productsWithInsufficientStock,
-  failedRequests
-) {
-  // Fermer l'indicateur de chargement
-  Swal.close();
+// Update the processStockCheckResults function to handle errors
+function processStockCheckResults(orderId, productsWithInsufficientStock, failedRequests) {
+  // Close loading indicator
+  Swal.close()
 
-  // Si des requêtes ont échoué mais qu'il n'y a pas de problème de stock identifié
-  if (
-    failedRequests > 0 &&
-    productsWithInsufficientStock.length === failedRequests
-  ) {
-    // Construire le message d'erreur
-    let errorMessage =
-      "Impossible de vérifier le stock pour certains produits:<br><br>";
-    errorMessage += "<ul>";
+  // If requests failed but no stock issues identified
+  if (failedRequests > 0 && productsWithInsufficientStock.length === failedRequests) {
+    // Build error message
+    let errorMessage = "Unable to verify stock for some products:<br><br>"
+    errorMessage += "<ul>"
     productsWithInsufficientStock.forEach((product) => {
-      errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Erreur inconnue"}</li>`;
-    });
-    errorMessage += "</ul>";
-    errorMessage += "<br>Voulez-vous quand même accepter la commande?";
+      errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Unknown error"}</li>`
+    })
+    errorMessage += "</ul>"
+    errorMessage += "<br>Do you want to accept the order anyway?"
 
-    // Afficher l'erreur avec option de continuer
+    // Show error with option to continue
     Swal.fire({
-      title: "Erreur de vérification du stock",
+      title: "Stock verification error",
       html: errorMessage,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, accepter quand même",
-      cancelButtonText: "Annuler",
+      confirmButtonText: "Yes, accept anyway",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        updateOrderStatus(orderId, "accepted");
+        updateOrderStatus(orderId, "accepted")
       }
-    });
-    return;
+    })
+    return
   }
 
-  // Si des produits ont un stock insuffisant
+  // If products have insufficient stock
   if (productsWithInsufficientStock.length > 0) {
-    // Filtrer pour ne garder que les produits avec un vrai problème de stock (pas les erreurs)
-    const realStockIssues = productsWithInsufficientStock.filter(
-      (p) => !p.error
-    );
+    // Filter to keep only products with real stock issues (not errors)
+    const realStockIssues = productsWithInsufficientStock.filter((p) => !p.error)
 
     if (realStockIssues.length > 0) {
-      // Construire le message d'erreur pour les problèmes de stock
-      let errorMessage =
-        "Les produits suivants n'ont pas de stock suffisant:<br><br>";
-      errorMessage += "<ul>";
+      // Build error message for stock issues
+      let errorMessage = "The following products do not have sufficient stock:<br><br>"
+      errorMessage += "<ul>"
       realStockIssues.forEach((product) => {
-        errorMessage += `<li><strong>${product.name}</strong>: Commandé: ${product.ordered}, Disponible: ${product.available}</li>`;
-      });
-      errorMessage += "</ul>";
+        errorMessage += `<li><strong>${product.name}</strong>: Ordered: ${product.ordered}, Available: ${product.available}</li>`
+      })
+      errorMessage += "</ul>"
 
-      // Afficher l'erreur
+      // Show error
       Swal.fire({
-        title: "Stock insuffisant!",
+        title: "Insufficient stock!",
         html: errorMessage,
         icon: "error",
         confirmButtonText: "OK",
-      });
+      })
     } else if (failedRequests > 0) {
-      // S'il n'y a que des erreurs techniques, proposer de continuer
-      let errorMessage =
-        "Impossible de vérifier le stock pour certains produits:<br><br>";
-      errorMessage += "<ul>";
+      // If only technical errors, offer to continue
+      let errorMessage = "Unable to verify stock for some products:<br><br>"
+      errorMessage += "<ul>"
       productsWithInsufficientStock.forEach((product) => {
-        errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Erreur inconnue"}</li>`;
-      });
-      errorMessage += "</ul>";
-      errorMessage += "<br>Voulez-vous quand même accepter la commande?";
+        errorMessage += `<li><strong>${product.name}</strong>: ${product.error || "Unknown error"}</li>`
+      })
+      errorMessage += "</ul>"
+      errorMessage += "<br>Do you want to accept the order anyway?"
 
       Swal.fire({
-        title: "Erreur de vérification du stock",
+        title: "Stock verification error",
         html: errorMessage,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Oui, accepter quand même",
-        cancelButtonText: "Annuler",
+        confirmButtonText: "Yes, accept anyway",
+        cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          updateOrderStatus(orderId, "accepted");
+          updateOrderStatus(orderId, "accepted")
         }
-      });
+      })
     }
   } else {
-    // Si tous les produits ont un stock suffisant, demander confirmation pour accepter la commande
+    // If all products have sufficient stock, ask for confirmation to accept the order
     Swal.fire({
-      title: "Stock vérifié avec succès",
-      text: "Tous les produits sont disponibles en stock. Voulez-vous accepter cette commande?",
+      title: "Stock verified successfully",
+      text: "All products are available in stock. Do you want to accept this order?",
       icon: "success",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, accepter",
-      cancelButtonText: "Annuler",
+      confirmButtonText: "Yes, accept",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        updateOrderStatus(orderId, "accepted");
+        updateOrderStatus(orderId, "accepted")
       }
-    });
+    })
   }
 }
 
-// Mettre à jour la fonction updateOrderCounts pour inclure les commandes reportées
+// Update the updateOrderCounts function to include postponed orders
 function updateOrderCounts(orders) {
   // Count orders by status
-  const totalCount = orders.length;
-  const pendingOrders = orders.filter(
-    (order) => order.orderStatus === "pending"
-  ).length;
-  const acceptedOrders = orders.filter(
-    (order) => order.orderStatus === "accepted"
-  ).length;
-  const completedOrders = orders.filter(
-    (order) => order.orderStatus === "completed"
-  ).length;
-  const cancelledOrders = orders.filter(
-    (order) => order.orderStatus === "cancelled"
-  ).length;
-  const shippedOrders = orders.filter(
-    (order) => order.orderStatus === "shipped"
-  ).length;
-  const postponedOrders = orders.filter(
-    (order) => order.orderStatus === "postponed"
-  ).length;
+  const totalCount = orders.length
+  const pendingOrders = orders.filter((order) => order.orderStatus === "pending").length
+  const acceptedOrders = orders.filter((order) => order.orderStatus === "accepted").length
+  const completedOrders = orders.filter((order) => order.orderStatus === "completed").length
+  const cancelledOrders = orders.filter((order) => order.orderStatus === "cancelled").length
+  const shippedOrders = orders.filter((order) => order.orderStatus === "shipped").length
+  const postponedOrders = orders.filter((order) => order.orderStatus === "postponed").length
 
   // Update stat cards
-  updateCountDisplay(".total-orders-count", totalCount);
-  updateCountDisplay(".completed-orders-count", completedOrders);
-  updateCountDisplay(".accepted-orders-count", acceptedOrders);
-  updateCountDisplay(".pending-orders-count", pendingOrders);
-  updateCountDisplay(".cancelled-orders-count", cancelledOrders);
-  updateCountDisplay(".shipped-orders-count", shippedOrders);
-  updateCountDisplay(".postponed-orders-count", postponedOrders);
+  updateCountDisplay(".total-orders-count", totalCount)
+  updateCountDisplay(".completed-orders-count", completedOrders)
+  updateCountDisplay(".accepted-orders-count", acceptedOrders)
+  updateCountDisplay(".pending-orders-count", pendingOrders)
+  updateCountDisplay(".cancelled-orders-count", cancelledOrders)
+  updateCountDisplay(".shipped-orders-count", shippedOrders)
+  updateCountDisplay(".postponed-orders-count", postponedOrders)
 
   // Update tab badges
-  updateCountDisplay(".all-orders-badge", totalCount);
-  updateCountDisplay(".pending-orders-badge", pendingOrders);
-  updateCountDisplay(".accepted-orders-badge", acceptedOrders);
-  updateCountDisplay(".completed-orders-badge", completedOrders);
-  updateCountDisplay(".cancelled-orders-badge", cancelledOrders);
-  updateCountDisplay(".shipped-orders-badge", shippedOrders);
-  updateCountDisplay(".postponed-orders-badge", postponedOrders);
+  updateCountDisplay(".all-orders-badge", totalCount)
+  updateCountDisplay(".pending-orders-badge", pendingOrders)
+  updateCountDisplay(".accepted-orders-badge", acceptedOrders)
+  updateCountDisplay(".completed-orders-badge", completedOrders)
+  updateCountDisplay(".cancelled-orders-badge", cancelledOrders)
+  updateCountDisplay(".shipped-orders-badge", shippedOrders)
+  updateCountDisplay(".postponed-orders-badge", postponedOrders)
 }
 
 // Helper function to safely update count displays
 function updateCountDisplay(selector, value) {
-  const elements = document.querySelectorAll(selector);
+  const elements = document.querySelectorAll(selector)
   elements.forEach((element) => {
     if (element) {
-      element.textContent = value;
+      element.textContent = value
     }
-  });
+  })
 }
 
 // Update pagination information text
 function updatePaginationInfo(start, end, total) {
   if (paginationInfo) {
-    paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${total} entries`;
+    paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${total} entries`
   }
 }
 
 // Update pagination links
 function updatePaginationLinks(currentPage, totalPages) {
-  if (!paginationLinks) return;
+  if (!paginationLinks) return
 
-  let html = "";
+  let html = ""
 
   // Previous button
   html += `
@@ -1937,7 +1777,7 @@ function updatePaginationLinks(currentPage, totalPages) {
         <i class="bi bi-chevron-left"></i>
       </a>
     </li>
-  `;
+  `
 
   // Page numbers
   for (let i = 1; i <= totalPages; i++) {
@@ -1945,7 +1785,7 @@ function updatePaginationLinks(currentPage, totalPages) {
       <li class="page-item ${i === currentPage ? "active" : ""}">
         <a class="page-link" href="#" data-page="${i}">${i}</a>
       </li>
-    `;
+    `
   }
 
   // Next button
@@ -1955,261 +1795,247 @@ function updatePaginationLinks(currentPage, totalPages) {
         <i class="bi bi-chevron-right"></i>
       </a>
     </li>
-  `;
+  `
 
-  paginationLinks.innerHTML = html;
+  paginationLinks.innerHTML = html
 
   // Add event listeners to pagination links
   document.querySelectorAll(".page-link").forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const page = Number.parseInt(e.currentTarget.getAttribute("data-page"));
+      e.preventDefault()
+      const page = Number.parseInt(e.currentTarget.getAttribute("data-page"))
       if (page && page !== currentPage && page > 0 && page <= totalPages) {
-        currentPage = page;
-        filterAndDisplayOrders();
+        currentPage = page
+        filterAndDisplayOrders()
       }
-    });
-  });
+    })
+  })
 }
 
 // Confirm and delete an order
 function confirmDeleteOrder(orderId) {
   Swal.fire({
-    title: "Êtes-vous sûr?",
-    text: "Voulez-vous vraiment supprimer cette commande?",
+    title: "Are you sure?",
+    text: "Do you really want to delete this order?",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Oui, supprimer",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes, delete",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
-      deleteOrder(orderId);
+      deleteOrder(orderId)
     }
-  });
+  })
 }
 
 // Delete an order via XHR
 function deleteOrder(orderId) {
   // Get the authentication token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (!token) {
-    window.location.href = "../login.html";
-    return;
+    window.location.href = "../login.html"
+    return
   }
 
   // Create XHR request to delete order
-  const xhr = new XMLHttpRequest();
-  xhr.open("DELETE", `http://localhost:3000/order/delete/${orderId}`, true);
-  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  const xhr = new XMLHttpRequest()
+  xhr.open("DELETE", `http://localhost:3000/order/delete/${orderId}`, true)
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+  xhr.setRequestHeader("Content-Type", "application/json")
 
   xhr.onload = () => {
     if (xhr.status === 200) {
       // Reload orders after successful deletion
-      loadOrders();
+      loadOrders()
       Swal.fire({
-        title: "Supprimé!",
-        text: "La commande a été supprimée avec succès.",
+        title: "Deleted!",
+        text: "The order has been successfully deleted.",
         icon: "success",
-      });
+      })
     } else {
-      console.error("Error deleting order:", xhr.status);
+      console.error("Error deleting order:", xhr.status)
       Swal.fire({
-        title: "Erreur!",
-        text: `Erreur lors de la suppression de la commande. Statut: ${xhr.status}`,
+        title: "Error!",
+        text: `Error deleting order. Status: ${xhr.status}`,
         icon: "error",
-      });
+      })
     }
-  };
+  }
 
   xhr.onerror = () => {
-    console.error("Network error when deleting order");
+    console.error("Network error when deleting order")
     Swal.fire({
-      title: "Erreur réseau",
-      text: "Veuillez vérifier votre connexion et réessayer.",
+      title: "Network Error",
+      text: "Please check your connection and try again.",
       icon: "error",
-    });
-  };
+    })
+  }
 
   // Send the request
-  xhr.send();
+  xhr.send()
 }
 
-// Ajouter une fonction pour reporter une commande
+// Add a function to postpone an order
 function postponeOrder(orderId) {
   Swal.fire({
-    title: "Reporter la commande",
-    text: "Êtes-vous sûr de vouloir reporter cette commande?",
+    title: "Postpone Order",
+    text: "Are you sure you want to postpone this order?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, reporter",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes, postpone",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
-      updateOrderStatus(orderId, "postponed");
+      updateOrderStatus(orderId, "postponed")
     }
-  });
+  })
 }
 
-// Ajouter une fonction pour reprogrammer une commande reportée
+// Add a function to reschedule a postponed order
 function rescheduleOrder(orderId) {
-  // Créer un calendrier pour sélectionner une nouvelle date
+  // Create a calendar to select a new date
   Swal.fire({
-    title: "Reprogrammer la commande",
+    title: "Reschedule Order",
     html: `
       <div class="mb-3">
-        <label for="reschedule-date" class="form-label">Nouvelle date de livraison</label>
+        <label for="reschedule-date" class="form-label">New delivery date</label>
         <input type="date" id="reschedule-date" class="form-control" min="${new Date().toISOString().split("T")[0]}">
       </div>
       <div class="mb-3">
-        <label for="reschedule-notes" class="form-label">Notes (optionnel)</label>
-        <textarea id="reschedule-notes" class="form-control" rows="3" placeholder="Ajouter des notes concernant la reprogrammation..."></textarea>
+        <label for="reschedule-notes" class="form-label">Notes (optional)</label>
+        <textarea id="reschedule-notes" class="form-control" rows="3" placeholder="Add notes about the rescheduling..."></textarea>
       </div>
     `,
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Confirmer",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Confirm",
+    cancelButtonText: "Cancel",
     preConfirm: () => {
-      const date = document.getElementById("reschedule-date").value;
-      const notes = document.getElementById("reschedule-notes").value;
+      const date = document.getElementById("reschedule-date").value
+      const notes = document.getElementById("reschedule-notes").value
 
       if (!date) {
-        Swal.showValidationMessage("Veuillez sélectionner une date");
-        return false;
+        Swal.showValidationMessage("Please select a date")
+        return false
       }
 
-      return { date, notes };
+      return { date, notes }
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      // Mettre à jour le statut de la commande avec les nouvelles informations
-      const token = localStorage.getItem("token");
+      // Update order status with new information
+      const token = localStorage.getItem("token")
       if (!token) {
-        window.location.href = "../login.html";
-        return;
+        window.location.href = "../login.html"
+        return
       }
 
-      const xhr = new XMLHttpRequest();
-      xhr.open(
-        "PUT",
-        `http://localhost:3000/order/${orderId}/reschedule`,
-        true
-      );
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      xhr.setRequestHeader("Content-Type", "application/json");
+      const xhr = new XMLHttpRequest()
+      xhr.open("PUT", `http://localhost:3000/order/${orderId}/reschedule`, true)
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+      xhr.setRequestHeader("Content-Type", "application/json")
 
       xhr.onload = () => {
         if (xhr.status === 200) {
-          // Recharger les commandes après la reprogrammation réussie
-          loadOrders();
+          // Reload orders after successful rescheduling
+          loadOrders()
           Swal.fire({
-            title: "Succès!",
-            text: "La commande a été reprogrammée avec succès.",
+            title: "Success!",
+            text: "The order has been successfully rescheduled.",
             icon: "success",
-          });
+          })
         } else {
-          console.error(
-            "Erreur lors de la reprogrammation de la commande:",
-            xhr.status
-          );
+          console.error("Error rescheduling order:", xhr.status)
           Swal.fire({
-            title: "Erreur!",
-            text: `Erreur lors de la reprogrammation de la commande. Statut: ${xhr.status}`,
+            title: "Error!",
+            text: `Error rescheduling order. Status: ${xhr.status}`,
             icon: "error",
-          });
+          })
         }
-      };
+      }
 
       xhr.onerror = () => {
-        console.error(
-          "Erreur réseau lors de la reprogrammation de la commande"
-        );
+        console.error("Network error when rescheduling order")
         Swal.fire({
-          title: "Erreur réseau",
-          text: "Veuillez vérifier votre connexion et réessayer.",
+          title: "Network Error",
+          text: "Please check your connection and try again.",
           icon: "error",
-        });
-      };
+        })
+      }
 
-      // Envoyer la requête avec les données de reprogrammation
+      // Send request with rescheduling data
       xhr.send(
         JSON.stringify({
           newDeliveryDate: result.value.date,
           notes: result.value.notes,
-        })
-      );
+        }),
+      )
     }
-  });
+  })
 }
 
 // Function to handle shipping an order if the delivery.js makeToShip function isn't available
 function makeToShipFallback(orderId) {
   Swal.fire({
-    title: "Confirmer l'expédition",
-    text: "Êtes-vous sûr de vouloir expédier cette commande ? Une livraison sera créée et une facture générée.",
+    title: "Confirm Shipping",
+    text: "Are you sure you want to ship this order? A delivery will be created and an invoice generated.",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Oui, expédier",
-    cancelButtonText: "Annuler",
+    confirmButtonText: "Yes, ship",
+    cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
-      // Mettre à jour le statut de la commande vers "shipped"
-      updateOrderStatus(orderId, "shipped");
+      // Update order status to "shipped"
+      updateOrderStatus(orderId, "shipped")
 
-      // Ensuite, créer la livraison et la facture
-      const xhr = new XMLHttpRequest();
-      xhr.open("PUT", `/order/${orderId}/ship`, true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.setRequestHeader(
-        "Authorization",
-        `Bearer ${localStorage.getItem("token")}`
-      );
+      // Then create delivery and invoice
+      const xhr = new XMLHttpRequest()
+      xhr.open("PUT", `/order/${orderId}/ship`, true)
+      xhr.setRequestHeader("Content-Type", "application/json")
+      xhr.setRequestHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
 
       xhr.onload = () => {
         if (xhr.status === 200) {
           Swal.fire({
-            title: "Succès!",
-            text: "La commande a été expédiée, une livraison créée et une facture générée",
+            title: "Success!",
+            text: "The order has been shipped, a delivery created and an invoice generated",
             icon: "success",
             confirmButtonText: "OK",
           }).then(() => {
             // Reload the page or update UI
-            window.location.reload();
-          });
+            window.location.reload()
+          })
         } else {
           try {
-            const response = JSON.parse(xhr.responseText);
-            showErrorMessage(
-              response.message || "Erreur lors de l'expédition de la commande"
-            );
+            const response = JSON.parse(xhr.responseText)
+            showErrorMessage(response.message || "Error shipping order")
           } catch (e) {
-            showErrorMessage("Erreur lors de l'expédition de la commande");
+            showErrorMessage("Error shipping order")
           }
         }
-      };
+      }
 
       xhr.onerror = () => {
-        showErrorMessage("Erreur de connexion au serveur");
-      };
+        showErrorMessage("Server connection error")
+      }
 
-      xhr.send();
+      xhr.send()
     }
-  });
+  })
 }
 
 function showErrorMessage(message) {
   Swal.fire({
-    title: "Erreur!",
+    title: "Error!",
     text: message,
     icon: "error",
     confirmButtonText: "OK",
-  });
+  })
 }
