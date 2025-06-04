@@ -1809,42 +1809,71 @@ function initializeOrdersSection() {
     }
     updatePageNumbers()
   }
-
   function updatePageNumbers() {
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage)
     pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`
   }
-
+  
+  // Helper function to find an order by ID from our locally stored orders
+  function findOrderById(orderId) {
+    console.log("Searching for order ID:", orderId, "in", allOrders.length, "orders")
+    if (!orderId) {
+      console.error("Invalid order ID provided:", orderId)
+      return null
+    }
+    
+    // Make sure allOrders is an array
+    if (!Array.isArray(allOrders)) {
+      console.error("allOrders is not an array:", allOrders)
+      return null
+    }
+    
+    // Find the order
+    const order = allOrders.find(order => order && order._id === orderId)
+    console.log("Search result:", order ? "Found" : "Not found")
+    return order
+  }
   function addOrderButtonListeners() {
     document.querySelectorAll(".order-action.receipt").forEach((button) => {
       button.addEventListener("click", (e) => {
-        const orderId = e.target.id.split("-").pop()
-        openReceiptModal(orderId)
+        // Make sure we're using the button's ID, not the target element which could be a child
+        const orderId = button.id.split("-").pop()
+        console.log("Clicked receipt button for order ID:", orderId)
+        
+        // Find the order in our local data first (as a fallback)
+        const order = findOrderById(orderId)
+        if (order) {
+          console.log("Found order in local data:", order)
+          showReceiptModal(order)
+        } else {
+          console.log("Order not found in local data, trying API fallback")
+          // Fallback to API call if order not found locally
+          openReceiptModal(orderId)
+        }
       })
     })
 
     document.querySelectorAll(".order-action.cancel").forEach((button) => {
       button.addEventListener("click", (e) => {
-        const orderId = e.target.id.split("-").pop()
+        const orderId = button.id.split("-").pop()
         cancelOrder(orderId)
       })
     })
-
+    
     document.querySelectorAll(".order-action.track").forEach((button) => {
       button.addEventListener("click", (e) => {
-        const orderId = e.target.id.split("-").pop()
+        const orderId = button.id.split("-").pop()
         trackOrder(orderId)
       })
     })
 
     document.querySelectorAll(".order-action.review").forEach((button) => {
       button.addEventListener("click", (e) => {
-        const orderId = e.target.id.split("-").pop()
+        const orderId = button.id.split("-").pop()
         leaveReview(orderId)
       })
     })
   }
-
   function openReceiptModal(orderId) {
     const userId = localStorage.getItem("userId")
     const token = localStorage.getItem("token")
@@ -1853,35 +1882,107 @@ function initializeOrdersSection() {
       showToast("Error", "Please log in to view receipt", "error")
       return
     }
-
+    
+    console.log(`Attempting to fetch order ${orderId} from API for user ${userId}`)
+    
+    // Find the order in our local data first (as a fallback)
+    const localOrder = findOrderById(orderId)
+    if (localOrder) {
+      console.log("Using cached order data")
+      showReceiptModal(localOrder)
+      return
+    }
+    
+    // Try to get from API as backup
     const xhr = new XMLHttpRequest()
     xhr.open("GET", `/client/${userId}/orders/${orderId}`, true)
     xhr.setRequestHeader("Authorization", `Bearer ${token}`)
+    
+    console.log("Sending API request for order details")
 
     xhr.onload = () => {
       if (xhr.status === 200) {
         try {
-          const order = JSON.parse(xhr.responseText)
-          showReceiptModal(order)
+          console.log("API response received:", xhr.responseText.substring(0, 100) + "...")
+          const response = JSON.parse(xhr.responseText)
+          const order = response.data || response
+          
+          if (order && order._id) {
+            console.log("Successfully parsed order data")
+            showReceiptModal(order)
+          } else {
+            console.error("Invalid order data structure:", order)
+            createGenericReceipt(orderId)
+          }
         } catch (error) {
           console.error("Error parsing order data:", error)
-          showToast("Error", "Error loading receipt", "error")
+          createGenericReceipt(orderId)
         }
       } else {
         console.error("Error loading order. Status:", xhr.status)
-        showToast("Error", "Error loading receipt", "error")
+        createGenericReceipt(orderId)
       }
     }
 
     xhr.onerror = () => {
       console.error("Network error occurred")
-      showToast("Error", "Network error occurred", "error")
+      createGenericReceipt(orderId)
     }
 
     xhr.send()
   }
-
+  
+  // Fallback function to create a minimal receipt when API fails
+  function createGenericReceipt(orderId) {
+    // Create a simple order object with minimal information
+    const order = {
+      _id: orderId,
+      dateCommande: new Date(),
+      shop: { shopName: "Order Information" },
+      orderTotal: 0,
+      products: []
+    }
+    
+    showReceiptModal(order)
+    
+    // Add a message to the receipt that this is limited information
+    const receiptContainer = document.querySelector(".receipt-container")
+    if (receiptContainer) {
+      const infoMessage = document.createElement("div")
+      infoMessage.className = "receipt-error-message"
+      infoMessage.innerHTML = `
+        <p>Complete order details could not be loaded.</p>
+        <p>Please contact customer support for assistance.</p>
+      `
+      receiptContainer.appendChild(infoMessage)
+    }
+  }
   function showReceiptModal(order) {
+    // Log order structure to help debug
+    console.log("Order for receipt:", order)
+    
+    // Add extra debugging for products array
+    if (order.products) {
+      console.log("Products array exists with length:", order.products.length);
+      if (order.products.length > 0) {
+        console.log("First product sample:", order.products[0]);
+        
+        // Try to detect the structure format
+        const firstProduct = order.products[0];
+        if (firstProduct.productId && typeof firstProduct.productId === 'object') {
+          console.log("Product structure appears to be: { productId: { productName, productPrice }, quantity }");
+        } else if (typeof firstProduct.productId === 'string') {
+          console.log("Product structure appears to be: { productId: 'string-id', quantity }");
+        } else if (firstProduct.productName) {
+          console.log("Product structure appears to be: { productName, productPrice, quantity }");
+        } else if (firstProduct.product) {
+          console.log("Product structure appears to be: { product: { ... }, quantity }");
+        }
+      }
+    } else {
+      console.log("No products array found in order object");
+    }
+
     // Create the modal if it doesn't exist
     let modal = document.getElementById("receiptModal")
     if (!modal) {
@@ -1966,55 +2067,252 @@ function initializeOrdersSection() {
     receiptContainer.appendChild(productsSection)
 
     const productList = productsSection.querySelector(".product-list")
+    // Check if there are any products to display
+    let hasDisplayedProducts = false;
+
+    // Approach 1: Handle standard product structure
     if (order.products && Array.isArray(order.products)) {
       order.products.forEach((product) => {
-        const productItem = document.createElement("div")
-        productItem.className = "product-item simplified"
-        productItem.innerHTML = `
-          <div class="product-details-simplified">
-            <h4 class="product-name">${product.productId.productName}</h4>
-            <div class="product-meta-simplified">
-              <span class="quantity">${product.quantity} x</span>
-              <span class="price">${product.productId.productPrice.toFixed(2)} TND</span>
+        try {
+          const productItem = document.createElement("div")
+          productItem.className = "product-item simplified"
+          
+          // Debug product data structure
+          console.log("Processing product:", product)
+          
+          // Different ways the product data might be structured
+          let productName = "Product";
+          let productPrice = 0;
+          let quantity = 1;
+          
+          // Case 1: product.productId is an object with productName/productPrice properties
+          if (product.productId && typeof product.productId === 'object') {
+            productName = product.productId.productName || product.productId.name || productName;
+            productPrice = parseFloat(product.productId.productPrice || product.productId.price || 0);
+            quantity = parseInt(product.quantity || 1, 10);
+            console.log("Case 1 - Product from productId object:", { productName, productPrice, quantity });
+          } 
+          // Case 2: product is the product object itself
+          else if (product.productName || product.name) {
+            productName = product.productName || product.name || productName;
+            productPrice = parseFloat(product.productPrice || product.price || 0);
+            quantity = parseInt(product.quantity || 1, 10);
+            console.log("Case 2 - Direct product properties:", { productName, productPrice, quantity });
+          }
+          // Case 3: If product is just an ID reference
+          else if (typeof product.productId === 'string') {
+            productName = "Product #" + product.productId.substring(0, 8);
+            productPrice = parseFloat(product.price || 0);
+            quantity = parseInt(product.quantity || 1, 10);
+            console.log("Case 3 - Product from ID string:", { productName, productPrice, quantity });
+          }
+          // Case 4: product has a 'product' property (nested structure)
+          else if (product.product) {
+            if (typeof product.product === 'object') {
+              productName = product.product.productName || product.product.name || productName;
+              productPrice = parseFloat(product.product.productPrice || product.product.price || 0);
+            } else if (typeof product.product === 'string') {
+              productName = "Product #" + product.product.substring(0, 8);
+            }
+            quantity = parseInt(product.quantity || 1, 10);
+            console.log("Case 4 - Product from nested product property:", { productName, productPrice, quantity });
+          }
+          
+          productItem.innerHTML = `
+            <div class="product-details-simplified">
+              <h4 class="product-name">${productName}</h4>
+              <div class="product-meta-simplified">
+                <span class="quantity">${quantity} x</span>
+                <span class="price">${isNaN(productPrice) ? '0.00' : productPrice.toFixed(2)} TND</span>
+              </div>
+              <span class="item-total">${isNaN(productPrice) ? '0.00' : (quantity * productPrice).toFixed(2)} TND</span>
             </div>
-            <span class="item-total">${(product.quantity * product.productId.productPrice).toFixed(2)} TND</span>
-          </div>
-        `
-        productList.appendChild(productItem)
-      })
-    } else if (order.cartData && order.cartData.items && Array.isArray(order.cartData.items)) {
-      order.cartData.items.forEach((item) => {
-        const productItem = document.createElement("div")
-        productItem.className = "product-item simplified"
-        productItem.innerHTML = `
-          <div class="product-details-simplified">
-            <h4 class="product-name">${item.name}</h4>
-            <div class="product-meta-simplified">
-              <span class="quantity">${item.quantity} x</span>
-              <span class="price">${item.price.toFixed(2)} TND</span>
-            </div>
-            <span class="item-total">${(item.quantity * item.price).toFixed(2)} TND</span>
-          </div>
-        `
-        productList.appendChild(productItem)
+          `
+          productList.appendChild(productItem)
+          hasDisplayedProducts = true;
+        } catch (e) {
+          console.error("Error rendering product:", e);
+        }
       })
     }
-
+    
+    // Approach 2: Handle cart data structure
+    if (order.cartData && order.cartData.items && Array.isArray(order.cartData.items)) {
+      console.log("Processing cart data items:", order.cartData.items);
+      
+      order.cartData.items.forEach((item) => {
+        try {
+          const productItem = document.createElement("div")
+          productItem.className = "product-item simplified"
+          
+          // Debug the item structure
+          console.log("Processing cart item:", item)
+          
+          // Safely extract item data with fallbacks
+          let itemName = "Product";
+          let itemPrice = 0;
+          let itemQuantity = 1;
+          
+          // Case 1: Direct properties
+          if (item.name || item.productName) {
+            itemName = item.name || item.productName || "Product";
+            itemPrice = parseFloat(item.price || item.productPrice || 0);
+            itemQuantity = parseInt(item.quantity || 1, 10);
+            console.log("Cart Item Case 1 - Direct properties:", { itemName, itemPrice, itemQuantity });
+          } 
+          // Case 2: Nested product object
+          else if (item.product) {
+            if (typeof item.product === 'object') {
+              itemName = item.product.name || item.product.productName || "Product";
+              itemPrice = parseFloat(item.product.price || item.product.productPrice || 0);
+            } else {
+              itemName = "Product #" + item.product.toString().substring(0, 8);
+            }
+            itemQuantity = parseInt(item.quantity || 1, 10);
+            console.log("Cart Item Case 2 - Nested product:", { itemName, itemPrice, itemQuantity });
+          }
+          // Case 3: Nested productId object
+          else if (item.productId && typeof item.productId === 'object') {
+            itemName = item.productId.name || item.productId.productName || "Product";
+            itemPrice = parseFloat(item.productId.price || item.productId.productPrice || 0);
+            itemQuantity = parseInt(item.quantity || 1, 10);
+            console.log("Cart Item Case 3 - Nested productId:", { itemName, itemPrice, itemQuantity });
+          }
+          // Case 4: If item has a separate price field but no name
+          else if (item.price) {
+            itemName = item.id ? `Product #${item.id.toString().substring(0, 8)}` : "Product";
+            itemPrice = parseFloat(item.price || 0);
+            itemQuantity = parseInt(item.quantity || 1, 10);
+            console.log("Cart Item Case 4 - Price only:", { itemName, itemPrice, itemQuantity });
+          }
+          
+          productItem.innerHTML = `
+            <div class="product-details-simplified">
+              <h4 class="product-name">${itemName}</h4>
+              <div class="product-meta-simplified">
+                <span class="quantity">${itemQuantity} x</span>
+                <span class="price">${isNaN(itemPrice) ? '0.00' : itemPrice.toFixed(2)} TND</span>
+              </div>
+              <span class="item-total">${isNaN(itemPrice) ? '0.00' : (itemQuantity * itemPrice).toFixed(2)} TND</span>
+            </div>
+          `
+          productList.appendChild(productItem)
+          hasDisplayedProducts = true;
+        } catch (e) {
+          console.error("Error rendering cart item:", e);
+        }
+      })
+    }
+    
+    // If no products were displayed successfully, try one more approach directly from the order object
+    if (!hasDisplayedProducts) {
+      console.log("No products displayed yet, trying direct order structure analysis");
+      
+      // Try to find products directly in the order structure
+      for (const key in order) {
+        // Skip certain known keys that don't contain product data
+        if (["_id", "dateCommande", "createdAt", "date", "shop", "orderTotal", "totalAmount", "orderStatus", "status"].includes(key)) {
+          continue;
+        }
+        
+        const value = order[key];
+        if (Array.isArray(value)) {
+          console.log(`Found potential products array in key: ${key}`, value);
+          
+          value.forEach((item, index) => {
+            try {
+              // Check if this looks like a product
+              if (typeof item === 'object' && item !== null) {
+                console.log(`Processing item ${index} from ${key}:`, item);
+                
+                const productItem = document.createElement("div");
+                productItem.className = "product-item simplified";
+                
+                // Try to extract meaningful product data
+                let productName = "Product";
+                let productPrice = 0;
+                let quantity = 1;
+                
+                // Check for common product name fields
+                for (const nameField of ['productName', 'name', 'title', 'product_name']) {
+                  if (item[nameField]) {
+                    productName = item[nameField];
+                    break;
+                  }
+                  // Check nested fields
+                  for (const nestedField of ['product', 'productId', 'item']) {
+                    if (item[nestedField] && item[nestedField][nameField]) {
+                      productName = item[nestedField][nameField];
+                      break;
+                    }
+                  }
+                }
+                
+                // Check for common price fields
+                for (const priceField of ['productPrice', 'price', 'amount', 'unit_price']) {
+                  if (item[priceField] !== undefined) {
+                    productPrice = parseFloat(item[priceField] || 0);
+                    break;
+                  }
+                  // Check nested fields
+                  for (const nestedField of ['product', 'productId', 'item']) {
+                    if (item[nestedField] && item[nestedField][priceField] !== undefined) {
+                      productPrice = parseFloat(item[nestedField][priceField] || 0);
+                      break;
+                    }
+                  }
+                }
+                
+                // Check for quantity
+                for (const qtyField of ['quantity', 'qty', 'count']) {
+                  if (item[qtyField] !== undefined) {
+                    quantity = parseInt(item[qtyField] || 1, 10);
+                    break;
+                  }
+                }
+                
+                console.log("Direct analysis found:", { productName, productPrice, quantity });
+                
+                productItem.innerHTML = `
+                  <div class="product-details-simplified">
+                    <h4 class="product-name">${productName}</h4>
+                    <div class="product-meta-simplified">
+                      <span class="quantity">${quantity} x</span>
+                      <span class="price">${isNaN(productPrice) ? '0.00' : productPrice.toFixed(2)} TND</span>
+                    </div>
+                    <span class="item-total">${isNaN(productPrice) ? '0.00' : (quantity * productPrice).toFixed(2)} TND</span>
+                  </div>
+                `;
+                productList.appendChild(productItem);
+                hasDisplayedProducts = true;
+              }
+            } catch (e) {
+              console.error("Error processing potential product item:", e);
+            }
+          });
+        }
+      }
+    }
+    
     // Create summary section
     const receiptSummary = document.createElement("div")
     receiptSummary.className = "receipt-summary"
+    
+    // Safely get the order total amount
+    const totalAmount = parseFloat(order.orderTotal || order.totalAmount || 0)
+    
     receiptSummary.innerHTML = `
       <div class="summary-row">
         <span class="summary-label">Subtotal</span>
-        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} TND</span>
+        <span class="summary-value">${isNaN(totalAmount) ? '0.00' : totalAmount.toFixed(2)} TND</span>
       </div>
       <div class="summary-row total">
         <span class="summary-label">Total</span>
-        <span class="summary-value">${(order.orderTotal || order.totalAmount).toFixed(2)} TND</span>
+        <span class="summary-value">${isNaN(totalAmount) ? '0.00' : totalAmount.toFixed(2)} TND</span>
       </div>
     `
     receiptContainer.appendChild(receiptSummary)
-
+    
     // Create footer section
     const receiptFooter = document.createElement("div")
     receiptFooter.className = "receipt-footer"
@@ -2025,8 +2323,8 @@ function initializeOrdersSection() {
     receiptContainer.appendChild(receiptFooter)
 
     // Show the modal
-    const bsModal = new bootstrap.Modal(modal)
-    bsModal.show()
+    const bootstrapModal = new bootstrap.Modal(modal)
+    bootstrapModal.show()
   }
 
   function cancelOrder(orderId) {
@@ -2226,7 +2524,6 @@ function showToast(title, message, type = "info") {
       },
     }).showToast()
   } else {
-    // Fallback to alert if Toastify is not available
     alert(`${title}: ${message}`)
   }
 }
