@@ -1,13 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // containers
   const tableBody = document.querySelector(".wishlist-table tbody");
   const wishlistCards = document.querySelector(".wishlist-cards");
 
   let wishlistItems = [];
 
-  // Fetch wishlist items from the server
   function fetchWishlistItems() {
-    // Get the client ID directly from localStorage
     const clientId = localStorage.getItem('userId');
     console.log("Attempting to fetch wishlist with clientId:", clientId);
     
@@ -17,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Check if user is logged in by looking for token
     const token = localStorage.getItem('token');
     if (!token) {
       console.error("Authentication token not found");
@@ -28,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `/favoris/${clientId}`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Authorization', `Bearer ${token}`); // Add token to request
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     
     xhr.onload = function() {
       console.log("Wishlist API response status:", this.status);
@@ -37,11 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (this.status === 200) {
         try {
           const response = JSON.parse(this.responseText);
-          
-          // Debug: Log the response structure
           console.log("Parsed response:", response);
-          
-          // Check if response has the expected structure
           if (response.favorites && Array.isArray(response.favorites)) {
             console.log(`Found ${response.favorites.length} wishlist items`);
             
@@ -49,9 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
               console.log("First item structure:", response.favorites[0]);
             }
             
-            // Transform the data to match the expected format
             wishlistItems = response.favorites.map(item => {
-              // Check if item has the expected structure
               if (!item.productId) {
                 console.error("Item missing productId:", item);
                 return null;
@@ -59,10 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
               
               const product = item.productId;
               
-              // Get the mainImage from the product
               let imagePath = '';
               if (product.mainImage) {
-                // Construct the path to the image in the uploads directory
                 imagePath = `/uploads/${product.mainImage}`;
               }
               
@@ -72,10 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 image: imagePath,
                 price: product.productPrice || 0,
                 stock: product.stock > 0 ? "In Stock" : "Out of Stock",
-                rating: 4.8, // Default rating if not available
                 link: `product-details.html?id=${product._id}`
               };
-            }).filter(item => item !== null); // Remove any null items
+            }).filter(item => item !== null);
           } else {
             console.error("Unexpected response structure:", response);
             wishlistItems = [];
@@ -150,10 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="product-content">
               <h6><a href="${item.link}">${item.name}</a></h6>
-              <div class="product-rating">
-                <span class="stars">★★★★★</span>
-                <span class="rating">${item.rating}</span>
-              </div>
             </div>
           </div>
         </td>
@@ -175,41 +158,36 @@ document.addEventListener("DOMContentLoaded", () => {
       tableBody.appendChild(tr);
 
       // mobile card
-      // Inside your renderWishlist function where you create the card
-const card = document.createElement("div");
-card.className = "wishlist-card";
-card.dataset.index = idx;
-card.dataset.productId = item.id;
-card.innerHTML = `
-<div class="card-product">
-  <div class="product-thumb">
-    <a href="${item.link}">
-      ${item.image ? `<img src="${item.image}" alt="${item.name}"/>` : `<span class="no-image">${item.name}</span>`}
-    </a>
-  </div>
-  <div class="product-details">
-    <h6><a href="${item.link}">${item.name}</a></h6>
-    <div class="product-rating">
-      <span class="stars">★★★★★</span>
-      <span class="rating">${item.rating}</span>
-    </div>
-    <div class="meta">
-      <span class="price">${item.price.toFixed(2)} TND</span>
-      <span class="stock-status">${item.stock}</span>
-    </div>
-    <div class="card-actions">
-      <div class="btn-group">
-        <button class="btn-add-to-cart" data-product-id="${item.id}">
-          <i class="ph ph-shopping-cart"></i>
-        </button>
-        <button class="btn-remove" data-product-id="${item.id}">
-          <i class="ph ph-trash"></i>
-        </button>
+      const card = document.createElement("div");
+      card.className = "wishlist-card";
+      card.dataset.index = idx;
+      card.dataset.productId = item.id;
+      card.innerHTML = `
+      <div class="card-product">
+        <div class="product-thumb">
+          <a href="${item.link}">
+            ${item.image ? `<img src="${item.image}" alt="${item.name}"/>` : `<span class="no-image">${item.name}</span>`}
+          </a>
+        </div>
+        <div class="product-details">
+          <h6><a href="${item.link}">${item.name}</a></h6>
+          <div class="meta">
+            <span class="price">${item.price.toFixed(2)} TND</span>
+            <span class="stock-status">${item.stock}</span>
+          </div>
+          <div class="card-actions">
+            <div class="btn-group">
+              <button class="btn-add-to-cart" data-product-id="${item.id}">
+                <i class="ph ph-shopping-cart"></i>
+              </button>
+              <button class="btn-remove" data-product-id="${item.id}">
+                <i class="ph ph-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-`;
+      `;
       wishlistCards.appendChild(card);
     });
 
@@ -270,7 +248,7 @@ card.innerHTML = `
     xhr.send(JSON.stringify({
       clientId,
       productId,
-      quantity: 1 // Default quantity
+      quantity: 1 
     }));
   }
 
@@ -330,9 +308,7 @@ card.innerHTML = `
       
       if (this.status === 200) {
         console.log('Product removed from wishlist successfully');
-        // Remove item from local array
         wishlistItems = wishlistItems.filter(item => item.id !== productId);
-        // Re-render the wishlist
         renderWishlist();
         showNotification('Product removed from wishlist', 'success');
         
@@ -358,9 +334,8 @@ card.innerHTML = `
     }));
   }
 
-  // Simple notification function
+  // Toast notification
   function showNotification(message, type = 'info') {
-    // Check if notification container exists, if not create it
     let notificationContainer = document.getElementById('notification-container');
     if (!notificationContainer) {
       notificationContainer = document.createElement('div');
@@ -372,7 +347,6 @@ card.innerHTML = `
       document.body.appendChild(notificationContainer);
     }
     
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#F44336';
@@ -384,10 +358,8 @@ card.innerHTML = `
     notification.style.minWidth = '250px';
     notification.textContent = message;
     
-    // Add to container
     notificationContainer.appendChild(notification);
     
-    // Remove after 3 seconds
     setTimeout(() => {
       notification.style.opacity = '0';
       notification.style.transition = 'opacity 0.5s';

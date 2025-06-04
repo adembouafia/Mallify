@@ -31,7 +31,6 @@ window.addEventListener('load', function() {
             
             apexScript.onerror = function() {
               console.error('Failed to load ApexCharts from CDN:', cdnUrls[index]);
-              // Try the next CDN
               loadApexChartsFromCDN(cdnUrls, index + 1);
             };
             
@@ -160,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function fetchShopsCount() {
   const xhr = new XMLHttpRequest();
-  // Make sure this API endpoint matches your backend structure
   xhr.open("GET", "/api/shop/count", true);
 
   const token = localStorage.getItem("token");

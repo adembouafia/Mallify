@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Get the shop ID from URL parameters
   const urlParams = new URLSearchParams(window.location.search)
   const shopId = urlParams.get("id")
 
@@ -9,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return
   }
 
-  // Global variables
   let allProducts = []
   let categories = []
   let currentPage = 1
@@ -18,18 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedCategory = null
   let shopData = null
 
-  // Price filter variables
   let minPrice = 0
-  let maxPrice = Number.POSITIVE_INFINITY
+  let maxPrice = Number.POSITIVE_INFINITY //ken positive
 
-  // Initialize
   fetchShopDetails(shopId)
   fetchShopProducts(shopId)
   setupEventListeners()
 
-  // Setup event listeners for search, pagination, and view toggle
   function setupEventListeners() {
-    // Search form submission event
     const searchForm = document.querySelector(".vendor-two-details__contents .input-group")
     if (searchForm) {
       searchForm.addEventListener("submit", (e) => {
@@ -40,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    // Grid/List view toggle
     const gridButton = document.querySelector(".grid-btn")
     const listButton = document.querySelector(".list-btn")
 
@@ -58,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    // Category sidebar links
     document.addEventListener("click", (e) => {
       if (e.target.matches(".shop-sidebar ul li a") || e.target.closest(".shop-sidebar ul li a")) {
         e.preventDefault()
@@ -66,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const link = e.target.closest(".shop-sidebar ul li a")
         const categoryName = link.textContent.split("(")[0].trim()
 
-        // Highlight selected category
         document.querySelectorAll(".shop-sidebar ul li a").forEach((a) => {
           a.classList.remove("text-main-600")
           a.classList.add("text-gray-900", "hover-text-main-600")
